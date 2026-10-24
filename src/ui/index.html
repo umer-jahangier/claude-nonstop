@@ -7,10 +7,11 @@
 <title>claude-nonstop</title>
 <link rel="icon" id="favicon" href="data:,">
 <script>
-// Appearance: the saved choice (Automatic, Light or Dark), resolved before the first paint.
+// Appearance: the saved choice (Dark by default, Light, or Automatic), resolved before the
+// first paint.
 (function () {
-  var pref = 'system';
-  try { pref = localStorage.getItem('cn-theme') || 'system'; } catch (e) {}
+  var pref = 'dark';
+  try { pref = localStorage.getItem('cn-theme') || 'dark'; } catch (e) {}
   var dark = pref === 'dark' || (pref === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
 })();
@@ -704,7 +705,7 @@ main { position: relative; z-index: 1; }
     </div>
     <div class="tool-end">
       <span class="status" id="pill"><span class="dot"></span><span id="pill-text">Connecting…</span></span>
-      <button class="icon-btn theme-btn" type="button" id="theme-btn" data-act="theme-menu" data-fk="theme" aria-haspopup="menu" aria-expanded="false" aria-label="Appearance" title="Appearance"><svg class="i" aria-hidden="true"><use href="#i-auto-theme"/></svg></button>
+      <button class="icon-btn theme-btn" type="button" id="theme-btn" data-act="theme-menu" data-fk="theme" aria-haspopup="menu" aria-expanded="false" aria-label="Appearance: Dark" title="Appearance: Dark"><svg class="i" aria-hidden="true"><use href="#i-moon"/></svg></button>
     </div>
   </div>
 </header>
@@ -778,12 +779,12 @@ main { position: relative; z-index: 1; }
       <div class="group-head"><h2>Appearance</h2></div>
       <div class="group">
         <div class="row">
-          <span class="row-text"><span class="row-title" id="theme-label">Theme</span><span class="row-sub">Automatic follows your computer's setting</span></span>
+          <span class="row-text"><span class="row-title" id="theme-label">Theme</span><span class="row-sub">Dark unless you choose otherwise; Automatic follows your computer</span></span>
           <div class="mini-seg" role="radiogroup" aria-labelledby="theme-label" id="theme-seg">
             <span class="seg-thumb" aria-hidden="true"></span>
-            <button type="button" role="radio" data-act="theme-set" data-value="system" aria-checked="true">Automatic</button>
+            <button type="button" role="radio" data-act="theme-set" data-value="system" aria-checked="false">Automatic</button>
             <button type="button" role="radio" data-act="theme-set" data-value="light" aria-checked="false">Light</button>
-            <button type="button" role="radio" data-act="theme-set" data-value="dark" aria-checked="false">Dark</button>
+            <button type="button" role="radio" data-act="theme-set" data-value="dark" aria-checked="true">Dark</button>
           </div>
         </div>
       </div>
@@ -914,11 +915,11 @@ const announce = (text) => { $('#sr').textContent = text; };
 
 // ------------------------------------------------------------------ appearance
 
-// Automatic (the computer's setting, the default), Light or Dark. The head script applies
+// Dark (the default), Light, or Automatic (the computer's setting). The head script applies
 // the saved choice before the first paint; this keeps it in step afterwards.
 const theme = (() => {
   const media = window.matchMedia('(prefers-color-scheme: dark)');
-  const get = () => { try { return localStorage.getItem('cn-theme') || 'system'; } catch { return 'system'; } };
+  const get = () => { try { return localStorage.getItem('cn-theme') || 'dark'; } catch { return 'dark'; } };
   const resolve = (pref) => (pref === 'dark' || (pref === 'system' && media.matches) ? 'dark' : 'light');
 
   function controls() {

@@ -241,7 +241,7 @@ components:
 
 **Creative North Star: "The Quiet Settings Pane"**
 
-The UI reads like a pane of Apple's System Settings: a pale ground, white inset groups with hairline separators, plain sentences, the platform font, and a single system-blue accent reserved for controls and the live line. Density is comfortable and list-driven; nothing is a card grid, and nothing glows for its own sake. Light and dark are both first-class, declared as one token set on `:root` and swapped under `prefers-color-scheme: dark`.
+The UI reads like a pane of Apple's System Settings: a pale ground, white inset groups with hairline separators, plain sentences, the platform font, and a single system-blue accent reserved for controls and the live line. Density is comfortable and list-driven; nothing is a card grid, and nothing glows for its own sake. Light and dark are both first-class, declared as one token set on `:root` and swapped by `data-theme` on the root element. Dark is the default; Settings and the toolbar offer Light and Automatic (which follows `prefers-color-scheme`), and a script in `<head>` applies the choice before the first paint.
 
 Exactly one physical object lives on the page: a cable (white like an Apple USB-C cable in light mode, graphite in dark) that runs from a boot on the status card's left edge to a port on the live row. Its plug carries a MagSafe-style status light. The status card's right side holds a WebGL dotted globe where each gateway request flies as a light from this computer to Anthropic. These two are the only illustrative elements; everything else is platform chrome.
 

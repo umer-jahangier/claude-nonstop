@@ -12,8 +12,8 @@ account 1  →  account 2  →  …  →  API key 1  →  API key 2  →  …
 ```
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot-dark.jpg">
-  <img alt="The claude-nonstop web page: the line in use, subscription accounts and API keys in grouped lists, a cable plugged into the live line, a globe showing requests travelling to Anthropic, and live activity." src="docs/screenshot-light.jpg">
+  <source media="(prefers-color-scheme: light)" srcset="docs/screenshot-light.jpg">
+  <img alt="The claude-nonstop web page: the line in use, subscription accounts and API keys in grouped lists, a cable plugged into the live line, a globe showing requests travelling to Anthropic, and live activity." src="docs/screenshot-dark.jpg">
 </picture>
 
 ## Contents
@@ -40,7 +40,7 @@ account 1  →  account 2  →  …  →  API key 1  →  API key 2  →  …
 - **Subscriptions first.** Every session starts on the first account that still has usage left. API keys are only used once every account is out.
 - **Keys switch mid-session.** A local gateway sends each request with your first working key. If a key runs out of credit, the same request goes out again on the next key, and your session never notices.
 - **One command to install, nothing to configure by hand.** It brings its own Node.js, installs Claude Code if you don't have it, and sets everything up.
-- **A web page at `https://claude.nonstop`** to add accounts and keys, see what's in use, and switch lines by dragging a cable. Light, dark, or your computer's setting.
+- **A web page at `https://claude.nonstop`** to add accounts and keys, see what's in use, and switch lines by dragging a cable. Dark by default, with Light and Automatic (your computer's setting) one click away.
 - **Works in the terminal and in the Claude desktop app**, on macOS, Windows and Linux.
 - **Your secrets stay on your computer, encrypted.** Keys are only ever sent to Anthropic.
 - **Updates itself** from GitHub releases.
@@ -121,7 +121,7 @@ claude-nonstop: using Work (subscription)
 | Globe | A light travels from your computer to Anthropic and back for every gateway request. Drag it to spin it |
 | Activity | Every request, key switch and new session, live |
 | Desktop App tab | Sets up the Claude desktop app with one click, with manual steps as a fallback |
-| Settings tab | Appearance (Automatic, Light, Dark), how long a used-up key or a limited account is skipped, and what's set up on this computer |
+| Settings tab | Appearance (Dark by default, Light, or Automatic to follow your computer), how long a used-up key or a limited account is skipped, and what's set up on this computer |
 
 **Addresses.** Any of these opens the page:
 
