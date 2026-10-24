@@ -10,6 +10,8 @@ const http = require('http');
 const https = require('https');
 const { classifyResponse } = require('./classify');
 const keys = require('./keys');
+const relay = require('./relay');
+const events = require('./events');
 const state = require('./state');
 const { log } = require('./files');
 
@@ -128,7 +130,7 @@ async function handle(req, res, ctx) {
     sendError(res, 413, 'request_too_large', 'claude-nonstop gateway: request body is too large');
     return;
   }
-  for (const entry of vault.keys) {
+  for (const entry of relay.keyOrder(cfg, vault.keys)) {
     if (state.isCoolingDown(entry.id, cfg.cooldownMinutes)) continue;
     const { res: upRes, upstream, error } = await forward(cfg, req, body, entry.key);
     if (error) {
@@ -141,13 +143,16 @@ async function handle(req, res, ctx) {
       if (classifyResponse(upRes.statusCode, text) === 'used-up') {
         state.recordKey(entry.id, { verdict: 'used-up', status: upRes.statusCode, detail: keys.errorMessage(text) });
         log(`gateway: key "${entry.label}" is used up (HTTP ${upRes.statusCode}), sending the request again on the next key`);
+        events.emit('switch', { keyId: entry.id, label: entry.label, status: upRes.statusCode, detail: keys.errorMessage(text) });
         continue;
       }
+      events.emit('request', { keyId: entry.id, label: entry.label, status: upRes.statusCode, path: req.url });
       res.writeHead(upRes.statusCode, responseHeaders(upRes.headers, errBody.length));
       res.end(errBody);
       return;
     }
     ctx.noteKeyInUse(entry);
+    events.emit('request', { keyId: entry.id, label: entry.label, status: upRes.statusCode, path: req.url });
     res.writeHead(upRes.statusCode, responseHeaders(upRes.headers));
     upRes.pipe(res);
     // If the client goes away mid-stream, stop the upstream request too.
@@ -156,6 +161,7 @@ async function handle(req, res, ctx) {
     });
     return;
   }
+  events.emit('exhausted', {});
   sendError(
     res,
     402,

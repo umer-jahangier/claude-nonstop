@@ -2,415 +2,826 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
 <title>claude-nonstop</title>
+<link rel="icon" id="favicon" href="data:,">
 <style>
 :root {
-  --panel: #e3e6e0;
-  --bank: #d9ddd6;
-  --legend: #d1d6ce;
-  --rule: #bcc2ba;
-  --rule-strong: #8f978f;
-  --ink: #1b1f22;
-  --ink-2: #4a524d;
-  --ink-3: #545c57;
-  --strip: #f6f1e3;
-  --strip-ink: #2b2620;
-  --brass: #9a7542;
-  --plate: #23282c;
-  --plate-2: #2e3439;
-  --plate-ink: #eef0ea;
-  --plate-ink-2: #b4bbb5;
-  --live: #2e9a46;
-  --live-ring: #1f6e31;
-  --warn: #d48a14;
-  --warn-ring: #9a630b;
-  --dead: #c0392b;
-  --dead-ring: #8a2419;
-  --unlit: #8e968f;
-  --cord: #8f3a20;
-  --cord-hi: #c06a48;
-  --action: #8f3a20;
-  --action-hover: #79301a;
-  --action-ink: #ffffff;
-  --field: #f2f3ef;
-  --jack: #2a2f33;
-  --jack-ring: #737b75;
-  --live-tint: rgba(46, 154, 70, 0.09);
-  --focus: #1f5fd1;
-  --shadow: 0 1px 2px rgba(20, 24, 26, 0.12), 0 4px 14px rgba(20, 24, 26, 0.06);
+  color-scheme: light dark;
+  --ground: #f2f2f7;
+  --group: #ffffff;
+  --sheet: #f2f2f7;
+  --sheet-group: #ffffff;
+  --label: #1d1d1f;
+  --label-2: #6e6e73;
+  --sep: rgba(60, 60, 67, 0.17);
+  --fill: rgba(120, 120, 128, 0.12);
+  --fill-2: rgba(120, 120, 128, 0.2);
+  --track: rgba(120, 120, 128, 0.16);
+  --thumb: #ffffff;
+  --accent: #0066cc;
+  --accent-fill: #0071e3;
+  --accent-hover: #0077ed;
+  --accent-tint: rgba(0, 113, 227, 0.1);
+  --focus: rgba(0, 113, 227, 0.45);
+  --select: rgba(0, 113, 227, 0.2);
+  --green: #34c759;
+  --orange: #ff9500;
+  --red: #ff3b30;
+  --gray: #aeaeb2;
+  --red-text: #d70015;
+  --key-tile: #8e8e93;
+  --bar: rgba(242, 242, 247, 0.78);
+  --bar-edge: rgba(0, 0, 0, 0.1);
+  --material: rgba(251, 251, 253, 0.84);
+  --scrim: rgba(0, 0, 0, 0.2);
+  --scroll: rgba(120, 120, 128, 0.42);
+  --shadow-menu: 0 0 0 0.5px rgba(0, 0, 0, 0.12), 0 12px 32px -6px rgba(0, 0, 0, 0.2);
+  --shadow-sheet: 0 0 0 0.5px rgba(0, 0, 0, 0.08), 0 30px 80px -16px rgba(0, 0, 0, 0.32);
+  --shadow-thumb: 0 3px 8px rgba(0, 0, 0, 0.12), 0 1px 1px rgba(0, 0, 0, 0.05);
+  --cable: #ffffff;
+  --cable-edge: rgba(0, 0, 0, 0.17);
+  --cable-shade: rgba(0, 0, 0, 0.07);
+  --cable-hi: rgba(255, 255, 255, 0);
+  --plug-top: #ffffff;
+  --plug-bottom: #e3e3e8;
+  --plug-edge: rgba(0, 0, 0, 0.16);
+  --port: #dcdce1;
+  --port-ring: rgba(0, 0, 0, 0.07);
+  --hair: 1px;
+  --font: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-  --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --spring-ms: 420ms;
+  --spring: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --plug-len: 22px;
+  --boot-len: 12px;
+  --avatar: 48px;
+  --now-pad: 20px;
+  --globe-body: 240 243 248;
+  --globe-rim: 186 204 232;
+  --globe-dot: 70 84 108;
+  --globe-dot-back: 196 204 218;
+  --globe-arc: 0 113 227;
+  --globe-aura: 0 113 227;
+  --globe-aura-a: 0.1;
 }
+
 @media (prefers-color-scheme: dark) {
   :root {
-    --panel: #1b1f22;
-    --bank: #22272b;
-    --legend: #262c30;
-    --rule: #343b40;
-    --rule-strong: #4f585e;
-    --ink: #e8eae5;
-    --ink-2: #b0b7b2;
-    --ink-3: #8f9792;
-    --strip: #ebe3cc;
-    --strip-ink: #29241d;
-    --brass: #a8824d;
-    --plate: #0f1214;
-    --plate-2: #191d20;
-    --plate-ink: #eef0ea;
-    --plate-ink-2: #a9b0aa;
-    --live: #4fb35f;
-    --live-ring: #2f7a3b;
-    --warn: #e8a33a;
-    --warn-ring: #a8701d;
-    --dead: #e0503f;
-    --dead-ring: #9c3024;
-    --unlit: #59626a;
-    --cord: #a8452a;
-    --cord-hi: #d27a55;
-    --action: #a8452a;
-    --action-hover: #bd5332;
-    --field: #262b30;
-    --jack: #0b0d0f;
-    --jack-ring: #59626a;
-    --live-tint: rgba(79, 179, 95, 0.10);
-    --focus: #79b0ff;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 6px 18px rgba(0, 0, 0, 0.25);
+    --ground: #000000;
+    --group: #1c1c1e;
+    --sheet: #1c1c1e;
+    --sheet-group: #2c2c2e;
+    --label: #f5f5f7;
+    --label-2: #98989d;
+    --sep: rgba(84, 84, 88, 0.55);
+    --fill: rgba(120, 120, 128, 0.24);
+    --fill-2: rgba(120, 120, 128, 0.36);
+    --track: rgba(120, 120, 128, 0.32);
+    --thumb: #636366;
+    --accent: #2997ff;
+    --accent-tint: rgba(41, 151, 255, 0.16);
+    --focus: rgba(41, 151, 255, 0.55);
+    --select: rgba(41, 151, 255, 0.32);
+    --green: #30d158;
+    --orange: #ff9f0a;
+    --red: #ff453a;
+    --gray: #636366;
+    --red-text: #ff6961;
+    --key-tile: #636366;
+    --bar: rgba(22, 22, 24, 0.76);
+    --bar-edge: rgba(255, 255, 255, 0.1);
+    --material: rgba(44, 44, 46, 0.86);
+    --scrim: rgba(0, 0, 0, 0.5);
+    --scroll: rgba(120, 120, 128, 0.5);
+    --shadow-menu: 0 0 0 0.5px rgba(255, 255, 255, 0.1), 0 12px 32px -6px rgba(0, 0, 0, 0.7);
+    --shadow-sheet: 0 0 0 0.5px rgba(255, 255, 255, 0.1), 0 30px 80px -16px rgba(0, 0, 0, 0.8);
+    --shadow-thumb: 0 3px 8px rgba(0, 0, 0, 0.32);
+    --cable: #3a3a3c;
+    --cable-edge: rgba(0, 0, 0, 0.75);
+    --cable-shade: rgba(0, 0, 0, 0.4);
+    --cable-hi: rgba(255, 255, 255, 0.22);
+    --plug-top: #636366;
+    --plug-bottom: #3a3a3c;
+    --plug-edge: rgba(0, 0, 0, 0.7);
+    --port: #0c0c0d;
+    --port-ring: rgba(255, 255, 255, 0.13);
+    --globe-body: 12 15 22;
+    --globe-rim: 56 116 206;
+    --globe-dot: 214 228 255;
+    --globe-dot-back: 52 62 84;
+    --globe-arc: 41 151 255;
+    --globe-aura: 41 151 255;
+    --globe-aura-a: 0.24;
   }
 }
 
-* { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+@media (min-resolution: 2dppx) { :root { --hair: 0.5px; } }
+
+@media (prefers-contrast: more) {
+  :root { --sep: rgba(60, 60, 67, 0.45); --label-2: #48484a; --fill: rgba(120, 120, 128, 0.22); }
+  .group { box-shadow: 0 0 0 1px var(--sep); }
+}
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root { --sep: rgba(235, 235, 245, 0.4); --label-2: #c7c7cc; }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scrollbar-gutter: stable; scrollbar-color: var(--scroll) transparent; -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
-  background: var(--panel);
-  color: var(--ink);
-  font: 14px/1.45 var(--sans);
-  caret-color: var(--cord);
-  scrollbar-color: var(--rule-strong) transparent;
+  position: relative;
+  min-height: 100vh;
+  background: var(--ground);
+  color: var(--label);
+  font-family: var(--font);
+  font-size: 0.9375rem;
+  line-height: 1.47;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
-::selection { background: color-mix(in srgb, var(--cord) 32%, transparent); }
-a { color: inherit; text-underline-offset: 3px; }
-button, input { font: inherit; color: inherit; }
-:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
-.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-.mono { font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+body:has(dialog[open]) { overflow: hidden; }
+body.dragging, body.dragging * { cursor: grabbing !important; user-select: none; -webkit-user-select: none; }
+::selection { background: var(--select); }
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 8px; border: 3px solid transparent; background-clip: content-box; }
+input, button, textarea { font: inherit; letter-spacing: inherit; color: inherit; }
+input { caret-color: var(--accent-fill); }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 2px; }
+:focus { outline: none; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+code { font-family: var(--mono); font-size: 0.8125em; letter-spacing: 0; padding: 1px 5px; border-radius: 5px; background: var(--fill); }
+[hidden] { display: none !important; }
+.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.num { font-variant-numeric: tabular-nums; }
+.mono { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
-.wrap { position: relative; max-width: 1120px; margin: 0 auto; padding: 20px 16px 72px; }
-@media (min-width: 720px) { .wrap { padding: 28px 32px 88px; } }
+/* ---------------------------------------------------------------- toolbar */
 
-/* masthead */
-.masthead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; margin-bottom: 18px; }
-.brand { display: flex; align-items: center; gap: 10px; }
-.brand .i { width: 20px; height: 20px; color: var(--cord); }
-.wordmark { margin: 0; font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
-.brand .ver { color: var(--ink-3); }
-.facts { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--ink-2); font-size: 13px; }
-.facts span { display: inline-flex; align-items: center; gap: 7px; }
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bar);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  box-shadow: 0 var(--hair) 0 transparent;
+  transition: box-shadow 0.25s ease;
+}
+.toolbar.scrolled { box-shadow: 0 var(--hair) 0 var(--bar-edge); }
+.toolbar-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  height: 52px;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+}
+.brand { display: flex; align-items: center; gap: 9px; min-width: 0; font-weight: 600; font-size: 0.9375rem; letter-spacing: -0.015em; }
+.app-icon { width: 26px; height: 26px; flex: none; cursor: default; }
+.app-icon .ai-loop { stroke-dasharray: 100; }
+.app-icon .ai-glint { stroke-dasharray: 10 200; stroke-dashoffset: 10; }
+.status { justify-self: end; display: inline-flex; align-items: center; gap: 7px; font-size: 0.8125rem; color: var(--label-2); white-space: nowrap; }
+.status .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gray); transition: background-color 0.3s ease; }
+.status.live .dot { background: var(--green); }
+.status.down .dot { background: var(--orange); }
 
-/* lamps: lit or dark, nothing in between */
-.lamp { width: 12px; height: 12px; border-radius: 50%; flex: none; display: inline-block; border: 2px solid var(--unlit); background: transparent; }
-.lamp[data-s="live"] { background: var(--live); border-color: var(--live-ring); }
-.lamp[data-s="warn"] { background: var(--warn); border-color: var(--warn-ring); }
-.lamp[data-s="dead"] { background: var(--dead); border-color: var(--dead-ring); }
-.lamp[data-s="off"] { border-style: dashed; }
-
-/* the connected plate */
-.plate { position: relative; background: var(--plate); color: var(--plate-ink); border-radius: 4px; padding: 16px 18px 16px 52px; box-shadow: var(--shadow); }
-@media (min-width: 720px) { .plate { padding: 18px 22px 18px 56px; } }
-.socket { position: absolute; left: 14px; top: 17px; width: 24px; height: 24px; border-radius: 50%; background: var(--plate-2); box-shadow: inset 0 0 0 2px var(--brass), inset 0 0 0 5px var(--plate-2), inset 0 0 0 7px #000; }
-@media (min-width: 720px) { .socket { left: 16px; top: 19px; } }
-.slots { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 12px 18px; align-items: baseline; margin: 0; }
-@media (min-width: 720px) { .slots { grid-template-columns: max-content minmax(0, 1.3fr) max-content minmax(0, 1fr); column-gap: 20px; } }
-.slots dt { font-size: 13px; font-weight: 600; color: var(--plate-ink-2); }
-.slots dd { margin: 0; min-width: 0; }
-.slot-value { margin: 0; font-size: 20px; font-weight: 650; line-height: 1.25; overflow-wrap: anywhere; }
-.slot-value.small { font-size: 16px; font-weight: 600; }
-.slot-value .lamp { margin-right: 10px; vertical-align: 0.05em; }
-.slot-sub { margin: 3px 0 0; color: var(--plate-ink-2); font-size: 13px; }
-.trouble { list-style: none; margin: 14px 0 0; padding: 12px 0 0; border-top: 1px solid rgba(255, 255, 255, 0.12); display: grid; gap: 8px; }
-.trouble li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font-size: 14px; }
-.trouble .msg { display: inline-flex; gap: 10px; align-items: baseline; flex: 1 1 280px; }
-.trouble .lamp { transform: translateY(1px); }
-.trouble .acts { display: flex; flex-wrap: wrap; gap: 8px; }
-.all-ready { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.12); color: var(--plate-ink-2); font-size: 13px; }
-
-/* buttons */
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 34px; padding: 0 14px; border-radius: 6px; border: 1px solid var(--rule-strong); background: var(--field); color: var(--ink); font-weight: 600; font-size: 13px; cursor: pointer; white-space: nowrap; text-decoration: none; transition: background-color 150ms ease-out, border-color 150ms ease-out; }
-.btn:hover { border-color: var(--ink-3); }
-.btn.primary { background: var(--action); border-color: var(--action); color: var(--action-ink); }
-.btn.primary:hover { background: var(--action-hover); border-color: var(--action-hover); }
-.btn.on-plate { background: transparent; color: var(--plate-ink); border-color: rgba(255, 255, 255, 0.28); }
-.btn.on-plate:hover { border-color: rgba(255, 255, 255, 0.6); }
-.btn:disabled, .icon-btn:disabled { opacity: 0.5; cursor: progress; }
-.icon-btn { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 6px; border: 1px solid transparent; background: transparent; color: var(--ink-2); cursor: pointer; transition: background-color 150ms ease-out, color 150ms ease-out; }
-.icon-btn:hover { background: var(--field); border-color: var(--rule); color: var(--ink); }
-.icon-btn.danger:hover { color: var(--dead); }
-.spin .i { animation: spin 900ms linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* the jack field: one continuous panel */
-.field { position: relative; margin-top: 18px; padding-left: 40px; }
-@media (min-width: 720px) { .field { padding-left: 56px; } }
-.board { background: var(--bank); border: 1px solid var(--rule); border-radius: 3px; }
-.bank + .bank { border-top: 1px solid var(--rule-strong); }
-.bank-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; padding: 12px 16px 10px; background: var(--legend); }
-.bank-head h2 { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
-.bank-head p { margin: 0; color: var(--ink-2); font-size: 13px; flex: 1 1 260px; }
-.bank-head .btn { min-height: 30px; }
-.lines { list-style: none; margin: 0; padding: 0; }
-.line {
+.segmented {
   position: relative;
   display: grid;
-  /* The lever column is reserved on every line, so strips and controls share one edge in both banks. */
-  grid-template-columns: 26px 12px minmax(0, 1fr) 28px;
-  grid-template-areas: "num lamp strip lever" ". . readout readout" ". . controls controls";
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  padding: 2px;
+  border-radius: 9px;
+  background: var(--track);
+  min-width: 330px;
+}
+.seg-thumb {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: calc((100% - 4px) / 3);
+  border-radius: 7px;
+  background: var(--thumb);
+  box-shadow: var(--shadow-thumb);
+  transform: translateX(calc(var(--i, 0) * 100%));
+  transition: transform var(--spring-ms) var(--spring);
+}
+.seg {
+  position: relative;
+  z-index: 1;
+  height: 28px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.12s ease;
+}
+.seg[aria-selected="false"]:hover { opacity: 0.72; }
+.seg:active { opacity: 0.55; }
+
+/* ---------------------------------------------------------------- layout */
+
+main { max-width: 1080px; margin: 0 auto; padding: 12px 20px 72px 44px; }
+.layout { display: grid; grid-template-columns: minmax(0, 640px) minmax(0, 320px); gap: 40px; justify-content: center; align-items: start; }
+.col-side { position: sticky; top: 68px; max-height: calc(100vh - 84px); overflow: auto; overscroll-behavior: contain; padding-bottom: 8px; scrollbar-width: thin; }
+.view { max-width: 660px; margin: 0 auto; }
+
+.group { position: relative; background: var(--group); border-radius: 12px; }
+.list { list-style: none; margin: 0; padding: 0; }
+.group-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 32px 4px 8px 16px; }
+.group-head h2 { margin: 0; font-size: 0.9375rem; font-weight: 600; letter-spacing: -0.015em; }
+.group-foot { margin: 8px 16px 0; font-size: 0.8125rem; line-height: 1.38; color: var(--label-2); max-width: 64ch; letter-spacing: -0.003em; }
+.col-side > section:first-child .group-head { margin-top: 8px; }
+
+.row {
+  position: relative;
+  display: flex;
   align-items: center;
-  gap: 6px 10px;
-  padding: 10px 12px 10px 14px;
-  border-top: 1px solid var(--rule);
-  min-height: 56px;
+  gap: 12px;
+  min-height: 52px;
+  padding: 10px 12px 10px 16px;
 }
-@media (min-width: 640px) {
-  .line { grid-template-columns: 26px 12px minmax(0, 1fr) auto 28px; grid-template-areas: "num lamp strip controls lever" ". . readout readout readout"; gap: 6px 12px; }
+.row + .row::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: var(--sep-left, 58px);
+  height: var(--hair);
+  background: var(--sep);
 }
-@media (min-width: 900px) {
-  .line { grid-template-columns: 26px 12px minmax(160px, 236px) minmax(0, 1fr) auto 28px; grid-template-areas: "num lamp strip readout controls lever"; padding-right: 10px; }
+.list > .row:first-child { border-top-left-radius: 12px; border-top-right-radius: 12px; }
+.list > .row:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
+.row-text { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.row-title { font-size: 0.9375rem; line-height: 1.33; font-weight: 500; letter-spacing: -0.015em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row-sub { font-size: 0.8125rem; line-height: 1.33; color: var(--label-2); letter-spacing: -0.003em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row-why { font-size: 0.8125rem; line-height: 1.38; color: var(--label-2); letter-spacing: -0.003em; overflow-wrap: anywhere; }
+.row[data-off] .row-title, .row[data-off] .symbol { opacity: 0.45; }
+.rename { margin: 0; }
+.rename-input { width: 100%; height: 24px; margin: -2px 0 -1px -4px; padding: 0 4px; border: 0; border-radius: 5px; background: var(--fill); color: var(--label); }
+
+.symbol { width: 30px; height: 30px; border-radius: 7px; display: grid; place-items: center; flex: none; color: #fff; background: var(--accent-fill); }
+.symbol[data-kind="key"] { background: var(--key-tile); }
+.symbol .i { width: 18px; height: 18px; stroke-width: 1.7; }
+
+.state { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8125rem; color: var(--label-2); white-space: nowrap; flex: none; }
+.state .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gray); flex: none; }
+.state[data-s="ready"] .dot { background: var(--green); }
+.state[data-s="warn"] .dot { background: var(--orange); }
+.state[data-s="dead"] .dot { background: var(--red); }
+.state[data-s="off"] .dot { background: transparent; box-shadow: inset 0 0 0 1.5px var(--gray); }
+.state[data-s="live"] { padding: 3px 9px; border-radius: 999px; background: var(--accent-tint); color: var(--accent); font-size: 0.75rem; font-weight: 600; letter-spacing: 0; }
+.state[data-s="live"] .dot { display: none; }
+
+.spinner { width: 16px; height: 16px; flex: none; color: var(--label-2); animation: spin 0.8s steps(8) infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------------------------------------------------------------- controls */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--fill);
+  color: var(--accent);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.12s ease-out, background-color 0.12s ease;
 }
-.line[data-live] { background: var(--live-tint); }
-.line .num { grid-area: num; color: var(--ink-3); }
-.line .lamp, .line .gap { grid-area: lamp; }
-.line .strip { grid-area: strip; }
-.line .controls { grid-area: controls; display: flex; align-items: center; justify-content: flex-start; gap: 2px; flex-wrap: wrap; margin-left: -8px; }
-@media (min-width: 640px) { .line .controls { justify-content: flex-end; margin-left: 0; } }
-.line .lever, .line .confirm { grid-area: lever; }
-.line .confirm { grid-column: 3 / -1; }
-@media (min-width: 640px) { .line .confirm { grid-area: controls; grid-column: auto / span 2; } }
-.jack { position: absolute; top: 50%; left: -31px; width: 16px; height: 16px; margin-top: -8px; border-radius: 50%; background: var(--jack); box-shadow: inset 0 0 0 2px var(--jack-ring); }
-@media (min-width: 720px) { .jack { left: -39px; } }
-.line[data-live] .jack { box-shadow: inset 0 0 0 2px var(--brass); }
+.btn:hover { background: var(--fill-2); text-decoration: none; }
+.btn:active { transform: scale(0.97); }
+.btn.primary { background: var(--accent-fill); color: #fff; }
+.btn.primary:hover { background: var(--accent-hover); }
+.btn.danger { color: var(--red-text); }
+.btn.large { height: 34px; padding: 0 16px; font-size: 0.875rem; }
+.btn:disabled { opacity: 0.45; pointer-events: none; }
+.btn .i { width: 15px; height: 15px; }
+.btn .spinner { color: currentColor; width: 14px; height: 14px; }
 
-/* the readout: identifiers and numbers in mono, sentences in the sans */
-.readout { grid-area: readout; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 1px 10px; color: var(--ink-2); font-size: 13px; }
-.readout .state { font-weight: 700; color: var(--ink); white-space: nowrap; }
-.readout .ident, .readout .meta { font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.readout .ident { min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
-.readout .meta { color: var(--ink-3); }
-.readout .why { flex-basis: 100%; }
+.text-btn { border: 0; background: none; padding: 4px 6px; margin: -4px -6px; border-radius: 6px; color: var(--accent); font-size: 0.875rem; cursor: pointer; transition: opacity 0.12s ease; }
+.text-btn:active { opacity: 0.55; }
 
-/* designation strip: an ivory label in a brass holder */
-.strip { min-width: 0; display: flex; padding: 2px; border-radius: 3px; background: var(--brass); border: 0; text-align: left; cursor: text; }
-.strip > span { display: block; width: 100%; min-width: 0; padding: 4px 9px; border-radius: 2px; background: var(--strip); color: var(--strip-ink); font-size: 13px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(60, 45, 20, 0.12); }
-.line[data-off] .strip { opacity: 0.55; }
-.strip input { width: 100%; padding: 3px 8px; border: 0; border-radius: 2px; background: var(--strip); color: var(--strip-ink); font-size: 13px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; }
+.icon-btn { width: 30px; height: 30px; border: 0; border-radius: 50%; background: transparent; color: var(--label-2); display: grid; place-items: center; flex: none; cursor: pointer; transition: background-color 0.12s ease, transform 0.12s ease-out, color 0.12s ease; }
+.icon-btn:hover, .icon-btn[aria-expanded="true"] { background: var(--fill); color: var(--label); }
+.icon-btn:active { background: var(--fill-2); transform: scale(0.92); }
+.icon-btn .i { width: 18px; height: 18px; }
 
-/* lever key: a brass bat in a slot, thrown up for on, down for off */
-.lever { position: relative; width: 24px; height: 36px; padding: 0; margin: 0; border: 0; background: transparent; cursor: pointer; justify-self: center; }
-.lever::before { content: ""; position: absolute; left: 9px; top: 3px; width: 6px; height: 30px; border-radius: 3px; background: var(--jack); box-shadow: inset 0 0 0 1px var(--jack-ring); }
-.lever::after { content: ""; position: absolute; left: 3px; top: 4px; width: 18px; height: 11px; border-radius: 2px; background: var(--brass); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 1px 2px rgba(0, 0, 0, 0.35); transform: translateY(17px); transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), background-color 150ms ease-out; }
-.lever[aria-checked="true"]::after { transform: translateY(0); }
-.lever[aria-checked="false"]::after { background: var(--unlit); }
-
-/* a spare jack is the add action */
-.line.spare .strip { background: transparent; border: 1px dashed var(--rule-strong); padding: 0; cursor: pointer; }
-.line.spare .strip > span { background: transparent; box-shadow: none; color: var(--ink-2); display: flex; align-items: center; gap: 8px; padding: 6px 9px; }
-.line.spare .strip:hover > span { color: var(--ink); }
-.line.spare .jack { box-shadow: inset 0 0 0 2px var(--rule-strong); background: transparent; }
-
-.form { display: grid; gap: 10px; padding: 12px 14px 16px 52px; border-top: 1px solid var(--rule); grid-template-columns: 1fr; }
-@media (min-width: 720px) { .form { grid-template-columns: minmax(0, 220px) minmax(0, 1fr) auto; align-items: end; } }
-.form label { display: grid; gap: 5px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
-.form .hint { grid-column: 1 / -1; margin: 0; color: var(--ink-2); font-size: 13px; }
-.form .hint.inline { grid-column: auto; align-self: center; }
-.form .row-actions { display: flex; gap: 8px; }
-.input { width: 100%; min-height: 36px; padding: 7px 10px; border-radius: 6px; border: 1px solid var(--rule-strong); background: var(--field); color: var(--ink); font-size: 14px; }
-.input::placeholder { color: var(--ink-3); }
-.input.mono { font-size: 13px; }
-
-.job { margin: 0 14px 14px 52px; padding: 12px 14px; border-radius: 4px; background: var(--plate); color: var(--plate-ink); display: grid; gap: 10px; }
-.job p { margin: 0; }
-.job pre { margin: 0; max-height: 9.5em; overflow: auto; font: 12.5px/1.45 var(--mono); color: var(--plate-ink-2); white-space: pre-wrap; overflow-wrap: anywhere; }
-.job .input { background: var(--plate-2); color: var(--plate-ink); border-color: rgba(255, 255, 255, 0.28); }
-.job form { display: flex; flex-wrap: wrap; gap: 8px; }
-.job form .input { flex: 1 1 220px; }
-
-.confirm { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; font-size: 13px; font-weight: 600; }
-.btn.danger { background: var(--dead-ring); border-color: var(--dead-ring); color: #fff; }
-
-/* skeleton */
-.skeleton { height: 14px; border-radius: 3px; background: var(--rule); opacity: 0.6; }
-
-/* the cord, drawn over the gutter */
-.cord { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 2; }
-.cord .sheath { stroke: var(--cord); stroke-width: 5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.cord .weave { stroke: var(--cord-hi); stroke-width: 1.4; fill: none; stroke-dasharray: 2 4; stroke-linecap: round; }
-.cord .tip { fill: var(--brass); }
-
-/* the lower section of the same panel */
-.aux { display: grid; grid-template-columns: 1fr; align-items: start; border-top: 1px solid var(--rule-strong); }
-@media (min-width: 900px) {
-  .aux { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
-  .aux .panel:first-child { border-right: 1px solid var(--rule); }
+.switch { position: relative; width: 42px; height: 26px; flex: none; padding: 0; border: 0; border-radius: 13px; background: var(--track); cursor: pointer; transition: background-color 0.22s ease; }
+.switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 0 0.5px rgba(0, 0, 0, 0.05);
+  transition: transform var(--spring-ms) var(--spring), width 0.16s ease;
 }
-.panel { padding: 16px 18px 18px; }
-.panel + .panel { border-top: 1px solid var(--rule); }
-@media (min-width: 900px) { .panel + .panel { border-top: 0; } }
-.panel h2 { margin: 0 0 6px; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
-.panel > p { margin: 0 0 12px; color: var(--ink-2); max-width: 68ch; }
-.steps { margin: 0 0 14px; padding-left: 20px; display: grid; gap: 6px; }
-.steps li::marker { color: var(--ink-3); font-variant-numeric: tabular-nums; }
-.values { margin: 0 0 14px; display: grid; gap: 8px; }
-.values div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; align-items: center; }
-.values dt { grid-column: 1 / -1; color: var(--ink-2); font-size: 13px; }
-@media (min-width: 560px) { .values div { grid-template-columns: 140px minmax(0, 1fr) auto; } .values dt { grid-column: auto; } }
-.values dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
-.values .acts { display: flex; gap: 2px; }
-.panel .btn-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.file { margin: 10px 0 0; color: var(--ink-2); font-size: 13px; overflow-wrap: anywhere; }
-.settings { display: grid; gap: 14px; }
-.setting { display: grid; grid-template-columns: minmax(0, 1fr) 92px; gap: 4px 12px; align-items: center; }
-.setting label { font-weight: 600; }
-.setting p { grid-column: 1; margin: 0; color: var(--ink-2); font-size: 13px; }
-.setting .input { grid-column: 2; grid-row: 1 / span 2; text-align: right; }
-.setup-facts { margin: 14px 0 0; padding: 12px 0 0; border-top: 1px solid var(--rule); display: grid; gap: 6px; color: var(--ink-2); font-size: 13px; }
-.setup-facts code, .panel code { font-family: var(--mono); font-size: 12.5px; color: var(--ink); }
+.switch[aria-checked="true"] { background: var(--green); }
+.switch[aria-checked="true"]::after { transform: translateX(16px); }
+.switch:active::after { width: 26px; }
+.switch[aria-checked="true"]:active::after { transform: translateX(12px); }
 
-/* toast */
-.toast { position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, 16px); opacity: 0; max-width: min(560px, calc(100% - 32px)); padding: 11px 16px; border-radius: 6px; background: var(--plate); color: var(--plate-ink); box-shadow: var(--shadow); font-size: 14px; transition: opacity 180ms ease-out, transform 220ms cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; z-index: 5; }
-.toast.show { opacity: 1; transform: translate(-50%, 0); }
-.toast.error { background: var(--dead-ring); }
+.add-btn { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 48px; padding: 0 16px; border: 0; border-radius: inherit; background: none; color: var(--accent); font-size: 0.9375rem; letter-spacing: -0.015em; text-align: left; cursor: pointer; transition: background-color 0.12s ease; }
+.add-btn:hover { background: var(--fill); }
+.add-btn:active { background: var(--fill-2); }
+.add-btn .tile { width: 30px; height: 30px; display: grid; place-items: center; flex: none; }
+.add-btn .i { width: 20px; height: 20px; }
+.row.add { padding: 0; min-height: 0; }
+
+/* ---------------------------------------------------------------- ports, plug and cable */
+
+.port { position: absolute; left: -12px; top: 50%; width: 24px; height: 40px; margin-top: -20px; padding: 0; border: 0; border-radius: 8px; background: none; display: grid; place-items: center; cursor: pointer; z-index: 2; }
+.port .slot { width: 6px; height: 20px; border-radius: 3px; background: var(--port); box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.22), 0 0 0 1px var(--port-ring); transition: box-shadow 0.18s ease, transform 0.18s ease; }
+.port:hover .slot { box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.22), 0 0 0 1px var(--port-ring), 0 0 0 3.5px var(--accent-tint); }
+.port.magnet .slot { transform: scaleY(1.12); box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.22), 0 0 0 1px var(--accent-fill), 0 0 0 4px var(--focus); }
+
+#cable { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; overflow: visible; }
+#cable path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+#cable .c-shade { stroke: var(--cable-shade); stroke-width: 6; }
+#cable .c-edge { stroke: var(--cable-edge); stroke-width: 4.6; }
+#cable .c-body { stroke: var(--cable); stroke-width: 3.3; }
+#cable .c-hi { stroke: var(--cable-hi); stroke-width: 1; }
+#cable .c-glint { stroke: var(--accent-fill); stroke-width: 2.4; stroke-dasharray: 36 4000; opacity: 0; }
+
+.plug { position: absolute; left: 0; top: 0; z-index: 6; width: var(--plug-len); height: 12px; margin: -6px 0 0 calc(-1 * var(--plug-len)); padding: 0; border: 0; border-radius: 5px; background: none; transform-origin: 100% 50%; cursor: grab; touch-action: none; will-change: transform; }
+.plug::before { content: ""; position: absolute; inset: -14px -8px -14px -12px; }
+.plug-body {
+  position: absolute;
+  inset: 0;
+  border-radius: 4px 6px 6px 4px;
+  background: linear-gradient(var(--plug-top), var(--plug-bottom));
+  box-shadow: 0 0 0 0.5px var(--plug-edge), 0 1px 2px rgba(0, 0, 0, 0.16), 0 4px 10px -3px rgba(0, 0, 0, 0.18);
+  transform-origin: 100% 50%;
+  transition: transform 0.24s var(--spring), box-shadow 0.24s ease;
+}
+.plug.lifted .plug-body { transform: scale(1.16); box-shadow: 0 0 0 0.5px var(--plug-edge), 0 8px 18px -4px rgba(0, 0, 0, 0.3); }
+.plug:focus-visible { outline: none; }
+.plug:focus-visible .plug-body { box-shadow: 0 0 0 0.5px var(--plug-edge), 0 0 0 3.5px var(--focus); }
+.led { position: absolute; left: 6px; top: 50%; width: 4px; height: 4px; margin-top: -2px; border-radius: 50%; background: var(--gray); transition: background-color 0.25s ease, box-shadow 0.25s ease; }
+.led[data-tone="ok"] { background: var(--green); }
+.led[data-tone="warn"] { background: var(--orange); }
+.led.blink { background: #ffffff; transition: none; }
+
+/* ---------------------------------------------------------------- the status card */
+
+.now { display: grid; grid-template-columns: minmax(0, 1fr) 280px; grid-template-areas: "head art" "rows art"; margin-top: 8px; }
+.now-head { grid-area: head; padding: var(--now-pad) var(--now-pad) 0; }
+.now-art { grid-area: art; position: relative; min-height: 232px; overflow: hidden; border-radius: 0 12px 12px 0; cursor: grab; touch-action: pan-y; -webkit-mask-image: linear-gradient(to right, transparent, #000 40px); mask-image: linear-gradient(to right, transparent, #000 40px); }
+.now-art.grabbing { cursor: grabbing; }
+.now-art canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.globe-label { position: absolute; left: 0; top: 0; padding: 2px 7px; border-radius: 999px; background: var(--material); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); box-shadow: 0 0 0 0.5px var(--sep); font-size: 0.6875rem; font-weight: 600; letter-spacing: 0; color: var(--label); white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.3s ease; will-change: transform; }
+.globe-label.on { opacity: 1; }
+.boot {
+  position: absolute;
+  left: calc(-1 * var(--boot-len));
+  top: calc(var(--now-pad) + var(--avatar) / 2);
+  width: var(--boot-len);
+  height: 8px;
+  margin-top: -4px;
+  border-radius: 4px 1px 1px 4px;
+  background: linear-gradient(var(--plug-top), var(--plug-bottom));
+  box-shadow: 0 0 0 0.5px var(--plug-edge), 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+.now-head { display: flex; align-items: center; gap: 14px; min-height: var(--avatar); }
+.avatar { width: var(--avatar); height: var(--avatar); border-radius: 50%; display: grid; place-items: center; flex: none; color: #fff; background: var(--accent-fill); transition: background-color 0.3s ease; }
+.avatar[data-kind="key"] { background: var(--key-tile); }
+.avatar[data-kind="idle"] { background: var(--fill-2); color: var(--label-2); }
+.avatar .i { width: 24px; height: 24px; stroke-width: 1.6; }
+.now h1 { margin: 0; font-size: 1.75rem; line-height: 1.14; font-weight: 700; letter-spacing: -0.024em; text-wrap: balance; overflow-wrap: anywhere; }
+.now h1 .dim { color: var(--label-2); font-weight: 600; }
+.now .sub { margin: 3px 0 0; font-size: 0.9375rem; color: var(--label-2); letter-spacing: -0.012em; }
+.kv-list { grid-area: rows; align-self: end; margin-top: 16px; }
+.kv { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 46px; padding: 7px var(--now-pad); }
+.kv::before { content: ""; position: absolute; top: 0; left: var(--now-pad); right: 0; height: var(--hair); background: var(--sep); }
+.kv .k { flex: none; }
+.kv .v { display: flex; align-items: center; justify-content: flex-end; gap: 10px; min-width: 0; color: var(--label-2); text-align: right; }
+.kv .v > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stats { font-variant-numeric: tabular-nums; }
+
+/* ---------------------------------------------------------------- alerts */
+
+.alerts { margin-top: 16px; --sep-left: 50px; }
+.alert { align-items: center; flex-wrap: wrap; row-gap: 8px; padding-top: 12px; padding-bottom: 12px; }
+.alert-icon { width: 22px; height: 22px; display: grid; place-items: center; flex: none; align-self: flex-start; color: var(--red); }
+.alert[data-tone="warn"] .alert-icon { color: var(--orange); }
+.alert-icon .i { width: 22px; height: 22px; }
+.alert .row-text { min-width: 200px; }
+.alert-text { font-size: 0.875rem; line-height: 1.43; letter-spacing: -0.01em; }
+.alert-acts { display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+
+/* ---------------------------------------------------------------- activity */
+
+.feed { --sep-left: 37px; }
+.feed .row { min-height: 0; padding: 9px 14px; gap: 10px; align-items: flex-start; }
+.feed .fd { width: 7px; height: 7px; margin-top: 6px; border-radius: 50%; flex: none; background: var(--gray); }
+.feed [data-tone="pulse"] .fd { background: var(--accent-fill); }
+.feed [data-tone="ready"] .fd { background: var(--green); }
+.feed [data-tone="warn"] .fd { background: var(--orange); }
+.feed [data-tone="dead"] .fd { background: var(--red); }
+.feed [data-tone="energy"] .fd { background: var(--label-2); }
+.feed .ft { flex: 1; min-width: 0; font-size: 0.8125rem; line-height: 1.4; letter-spacing: -0.005em; overflow-wrap: anywhere; }
+.feed .ft b { font-weight: 600; }
+.feed time { flex: none; margin-top: 1px; font-size: 0.75rem; color: var(--label-2); white-space: nowrap; font-variant-numeric: tabular-nums; letter-spacing: 0; }
+.feed .empty { color: var(--label-2); font-size: 0.8125rem; line-height: 1.4; }
+.feed .fresh { animation: arrive 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+.feed .more-row { padding: 0; }
+.feed .more-row .text-btn { margin: 0; width: 100%; text-align: left; padding: 10px 14px 10px 37px; font-size: 0.8125rem; border-radius: inherit; }
+@keyframes arrive { from { transform: translateY(-5px); background-color: var(--accent-tint); } }
+
+/* ---------------------------------------------------------------- desktop and settings */
+
+.view-title { margin: 20px 0 6px 4px; font-size: 1.75rem; line-height: 1.14; font-weight: 700; letter-spacing: -0.024em; }
+.view-lede { margin: 0 4px; max-width: 60ch; color: var(--label-2); line-height: 1.47; letter-spacing: -0.012em; }
+.steps { --sep-left: 50px; }
+.steps .row { align-items: flex-start; padding-top: 12px; padding-bottom: 12px; }
+.step-n { width: 22px; height: 22px; margin-top: 1px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--fill-2); font-size: 0.75rem; font-weight: 600; letter-spacing: 0; font-variant-numeric: tabular-nums; }
+.steps .row-text { font-size: 0.9375rem; line-height: 1.4; }
+.values { --sep-left: 16px; }
+.values .row { min-height: 50px; padding-right: 10px; }
+.values .k { flex: none; width: 128px; }
+.values .v { flex: 1; min-width: 0; color: var(--label-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.values .acts { display: flex; gap: 2px; flex: none; }
+.view-actions { margin: 16px 0 0 4px; display: flex; gap: 10px; }
+.flat { --sep-left: 16px; }
+.field-row { cursor: default; }
+.num-field { display: inline-flex; align-items: center; gap: 8px; color: var(--label-2); flex: none; }
+.num-input { width: 64px; height: 30px; padding: 0 8px; border: 0; border-radius: 7px; background: var(--fill); color: var(--label); text-align: right; font-variant-numeric: tabular-nums; -moz-appearance: textfield; appearance: textfield; }
+.num-input::-webkit-inner-spin-button, .num-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.num-input:focus-visible { outline-offset: 0; }
+.row-btn { width: 100%; min-height: 46px; padding: 0 16px; border: 0; border-radius: 12px; background: none; color: var(--accent); font-size: 0.9375rem; letter-spacing: -0.015em; text-align: left; cursor: pointer; transition: background-color 0.12s ease; }
+.row-btn:hover { background: var(--fill); }
+.row-btn:active { background: var(--fill-2); }
+.group + .group { margin-top: 16px; }
+.fact-val { flex: none; color: var(--label-2); font-size: 0.875rem; }
+
+/* ---------------------------------------------------------------- menu */
+
+.menu {
+  position: absolute;
+  z-index: 40;
+  min-width: 228px;
+  padding: 5px;
+  border-radius: 12px;
+  background: var(--material);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  backdrop-filter: saturate(180%) blur(24px);
+  box-shadow: var(--shadow-menu);
+}
+.menu-item { display: flex; align-items: center; gap: 10px; width: 100%; height: 32px; padding: 0 10px; border: 0; border-radius: 7px; background: none; font-size: 0.875rem; letter-spacing: -0.012em; text-align: left; cursor: default; }
+.menu-item .i { width: 16px; height: 16px; color: var(--label-2); }
+.menu-item:hover, .menu-item:focus-visible { background: var(--accent-fill); color: #fff; outline: none; }
+.menu-item:hover .i, .menu-item:focus-visible .i { color: #fff; }
+.menu-item.danger, .menu-item.danger .i { color: var(--red-text); }
+.menu-item.danger:hover, .menu-item.danger:focus-visible { background: var(--red); color: #fff; }
+.menu-item.danger:hover .i, .menu-item.danger:focus-visible .i { color: #fff; }
+.menu-item:disabled { opacity: 0.38; pointer-events: none; }
+.menu-sep { height: var(--hair); margin: 5px 10px; background: var(--sep); }
+
+/* ---------------------------------------------------------------- sheet */
+
+.sheet { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: transparent; color: var(--label); overflow: auto; }
+.sheet::backdrop { background: transparent; }
+.scrim { position: fixed; inset: 0; background: var(--scrim); }
+.sheet-panel { position: relative; width: min(460px, calc(100% - 32px)); margin: 76px auto 32px; padding: 22px 20px 20px; border-radius: 14px; background: var(--sheet); box-shadow: var(--shadow-sheet); }
+.sheet-panel.narrow { width: min(340px, calc(100% - 32px)); text-align: center; }
+.sheet-panel h2 { margin: 0 0 4px; font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.022em; line-height: 1.3; }
+.sheet-panel .lede { margin: 0 0 16px; font-size: 0.875rem; line-height: 1.43; color: var(--label-2); letter-spacing: -0.01em; }
+.fields { background: var(--sheet-group); border-radius: 10px; }
+.field { position: relative; display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 8px 0 14px; }
+.field + .field::before { content: ""; position: absolute; top: 0; left: 14px; right: 0; height: var(--hair); background: var(--sep); }
+.field:first-child { border-top-left-radius: 10px; border-top-right-radius: 10px; }
+.field:last-child { border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; }
+.field:focus-within { box-shadow: inset 0 0 0 2px var(--focus); }
+.field label { width: 72px; flex: none; }
+.field input { flex: 1; min-width: 0; height: 44px; padding: 0; border: 0; background: transparent; color: var(--label); letter-spacing: -0.012em; }
+.field input:focus-visible { outline: none; }
+.field input::placeholder { color: var(--label-2); opacity: 1; }
+.field input.mono-input { font-family: var(--mono); font-size: 0.8125rem; letter-spacing: 0; }
+.hint { margin: 10px 4px 0; font-size: 0.8125rem; line-height: 1.38; color: var(--label-2); letter-spacing: -0.003em; }
+.sheet-error { margin: 10px 4px 0; font-size: 0.8125rem; line-height: 1.38; color: var(--red-text); }
+.sheet-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+.narrow .sheet-actions { justify-content: stretch; }
+.narrow .sheet-actions .btn { flex: 1; }
+.narrow p { margin: 6px 0 0; font-size: 0.875rem; line-height: 1.43; color: var(--label-2); }
+.job-status { display: flex; align-items: flex-start; gap: 12px; margin: 14px 0 0; }
+.job-status .spinner { width: 20px; height: 20px; margin-top: 1px; }
+.job-status p { margin: 0; font-size: 0.875rem; line-height: 1.43; letter-spacing: -0.01em; }
+.code-field { margin-top: 16px; }
+.details { margin: 14px 4px 0; font-size: 0.8125rem; color: var(--label-2); }
+.details summary { cursor: pointer; width: max-content; border-radius: 5px; }
+.details pre { margin: 8px 0 0; padding: 10px 12px; max-height: 180px; overflow: auto; border-radius: 8px; background: var(--fill); color: var(--label); font-family: var(--mono); font-size: 0.75rem; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+.result { display: grid; justify-items: center; gap: 4px; padding: 8px 0 0; text-align: center; }
+.result > .i { width: 44px; height: 44px; margin-bottom: 8px; stroke-width: 1.4; color: var(--green); }
+.result.fail > .i { color: var(--red); }
+.result p { margin: 0; font-size: 0.875rem; color: var(--label-2); }
+.result + .sheet-actions { justify-content: center; }
+
+/* ---------------------------------------------------------------- toast */
+
+.toast {
+  position: fixed;
+  top: 64px;
+  left: 50%;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: min(520px, calc(100% - 32px));
+  padding: 10px 16px;
+  border-radius: 20px;
+  background: var(--material);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  backdrop-filter: saturate(180%) blur(24px);
+  box-shadow: var(--shadow-menu);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.38;
+  letter-spacing: -0.012em;
+  transform: translateX(-50%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; visibility: visible; }
+.toast .i { width: 18px; height: 18px; color: var(--red); }
+
+/* ---------------------------------------------------------------- responsive */
+
+@media (max-width: 1099px) {
+  .layout { grid-template-columns: minmax(0, 660px); gap: 0; }
+  .col-side { position: static; max-height: none; overflow: visible; }
+  .col-side > section:first-child .group-head { margin-top: 32px; }
+}
+@media (max-width: 760px) {
+  main { padding: 8px 16px 56px 40px; }
+}
+@media (max-width: 640px) {
+  :root { --plug-len: 19px; --boot-len: 10px; --avatar: 42px; --now-pad: 16px; }
+  .toolbar-inner { height: auto; grid-template-columns: 1fr auto; grid-template-areas: "brand status" "seg seg"; row-gap: 8px; padding: 8px 16px 10px; }
+  .brand { grid-area: brand; }
+  .status { grid-area: status; }
+  .segmented { grid-area: seg; min-width: 0; }
+  main { padding: 6px 14px 48px 32px; }
+  .now h1 { font-size: 1.375rem; }
+  .now .avatar { display: none; }
+  .now { grid-template-columns: minmax(0, 1fr) 124px; grid-template-areas: "head art" "rows rows"; }
+  .now-art { min-height: 132px; border-radius: 0 12px 0 0; -webkit-mask-image: linear-gradient(to right, transparent, #000 24px); mask-image: linear-gradient(to right, transparent, #000 24px); }
+  .globe-label { display: none; }
+  .row { gap: 10px; padding-right: 8px; }
+  .state:not([data-s="live"]) .state-word { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .values .k { width: 96px; }
+  .toast { top: 100px; }
+  .alert-acts { width: 100%; margin-left: 34px; }
+  .sheet-panel, .sheet-panel.narrow { position: fixed; left: 0; right: 0; bottom: 0; width: 100%; max-height: 92vh; margin: 0; overflow: auto; padding: 22px 16px calc(18px + env(safe-area-inset-bottom)); border-radius: 14px 14px 0 0; }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition-duration: 0ms !important; animation-duration: 0ms !important; }
+  .seg-thumb, .switch::after, .plug-body { transition-duration: 0.01ms; }
+  .feed .fresh { animation: none; }
+  .spinner { animation-duration: 2.4s; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .toolbar { background: var(--ground); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .menu, .toast { background: var(--group); -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="i-plug" viewBox="0 0 16 16"><path d="M5.5 1.5v3M10.5 1.5v3M3.5 4.5h9V7a4.5 4.5 0 0 1-9 0zM8 11.5v3"/></symbol>
-  <symbol id="i-test" viewBox="0 0 16 16"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3"/></symbol>
-  <symbol id="i-up" viewBox="0 0 16 16"><path d="M8 12.5v-9M4 7.5l4-4 4 4"/></symbol>
-  <symbol id="i-down" viewBox="0 0 16 16"><path d="M8 3.5v9M4 8.5l4 4 4-4"/></symbol>
-  <symbol id="i-edit" viewBox="0 0 16 16"><path d="M10.5 2.5l3 3L6 13H3v-3z"/></symbol>
-  <symbol id="i-trash" viewBox="0 0 16 16"><path d="M2.5 4.5h11M6.5 4.5V2.5h3v2M4 4.5l.6 9h6.8l.6-9"/></symbol>
-  <symbol id="i-copy" viewBox="0 0 16 16"><path d="M5.5 5.5h8v8h-8zM2.5 10.5v-8h8"/></symbol>
-  <symbol id="i-eye" viewBox="0 0 16 16"><path d="M1.5 8S4 3.5 8 3.5 14.5 8 14.5 8 12 12.5 8 12.5 1.5 8 1.5 8z"/><circle cx="8" cy="8" r="2"/></symbol>
-  <symbol id="i-folder" viewBox="0 0 16 16"><path d="M1.5 3.5h4.5l1.5 1.5h7v8h-13z"/></symbol>
-  <symbol id="i-signin" viewBox="0 0 16 16"><path d="M9.5 2.5h4v11h-4M1.5 8h8M6.5 5l3 3-3 3"/></symbol>
-  <symbol id="i-plus" viewBox="0 0 16 16"><path d="M8 3v10M3 8h10"/></symbol>
-  <symbol id="i-out" viewBox="0 0 16 16"><path d="M9.5 2.5h4v4M13.5 2.5 7.5 8.5M11.5 9.5v4h-9v-9h4"/></symbol>
+  <symbol id="i-person" viewBox="0 0 20 20"><circle cx="10" cy="6.8" r="3.1"/><path d="M4 16.5c.9-3.1 3.2-4.6 6-4.6s5.1 1.5 6 4.6"/></symbol>
+  <symbol id="i-key" viewBox="0 0 20 20"><circle cx="6.6" cy="13.4" r="3.1"/><path d="M8.8 11.2 16 4M13.4 6.6l2 2M11.6 8.4l1.6 1.6"/></symbol>
+  <symbol id="i-more" viewBox="0 0 20 20"><circle cx="4.6" cy="10" r="1.5" fill="currentColor" stroke="none"/><circle cx="10" cy="10" r="1.5" fill="currentColor" stroke="none"/><circle cx="15.4" cy="10" r="1.5" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-plus-circle" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7.6"/><path d="M10 6.6v6.8M6.6 10h6.8"/></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7.6"/><path d="M6.7 10.3l2.3 2.3 4.4-4.9"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7.6"/><path d="M10 6v4.6"/><circle cx="10" cy="13.7" r="0.95" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-test" viewBox="0 0 20 20"><path d="M16 10a6 6 0 1 1-1.8-4.3M16 3.8v3.4h-3.4"/></symbol>
+  <symbol id="i-signin" viewBox="0 0 20 20"><path d="M11.5 3.5h4v13h-4M3.5 10h8.5M9 6.8l3.2 3.2L9 13.2"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 20 20"><path d="M13 3.8l3.2 3.2-8.6 8.6H4.4v-3.2z"/></symbol>
+  <symbol id="i-up" viewBox="0 0 20 20"><path d="M10 15.5v-11M5.5 9 10 4.5 14.5 9"/></symbol>
+  <symbol id="i-down" viewBox="0 0 20 20"><path d="M10 4.5v11M5.5 11 10 15.5 14.5 11"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 20 20"><path d="M3.8 5.5h12.4M8 5.5V3.8h4v1.7M5.4 5.5l.7 10.7h7.8l.7-10.7"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 20 20"><rect x="7" y="7" width="9" height="9" rx="2"/><path d="M4 13V5a1 1 0 0 1 1-1h8"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 20 20"><path d="M2 10s3-5.5 8-5.5S18 10 18 10s-3 5.5-8 5.5S2 10 2 10z"/><circle cx="10" cy="10" r="2.4"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 20 20"><path d="M2.5 5.5a1 1 0 0 1 1-1h4l1.6 1.8h7.4a1 1 0 0 1 1 1v8.2a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-out" viewBox="0 0 20 20"><path d="M7 13 13.5 6.5M8 6.5h5.5V12"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 20 20"><path d="M7 2.5v4M13 2.5v4M5 6.5h10v2.5a5 5 0 0 1-10 0zM10 14v3.5"/></symbol>
+  <symbol id="i-spinner" viewBox="0 0 20 20"><g stroke-width="2"><path d="M10 2.2v3.2"/><path d="M15.5 4.5l-2.2 2.2" opacity=".86"/><path d="M17.8 10h-3.2" opacity=".72"/><path d="M15.5 15.5l-2.2-2.2" opacity=".6"/><path d="M10 17.8v-3.2" opacity=".48"/><path d="M4.5 15.5l2.2-2.2" opacity=".36"/><path d="M2.2 10h3.2" opacity=".26"/><path d="M4.5 4.5l2.2 2.2" opacity=".18"/></g></symbol>
 </svg>
 
-<div class="wrap" id="wrap">
-  <header class="masthead">
-    <div class="brand"><svg class="i" aria-hidden="true"><use href="#i-plug"/></svg><h1 class="wordmark">claude-nonstop</h1><span class="ver mono" id="ver"></span></div>
-    <div class="facts" id="facts"></div>
-  </header>
-
-  <main>
-    <section class="plate" id="plate" aria-label="What's running now">
-      <span class="socket" id="socket" aria-hidden="true"></span>
-      <dl class="slots">
-        <dt>Live line</dt>
-        <dd>
-          <p class="slot-value" id="live-value"><span class="skeleton" style="display:inline-block;width:12rem"></span></p>
-          <p class="slot-sub" id="live-sub"></p>
-        </dd>
-        <dt>If it runs out</dt>
-        <dd>
-          <p class="slot-value small" id="next-value"></p>
-          <p class="slot-sub" id="next-sub"></p>
-        </dd>
-      </dl>
-      <div id="trouble"></div>
-    </section>
-
-    <div class="field" id="field">
-      <div class="board">
-        <section class="bank" aria-labelledby="accounts-title">
-          <div class="bank-head">
-            <h2 id="accounts-title">Subscription accounts</h2>
-            <p>Tried first, top to bottom. Each one signs in on Anthropic's own page.</p>
-          </div>
-          <ol class="lines" id="accounts"><li class="line"><span class="gap"></span><span class="skeleton strip"></span></li></ol>
-          <div id="account-extra"></div>
-        </section>
-
-        <section class="bank" aria-labelledby="keys-title">
-          <div class="bank-head">
-            <h2 id="keys-title">API keys</h2>
-            <p>Used after every account hits its limit. A used-up key is skipped, then checked again later.</p>
-            <button class="btn" type="button" data-act="check-all-keys" id="check-all">Test all keys</button>
-          </div>
-          <ol class="lines" id="keys"><li class="line"><span class="gap"></span><span class="skeleton strip"></span></li></ol>
-          <div id="key-extra"></div>
-        </section>
-
-        <div class="aux">
-          <section class="panel" aria-labelledby="desktop-title">
-            <h2 id="desktop-title">Claude desktop app</h2>
-            <p>The desktop app can run on your API keys through this gateway. Your subscription stays one choice away on its sign-in screen.</p>
-            <ol class="steps" id="desktop-steps"></ol>
-            <dl class="values" id="desktop-values"></dl>
-            <div class="btn-row">
-              <button class="btn" type="button" data-act="reveal-desktop"><svg class="i" aria-hidden="true"><use href="#i-folder"/></svg>Show the import file</button>
-            </div>
-            <p class="file mono" id="desktop-file"></p>
-          </section>
-
-          <section class="panel" aria-labelledby="settings-title">
-            <h2 id="settings-title">Timing</h2>
-            <form class="settings" id="settings-form">
-              <div class="setting">
-                <label for="cooldown">Key cooldown</label>
-                <input class="input mono" id="cooldown" name="cooldownMinutes" type="number" min="1" max="1440" step="1" inputmode="numeric">
-                <p>Minutes a used-up key is skipped before it's checked again.</p>
-              </div>
-              <div class="setting">
-                <label for="recheck">Account recheck</label>
-                <input class="input mono" id="recheck" name="accountRecheckMinutes" type="number" min="1" max="1440" step="1" inputmode="numeric">
-                <p>Minutes an account that hit its limit is skipped.</p>
-              </div>
-              <div class="btn-row">
-                <button class="btn primary" type="submit">Save timing</button>
-                <button class="btn" type="button" data-act="recheck-everything">Forget cooldowns</button>
-              </div>
-            </form>
-            <div class="setup-facts" id="setup-facts"></div>
-          </section>
-        </div>
-      </div>
+<header class="toolbar" id="toolbar">
+  <div class="toolbar-inner">
+    <div class="brand">
+      <svg class="app-icon" id="app-icon" viewBox="0 0 64 64" aria-hidden="true">
+        <defs><linearGradient id="ai-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3d9bff"/><stop offset="1" stop-color="#0058d0"/></linearGradient></defs>
+        <path d="M32 0C8.6 0 0 8.6 0 32s8.6 32 32 32 32-8.6 32-32S55.4 0 32 0Z" fill="url(#ai-bg)"/>
+        <g transform="translate(32 32) scale(.84) translate(-32 -32)" fill="none" stroke-linecap="round">
+          <path class="ai-loop" id="ai-loop" pathLength="100" stroke="#fff" stroke-opacity=".92" stroke-width="6.5" d="M32 32C27 22 11 21 11 32C11 43 27 42 32 32C37 22 53 21 53 32C53 43 37 42 32 32Z"/>
+          <path class="ai-glint" id="ai-glint" pathLength="100" stroke="#fff" stroke-width="8" d="M32 32C27 22 11 21 11 32C11 43 27 42 32 32C37 22 53 21 53 32C53 43 37 42 32 32Z"/>
+        </g>
+      </svg>
+      <span>claude-nonstop</span>
     </div>
-  </main>
-  <svg class="cord" id="cord" aria-hidden="true"><path class="sheath" id="cord-sheath"/><path class="weave" id="cord-weave"/><circle class="tip" id="cord-tip" r="5"/></svg>
-</div>
+    <div class="segmented" role="tablist" aria-label="Sections">
+      <span class="seg-thumb" aria-hidden="true"></span>
+      <button class="seg" role="tab" id="tab-relay" aria-controls="view-relay" aria-selected="true" data-view="relay">Relay</button>
+      <button class="seg" role="tab" id="tab-desktop" aria-controls="view-desktop" aria-selected="false" data-view="desktop" tabindex="-1">Desktop App</button>
+      <button class="seg" role="tab" id="tab-settings" aria-controls="view-settings" aria-selected="false" data-view="settings" tabindex="-1">Settings</button>
+    </div>
+    <span class="status" id="pill"><span class="dot"></span><span id="pill-text">Connecting…</span></span>
+  </div>
+</header>
 
+<main>
+  <section id="view-relay" role="tabpanel" aria-labelledby="tab-relay">
+    <div class="layout">
+      <div class="col-main">
+        <section class="group now" aria-labelledby="live-title">
+          <span class="boot" id="boot" aria-hidden="true"></span>
+          <div class="now-head">
+            <span class="avatar" id="avatar" data-kind="idle" aria-hidden="true"></span>
+            <div>
+              <h1 id="live-title">Loading…</h1>
+              <p class="sub" id="live-sub"></p>
+            </div>
+          </div>
+          <div class="kv-list">
+            <div class="kv"><span class="k">If it runs out</span><span class="v"><span id="next">–</span></span></div>
+            <div class="kv"><span class="k">Choice</span><span class="v" id="mode">Automatic</span></div>
+          </div>
+          <div class="now-art" id="now-art" role="img" aria-label="A globe with a light that travels from this computer to Anthropic for every gateway request" title="Each light is a request travelling to Anthropic. Drag to spin.">
+            <canvas id="globe"></canvas>
+            <span class="globe-label" id="label-you">This computer</span>
+            <span class="globe-label" id="label-them">Anthropic</span>
+          </div>
+        </section>
+        <p class="group-foot stats" id="stats"></p>
+
+        <ul class="group list alerts" id="alerts" aria-label="Needs attention" hidden></ul>
+
+        <section aria-labelledby="accounts-title">
+          <div class="group-head"><h2 id="accounts-title">Subscription accounts</h2></div>
+          <ol class="group list" id="accounts"><li class="row"><span class="row-sub">Loading…</span></li></ol>
+          <p class="group-foot">Used first, top to bottom. Each one signs in on Anthropic's own page.</p>
+        </section>
+
+        <section aria-labelledby="keys-title">
+          <div class="group-head"><h2 id="keys-title">API keys</h2><button class="text-btn" type="button" id="check-all" data-act="check-all-keys" data-fk="check-all" hidden>Test All</button></div>
+          <ol class="group list" id="keys"><li class="row"><span class="row-sub">Loading…</span></li></ol>
+          <p class="group-foot">Used one at a time once every account is out. A used-up key is skipped, then tried again after the cooldown.</p>
+        </section>
+      </div>
+
+      <aside class="col-side">
+        <section aria-labelledby="feed-title">
+          <div class="group-head"><h2 id="feed-title">Activity</h2></div>
+          <ol class="group list feed" id="feed" aria-live="off"><li class="row"><span class="empty">Waiting for activity…</span></li></ol>
+          <p class="group-foot">Drag the cable's plug onto any line to use it now. Keys switch at once, even mid-session; accounts apply to new sessions.</p>
+        </section>
+      </aside>
+    </div>
+  </section>
+
+  <section id="view-desktop" role="tabpanel" aria-labelledby="tab-desktop" hidden>
+    <div class="view">
+      <h1 class="view-title">Claude desktop app</h1>
+      <p class="view-lede">The desktop app can run on your API keys through this gateway, which switches keys by itself when one runs out. Your subscription stays one choice away on the app's sign-in screen.</p>
+      <div class="group-head"><h2>Set it up once</h2></div>
+      <ol class="group list steps" id="desktop-steps"></ol>
+      <div class="group-head"><h2>Connection details</h2></div>
+      <div class="group list values" id="desktop-values"></div>
+      <p class="group-foot" id="desktop-file"></p>
+      <div class="view-actions"><button class="btn" type="button" data-act="reveal-desktop" data-fk="reveal"><svg class="i" aria-hidden="true"><use href="#i-folder"/></svg>Show the Import File</button></div>
+    </div>
+  </section>
+
+  <section id="view-settings" role="tabpanel" aria-labelledby="tab-settings" hidden>
+    <div class="view">
+      <h1 class="view-title">Settings</h1>
+      <div class="group-head"><h2>Cooldowns</h2></div>
+      <form class="group list flat" id="settings-form">
+        <label class="row field-row" for="cooldown">
+          <span class="row-text"><span class="row-title">Used-up key</span><span class="row-sub">Skipped for this long, then tried again</span></span>
+          <span class="num-field"><input class="num-input" id="cooldown" name="cooldownMinutes" type="number" min="1" max="1440" step="1" inputmode="numeric"><span>min</span></span>
+        </label>
+        <label class="row field-row" for="recheck">
+          <span class="row-text"><span class="row-title">Account at its limit</span><span class="row-sub">Skipped for this long before it's checked again</span></span>
+          <span class="num-field"><input class="num-input" id="recheck" name="accountRecheckMinutes" type="number" min="1" max="1440" step="1" inputmode="numeric"><span>min</span></span>
+        </label>
+      </form>
+      <div class="group"><button class="row-btn" type="button" data-act="recheck-everything" data-fk="forget">Forget All Cooldowns</button></div>
+      <p class="group-foot">Changes save as you make them. Forgetting cooldowns tries every key and account again on the next session.</p>
+      <div class="group-head"><h2>This computer</h2></div>
+      <ul class="group list flat" id="setup-facts"></ul>
+    </div>
+  </section>
+</main>
+
+<svg id="cable" aria-hidden="true">
+  <path class="c-shade" id="c-shade" transform="translate(0 1.6)"/>
+  <path class="c-edge" id="c-edge"/>
+  <path class="c-body" id="c-body"/>
+  <path class="c-hi" id="c-hi" transform="translate(0 -0.7)"/>
+  <path class="c-glint" id="c-glint" pathLength="1000"/>
+</svg>
+<button class="plug" id="plug" type="button" aria-label="Cable plug. Drag it onto any line, or use the arrow keys and Return." title="Drag onto any line to use it"><span class="plug-body"><span class="led"></span></span></button>
+<div class="menu" id="menu" role="menu" tabindex="-1" hidden></div>
+<dialog class="sheet" id="sheet" aria-labelledby="sheet-title"></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<p class="sr-only" id="sr" aria-live="polite"></p>
 
 <script>
 'use strict';
-const $ = (sel, el = document) => el.querySelector(sel);
+
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const icon = (name) => `<svg class="i" aria-hidden="true"><use href="#i-${name}"/></svg>`;
-const pad = (n) => String(n).padStart(2, '0');
+const SPINNER = '<svg class="i spinner" aria-hidden="true"><use href="#i-spinner"/></svg>';
 const trimEnd = (s) => String(s || '').replace(/[.\s]+$/, '');
+const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+const narrow = window.matchMedia('(max-width: 640px)');
 const BILLING_URL = 'https://platform.claude.com/settings/billing';
 const KEYS_URL = 'https://platform.claude.com/settings/keys';
+
+// ------------------------------------------------------------------ springs
+
+// A spring's step response sampled into a CSS linear() easing, so CSS transitions and
+// WAAPI animations share one physics: damping 1 settles without overshoot, below 1 it
+// bounces. `response` is roughly how quickly it gets there, in seconds.
+function springCurve(response, damping) {
+  const w = (2 * Math.PI) / response;
+  const z = damping;
+  const at = (t) => {
+    if (z >= 1) return 1 - Math.exp(-w * t) * (1 + w * t);
+    const wd = w * Math.sqrt(1 - z * z);
+    return 1 - Math.exp(-z * w * t) * (Math.cos(wd * t) + ((z * w) / wd) * Math.sin(wd * t));
+  };
+  let end = 0.05;
+  for (let t = 0; t < 3; t += 0.004) if (Math.abs(1 - at(t)) > 0.002) end = t;
+  const points = [];
+  for (let i = 0; i <= 40; i++) points.push(+at((end * i) / 40).toFixed(4));
+  points[40] = 1;
+  return { easing: `linear(${points.join(', ')})`, ms: Math.round(end * 1000) };
+}
+const linearOk = Boolean(window.CSS && CSS.supports('transition-timing-function', 'linear(0, 1)'));
+const SPRING = linearOk ? springCurve(0.42, 1) : { easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)', ms: 420 };
+const EXIT = { easing: 'cubic-bezier(0.4, 0, 1, 1)', ms: 200 };
+if (linearOk) {
+  document.documentElement.style.setProperty('--spring', SPRING.easing);
+  document.documentElement.style.setProperty('--spring-ms', `${SPRING.ms}ms`);
+}
+
+// Runs a WAAPI animation; under reduced motion only its opacity part plays, briefly.
+function play(el, frames, { ms = SPRING.ms, easing = SPRING.easing, fill = 'none' } = {}) {
+  if (!el || !el.animate) return Promise.resolve(null);
+  if (reduced.matches) {
+    frames = frames.map((f) => ('opacity' in f ? { opacity: f.opacity } : {}));
+    if (!frames.some((f) => 'opacity' in f)) return Promise.resolve(null);
+    ms = Math.min(ms, 160);
+    easing = 'ease';
+  }
+  const a = el.animate(frames, { duration: ms, easing, fill });
+  return a.finished.then(() => a, () => a);
+}
+
+// ------------------------------------------------------------------ state
 
 let S = null;
 let logins = {};
 let desktopInfo = null;
+let requestsToday = 0;
 const busy = new Set();
-const ui = { adding: null, job: null, jobView: null, confirm: null, renaming: null, showToken: false, forms: { accountLabel: '', keyLabel: '', keyValue: '' } };
+const ui = { view: 'relay', menu: null, sheet: null, renaming: null, renameValue: '', renameFresh: false, showToken: false, feedAll: false, job: null, jobView: null };
 
 async function api(method, path, body) {
-  const res = await fetch(path, {
-    method,
-    headers: { 'x-claude-nonstop': '1', ...(body ? { 'content-type': 'application/json' } : {}) },
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  const res = await fetch(path, { method, headers: { 'x-claude-nonstop': '1', ...(body ? { 'content-type': 'application/json' } : {}) }, body: body ? JSON.stringify(body) : undefined });
   let data = {};
   try { data = await res.json(); } catch {}
   if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
@@ -420,21 +831,31 @@ async function api(method, path, body) {
 let toastTimer = null;
 function toast(text, isError) {
   const el = $('#toast');
-  el.textContent = text;
-  el.classList.toggle('error', Boolean(isError));
+  el.innerHTML = `${isError ? icon('alert') : ''}<span>${esc(text)}</span>`;
   el.setAttribute('role', isError ? 'alert' : 'status');
+  const wasShown = el.classList.contains('show');
+  el.getAnimations().forEach((a) => a.cancel());
   el.classList.add('show');
+  if (!wasShown) play(el, [{ opacity: 0, transform: 'translateX(-50%) translateY(-12px) scale(0.96)' }, { opacity: 1, transform: 'translateX(-50%)' }]);
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), isError ? 6000 : 3200);
+  toastTimer = setTimeout(hideToast, isError ? 6500 : 3200);
 }
+async function hideToast() {
+  const el = $('#toast');
+  const a = await play(el, [{ opacity: 1, transform: 'translateX(-50%)' }, { opacity: 0, transform: 'translateX(-50%) translateY(-12px) scale(0.96)' }], { ...EXIT, fill: 'forwards' });
+  el.classList.remove('show');
+  if (a) a.cancel();
+}
+const announce = (text) => { $('#sr').textContent = text; };
 
 function ago(at) {
   if (!at) return '';
-  const m = Math.max(0, Math.round((Date.now() - at) / 60000));
-  if (m === 0) return 'just now';
+  const s = Math.max(0, Math.round((Date.now() - at) / 1000));
+  if (s < 45) return 'just now';
+  const m = Math.round(s / 60);
   if (m < 60) return `${m} min ago`;
   const h = Math.round(m / 60);
-  return h < 48 ? `${h} h ago` : `${Math.round(h / 24)} days ago`;
+  return h < 48 ? `${h} h ago` : `${Math.round(h / 24)} d ago`;
 }
 
 // ------------------------------------------------------------------ line states
@@ -442,326 +863,1199 @@ function ago(at) {
 function accountState(a) {
   const login = logins[a.id];
   const c = a.lastCheck;
-  if (!a.enabled) return { lamp: 'off', word: 'Off', ready: false };
-  if (login && !login.loggedIn) return { lamp: 'dead', word: 'Not signed in', ready: false };
-  if (c && !c.ok && /limit/i.test(c.reason || '')) return { lamp: 'warn', word: 'Limit reached', ready: false };
-  if (c && !c.ok) return { lamp: 'warn', word: 'Check failed', ready: true };
-  return { lamp: '', word: c && c.ok ? 'Ready' : 'Not checked yet', ready: true };
+  if (!a.enabled) return { s: 'off', word: 'Off', ready: false };
+  if (login && !login.loggedIn) return { s: 'dead', word: 'Not signed in', ready: false };
+  if (c && !c.ok && /limit/i.test(c.reason || '')) return { s: 'warn', word: 'Limit reached', ready: false };
+  if (c && !c.ok) return { s: 'warn', word: 'Check failed', ready: true };
+  return { s: c && c.ok ? 'ready' : '', word: c && c.ok ? 'Ready' : 'Not checked', ready: true };
 }
 
 function keyState(k) {
   const c = k.lastCheck;
-  if (c && c.verdict === 'used-up' && k.coolingDown) return { lamp: 'dead', word: 'Used up', ready: false };
-  if (c && c.verdict === 'keep') return { lamp: 'warn', word: 'Kept', ready: true };
-  if (c && c.verdict === 'ok') return { lamp: '', word: 'Works', ready: true };
-  return { lamp: '', word: 'Not checked yet', ready: true };
+  if (c && c.verdict === 'used-up' && k.coolingDown) return { s: 'dead', word: 'Used up', ready: false };
+  if (c && c.verdict === 'keep') return { s: 'warn', word: 'Kept', ready: true };
+  if (c && c.verdict === 'ok') return { s: 'ready', word: 'Works', ready: true };
+  return { s: '', word: 'Not tested', ready: true };
 }
 
-// The relay in order: enabled accounts, then keys.
-function relay() {
-  const out = [];
-  for (const a of S.accounts) if (a.enabled) out.push({ type: 'account', item: a, st: accountState(a) });
-  for (const k of S.keys) out.push({ type: 'key', item: k, st: keyState(k) });
-  return out;
+const lineKey = (l) => `${l.type}:${l.item.id}`;
+const lineName = (l) => (l.type === 'account' ? l.item.label : `${l.item.label} (API key)`);
+const itemFor = (type, id) => (type === 'account' ? S.accounts.find((a) => a.id === id) : S.keys.find((k) => k.id === id));
+function nameForKey(key) {
+  const [type, id] = String(key).split(':');
+  const item = itemFor(type, id);
+  return item ? lineName({ type, item }) : 'that line';
 }
 
-// The line carrying sessions: the last one used, or the next ready one after it if it has gone dead.
-function liveIndex(lines) {
-  const cur = S.current || '';
-  let i = lines.findIndex((l) => (l.type === 'account' ? l.item.label === cur : `API key: ${l.item.label}` === cur));
-  if (i < 0 && cur === 'API keys (gateway)') i = lines.findIndex((l) => l.type === 'key');
-  if (i < 0) return -1;
-  for (let j = i; j < lines.length; j++) if (lines[j].st.ready) return j;
-  return -1;
+// The relay order, mirroring the gateway: a pinned key skips the accounts and goes first;
+// a pinned account goes first among the accounts.
+function relayOrder() {
+  const accounts = S.accounts.filter((a) => a.enabled).map((a) => ({ type: 'account', item: a, st: accountState(a) }));
+  const keys = S.keys.map((k) => ({ type: 'key', item: k, st: keyState(k) }));
+  const p = S.pinned;
+  const front = (list) => {
+    const i = list.findIndex((l) => l.item.id === p.id);
+    return i < 0 ? list : [list[i], ...list.slice(0, i), ...list.slice(i + 1)];
+  };
+  if (p && p.type === 'key') return front(keys);
+  if (p && p.type === 'account') return [...front(accounts), ...keys];
+  return [...accounts, ...keys];
 }
 
-function lineName(l) {
-  return l.type === 'account' ? l.item.label : `${l.item.label} (API key)`;
+function liveAndNext() {
+  const order = relayOrder();
+  let live = -1;
+  if (S.pinned) {
+    live = order.findIndex((l) => l.st.ready);
+  } else {
+    const cur = S.current || '';
+    let i = order.findIndex((l) => (l.type === 'account' ? l.item.label === cur : `API key: ${l.item.label}` === cur));
+    if (i < 0 && cur === 'API keys (gateway)') i = order.findIndex((l) => l.type === 'key');
+    if (i >= 0) for (let j = i; j < order.length; j++) if (order[j].st.ready) { live = j; break; }
+  }
+  const liveLine = live >= 0 ? order[live] : null;
+  const next = order.slice(live + 1).find((l) => l.st.ready && (!liveLine || lineKey(l) !== lineKey(liveLine))) || null;
+  const first = order.find((l) => l.st.ready) || null;
+  const manual = Boolean(S.pinned && liveLine && liveLine.item.id === S.pinned.id);
+  return { live: liveLine, next: liveLine ? next : null, first, manual };
 }
 
 // ------------------------------------------------------------------ render
 
-function renderFacts() {
-  $('#ver').textContent = `v${S.version}`;
-  $('#facts').innerHTML = [
-    `<span><span class="lamp" data-s="live"></span>Gateway <span class="mono">${esc(S.gatewayUrl.replace('http://', ''))}</span></span>`,
-    `<span>Secrets: ${esc(S.keystore || 'not set up yet')}</span>`,
-  ].join('');
+function renderNow(rel) {
+  const avatar = $('#avatar');
+  if (rel.live) {
+    avatar.dataset.kind = rel.live.type;
+    avatar.innerHTML = icon(rel.live.type === 'account' ? 'person' : 'key');
+    $('#live-title').innerHTML = `<span class="dim">Running on</span> ${esc(rel.live.item.label)}`;
+    const since = S.currentAt && !rel.manual ? `, since ${ago(S.currentAt)}` : '';
+    $('#live-sub').textContent = `${rel.live.type === 'account' ? 'Subscription account' : 'API key'}${since}`;
+  } else {
+    avatar.dataset.kind = 'idle';
+    avatar.innerHTML = icon('plug');
+    $('#live-title').textContent = rel.first ? 'Nothing running yet' : 'No line ready';
+    $('#live-sub').textContent = rel.first ? `Your next session starts on ${lineName(rel.first)}.` : 'Add an account or an API key below.';
+  }
+  $('#next').textContent = rel.next ? lineName(rel.next) : rel.live ? 'Nothing after this line' : '–';
+  $('#mode').innerHTML = S.pinned
+    ? '<span>Your pick</span><button class="btn" type="button" data-act="unpin" data-fk="unpin">Use Automatic</button>'
+    : '<span>Automatic</span>';
+
+  const keysOk = S.keys.filter((k) => keyState(k).ready).length;
+  const accts = S.accounts.filter((a) => a.enabled);
+  const acctsOk = accts.filter((a) => accountState(a).ready).length;
+  $('#stats').innerHTML = `<span id="req-count">${requestsToday}</span> gateway ${requestsToday === 1 ? 'request' : 'requests'} today · ${keysOk} of ${plural(S.keys.length, 'key')} working · ${acctsOk} of ${plural(accts.length, 'account')} ready`;
 }
 
-function renderPlate(lines, live) {
-  const liveLine = live >= 0 ? lines[live] : null;
-  if (liveLine) {
-    $('#live-value').innerHTML = `<span class="lamp" data-s="live"></span>${esc(lineName(liveLine))}`;
-    const since = S.currentAt ? `since ${ago(S.currentAt)}` : '';
-    $('#live-sub').textContent = liveLine.type === 'account' ? `Subscription${since ? `, ${since}` : ''}` : `Your API key${since ? `, ${since}` : ''}`;
-  } else {
-    const first = lines.find((l) => l.st.ready);
-    $('#live-value').innerHTML = `<span class="lamp"></span>${first ? 'Nothing running yet' : 'No line ready'}`;
-    $('#live-sub').textContent = first ? `Your next session starts on ${lineName(first)}.` : 'Add an account or an API key below.';
-  }
-  const next = live >= 0 ? lines.slice(live + 1).find((l) => l.st.ready) : null;
-  $('#next-value').textContent = next ? lineName(next) : live >= 0 ? 'Nothing after this line' : '–';
-  $('#next-sub').textContent = next ? (next.type === 'account' ? 'Another subscription account' : 'Billed to that API key') : live >= 0 ? 'Add an API key so sessions keep going.' : '';
-
-  const issues = [];
-  if (!S.claudeFound) issues.push({ lamp: 'dead', text: "Claude Code isn't installed on this computer, so accounts can't be checked or signed in." });
+function renderAlerts() {
+  const alerts = [];
+  if (!S.claudeFound) alerts.push({ tone: 'dead', text: "Claude Code isn't installed on this computer, so accounts can't be checked or signed in." });
   for (const a of S.accounts) {
     const login = logins[a.id];
-    if (a.enabled && login && !login.loggedIn) {
-      issues.push({ lamp: 'dead', text: `${a.label} isn't signed in.`, acts: `<button class="btn on-plate" type="button" data-act="login-account" data-id="${esc(a.id)}">${icon('signin')}Sign in</button>` });
-    }
+    if (a.enabled && login && !login.loggedIn) alerts.push({ tone: 'dead', text: `${a.label} isn't signed in.`, acts: `<button class="btn" type="button" data-act="login-account" data-id="${esc(a.id)}" data-fk="alert-login:${esc(a.id)}">Sign In…</button>` });
   }
   for (const k of S.keys) {
-    if (keyState(k).lamp !== 'dead') continue;
+    if (keyState(k).s !== 'dead') continue;
     const left = Math.max(1, S.settings.cooldownMinutes - Math.round((Date.now() - k.lastCheck.at) / 60000));
     const why = trimEnd(k.lastCheck.detail);
-    issues.push({
-      lamp: 'dead',
-      text: `${k.label} is used up${why ? `: ${why}` : ''}. Top it up; it's checked again in ${left} min.`,
-      acts: `<a class="btn on-plate" href="${BILLING_URL}" target="_blank" rel="noopener noreferrer">${icon('out')}Top up</a><button class="btn on-plate" type="button" data-act="test-key" data-id="${esc(k.id)}">${icon('test')}Test now</button>`,
-    });
+    alerts.push({ tone: 'dead', text: `${k.label} is used up${why ? `: ${why}` : ''}. Top it up; it's tried again in ${left} min.`, acts: `<a class="btn" href="${BILLING_URL}" target="_blank" rel="noopener noreferrer">Top Up${icon('out')}</a><button class="btn" type="button" data-act="test-key" data-id="${esc(k.id)}" data-fk="alert-test:${esc(k.id)}">Test Now</button>` });
   }
-  if (!S.keys.length) {
-    issues.push({
-      lamp: 'warn',
-      text: 'No API keys yet. When every account hits its limit, sessions have nothing to fall back on.',
-      acts: `<a class="btn on-plate" href="${KEYS_URL}" target="_blank" rel="noopener noreferrer">${icon('out')}Get a key</a><button class="btn on-plate" type="button" data-act="add-key">${icon('plus')}Add a key</button>`,
-    });
-  }
-  $('#trouble').innerHTML = issues.length
-    ? `<ul class="trouble" aria-label="Needs attention">${issues.map((i) => `<li><span class="msg"><span class="lamp" data-s="${i.lamp}"></span><span>${esc(i.text)}</span></span>${i.acts ? `<span class="acts">${i.acts}</span>` : ''}</li>`).join('')}</ul>`
-    : '<p class="all-ready">Every line is ready.</p>';
+  if (!S.keys.length) alerts.push({ tone: 'warn', text: 'No API keys yet. When every account hits its limit, sessions have nothing to fall back on.', acts: `<a class="btn" href="${KEYS_URL}" target="_blank" rel="noopener noreferrer">Get a Key${icon('out')}</a><button class="btn primary" type="button" data-act="add-key" data-fk="alert-add-key">Add a Key…</button>` });
+  const list = $('#alerts');
+  list.hidden = !alerts.length;
+  list.innerHTML = alerts.map((a) => `<li class="row alert" data-tone="${a.tone}"><span class="alert-icon">${icon('alert')}</span><span class="row-text"><span class="alert-text">${esc(a.text)}</span></span>${a.acts ? `<span class="alert-acts">${a.acts}</span>` : ''}</li>`).join('');
 }
 
-function controls(type, item, index, count) {
-  const id = esc(item.id);
-  if (ui.confirm === item.id) {
-    return `<div class="confirm" role="group" aria-label="Confirm removal"><span>Remove ${esc(item.label)}?</span><button class="btn danger" type="button" data-act="remove-${type}" data-id="${id}">Remove</button><button class="btn" type="button" data-act="cancel-confirm">Keep</button></div>`;
-  }
-  const isBusy = busy.has(item.id);
-  const parts = [];
+function readoutFor(type, item) {
   if (type === 'account') {
-    parts.push(`<button class="icon-btn${isBusy ? ' spin' : ''}" type="button" data-act="check-account" data-id="${id}" ${isBusy ? 'disabled aria-busy="true"' : ''} title="Check usage (one tiny request)" aria-label="Check usage on ${esc(item.label)}">${icon('test')}</button>`);
-    parts.push(`<button class="icon-btn" type="button" data-act="login-account" data-id="${id}" title="Sign in again" aria-label="Sign in to ${esc(item.label)} again">${icon('signin')}</button>`);
+    const login = logins[item.id];
+    const who = !login ? 'Checking sign-in…' : login.loggedIn ? login.email || 'Signed in' : 'Signed out';
+    const c = item.lastCheck;
+    return { ident: esc(who), when: c ? `checked ${ago(c.at)}` : '', why: c && !c.ok ? c.reason : '' };
+  }
+  const c = item.lastCheck;
+  const why = c && c.verdict !== 'ok' ? trimEnd(c.detail) || (c.status ? `HTTP ${c.status}` : 'No answer') : '';
+  return { ident: `<span class="mono">${esc(item.masked)}</span>`, when: c ? `tested ${ago(c.at)}` : '', why };
+}
+
+function rowHtml(type, item, liveId) {
+  const id = esc(item.id);
+  const label = esc(item.label);
+  const st = type === 'account' ? accountState(item) : keyState(item);
+  const isLive = liveId === `${type}:${item.id}`;
+  const signingIn = type === 'account' && ui.job && ui.job.accountId === item.id && !(ui.jobView && ui.jobView.done);
+  const r = readoutFor(type, item);
+  const title = ui.renaming === item.id
+    ? `<form class="rename" data-form="rename" data-type="${type}" data-id="${id}"><input class="rename-input row-title" name="label" value="${esc(ui.renameValue)}" maxlength="60" aria-label="New name for ${label}" autocomplete="off" spellcheck="false" data-fk="rename-input"></form>`
+    : `<span class="row-title">${label}</span>`;
+  let state;
+  if (busy.has(item.id) || signingIn) {
+    state = `<span class="state">${SPINNER}<span class="state-word">${signingIn ? 'Signing in…' : type === 'account' ? 'Checking…' : 'Testing…'}</span></span>`;
   } else {
-    parts.push(`<button class="icon-btn${isBusy ? ' spin' : ''}" type="button" data-act="test-key" data-id="${id}" ${isBusy ? 'disabled aria-busy="true"' : ''} title="Test this key" aria-label="Test ${esc(item.label)}">${icon('test')}</button>`);
+    const s = isLive ? 'live' : st.s;
+    state = `<span class="state" data-s="${s}"><span class="dot"></span><span class="state-word">${isLive ? 'In use' : esc(st.word)}</span></span>`;
   }
-  parts.push(`<button class="icon-btn" type="button" data-act="rename-${type}" data-id="${id}" title="Rename" aria-label="Rename ${esc(item.label)}">${icon('edit')}</button>`);
-  parts.push(`<button class="icon-btn" type="button" data-act="move-${type}" data-dir="up" data-id="${id}" ${index === 0 ? 'disabled' : ''} title="Move up" aria-label="Move ${esc(item.label)} up">${icon('up')}</button>`);
-  parts.push(`<button class="icon-btn" type="button" data-act="move-${type}" data-dir="down" data-id="${id}" ${index === count - 1 ? 'disabled' : ''} title="Move down" aria-label="Move ${esc(item.label)} down">${icon('down')}</button>`);
-  if (type === 'key' || item.kind === 'profile') {
-    parts.push(`<button class="icon-btn danger" type="button" data-act="ask-remove" data-id="${id}" title="Remove" aria-label="Remove ${esc(item.label)}">${icon('trash')}</button>`);
-  }
-  const lever = type === 'account'
-    ? `<button class="lever" type="button" role="switch" aria-checked="${item.enabled}" data-act="toggle-account" data-id="${id}" title="${item.enabled ? 'On: tried in order' : 'Off: skipped'}" aria-label="Use ${esc(item.label)}"></button>`
+  const toggle = type === 'account'
+    ? `<button class="switch" type="button" role="switch" aria-checked="${item.enabled}" data-act="toggle-account" data-id="${id}" data-fk="toggle:${id}" aria-label="Use ${label} in the relay"></button>`
     : '';
-  return `<div class="controls">${parts.join('')}</div>${lever}`;
+  const expanded = Boolean(ui.menu && ui.menu.id === item.id);
+  return `<li class="row" data-line="${type}:${id}"${isLive ? ' data-live' : ''}${type === 'account' && !item.enabled ? ' data-off' : ''}>
+    <button class="port" type="button" data-act="connect" data-target="${type}:${id}" data-fk="port:${id}" aria-label="Plug the cable into ${label}" title="Plug the cable in here"><span class="slot"></span></button>
+    <span class="symbol" data-kind="${type}" aria-hidden="true">${icon(type === 'account' ? 'person' : 'key')}</span>
+    <div class="row-text">${title}<span class="row-sub">${r.ident}${r.when ? ` · ${esc(r.when)}` : ''}</span>${r.why ? `<span class="row-why">${esc(r.why)}</span>` : ''}</div>
+    ${state}${toggle}
+    <button class="icon-btn more" type="button" data-act="menu" data-type="${type}" data-id="${id}" data-fk="menu:${id}" aria-haspopup="menu" aria-expanded="${expanded}" aria-label="Actions for ${label}" title="Actions">${icon('more')}</button>
+  </li>`;
 }
 
-function strip(type, item) {
-  if (ui.renaming === item.id) {
-    return `<form class="strip" data-form="rename" data-type="${type}" data-id="${esc(item.id)}"><input name="label" value="${esc(item.label)}" maxlength="60" aria-label="New name" autocomplete="off" spellcheck="false"></form>`;
-  }
-  return `<button class="strip" type="button" data-act="rename-${type}" data-id="${esc(item.id)}" title="Rename"><span>${esc(item.label)}</span></button>`;
+function addRowHtml(type) {
+  const act = type === 'account' ? 'add-account' : 'add-key';
+  return `<li class="row add"><button class="add-btn" type="button" data-act="${act}" data-fk="${act}"><span class="tile">${icon('plus-circle')}</span>${type === 'account' ? 'Add Account…' : 'Add API Key…'}</button></li>`;
 }
 
-function readout(word, ident, meta, why) {
-  return `<span class="state">${esc(word)}</span><span class="ident" title="${esc(ident)}">${esc(ident)}</span>${meta ? `<span class="meta">${esc(meta)}</span>` : ''}${why ? `<span class="why">${esc(why)}</span>` : ''}`;
-}
-
-function accountReadout(a, word) {
-  const login = logins[a.id];
-  const who = !login ? 'checking sign-in…' : login.loggedIn ? (login.email || 'signed in') : 'signed out';
-  const c = a.lastCheck;
-  if (busy.has(a.id)) return readout(word, who, '', 'Checking usage…');
-  if (!c) return readout(word, who, '', '');
-  return readout(word, who, ago(c.at), c.ok ? '' : c.reason);
-}
-
-function keyReadout(k, word) {
-  const c = k.lastCheck;
-  if (busy.has(k.id)) return readout(word, k.masked, '', 'Testing…');
-  if (!c) return readout(word, k.masked, '', '');
-  return readout(word, k.masked, `${c.status ? `HTTP ${c.status}` : 'no answer'} · ${ago(c.at)}`, trimEnd(c.detail));
-}
-
-function renderBanks(lines, live) {
-  const liveItem = live >= 0 ? lines[live].item.id : null;
-  let n = 0;
-  const row = (type, item, i, count) => {
-    n += 1;
-    const st = type === 'account' ? accountState(item) : keyState(item);
-    const isLive = item.id === liveItem;
-    const lamp = isLive ? 'live' : st.lamp;
-    const word = isLive ? 'Live' : st.word;
-    return `<li class="line" data-id="${esc(item.id)}"${isLive ? ' data-live' : ''}${type === 'account' && !item.enabled ? ' data-off' : ''}>
-      <span class="jack" aria-hidden="true"></span>
-      <span class="num mono">${pad(n)}</span>
-      <span class="lamp" data-s="${lamp}"><span class="vh">${esc(word)}</span></span>
-      ${strip(type, item)}
-      <span class="readout">${type === 'account' ? accountReadout(item, word) : keyReadout(item, word)}</span>
-      ${controls(type, item, i, count)}
-    </li>`;
-  };
-  const spare = (type) => `<li class="line spare">
-      <span class="jack" aria-hidden="true"></span>
-      <span class="num mono"></span>
-      <span class="gap"></span>
-      <button class="strip" type="button" data-act="add-${type}"><span>${icon('plus')}${type === 'account' ? 'Add an account' : 'Add an API key'}</span></button>
-    </li>`;
-
-  $('#accounts').innerHTML = S.accounts.map((a, i) => row('account', a, i, S.accounts.length)).join('') + spare('account');
-  $('#keys').innerHTML = S.keys.map((k, i) => row('key', k, i, S.keys.length)).join('') + spare('key');
-  $('#check-all').hidden = S.keys.length < 2;
-
-  $('#account-extra').innerHTML = (ui.adding === 'account' ? accountForm() : '') + jobPanel();
-  $('#key-extra').innerHTML = ui.adding === 'key' ? keyForm() : '';
-}
-
-function accountForm() {
-  return `<form class="form" data-form="add-account" autocomplete="off">
-    <label>Name<input class="input" name="label" id="account-label" maxlength="60" placeholder="Work, Personal…" value="${esc(ui.forms.accountLabel)}"></label>
-    <p class="hint inline">Your browser opens Anthropic's sign-in page. Sign in with the account you want to add.</p>
-    <div class="row-actions"><button class="btn primary" type="submit">${icon('signin')}Add and sign in</button><button class="btn" type="button" data-act="cancel-add">Cancel</button></div>
-  </form>`;
-}
-
-function keyForm() {
-  return `<form class="form" data-form="add-key" autocomplete="off">
-    <label>Name<input class="input" name="label" id="key-label" maxlength="60" placeholder="Personal, Team…" value="${esc(ui.forms.keyLabel)}"></label>
-    <label>API key<input class="input mono" name="key" id="key-value" type="password" placeholder="sk-ant-api03-…" spellcheck="false" autocapitalize="off" value="${esc(ui.forms.keyValue)}"></label>
-    <div class="row-actions"><button class="btn primary" type="submit">${icon('plug')}Save and test</button><button class="btn" type="button" data-act="cancel-add">Cancel</button></div>
-    <p class="hint">Stored encrypted on this computer, with the key held by ${esc(S.keystore || 'your system keychain')}. It's only ever sent to Anthropic.</p>
-  </form>`;
-}
-
-function jobPanel() {
-  const v = ui.jobView;
-  if (!ui.job) return '';
-  const account = S.accounts.find((a) => a.id === ui.job.accountId);
-  const name = account ? account.label : 'the account';
-  let status = `Finish signing in to ${esc(name)} in the browser window that opened.`;
-  if (v && v.done) status = v.ok ? `${esc(name)} is signed in.` : `Sign-in for ${esc(name)} didn't finish. Try again with the sign-in button on its line.`;
-  const link = v && v.url && !v.done ? `<p>No browser window? <a href="${esc(v.url)}" target="_blank" rel="noopener noreferrer">Open the sign-in page</a>.</p>` : '';
-  const code = v && !v.done ? `<form data-form="job-input"><input class="input mono" name="text" placeholder="Paste the code here if the page shows one" aria-label="Sign-in code" autocomplete="off" spellcheck="false"><button class="btn on-plate" type="submit">Send code</button></form>` : '';
-  const output = v && v.output ? `<pre aria-label="Sign-in output">${esc(v.output)}</pre>` : '';
-  return `<div class="job" role="status" aria-live="polite"><p>${status}</p>${link}${output}${code}</div>`;
+function renderLists(rel) {
+  const liveId = rel.live ? lineKey(rel.live) : null;
+  $('#accounts').innerHTML = S.accounts.map((a) => rowHtml('account', a, liveId)).join('') + addRowHtml('account');
+  $('#keys').innerHTML = S.keys.map((k) => rowHtml('key', k, liveId)).join('') + addRowHtml('key');
+  const checkAll = $('#check-all');
+  checkAll.hidden = S.keys.length < 2;
+  checkAll.disabled = busy.has('all-keys');
+  checkAll.textContent = busy.has('all-keys') ? 'Testing…' : 'Test All';
 }
 
 function renderDesktop() {
-  $('#desktop-steps').innerHTML = S.desktop.steps.map((s) => `<li>${esc(s)}</li>`).join('');
+  $('#desktop-steps').innerHTML = S.desktop.steps.map((s, i) => `<li class="row"><span class="step-n">${i + 1}</span><span class="row-text">${esc(s)}</span></li>`).join('');
   const token = desktopInfo ? desktopInfo.settings.inferenceGatewayApiKey : '';
-  const shown = ui.showToken ? token : token ? `${token.slice(0, 6)}${'•'.repeat(18)}` : 'creating…';
+  const shown = ui.showToken ? token : token ? `${token.slice(0, 6)}${'•'.repeat(16)}` : 'Creating…';
   $('#desktop-values').innerHTML = `
-    <div><dt>Gateway base URL</dt><dd class="mono">${esc(S.desktop.baseUrl)}</dd><span class="acts"><button class="icon-btn" type="button" data-act="copy" data-value="${esc(S.desktop.baseUrl)}" aria-label="Copy the base URL" title="Copy">${icon('copy')}</button></span></div>
-    <div><dt>Gateway API key</dt><dd class="mono">${esc(shown)}</dd><span class="acts"><button class="icon-btn" type="button" data-act="toggle-token" aria-label="${ui.showToken ? 'Hide' : 'Show'} the gateway key" title="${ui.showToken ? 'Hide' : 'Show'}">${icon('eye')}</button><button class="icon-btn" type="button" data-act="copy-token" aria-label="Copy the gateway key" title="Copy">${icon('copy')}</button></span></div>
-    <div><dt>Auth scheme</dt><dd class="mono">Bearer</dd><span></span></div>`;
-  $('#desktop-file').textContent = desktopInfo ? desktopInfo.file : '';
+    <div class="row"><span class="k">Base URL</span><span class="v mono">${esc(S.desktop.baseUrl)}</span><span class="acts"><button class="icon-btn" type="button" data-act="copy" data-value="${esc(S.desktop.baseUrl)}" data-fk="copy-url" aria-label="Copy the base URL" title="Copy">${icon('copy')}</button></span></div>
+    <div class="row"><span class="k">API key</span><span class="v mono">${esc(shown)}</span><span class="acts"><button class="icon-btn" type="button" data-act="toggle-token" data-fk="toggle-token" aria-label="${ui.showToken ? 'Hide' : 'Show'} the gateway key" title="${ui.showToken ? 'Hide' : 'Show'}">${icon('eye')}</button><button class="icon-btn" type="button" data-act="copy-token" data-fk="copy-token" aria-label="Copy the gateway key" title="Copy">${icon('copy')}</button></span></div>
+    <div class="row"><span class="k">Auth scheme</span><span class="v">Bearer</span></div>`;
+  $('#desktop-file').textContent = desktopInfo ? `The import file is ${desktopInfo.file}` : '';
 }
 
 function renderSettings() {
-  const form = $('#settings-form');
-  if (!form.contains(document.activeElement)) {
-    $('#cooldown').value = S.settings.cooldownMinutes;
-    $('#recheck').value = S.settings.accountRecheckMinutes;
+  for (const [id, value] of [['cooldown', S.settings.cooldownMinutes], ['recheck', S.settings.accountRecheckMinutes]]) {
+    const input = document.getElementById(id);
+    if (document.activeElement !== input) input.value = value;
   }
-  const shell = S.shell.installed ? 'Plain <code>claude</code> goes through claude-nonstop.' : 'Plain <code>claude</code> runs directly. Turn the shortcut on with <code>claude-nonstop shell install</code>.';
-  const service = S.service.installed ? 'The gateway starts when you log in.' : 'The gateway stops when you restart. Keep it on with <code>claude-nonstop service install</code>.';
-  $('#setup-facts').innerHTML = `<span>${shell}</span><span>${service}</span>`;
+  const facts = [
+    ['Plain claude command', S.shell.installed ? 'On' : 'Off', S.shell.installed ? 'Runs through claude-nonstop, so sessions move on when a limit hits.' : 'Runs Claude Code directly. Turn it on with <code>claude-nonstop shell install</code>.'],
+    ['Starts at login', S.service.installed ? 'On' : 'Off', S.service.installed ? 'The gateway starts when you log in and installs updates by itself.' : 'The gateway stops when you restart. Keep it on with <code>claude-nonstop service install</code>.'],
+    ['Secrets', 'Encrypted', `The encryption key lives in ${esc(S.keystore || 'your system keychain')}.`],
+    ['Version', esc(S.version), `Open this page any time at <code>${esc(location.host)}</code>.`],
+  ];
+  $('#setup-facts').innerHTML = facts.map(([title, value, sub]) => `<li class="row"><span class="row-text"><span class="row-title">${esc(title)}</span><span class="row-why">${sub}</span></span><span class="fact-val">${value}</span></li>`).join('');
 }
-
-// ------------------------------------------------------------------ the cord
-
-const cord = { y: null, live: null, anim: 0 };
-
-// The cord leaves the socket, drops into a lane just left of the jack column so it
-// hangs clear of every jack it passes, and turns into the live jack at the end.
-function cordPath(x0, y0, x1, y1, lane) {
-  const drop = y1 - y0;
-  if (drop < 90) return `M ${x0} ${y0} C ${lane} ${y0 + drop * 0.45}, ${lane} ${y1 - drop * 0.2}, ${x1} ${y1}`;
-  return `M ${x0} ${y0} C ${x0} ${y0 + 22}, ${lane} ${y0 + 18}, ${lane} ${y0 + 46} L ${lane} ${y1 - 30} C ${lane} ${y1 - 9}, ${x1 - 9} ${y1}, ${x1} ${y1}`;
-}
-
-function drawCord(endY, x0, y0, x1, lane, plugged) {
-  const d = plugged ? cordPath(x0, y0, x1, endY, lane) : `M ${x0} ${y0} C ${x0 - 14} ${y0 + 26}, ${x0 + 10} ${y0 + 40}, ${x0 - 2} ${y0 + 58}`;
-  $('#cord-sheath').setAttribute('d', d);
-  $('#cord-weave').setAttribute('d', d);
-  const tip = $('#cord-tip');
-  tip.setAttribute('cx', plugged ? x1 : x0 - 2);
-  tip.setAttribute('cy', plugged ? endY : y0 + 58);
-}
-
-function positionCord() {
-  const wrap = $('#wrap').getBoundingClientRect();
-  const socket = $('#socket').getBoundingClientRect();
-  const x0 = socket.left + socket.width / 2 - wrap.left;
-  const y0 = socket.top + socket.height / 2 - wrap.top;
-  const liveLine = document.querySelector('.line[data-live]');
-  const jack = liveLine && liveLine.querySelector('.jack');
-  cancelAnimationFrame(cord.anim);
-  if (!jack) {
-    cord.y = null;
-    cord.live = null;
-    drawCord(0, x0, y0, x0, x0, false);
-    return;
-  }
-  const r = jack.getBoundingClientRect();
-  const x1 = r.left + r.width / 2 - wrap.left;
-  const lane = x1 - r.width / 2 - 7;
-  const target = r.top + r.height / 2 - wrap.top;
-  const from = cord.y;
-  const moved = cord.live !== null && cord.live !== liveLine.dataset.id;
-  cord.live = liveLine.dataset.id;
-  // Only a change of live line animates. Layout shifts (resizing, text reflowing) and hidden
-  // tabs, where animation frames don't run, draw the cord straight into the jack.
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!moved || from == null || reduce || document.hidden || Math.abs(from - target) < 1) {
-    cord.y = target;
-    drawCord(target, x0, y0, x1, lane, true);
-    return;
-  }
-  // The relay advancing: the cord re-routes to the new live jack.
-  const start = performance.now();
-  const step = (now) => {
-    const t = Math.min(1, (now - start) / 220);
-    const e = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-    cord.y = from + (target - from) * e;
-    drawCord(cord.y, x0, y0, x1, lane, true);
-    if (t < 1) cord.anim = requestAnimationFrame(step);
-  };
-  cord.anim = requestAnimationFrame(step);
-}
-
-// ------------------------------------------------------------------ render all
 
 function render() {
   if (!S) return;
   const active = document.activeElement;
-  const focusId = active && active.id;
-  const caret = active && typeof active.selectionStart === 'number' ? active.selectionStart : null;
-  const lines = relay();
-  const live = liveIndex(lines);
-  renderFacts();
-  renderPlate(lines, live);
-  renderBanks(lines, live);
+  const fk = active && active.dataset ? active.dataset.fk : null;
+  const caret = active && typeof active.selectionStart === 'number' ? [active.selectionStart, active.selectionEnd] : null;
+  const rel = liveAndNext();
+  renderNow(rel);
+  renderAlerts();
+  renderLists(rel);
   renderDesktop();
   renderSettings();
-  positionCord();
-  if (focusId) {
-    const el = document.getElementById(focusId);
+  cable.setTarget(rel.live ? lineKey(rel.live) : null, rel.live ? rel.live.st.s : null);
+  favicon.setAlert(S.keys.length > 0 && S.keys.every((k) => keyState(k).s === 'dead') && !rel.live);
+  if (fk) {
+    const el = document.querySelector(`[data-fk="${CSS.escape(fk)}"]`);
     if (el && el !== document.activeElement) {
-      el.focus();
-      if (caret != null && el.setSelectionRange) try { el.setSelectionRange(caret, caret); } catch {}
+      el.focus({ preventScroll: true });
+      if (caret && el.setSelectionRange) try { el.setSelectionRange(caret[0], caret[1]); } catch {}
     }
   }
-  const renameInput = document.querySelector('form[data-form="rename"] input');
-  if (renameInput && document.activeElement !== renameInput) { renameInput.focus(); renameInput.select(); }
+  if (ui.renaming && ui.renameFresh) {
+    const input = $('.rename-input');
+    if (input) { input.focus(); input.select(); ui.renameFresh = false; }
+  }
+  if (ui.menu) positionMenu();
+  cable.wake();
 }
+
+// ------------------------------------------------------------------ the cable
+
+// One cable runs from the status card to the live line's port. It is a verlet chain in
+// page coordinates, so scrolling never disturbs it. The plug's tip rides a 2D spring that
+// takes over the pointer's velocity on release, and a flick is projected forward to the
+// port it was thrown at. The loop sleeps whenever the cable is at rest.
+const cable = (() => {
+  const svg = $('#cable');
+  const strands = ['c-shade', 'c-edge', 'c-body', 'c-hi'].map((id) => document.getElementById(id));
+  const glintPath = $('#c-glint');
+  const plug = $('#plug');
+  const led = $('.led', plug);
+  const N = 22;
+  const pts = [];
+  const prev = [];
+  const pin = new Array(N + 1).fill(false);
+  const tip = { x: 0, y: 0, vx: 0, vy: 0 };
+  let theta = Math.PI / 2;
+  let spring = { response: 0.5, damping: 1 };
+  let targetKey = null;
+  let tone = null;
+  let drag = null;
+  let magnet = null;
+  let magnetEl = null;
+  let kb = -1;
+  let ports = [];
+  let running = false;
+  let quiet = 0;
+  let last = 0;
+  let placed = false;
+  let visible = true;
+  let glint = null;
+  let settledKey = null;
+  let plugLen = 22;
+
+  const readDims = () => { plugLen = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--plug-len')) || 22; };
+  const rect = (el) => { const r = el.getBoundingClientRect(); return { x: r.left + window.scrollX, y: r.top + window.scrollY, w: r.width, h: r.height }; };
+  const source = () => { const r = rect($('#boot')); return { x: r.x, y: r.y + r.h / 2 }; };
+  const portPoint = (el) => { const r = rect($('.slot', el)); return { x: r.x + r.w / 2 + 1.5, y: r.y + r.h / 2 }; };
+  const portEl = (key) => (key ? document.querySelector(`.row[data-line="${CSS.escape(key)}"] .port`) : null);
+  const listPorts = () => $$('.row[data-line] .port').map((el) => ({ el, key: el.dataset.target, at: portPoint(el) }));
+  const smooth = (t) => { const c = Math.max(0, Math.min(1, t)); return c * c * (3 - 2 * c); };
+  const angleTo = (from, to) => Math.atan2(Math.sin(to - from), Math.cos(to - from));
+  // Apple's momentum projection: where a flick would come to rest.
+  const project = (v) => ((v / 1000) * 0.99) / (1 - 0.99);
+
+  function goal() {
+    if (kb >= 0 && ports[kb]) return { ...ports[kb].at, docked: true, key: ports[kb].key };
+    const el = portEl(targetKey);
+    if (el) return { ...portPoint(el), docked: true, key: targetKey };
+    const s = source();
+    return { x: s.x - 6, y: s.y + 60, docked: false, key: null };
+  }
+
+  function nearest(at, reach) {
+    let best = null;
+    for (const p of ports) {
+      const d = Math.hypot(p.at.x - at.x, p.at.y - at.y);
+      if (d < reach && (!best || d < best.d)) best = { ...p, d };
+    }
+    return best;
+  }
+
+  function markMagnet(el) {
+    if (magnetEl === el) return;
+    if (magnetEl) magnetEl.classList.remove('magnet');
+    magnetEl = el;
+    if (el) el.classList.add('magnet');
+  }
+
+  // A still cable: a cubic curve that leaves the card leftward and bows into the margin.
+  function stillCurve(s, e, docked) {
+    const bow = Math.min(46, Math.max(8, (s.x - 4) * 0.6));
+    const c1 = { x: s.x - bow, y: s.y };
+    const c2 = docked ? { x: e.x - bow, y: e.y } : { x: e.x - Math.cos(theta) * bow, y: e.y - Math.sin(theta) * bow };
+    for (let i = 0; i <= N; i++) {
+      const t = i / N;
+      const u = 1 - t;
+      const p = {
+        x: u * u * u * s.x + 3 * u * u * t * c1.x + 3 * u * t * t * c2.x + t * t * t * e.x,
+        y: u * u * u * s.y + 3 * u * u * t * c1.y + 3 * u * t * t * c2.y + t * t * t * e.y,
+      };
+      pts[i] = p;
+      prev[i] = { ...p };
+    }
+  }
+
+  function simulate(dt, s, e, docked) {
+    const D = Math.hypot(e.x - s.x, e.y - s.y);
+    const bow = Math.min(30, Math.max(8, (s.x - 8) * 0.55), D * 0.3 + 6);
+    const seg = (D + (8 * bow * bow) / (3 * Math.max(D, 1)) + 10) / N;
+    // Gravity leans left, so the slack falls into the margin instead of over the lists.
+    const gx = -900 * dt * dt;
+    const gy = 380 * dt * dt;
+    pin.fill(false);
+    pin[0] = pin[1] = pin[N] = true;
+    if (docked) pin[N - 1] = true;
+    let motion = 0;
+    for (let i = 0; i <= N; i++) {
+      if (pin[i]) continue;
+      const p = pts[i];
+      const q = prev[i];
+      let vx = (p.x - q.x) * 0.94;
+      let vy = (p.y - q.y) * 0.94;
+      const v = Math.hypot(vx, vy);
+      if (v > 40) { vx *= 40 / v; vy *= 40 / v; }
+      motion = Math.max(motion, v);
+      q.x = p.x;
+      q.y = p.y;
+      p.x += vx + gx;
+      p.y += vy + gy;
+    }
+    const fix = (i, x, y) => { pts[i].x = prev[i].x = x; pts[i].y = prev[i].y = y; };
+    for (let it = 0; it < 24; it++) {
+      fix(0, s.x, s.y);
+      fix(1, s.x - seg, s.y);
+      fix(N, e.x, e.y);
+      if (docked) fix(N - 1, e.x - seg * Math.cos(theta), e.y - seg * Math.sin(theta));
+      for (let i = 0; i < N; i++) {
+        const p = pts[i];
+        const q = pts[i + 1];
+        const dx = q.x - p.x;
+        const dy = q.y - p.y;
+        const d = Math.hypot(dx, dy) || 0.0001;
+        const diff = (d - seg) / d;
+        const wp = pin[i] ? 0 : 1;
+        const wq = pin[i + 1] ? 0 : 1;
+        const sum = wp + wq;
+        if (!sum) continue;
+        p.x += dx * diff * (wp / sum);
+        p.y += dy * diff * (wp / sum);
+        q.x -= dx * diff * (wq / sum);
+        q.y -= dy * diff * (wq / sum);
+      }
+      // The window's edge is a wall: on narrow screens the slack rests against it.
+      for (let i = 2; i < N - 1; i++) if (pts[i].x < 3) pts[i].x = 3;
+    }
+    return motion;
+  }
+
+  function draw() {
+    let d = `M${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;
+    for (let i = 1; i < N; i++) {
+      const mx = (pts[i].x + pts[i + 1].x) / 2;
+      const my = (pts[i].y + pts[i + 1].y) / 2;
+      d += `Q${pts[i].x.toFixed(1)} ${pts[i].y.toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)}`;
+    }
+    d += `L${pts[N].x.toFixed(1)} ${pts[N].y.toFixed(1)}`;
+    for (const p of strands) p.setAttribute('d', d);
+    glintPath.setAttribute('d', d);
+    plug.style.transform = `translate(${tip.x.toFixed(2)}px, ${tip.y.toFixed(2)}px) rotate(${theta.toFixed(4)}rad)`;
+  }
+
+  function place() {
+    readDims();
+    const g = goal();
+    tip.x = g.x;
+    tip.y = g.y;
+    tip.vx = tip.vy = 0;
+    theta = g.docked ? 0 : Math.PI / 2;
+    stillCurve(source(), { x: tip.x - plugLen * Math.cos(theta), y: tip.y - plugLen * Math.sin(theta) }, g.docked);
+    settledKey = g.key;
+    placed = true;
+  }
+
+  function step(now) {
+    const dt = Math.min(1 / 30, Math.max(1 / 240, (now - last) / 1000 || 1 / 60));
+    last = now;
+    ports = listPorts();
+    const s = source();
+    let docked = false;
+    let aim = null;
+    if (drag) {
+      const raw = { x: drag.cx + window.scrollX + drag.ox, y: drag.cy + window.scrollY + drag.oy };
+      magnet = nearest(raw, 42);
+      markMagnet(magnet ? magnet.el : null);
+      const k = magnet ? smooth(1 - magnet.d / 42) : 0;
+      tip.x = raw.x + (magnet ? (magnet.at.x - raw.x) * k : 0);
+      tip.y = raw.y + (magnet ? (magnet.at.y - raw.y) * k : 0);
+      aim = magnet ? k : null;
+      autoScroll();
+    } else {
+      const g = goal();
+      docked = g.docked;
+      const off = Math.hypot(tip.x - g.x, tip.y - g.y);
+      if (reduced.matches || (g.key && g.key === settledKey && off < 40)) {
+        // Same port after a small layout shift: stay plugged in instead of gliding after it.
+        tip.x = g.x;
+        tip.y = g.y;
+        tip.vx = tip.vy = 0;
+      } else {
+        settledKey = null;
+        const w = (2 * Math.PI) / spring.response;
+        const stiff = w * w;
+        const damp = 2 * spring.damping * w;
+        const h = dt / 4;
+        for (let i = 0; i < 4; i++) {
+          tip.vx += (-stiff * (tip.x - g.x) - damp * tip.vx) * h;
+          tip.vy += (-stiff * (tip.y - g.y) - damp * tip.vy) * h;
+          tip.x += tip.vx * h;
+          tip.y += tip.vy * h;
+        }
+        if (Math.hypot(tip.x - g.x, tip.y - g.y) < 0.1 && Math.hypot(tip.vx, tip.vy) < 2) {
+          tip.x = g.x;
+          tip.y = g.y;
+          tip.vx = tip.vy = 0;
+          settledKey = g.key;
+          spring = { response: 0.5, damping: 1 };
+        }
+      }
+    }
+    // The plug lines up with the cable while free, and squares up to a port as it seats.
+    const free = Math.atan2(tip.y - pts[N - 2].y, tip.x - pts[N - 2].x);
+    let want = docked ? 0 : free;
+    if (aim != null) want = free + angleTo(free, 0) * aim;
+    const turn = angleTo(theta, want);
+    theta += reduced.matches || docked ? turn : turn * 0.3;
+    const e = { x: tip.x - plugLen * Math.cos(theta), y: tip.y - plugLen * Math.sin(theta) };
+    let motion = 0;
+    if (reduced.matches) stillCurve(s, e, docked);
+    else motion = simulate(dt, s, e, docked && !drag);
+    if (glint) {
+      const p = (now - glint) / 760;
+      if (p >= 1) {
+        glint = null;
+        glintPath.style.opacity = '0';
+      } else {
+        glintPath.style.strokeDashoffset = String(36 - p * 1036);
+        glintPath.style.opacity = String(Math.sin(Math.PI * p) * 0.95);
+      }
+    }
+    led.dataset.tone = docked && !drag ? (tone === 'warn' ? 'warn' : 'ok') : 'off';
+    draw();
+    const still = !drag && kb < 0 && !glint && motion < 0.02 && Math.abs(turn) < 0.0005 && Math.hypot(tip.vx, tip.vy) < 0.5;
+    quiet = still ? quiet + 1 : 0;
+  }
+
+  function frame(now) {
+    if (!visible) { running = false; return; }
+    step(now);
+    if (quiet < 40) requestAnimationFrame(frame);
+    else running = false;
+  }
+
+  function wake() {
+    if (!visible || !S) return;
+    if (!placed) place();
+    quiet = 0;
+    if (!running) {
+      running = true;
+      last = performance.now();
+      requestAnimationFrame(frame);
+    }
+  }
+
+  function autoScroll() {
+    const h = window.innerHeight;
+    const top = $('#toolbar').getBoundingClientRect().bottom + 48;
+    if (drag.cy > h - 56) window.scrollBy(0, Math.ceil((drag.cy - (h - 56)) / 5));
+    else if (drag.cy < top) window.scrollBy(0, -Math.ceil((top - drag.cy) / 5));
+  }
+
+  function velocity(hist) {
+    const now = performance.now();
+    const recent = hist.filter((p) => now - p.t < 90);
+    if (recent.length < 2) return { x: 0, y: 0 };
+    const a = recent[0];
+    const b = recent[recent.length - 1];
+    const dt = Math.max(0.008, (b.t - a.t) / 1000);
+    return { x: (b.x - a.x) / dt, y: (b.y - a.y) / dt };
+  }
+
+  async function plugInto(key) {
+    const before = targetKey;
+    targetKey = key;
+    settledKey = null;
+    wake();
+    try {
+      if (key !== before || !S.pinned) await actions.connect(null, { dataset: { target: key } });
+    } catch (err) {
+      targetKey = before;
+      wake();
+      toast(err.message, true);
+    }
+  }
+
+  plug.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0 || !S) return;
+    e.preventDefault();
+    plug.setPointerCapture(e.pointerId);
+    const px = e.clientX + window.scrollX;
+    const py = e.clientY + window.scrollY;
+    drag = { id: e.pointerId, cx: e.clientX, cy: e.clientY, sx: e.clientX, sy: e.clientY, ox: tip.x - px, oy: tip.y - py, moved: false, hist: [{ x: px, y: py, t: performance.now() }] };
+    kb = -1;
+    plug.classList.add('lifted');
+    document.body.classList.add('dragging');
+    closeMenu(true);
+    wake();
+  });
+  plug.addEventListener('pointermove', (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    drag.cx = e.clientX;
+    drag.cy = e.clientY;
+    if (!drag.moved && Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > 3) drag.moved = true;
+    const now = performance.now();
+    drag.hist.push({ x: e.clientX + window.scrollX, y: e.clientY + window.scrollY, t: now });
+    while (drag.hist.length > 2 && now - drag.hist[0].t > 120) drag.hist.shift();
+  });
+  function release(commit) {
+    if (!drag) return;
+    const d = drag;
+    drag = null;
+    plug.classList.remove('lifted');
+    document.body.classList.remove('dragging');
+    const caught = magnet;
+    magnet = null;
+    markMagnet(null);
+    if (!d.moved) {
+      toast("Drag the plug onto any line's port to use that line.");
+      wake();
+      return;
+    }
+    const v = velocity(d.hist);
+    let chosen = commit ? caught : null;
+    if (commit && !chosen && Math.hypot(v.x, v.y) > 250) {
+      chosen = nearest({ x: tip.x + project(v.x), y: tip.y + project(v.y) }, 64);
+    }
+    // Hand the pointer's velocity to the spring; only a throw earns a little bounce.
+    tip.vx = v.x;
+    tip.vy = v.y;
+    spring = { response: 0.42, damping: 0.8 };
+    settledKey = null;
+    if (chosen) plugInto(chosen.key);
+    else wake();
+  }
+  plug.addEventListener('pointerup', () => release(true));
+  plug.addEventListener('pointercancel', () => release(false));
+  plug.addEventListener('lostpointercapture', () => release(false));
+
+  plug.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      ports = listPorts();
+      if (!ports.length) return;
+      if (kb < 0) kb = ports.findIndex((p) => p.key === targetKey);
+      kb = (kb + (e.key === 'ArrowDown' ? 1 : -1) + ports.length) % ports.length;
+      spring = { response: 0.32, damping: 1 };
+      settledKey = null;
+      ports[kb].el.closest('.row').scrollIntoView({ block: 'nearest', behavior: reduced.matches ? 'auto' : 'smooth' });
+      announce(`Over ${nameForKey(ports[kb].key)}. Press Return to plug it in, or Escape to cancel.`);
+      wake();
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (kb >= 0 && ports[kb]) {
+        const key = ports[kb].key;
+        kb = -1;
+        plugInto(key);
+      } else {
+        announce('Use the arrow keys to move the plug to a line, then press Return.');
+        toast('Use the arrow keys to move the plug, then press Return.');
+      }
+    } else if (e.key === 'Escape' && kb >= 0) {
+      kb = -1;
+      settledKey = null;
+      announce('Cancelled.');
+      wake();
+    }
+  });
+  plug.addEventListener('blur', () => { if (kb >= 0) { kb = -1; settledKey = null; wake(); } });
+
+  window.addEventListener('resize', () => { readDims(); settledKey = null; wake(); });
+  if (window.ResizeObserver) new ResizeObserver(() => wake()).observe($('main'));
+  reduced.addEventListener('change', wake);
+
+  return {
+    setTarget(key, nextTone) {
+      tone = nextTone;
+      if (key !== targetKey) {
+        targetKey = key;
+        settledKey = null;
+        spring = { response: 0.55, damping: 1 };
+      }
+    },
+    pulse() {
+      if (!visible || reduced.matches) return;
+      glint = performance.now();
+      led.classList.add('blink');
+      setTimeout(() => led.classList.remove('blink'), 180);
+      wake();
+    },
+    show(on) {
+      visible = on;
+      svg.hidden = !on;
+      plug.hidden = !on;
+      if (on) { settledKey = null; wake(); }
+    },
+    wake,
+  };
+})();
+
+// ------------------------------------------------------------------ the globe
+
+// A dotted Earth in the status card, in plain WebGL. Its land is a 1-degree bitmap of
+// Natural Earth's public-domain coastline baked into this page, and your spot on it is
+// guessed from this computer's timezone (the guess never leaves the page). For every
+// gateway request a light flies from here to Anthropic and back. Drag it to spin it: the
+// surface tracks the pointer 1:1, coasts when you let go, then settles back by itself.
+const LAND = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH/4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADf//8AAf///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB////D//////n/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/gf/x////////wAAAAAbgAAB4AAAAAAPwAAAAAAAAAAAAAAAAAAAAAAAAAAAf//8A///////+AAAAB/ngAAAAAAAAAAH8AAAAAAAAAAAAAAAAAAAAAAAAcH3Hv/5////////8AAAAA/gAAAAAAAAAAAAD4AAAAAAAAAAAAAAAAAAAAAAcIAAQP/AH///////+AAAAAPCAAAAAAAAAAAAAYAAAAAAAAAAAAAAAAAAAAADwDAc+f+AP///////4AAAAAAAAAAAAAB4AAAAB/8AAAAAAAAAAAAAAAAAAAAAH9wc374AAAf/////8AAAAAAAAAAAAH4AAAA////AAAB/gAAAAAAAAAAAAAAAAwAAA/QAAAH/////8AAAAAAAAAAAAOAAAAP///wAAAAAAAAAAAAAAAAAAAAP8AYe+c3AAAD/////4AAAAAAAAAAAA4AAAH////++HgAOAAAAAAAAAAAAAAAfv+4+w/4gAAB/////wAAAAAAAAAAADwAHgH///////4AfgAAAAAgAAAAAAAAPf/4O4//9AAB/////wAAAAAAAAAAADwAPb////////4m//gAAAAAAAf+AAAAAA/+A8f//4AB////8gAAAAAAA/gAAAAAfv/////////////8AAAAAB///+H//H/+PeDwf+AA3////AAAAAAA//4AAAA8fv///////////////P8gAf////////A4CPz4H8AAP///wAAAAAAD///wADH/n3/////////////////8AD////////////34Z/wA///4AAAAAAAP///+M////n/////////////////+4E/////////////gD/8Af//gAAAAAAAf//5+P////f/////////////////fw/////////////6AD8YAf/wAAf8AAAA/8f+D///////////////////////AgEf///////////zw7/AAP/gAAP4AAAB/4/+f//////////////////////8AMAf//////////+DIA/gAH/gAAAAAAAH/z/////////////////////////+AAH///////////8AwgOAAD+AAAAAAAA//H/////////////////////////6AAP///////////wAA/AAAB+AAAAAAAB/+H//////////////////////nP+AAAH//z////////wAA/wAAAOAAAAAAAB//D/////////////////////+A/4AAAA/zAD///////gAA/4wAAAAAAAAAAB//Ab///////////////////+eDgAAAAABwAA///////4AA/94AAAAAAAAAYA5+A///////////////////4AAHAAAAAADcAAD//////4AAf/8AAAAAAAAA8AC+C///////////////////wAAfgAAAAAMAAAA///////wAf/8AAAAAAAAA4AO8H///////////////////AAA/gAAAABgAAAA///////8A///AAAAAAAAA8ANwH//////////////////8AAB/AAAAAEAAAAAf///////z///4AAAAAAAHOAEDv//////////////////+AAA+AAAAAAAAAABH///////x///8AAAAAAAHHAf/////////////////////6AA8AAAAAAAAAAAD///////x///8AAAAAAAGPz//////////////////////6AAwAAAAAAAAAAAD///////9///6AAAAAAAAPj//////////////////////6AAQAAAAAAAAAAAC///////////EAAAAAAAAYf//////////////////////7AAAAAAAAAAAAAABv////////+MNAAAAAAAAD///////////////////////zAAAAAAAAAAAAAAAH////////7gfgAAAAAAAf///////////////////////yAAAAAAAAAAAAAAAL/////////gCgAAAAAAAH///////////////////////iAAAAAAAAAAAAAAAP/////////pAAAAAAAAAD/////uP/x//////////////DAAAAAAAAAAAAAAAP/////////+AAAAAAAAAB//v//Gf/B/////////////+AAAAAAAAAAAAAAAAP////////8wAAAAAAAAAB//H/+AP+P/////////////8CAAAAAAAAAAAAAAAP////////wAAAAAAAAADj/jz/8AD/H/////////////4HgAAAAAAAAAAAAAAP////////gAAAAAAAAAH/4Bw/8AA/B////////////+APAAAAAAAAAAAAAAAP////////gAAAAAAAAAH/wA8f8Ph/g////////////8AAAAAAAAAAAAAAAAAP///////8AAAAAAAAAAH/gMHfJ///x///////////v4AMAAAAAAAAAAAAAAAP///////8AAAAAAAAAAH/AMCOP///h//////////+JwAMAAAAAAAAAAAAAAAH///////4AAAAAAAAAAH/AAAHH///g//////////8BwAIAAAAAAAAAAAAAAAH///////wAAAAAAAAAAH+AAYGH///w//////////+w4A4AAAAAAAAAAAAAAAD///////wAAAAAAAAAAAgf+ACBs//////////////g4D4AAAAAAAAAAAAAAAB///////wAAAAAAAAAAAj/+AAAA//////////////AYf4AAAAAAAAAAAAAAAA///////gAAAAAAAAAAB//8AAAA//////////////Ah2AAAAAAAAAAAAAAAAAP/////+AAAAAAAAAAAD//+AAAB//////////////gDwAAAAAAAAAAAAAAAAAH/////8AAAAAAAAAAAH///4GAB//////////////gDAAAAAAAAAAAAAAAAAAG/////4AAAAAAAAAAAP///8P4h//////////////wCAAAAAAAAAAAAAAAAAACf////4AAAAAAAAAAAP////v////////////////gAAAAAAAAAAAAAAAAAAABP//hgYAAAAAAAAAAAP//////3//P///////////wAAAAAAAAAAAAAAAAAAAAv//AAYAAAAAAAAAAAf//////9//H///////////wAAAAAAAAAAAAAAAAAAAB3/+AAcAAAAAAAAAAB///////4//h///////////gAAAAAAAAAAAAAAAAAAAAR/+AANAAAAAAAAAAD///////8//wH//////////AAAAAAAAAAAAAAAAAAAAAJ/+AAEAAAAAAAAAAH///////+f/0B/////////+AAAAAAAAAAAAAAAAAAAAAI/8AAAAAAAAAAAAAH///////+f/44Af///////+QAAAAAAAAAAAAAAAAAAAAAf8AAAAAAAAAAAAAP////////H//+AP///////4gAAAAAAAAAAAAAAAAAAAAAP8AAuAAAAAAAAAAP////////H///AD///v///ggAAAAAAAAAAAAAAAAAAAAAH+AABgAAAAAAAAAf////////n//+AD//4P//YAAAAAAAAAAAAAAAAAAAAAAAP+A4AYAAAAAAAAAP////////j//+AAf/4H/+AAAAAAAAAAAAAAAAgAAAAAAAH/B4ABwAAAAAAAAP////////h//8AAf/gD/8YAAAAAAAAAAAAAAAAAAAAAAAD/nwAD9AAAAAAAAP////////x//4AAf/AD/8QAAAAAAAAAAAAAAAAAAAAAAAAf/wAAAAAAAAAAAP////////4//gAAf+AD/+AAwAAAAAAAAAAAAAAAAAAAAAAH/wAAAAAAAAAAAf////////4f+AAAf8AD//AAwAAAAAAAAAAAAAAAAAAAAAAAH/AAAAAAAAAAAf////////8f8AAAPwAAP/gAwAAAAAAAAAAAAAAAAAAAAAAAD/gAAAAAAAAAAf////////+fgAAAPwAAP/gAwAAAAAAAAAAAAAAAAAAAAAAAA/AAAAAAAAAAAf/////////eAAAAHwAAP/gAMAAAAAAAAAAAAAAAAAAAAAAAAHgAAAAAAAAAAf/////////gAAAAHwAAM/gACAAAAAAAAAAAAAAAAAAAAAAAADABAAAAAAAAAP/////////gYAAADwAAEfgAJAAAAAAAAAAAAAAAAAAAAAAAADgPfOAAAAAAAH/////////34AAADwAAIOABAAAAAAAAAAAAAAAAAAAAAAAAAAyPf+AAAAAAAD//////////4AAADoAAIEACBAAAAAAAAAAAAAAAAAAAAAAAAA8///AAAAAAAB//////////wAAABIAAMAAAFAAAAAAAAAAAAAAAAAAAAAAAAAE///gAAAAAAB//////////wAAAAMAAEAAALgAAAAAAAAAAAAAAAAAAAAAAAAAf//wAAAAAAAf/////////gAAAAMAADAAMCAAAAAAAAAAAAAAAAAAAAAAAAAA////gAAAAAAP/B///////gAAAAAAADgAOAAAAAAAAAAAAAAAAAAAAAAAAAAAf///wAAAAAACAA///////AAAAAAAAxgA+AAAAAAAAAAAAAAAAAAAAAAAAAAAf///4AAAAAAAAAD/////+AAAAAAAAZgB4AAAAAAAAAAAAAAAAAAAAAAAAAAB////4AAAAAAAAAD/////8AAAAAAAAMwH8AAAAAAAAAAAAAAAAAAAAAAAAAAB////8AAAAAAAAAH/////4AAAAAAAAHQf8AIAAAAAAAAAAAAAAAAAAAAAAAAD////8AAAAAAAAAH/////gAAAAAAAAHgf88IAAAAAAAAAAAAAAAAAAAAAAAAD////+AAAAAAAAAH/////AAAAAAAAADwf8AAgAAAAAAAAAAAAAAAAAAAAAAAH/////4AAAAAAAAH/////AAAAAAAAABwP5wBwAAAAAAAAAAAAAAAAAAAAAAAH/////6AAAAAAAAD////+AAAAAAAAAB8P5wATwAAAAAAAAAAAAAAAAAAAAAAD//////4AAAAAAAB////8AAAAAAAAAA8AxQif+AAAAAAAAAAAAAAAAAAAAAAH//////8AAAAAAAB////4AAAAAAAAAAcAAIAD/gAAAAAAAAAAAAAAAAAAAAAH///////gAAAAAAA////4AAAAAAAAAAMAAIAI/ywAAAAAAAAAAAAAAAAAAAAH///////gAAAAAAA////4AAAAAAAAAADgAAAI/8BAAAAAAAAAAAAAAAAAAAAD///////gAAAAAAAf///4AAAAAAAAAAB+AAAA/4AIAAAAAAAAAAAAAAAAAAAB///////gAAAAAAAf///4AAAAAAAAAAAAmogAOMAAAAAAAAAAAAAAAAAAAAAB///////AAAAAAAAf///8AAAAAAAAAAAABCAAAGADAAAAAAAAAAAAAAAAAAAA///////AAAAAAAAf///8AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAf/////+AAAAAAAAP///8AAAAAAAAAAAAAAAgCAAAAAAAAAAAAAAAAAAAAAAAf/////8AAAAAAAAf///+AQAAAAAAAAAAAAB+CAAAAAAAAAAAAAAAAAAAAAAAP/////4AAAAAAAAf///+AQAAAAAAAAAAAAD8DAAAAAAAAAAAAAAAAAAAAAAAP/////4AAAAAAAA////+AwAAAAAAAAAAAA38DgAAAAAAAAAAAAAAAAAAAAAAH/////4AAAAAAAA////8BwAAAAAAAAAAAD/8DgAAAAAAAAAAAAAAAAAAAAAAB/////4AAAAAAAA////8PwAAAAAAAAAAAD//HwAABABAAAAAAAAAAAAAAAAAAf////4AAAAAAAA////wPgAAAAAAAAAAAP//3wAAAACAAAAAAAAAAAAAAAAAAP////wAAAAAAAA////APgAAAAAAAAAAAP///wAAAAAAAAAAAAAAAAAAAAAAAP////wAAAAAAAAf//+APgAAAAAAAAAAAf///4AAAAAAAAAAAAAAAAAAAAAAAP////wAAAAAAAAf//+APgAAAAAAAAAAD////+AAIAAAAAAAAAAAAAAAAAAAAP////gAAAAAAAAP//+AfAAAAAAAAAAAf////+AAEAAAAAAAAAAAAAAAAAAAAP////AAAAAAAAAP///AfAAAAAAAAAAA//////AAAAAAAAAAAAAAAAAAAAAAAP///4AAAAAAAAAP//+APAAAAAAAAAAA//////gAAAAAAAAAAAAAAAAAAAAAAf///gAAAAAAAAAH//+AOAAAAAAAAAAB//////wAAAAAAAAAAAAAAAAAAAAAAf///AAAAAAAAAAH//4AEAAAAAAAAAAA//////4AAAAAAAAAAAAAAAAAAAAAAf//+AAAAAAAAAAH//4AAAAAAAAAAAAB//////4AAAAAAAAAAAAAAAAAAAAAAf//+AAAAAAAAAAH//4AAAAAAAAAAAAA//////4AAAAAAAAAAAAAAAAAAAAAAf//+AAAAAAAAAAD//wAAAAAAAAAAAAAf/////8AAAAAAAAAAAAAAAAAAAAAAf//8AAAAAAAAAAB//gAAAAAAAAAAAAAf/////4AAAAAAAAAAAAAAAAAAAAAA///8AAAAAAAAAAB//gAAAAAAAAAAAAAf/////4AAAAAAAAAAAAAAAAAAAAAA///4AAAAAAAAAAA//AAAAAAAAAAAAAAP/////4AAAAAAAAAAAAAAAAAAAAAAf//wAAAAAAAAAAA/+AAAAAAAAAAAAAAP/AP//wAAAAAAAAAAAAAAAAAAAAAA///gAAAAAAAAAAA/4AAAAAAAAAAAAAAf8AG//gAAAAAAAAAAAAAAAAAAAAAA//3AAAAAAAAAAAAYAAAAAAAAAAAAAAAOAAF//gAAAAAAAAAAAAAAAAAAAAAB//4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//AAABAAAAAAAAAAAAAAAAAAB//4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/AAAAgAAAAAAAAAAAAAAAAAD//4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/AAAAQAAAAAAAAAAAAAAAAAB//gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABYAAAAcAAAAAAAAAAAAAAAAAB/8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAAAAD/8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAAAAD/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcAAADQAAAAAAAAAAAAAAAAAD/4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcAAAHAAAAAAAAAAAAAAAAAAB/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAOAAAAAAAAAAAAAAAAAAD/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAAAAAH+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB4AAAAAAAAAAAAAAAAAAH+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAAAH/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP8AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH4BwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAABwAAAAAAAAAAAAAAAAAAH4AAAAAAB4HgAD8AAAAAAAAAAAAAAAAAAAAAAAAADgAAAAAAAAAAAAAAAAAA//AAAD//////////wAAAAAAAAAAAAAAAAAAAAAAADgAAAAAAAAAAAAAAAAAf///4Af///////////AAAAAAAAAAAAAAAAAAAAAAAz4AAAAAAAAAAAAAAAPz////8B/////////////wAAAAAAAAAAAAAAAAAAAAA78AAAAAAAAAAA8/8///////wf/////////////+AAAAAAAAAAAAAAAAAAAAH9+AAAAAAAAZ////////////w////////////////4AAAAAAAAAAAAAAAAAAAB+AAAAAAAB//////////////////////////////4AAAAAAAAABmAAB8f+HB/+AAAAAAAP//////////////////////////////gAAAAAAAAP/c/oAf/////4AAAAAAAP/////////////////////////////8AAAAAAAD/////////////gAAAAAAB//////////////////////////////wAAAAAAAD////////////wAAAAAAP///////////////////////////////wAAAAAD/////////////4AAAAAAD////////////////////////////////wAAAADh/////////////AAAAB8A/////////////////////////////////+AAAAA4Af///////////gAAAH+AA///////////////////////////////+AAAAAAAAH///////////+A/A/wAA///////////////////////////////8AAAAAAAf//////////////gAAAf////////////////////////////////+AAAAAAAH///////////////h////////////////////////////////////wAAAAAAP/////////////////////////////////////////////////////gA+/gAAH/////////////////////////////////////////////////////8/////v//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////';
+const ANTHROPIC = [37.78, -122.4];
+const PLACES = {
+  'America/Los_Angeles': [34.05, -118.24], 'America/Vancouver': [49.28, -123.12], 'America/Denver': [39.74, -104.99], 'America/Phoenix': [33.45, -112.07],
+  'America/Chicago': [41.88, -87.63], 'America/Mexico_City': [19.43, -99.13], 'America/New_York': [40.71, -74.01], 'America/Toronto': [43.65, -79.38],
+  'America/Halifax': [44.65, -63.57], 'America/Bogota': [4.71, -74.07], 'America/Lima': [-12.05, -77.04], 'America/Santiago': [-33.45, -70.67],
+  'America/Sao_Paulo': [-23.55, -46.63], 'America/Argentina/Buenos_Aires': [-34.6, -58.38], 'America/Caracas': [10.48, -66.9], 'America/Anchorage': [61.22, -149.9],
+  'Pacific/Honolulu': [21.31, -157.86], 'Atlantic/Reykjavik': [64.15, -21.94], 'Europe/London': [51.51, -0.13], 'Europe/Dublin': [53.35, -6.26],
+  'Europe/Lisbon': [38.72, -9.14], 'Europe/Madrid': [40.42, -3.7], 'Europe/Paris': [48.86, 2.35], 'Europe/Brussels': [50.85, 4.35],
+  'Europe/Amsterdam': [52.37, 4.9], 'Europe/Berlin': [52.52, 13.4], 'Europe/Zurich': [47.38, 8.54], 'Europe/Rome': [41.9, 12.5],
+  'Europe/Vienna': [48.21, 16.37], 'Europe/Prague': [50.08, 14.44], 'Europe/Warsaw': [52.23, 21.01], 'Europe/Stockholm': [59.33, 18.07],
+  'Europe/Oslo': [59.91, 10.75], 'Europe/Copenhagen': [55.68, 12.57], 'Europe/Helsinki': [60.17, 24.94], 'Europe/Athens': [37.98, 23.73],
+  'Europe/Bucharest': [44.43, 26.1], 'Europe/Kiev': [50.45, 30.52], 'Europe/Kyiv': [50.45, 30.52], 'Europe/Istanbul': [41.01, 28.98],
+  'Europe/Moscow': [55.76, 37.62], 'Africa/Casablanca': [33.57, -7.59], 'Africa/Lagos': [6.52, 3.38], 'Africa/Cairo': [30.04, 31.24],
+  'Africa/Nairobi': [-1.29, 36.82], 'Africa/Johannesburg': [-26.2, 28.05], 'Asia/Jerusalem': [31.77, 35.21], 'Asia/Riyadh': [24.71, 46.68],
+  'Asia/Dubai': [25.2, 55.27], 'Asia/Tehran': [35.69, 51.39], 'Asia/Karachi': [24.86, 67.01], 'Asia/Tashkent': [41.3, 69.24],
+  'Asia/Kolkata': [22.57, 88.36], 'Asia/Calcutta': [22.57, 88.36], 'Asia/Kathmandu': [27.72, 85.32], 'Asia/Dhaka': [23.81, 90.41],
+  'Asia/Bangkok': [13.76, 100.5], 'Asia/Jakarta': [-6.21, 106.85], 'Asia/Ho_Chi_Minh': [10.82, 106.63], 'Asia/Singapore': [1.35, 103.82],
+  'Asia/Kuala_Lumpur': [3.14, 101.69], 'Asia/Manila': [14.6, 120.98], 'Asia/Hong_Kong': [22.32, 114.17], 'Asia/Shanghai': [31.23, 121.47],
+  'Asia/Taipei': [25.03, 121.57], 'Asia/Seoul': [37.57, 126.98], 'Asia/Tokyo': [35.68, 139.69], 'Australia/Perth': [-31.95, 115.86],
+  'Australia/Adelaide': [-34.93, 138.6], 'Australia/Brisbane': [-27.47, 153.03], 'Australia/Sydney': [-33.87, 151.21], 'Australia/Melbourne': [-37.81, 144.96],
+  'Pacific/Auckland': [-36.85, 174.76],
+};
+
+const globe = (() => {
+  const art = $('#now-art');
+  const canvas = $('#globe');
+  const gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: true, antialias: true });
+  if (!gl) { art.hidden = true; return { pulse() {} }; }
+  const RAD = Math.PI / 180;
+  const vec = (lat, lng) => [Math.cos(lat * RAD) * Math.sin(lng * RAD), Math.sin(lat * RAD), Math.cos(lat * RAD) * Math.cos(lng * RAD)];
+  const latLng = (p) => [Math.asin(Math.max(-1, Math.min(1, p[1]))) / RAD, Math.atan2(p[0], p[2]) / RAD];
+
+  const bits = Uint8Array.from(atob(LAND), (c) => c.charCodeAt(0));
+  const isLand = (lat, lng) => {
+    const i = Math.min(179, Math.max(0, Math.floor(90 - lat))) * 360 + ((Math.floor(lng + 180) % 360) + 360) % 360;
+    return (bits[i >> 3] >> (7 - (i & 7))) & 1;
+  };
+
+  // Land dots on a Fibonacci lattice: evenly spaced, with no seams or crowding at the poles.
+  const land = [];
+  const COUNT = 18000;
+  const golden = Math.PI * (3 - Math.sqrt(5));
+  for (let i = 0; i < COUNT; i++) {
+    const y = 1 - (2 * (i + 0.5)) / COUNT;
+    const r = Math.sqrt(1 - y * y);
+    const p = [Math.cos(i * golden) * r, y, Math.sin(i * golden) * r];
+    const [lat, lng] = latLng(p);
+    if (isLand(lat, lng)) land.push(p[0], p[1], p[2]);
+  }
+
+  function here() {
+    let tz = '';
+    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch {}
+    if (PLACES[tz]) return PLACES[tz];
+    const lng = Math.max(-179, Math.min(179, -new Date().getTimezoneOffset() / 4));
+    const south = /^(Australia|Pacific\/Auckland|America\/(Argentina|Sao_Paulo|Santiago|Lima|Montevideo)|Africa\/(Johannesburg|Maputo|Harare))/.test(tz);
+    return [south ? -25 : 30, lng];
+  }
+  const you = vec(...here());
+  const them = vec(...ANTHROPIC);
+  const span = Math.acos(Math.max(-1, Math.min(1, you[0] * them[0] + you[1] * them[1] + you[2] * them[2])));
+  function arcAt(t) {
+    let p = you;
+    if (span > 1e-4) {
+      const a = Math.sin((1 - t) * span) / Math.sin(span);
+      const b = Math.sin(t * span) / Math.sin(span);
+      p = [you[0] * a + them[0] * b, you[1] * a + them[1] * b, you[2] * a + them[2] * b];
+    }
+    const lift = 1 + Math.min(0.3, 0.06 + span * 0.14) * Math.sin(Math.PI * t);
+    return [p[0] * lift, p[1] * lift, p[2] * lift];
+  }
+  // Rest facing the middle of the route, tipped a little toward the equator.
+  const [midLat, midLng] = latLng(arcAt(0.5));
+  const home = { yaw: -midLng * RAD, pitch: (midLat * 0.75) * RAD };
+
+  // ---- shaders
+  const compile = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+  const program = (vs, fs) => {
+    const p = gl.createProgram();
+    gl.attachShader(p, compile(gl.VERTEX_SHADER, vs));
+    gl.attachShader(p, compile(gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+    return p;
+  };
+  let dotsProg;
+  let bodyProg;
+  try {
+    dotsProg = program(`
+      attribute vec3 aPos; attribute float aSize; attribute float aAlpha;
+      uniform mat3 uRot; uniform vec2 uScale; uniform vec2 uCenter; uniform float uPx; uniform mediump float uMode;
+      varying float vA; varying float vZ;
+      void main() {
+        vec3 p = uRot * aPos;
+        vZ = p.z;
+        float vis = uMode < 0.5 ? smoothstep(-0.02, 0.3, p.z) : max(step(0.0, p.z), step(1.0, length(p.xy)));
+        vA = aAlpha * vis;
+        gl_Position = vec4(uCenter + p.xy * uScale, 0.0, 1.0);
+        gl_PointSize = aSize * uPx * (uMode < 0.5 ? 0.6 + 0.4 * max(p.z, 0.0) : 1.0);
+      }`, `
+      precision mediump float;
+      uniform vec3 uColor; uniform vec3 uColor2; uniform float uMode;
+      varying float vA; varying float vZ;
+      void main() {
+        float d = length(gl_PointCoord - 0.5);
+        float a = uMode < 1.5 ? smoothstep(0.5, 0.3, d) : exp(-d * d * 16.0);
+        vec3 c = uMode < 0.5 ? mix(uColor2, uColor, smoothstep(0.05, 0.85, vZ)) : uColor;
+        a *= vA;
+        if (a < 0.004) discard;
+        gl_FragColor = vec4(c * a, a);
+      }`);
+    bodyProg = program(`
+      attribute vec2 aQuad;
+      void main() { gl_Position = vec4(aQuad, 0.0, 1.0); }`, `
+      precision mediump float;
+      uniform vec2 uC; uniform float uR; uniform vec3 uBody; uniform vec3 uRim; uniform vec3 uAura; uniform float uAuraA;
+      void main() {
+        vec2 p = (gl_FragCoord.xy - uC) / uR;
+        float d = length(p);
+        float inside = clamp((1.0 - d) * uR + 0.5, 0.0, 1.0);
+        float z = sqrt(max(0.0, 1.0 - d * d));
+        float lit = clamp(dot(vec3(p, z), normalize(vec3(-0.5, 0.6, 0.65))), 0.0, 1.0);
+        float rim = pow(1.0 - z, 2.6);
+        vec3 body = uBody * (0.9 + 0.1 * lit) + uRim * rim * 0.75;
+        float aura = exp(-pow(max(d - 1.0, 0.0) * 7.0, 1.3)) * (1.0 - inside) * uAuraA;
+        gl_FragColor = vec4(body * inside, inside) + vec4(uAura * aura, aura);
+      }`);
+  } catch {
+    art.hidden = true;
+    return { pulse() {} };
+  }
+  const loc = (p, names) => Object.fromEntries(names.map((n) => [n, n[0] === 'a' ? gl.getAttribLocation(p, n) : gl.getUniformLocation(p, n)]));
+  const D = loc(dotsProg, ['aPos', 'aSize', 'aAlpha', 'uRot', 'uScale', 'uCenter', 'uPx', 'uMode', 'uColor', 'uColor2']);
+  const B = loc(bodyProg, ['aQuad', 'uC', 'uR', 'uBody', 'uRim', 'uAura', 'uAuraA']);
+  const landBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, landBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(land), gl.STATIC_DRAW);
+  const quadBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+  const sparkBuf = gl.createBuffer();
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
+  let colors = {};
+  function readColors() {
+    const cs = getComputedStyle(document.documentElement);
+    const rgb = (name) => cs.getPropertyValue(name).trim().split(/\s+/).map((v) => Number(v) / 255);
+    colors = { body: rgb('--globe-body'), rim: rgb('--globe-rim'), dot: rgb('--globe-dot'), back: rgb('--globe-dot-back'), arc: rgb('--globe-arc'), aura: rgb('--globe-aura'), auraA: Number(cs.getPropertyValue('--globe-aura-a')) || 0.1 };
+  }
+
+  // ---- layout
+  let W = 0;
+  let H = 0;
+  let dpr = 1;
+  let R = 1;
+  let cx = 0;
+  let cy = 0;
+  function resize() {
+    const r = art.getBoundingClientRect();
+    W = Math.max(1, r.width);
+    H = Math.max(1, r.height);
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    R = Math.min(W * 0.44, H * 0.56);
+    cx = W * 0.54;
+    cy = H * 0.52;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+
+  // ---- motion: drag 1:1, coast on release, then a critically damped spring back home
+  const view = { yaw: home.yaw + (reduced.matches ? 0 : 0.9), pitch: home.pitch, vy: 0, vp: 0 };
+  const hover = { x: 0, y: 0, tx: 0, ty: 0 };
+  let drag = null;
+  let releasedAt = -1e9;
+  let comets = [];
+  let running = false;
+  let visible = true;
+  let last = 0;
+  const wrap = (a) => Math.atan2(Math.sin(a), Math.cos(a));
+  const band = (v, lo, hi) => (v < lo ? lo - (lo - v) * 0.35 : v > hi ? hi + (v - hi) * 0.35 : v);
+
+  function matrix() {
+    const c = Math.cos(view.yaw);
+    const s = Math.sin(view.yaw);
+    const cp = Math.cos(view.pitch);
+    const sp = Math.sin(view.pitch);
+    return [c, sp * s, -cp * s, 0, cp, sp, s, -sp * c, cp * c];
+  }
+  const apply = (m, p) => [m[0] * p[0] + m[3] * p[1] + m[6] * p[2], m[1] * p[0] + m[4] * p[1] + m[7] * p[2], m[2] * p[0] + m[5] * p[1] + m[8] * p[2]];
+
+  function physics(dt, now) {
+    if (drag) return true;
+    let moving = false;
+    const coasting = Math.hypot(view.vy, view.vp) > 0.05 && now - releasedAt < 1500;
+    if (coasting && !reduced.matches) {
+      view.yaw += view.vy * dt;
+      view.pitch = band(view.pitch + view.vp * dt, -1.1, 1.1);
+      const f = Math.exp(-dt / 0.45);
+      view.vy *= f;
+      view.vp *= f;
+      moving = true;
+    } else if (now - releasedAt > 2400 || releasedAt < 0) {
+      hover.x += (hover.tx - hover.x) * Math.min(1, dt * 6);
+      hover.y += (hover.ty - hover.y) * Math.min(1, dt * 6);
+      const ty = home.yaw + hover.x * 0.22;
+      const tp = home.pitch + hover.y * 0.16;
+      if (reduced.matches) {
+        view.yaw = ty;
+        view.pitch = tp;
+        view.vy = view.vp = 0;
+      } else {
+        const w = (2 * Math.PI) / 1.1;
+        const k = w * w;
+        const c = 2 * w;
+        const ey = wrap(view.yaw - ty);
+        view.vy += (-k * ey - c * view.vy) * dt;
+        view.vp += (-k * (view.pitch - tp) - c * view.vp) * dt;
+        view.yaw = ty + ey + view.vy * dt;
+        view.pitch += view.vp * dt;
+        moving = Math.abs(ey) > 1e-4 || Math.abs(view.pitch - tp) > 1e-4 || Math.hypot(view.vy, view.vp) > 1e-3 || Math.abs(hover.tx - hover.x) > 1e-3 || Math.abs(hover.ty - hover.y) > 1e-3;
+      }
+    } else {
+      view.vy = view.vp = 0;
+      moving = true;
+    }
+    return moving;
+  }
+
+  // ---- drawing
+  function sparks(now) {
+    const glow = [];
+    const crisp = [];
+    const white = [];
+    const push = (list, p, size, alpha) => list.push(p[0], p[1], p[2], size, alpha);
+    for (let i = 0; i <= 60; i++) push(crisp, arcAt(i / 60), 1.5, 0.5);
+    const swell = comets.reduce((m, c) => Math.max(m, c.swell || 0), 0);
+    push(glow, you, 22, 0.3);
+    push(crisp, you, 6.5, 1);
+    push(white, you, 2.4, 1);
+    push(glow, them, 16 + swell * 16, 0.22 + swell * 0.4);
+    push(crisp, them, 5, 1);
+    for (const c of comets) {
+      for (let k = 0; k < 14; k++) {
+        const t = c.t - (c.dir * k) * 0.014;
+        if (t < 0 || t > 1) continue;
+        push(glow, arcAt(t), 12 - k * 0.7, (1 - k / 14) * 0.9 * c.fade);
+      }
+      push(white, arcAt(c.t), 3.2, c.fade);
+    }
+    return { glow, crisp, white };
+  }
+
+  function draw(now) {
+    const m = matrix();
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    // The sphere and its atmosphere.
+    gl.useProgram(bodyProg);
+    gl.bindBuffer(gl.ARRAY_BUFFER, quadBuf);
+    gl.enableVertexAttribArray(B.aQuad);
+    gl.vertexAttribPointer(B.aQuad, 2, gl.FLOAT, false, 0, 0);
+    gl.uniform2f(B.uC, cx * dpr, (H - cy) * dpr);
+    gl.uniform1f(B.uR, R * dpr);
+    gl.uniform3fv(B.uBody, colors.body);
+    gl.uniform3fv(B.uRim, colors.rim);
+    gl.uniform3fv(B.uAura, colors.aura);
+    gl.uniform1f(B.uAuraA, colors.auraA);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    gl.disableVertexAttribArray(B.aQuad);
+    // The land.
+    gl.useProgram(dotsProg);
+    gl.uniformMatrix3fv(D.uRot, false, new Float32Array(m));
+    gl.uniform2f(D.uScale, (R / W) * 2, (R / H) * 2);
+    gl.uniform2f(D.uCenter, (cx / W) * 2 - 1, 1 - (cy / H) * 2);
+    gl.uniform1f(D.uPx, dpr);
+    gl.bindBuffer(gl.ARRAY_BUFFER, landBuf);
+    gl.enableVertexAttribArray(D.aPos);
+    gl.vertexAttribPointer(D.aPos, 3, gl.FLOAT, false, 0, 0);
+    gl.disableVertexAttribArray(D.aSize);
+    gl.disableVertexAttribArray(D.aAlpha);
+    gl.vertexAttrib1f(D.aSize, Math.max(1.1, Math.min(2.3, R * 0.0165)));
+    gl.vertexAttrib1f(D.aAlpha, 1);
+    gl.uniform1f(D.uMode, 0);
+    gl.uniform3fv(D.uColor, colors.dot);
+    gl.uniform3fv(D.uColor2, colors.back);
+    gl.drawArrays(gl.POINTS, 0, land.length / 3);
+    // The route, the two ends and any requests in flight.
+    const s = sparks(now);
+    const all = new Float32Array([...s.glow, ...s.crisp, ...s.white]);
+    gl.bindBuffer(gl.ARRAY_BUFFER, sparkBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, all, gl.DYNAMIC_DRAW);
+    gl.enableVertexAttribArray(D.aSize);
+    gl.enableVertexAttribArray(D.aAlpha);
+    gl.vertexAttribPointer(D.aPos, 3, gl.FLOAT, false, 20, 0);
+    gl.vertexAttribPointer(D.aSize, 1, gl.FLOAT, false, 20, 12);
+    gl.vertexAttribPointer(D.aAlpha, 1, gl.FLOAT, false, 20, 16);
+    const runs = [[s.glow.length / 5, 2, colors.arc], [s.crisp.length / 5, 1, colors.arc], [s.white.length / 5, 1, [1, 1, 1]]];
+    let first = 0;
+    for (const [count, mode, color] of runs) {
+      gl.uniform1f(D.uMode, mode);
+      gl.uniform3fv(D.uColor, color);
+      if (count) gl.drawArrays(gl.POINTS, first, count);
+      first += count;
+    }
+    gl.disableVertexAttribArray(D.aSize);
+    gl.disableVertexAttribArray(D.aAlpha);
+    placeLabel($('#label-you'), apply(m, you), 'below');
+    placeLabel($('#label-them'), apply(m, them), 'above');
+  }
+
+  function placeLabel(el, p, side) {
+    const x = cx + p[0] * R;
+    const y = cy - p[1] * R + (side === 'below' ? 16 : -16);
+    const on = p[2] > 0.2 && x > 50 && x < W - 30 && y > 10 && y < H - 10;
+    el.classList.toggle('on', on);
+    el.style.transform = `translate(${(x - el.offsetWidth / 2).toFixed(1)}px, ${(y - el.offsetHeight / 2).toFixed(1)}px)`;
+  }
+
+  function tick(now) {
+    comets = comets.filter((c) => {
+      const age = now - c.at;
+      const out = 950;
+      const pause = 160;
+      const back = 800;
+      if (age < out) { c.dir = 1; c.t = easeInOut(age / out); c.fade = 1; c.swell = 0; return true; }
+      if (age < out + pause) { c.t = 1; c.fade = 0; c.swell = Math.sin(((age - out) / pause) * Math.PI); return true; }
+      if (age < out + pause + back) { c.dir = -1; c.t = 1 - easeInOut((age - out - pause) / back); c.fade = 0.65; c.swell = 0; return true; }
+      return false;
+    });
+    return comets.length > 0;
+  }
+  const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+  function frame(now) {
+    const dt = Math.min(1 / 30, Math.max(1 / 240, (now - last) / 1000 || 1 / 60));
+    last = now;
+    const a = physics(dt, now);
+    const b = tick(now);
+    draw(now);
+    if ((a || b) && visible && !document.hidden) requestAnimationFrame(frame);
+    else running = false;
+  }
+  function wake() {
+    if (running || !visible) return;
+    running = true;
+    last = performance.now();
+    requestAnimationFrame(frame);
+  }
+
+  canvas.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return;
+    canvas.setPointerCapture(e.pointerId);
+    drag = { id: e.pointerId, x: e.clientX, y: e.clientY, hist: [{ x: e.clientX, y: e.clientY, t: performance.now() }] };
+    view.vy = view.vp = 0;
+    art.classList.add('grabbing');
+    wake();
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    const r = art.getBoundingClientRect();
+    if (!drag) {
+      if (e.pointerType === 'mouse') { hover.tx = (e.clientX - r.left) / r.width - 0.5; hover.ty = (e.clientY - r.top) / r.height - 0.5; wake(); }
+      return;
+    }
+    if (e.pointerId !== drag.id) return;
+    view.yaw += (e.clientX - drag.x) / R;
+    view.pitch = band(view.pitch + (e.clientY - drag.y) / R, -1.1, 1.1);
+    drag.x = e.clientX;
+    drag.y = e.clientY;
+    const now = performance.now();
+    drag.hist.push({ x: e.clientX, y: e.clientY, t: now });
+    while (drag.hist.length > 2 && now - drag.hist[0].t > 100) drag.hist.shift();
+    wake();
+  });
+  const release = () => {
+    if (!drag) return;
+    const h = drag.hist;
+    const a = h[0];
+    const b = h[h.length - 1];
+    const dt = Math.max(0.008, (b.t - a.t) / 1000);
+    if (performance.now() - b.t < 80) { view.vy = (b.x - a.x) / dt / R; view.vp = (b.y - a.y) / dt / R; }
+    drag = null;
+    releasedAt = performance.now();
+    art.classList.remove('grabbing');
+    wake();
+  };
+  canvas.addEventListener('pointerup', release);
+  canvas.addEventListener('pointercancel', release);
+  canvas.addEventListener('pointerleave', () => { hover.tx = hover.ty = 0; wake(); });
+  canvas.addEventListener('webglcontextlost', () => { art.hidden = true; });
+
+  readColors();
+  resize();
+  if (window.ResizeObserver) new ResizeObserver(() => { resize(); draw(performance.now()); }).observe(art);
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { readColors(); draw(performance.now()); });
+  if (window.IntersectionObserver) new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; if (visible) wake(); }).observe(art);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) wake(); });
+  draw(performance.now());
+  wake();
+
+  return {
+    pulse() {
+      if (reduced.matches || comets.length > 5) return;
+      comets.push({ at: performance.now(), t: 0, dir: 1, fade: 1, swell: 0 });
+      wake();
+    },
+  };
+})();
+
+// ------------------------------------------------------------------ the app icon and tab icon
+
+const LOOP_D = 'M32 32C27 22 11 21 11 32C11 43 27 42 32 32C37 22 53 21 53 32C53 43 37 42 32 32Z';
+const TILE_D = 'M32 0C8.6 0 0 8.6 0 32s8.6 32 32 32 32-8.6 32-32S55.4 0 32 0Z';
+
+// The loop draws itself once on load, and a light runs round it for each gateway request.
+const logo = (() => {
+  const glintEl = $('#ai-glint');
+  play($('#ai-loop'), [{ strokeDashoffset: 100 }, { strokeDashoffset: 0 }], { ms: 1100, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' });
+  const run = () => play(glintEl, [{ strokeDashoffset: 10, opacity: 0 }, { opacity: 0.9, offset: 0.2 }, { opacity: 0.9, offset: 0.8 }, { strokeDashoffset: -100, opacity: 0 }], { ms: 900, easing: 'ease-in-out' });
+  $('#app-icon').addEventListener('pointerenter', run);
+  return { pulse: run };
+})();
+
+// The tab icon is the same tile. Its loop lights up for each gateway request, and it turns
+// red while every API key is used up, so the relay can be watched from the tab bar.
+const favicon = (() => {
+  const link = $('#favicon');
+  const svgFor = (top, bottom) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${top}"/><stop offset="1" stop-color="${bottom}"/></linearGradient></defs><path d="${TILE_D}" fill="url(#g)"/><path d="${LOOP_D}" fill="none" stroke="#fff" stroke-width="6.5" stroke-linecap="round" transform="translate(32 32) scale(.84) translate(-32 -32)"/></svg>`;
+  const href = (svg) => `data:image/svg+xml,${encodeURIComponent(svg)}`;
+  const calm = href(svgFor('#3d9bff', '#0058d0'));
+  const alarm = href(svgFor('#ff6b62', '#d70015'));
+  const loop = $('#ai-loop');
+  const total = loop.getTotalLength();
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 64;
+  const ctx = canvas.getContext('2d');
+  const tile = new Path2D(TILE_D);
+  const shape = new Path2D(LOOP_D);
+  let alert = false;
+  let running = false;
+
+  function paint(t) {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, 64, 64);
+    const g = ctx.createLinearGradient(0, 0, 0, 64);
+    g.addColorStop(0, alert ? '#ff6b62' : '#3d9bff');
+    g.addColorStop(1, alert ? '#d70015' : '#0058d0');
+    ctx.fillStyle = g;
+    ctx.fill(tile);
+    ctx.setTransform(0.84, 0, 0, 0.84, 32 * 0.16, 32 * 0.16);
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = 'rgba(255,255,255,0.92)';
+    ctx.lineWidth = 6.5;
+    ctx.stroke(shape);
+    const at = loop.getPointAtLength(total * t);
+    const glow = ctx.createRadialGradient(at.x, at.y, 0, at.x, at.y, 10);
+    glow.addColorStop(0, 'rgba(255,255,255,1)');
+    glow.addColorStop(0.45, 'rgba(190,225,255,0.85)');
+    glow.addColorStop(1, 'rgba(190,225,255,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(at.x, at.y, 10, 0, Math.PI * 2);
+    ctx.fill();
+    link.href = canvas.toDataURL('image/png');
+  }
+  const rest = () => { link.href = alert ? alarm : calm; };
+  rest();
+
+  return {
+    // Timers, not animation frames: the tab icon matters most while the tab is in the background.
+    pulse() {
+      if (reduced.matches || running) return;
+      running = true;
+      const start = Date.now();
+      const tick = () => {
+        const t = (Date.now() - start) / 900;
+        if (t >= 1) { running = false; rest(); return; }
+        paint(t);
+        setTimeout(tick, 50);
+      };
+      tick();
+    },
+    setAlert(on) {
+      if (alert === on) return;
+      alert = on;
+      if (!running) rest();
+    },
+  };
+})();
+
+// ------------------------------------------------------------------ activity
+
+const feed = [];
+function feedText(e) {
+  const byId = (id) => {
+    const a = S && S.accounts.find((x) => x.id === id);
+    if (a) return a.label;
+    const k = S && S.keys.find((x) => x.id === id);
+    return k ? `${k.label} (API key)` : 'a line';
+  };
+  switch (e.type) {
+    case 'request': return { tone: e.status >= 400 ? 'warn' : 'pulse', html: `<b>${esc(e.label)}</b> served ${e.count > 1 ? `<span class="num">${e.count}</span> requests` : 'a request'}${e.status >= 400 ? ` (HTTP ${e.status})` : ''}` };
+    case 'switch': return { tone: 'warn', html: `<b>${esc(e.label)}</b> ran out${e.detail ? `: ${esc(trimEnd(e.detail))}` : ''}. Moved to the next key.` };
+    case 'exhausted': return { tone: 'dead', html: '<b>Every API key is used up.</b> Top one up or add another.' };
+    case 'current': return { tone: 'energy', html: `New session on <b>${esc(String(e.label).replace(/^API key: /, ''))}</b>` };
+    case 'pin': return { tone: 'energy', html: e.pinType ? `Cable plugged into <b>${esc(byId(e.id))}</b>` : 'Back to <b>automatic</b>' };
+    case 'check': return { tone: e.verdict === 'ok' ? 'ready' : e.verdict === 'used-up' ? 'dead' : 'warn', html: `Tested <b>${esc(e.label)}</b>: ${e.verdict === 'ok' ? 'works' : e.verdict === 'used-up' ? 'used up' : 'kept'}` };
+    default: return null;
+  }
+}
+
+function addFeed(e) {
+  const lastItem = feed[0];
+  if (e.type === 'request' && lastItem && lastItem.type === 'request' && lastItem.keyId === e.keyId && lastItem.status < 400 && e.status < 400 && e.at - lastItem.at < 90000) {
+    lastItem.count = (lastItem.count || 1) + 1;
+    lastItem.at = e.at;
+    lastItem.fresh = !e.backlog;
+  } else {
+    feed.unshift({ ...e, count: 1, fresh: !e.backlog });
+    feed.length = Math.min(feed.length, 40);
+  }
+  renderFeed();
+}
+
+function renderFeed() {
+  const items = feed.map((e) => ({ e, t: feedText(e) })).filter((x) => x.t);
+  const shown = items.slice(0, ui.feedAll ? items.length : 10);
+  const more = items.length > 10
+    ? `<li class="row more-row"><button class="text-btn" type="button" data-act="feed-toggle" data-fk="feed-toggle">${ui.feedAll ? 'Show Less' : `Show All ${items.length}`}</button></li>`
+    : '';
+  $('#feed').innerHTML = shown.length
+    ? shown.map(({ e, t }) => `<li class="row${e.fresh ? ' fresh' : ''}" data-tone="${t.tone}"><span class="fd"></span><span class="ft">${t.html}</span><time datetime="${new Date(e.at).toISOString()}">${esc(ago(e.at))}</time></li>`).join('') + more
+    : '<li class="row"><span class="empty">Nothing yet. Requests, switches and new sessions show up here as they happen.</span></li>';
+  for (const e of feed) e.fresh = false;
+}
+
+let refreshTimer = null;
+const scheduleRefresh = () => { clearTimeout(refreshTimer); refreshTimer = setTimeout(refresh, 250); };
+
+function connectEvents() {
+  const pill = $('#pill');
+  const es = new EventSource('/api/events');
+  es.onopen = () => { pill.className = 'status live'; $('#pill-text').textContent = 'Gateway live'; };
+  es.onerror = () => { pill.className = 'status down'; $('#pill-text').textContent = 'Reconnecting…'; };
+  es.onmessage = (m) => {
+    let e;
+    try { e = JSON.parse(m.data); } catch { return; }
+    addFeed(e);
+    if (e.backlog) return;
+    if (e.type === 'request') {
+      requestsToday += 1;
+      const el = $('#req-count');
+      if (el) el.textContent = requestsToday;
+      cable.pulse();
+      globe.pulse();
+      favicon.pulse();
+      logo.pulse();
+    } else {
+      scheduleRefresh();
+      if (e.type === 'switch') toast(`${e.label} ran out, so the gateway moved to the next key.`);
+      if (e.type === 'exhausted') toast('Every API key is used up. Top one up or add another.', true);
+    }
+  };
+}
+
+// ------------------------------------------------------------------ data
 
 async function refresh() {
   try {
     S = await api('GET', '/api/state');
+    if (S.traffic && typeof S.traffic.requestsToday === 'number') requestsToday = Math.max(requestsToday, S.traffic.requestsToday);
     render();
   } catch (err) {
     toast(err.message, true);
@@ -791,23 +2085,30 @@ async function withBusy(id, work) {
     return await work();
   } finally {
     busy.delete(id);
+    render();
   }
 }
 
 let jobTimer = null;
+const jobPhase = () => (!ui.jobView || !ui.jobView.done ? 'wait' : ui.jobView.ok ? 'ok' : 'fail');
+
 async function pollJob() {
   clearTimeout(jobTimer);
   if (!ui.job) return;
+  const jobId = ui.job.id;
   try {
-    ui.jobView = await api('GET', `/api/jobs/${ui.job.id}`);
+    ui.jobView = await api('GET', `/api/jobs/${jobId}`);
   } catch (err) {
     ui.jobView = { done: true, ok: false, output: err.message };
   }
+  if (!ui.job || ui.job.id !== jobId) return;
+  updateJobSheet();
   render();
   if (ui.jobView.done) {
-    toast(ui.jobView.ok ? 'Signed in. That account is now in the relay.' : "Sign-in didn't finish.", !ui.jobView.ok);
+    const ok = ui.jobView.ok;
+    if (!(ui.sheet && ui.sheet.kind === 'job')) toast(ok ? 'Signed in. That account is back in the relay.' : "Sign-in didn't finish.", !ok);
     await refreshLogins();
-    if (ui.jobView.ok) setTimeout(() => { ui.job = null; ui.jobView = null; render(); }, 4000);
+    if (ok) setTimeout(() => { if (ui.sheet && ui.sheet.kind === 'job' && ui.job && ui.job.id === jobId) closeSheet(); }, 2400);
     return;
   }
   jobTimer = setTimeout(pollJob, 1000);
@@ -819,16 +2120,301 @@ function startJob(job, accountId) {
   pollJob();
 }
 
+// ------------------------------------------------------------------ views
+
+function showView(view) {
+  if (ui.view === view) return;
+  ui.view = view;
+  $$('.seg').forEach((tab, i) => {
+    const on = tab.dataset.view === view;
+    tab.setAttribute('aria-selected', String(on));
+    tab.tabIndex = on ? 0 : -1;
+    if (on) $('.segmented').style.setProperty('--i', i);
+  });
+  for (const v of ['relay', 'desktop', 'settings']) $(`#view-${v}`).hidden = v !== view;
+  closeMenu(true);
+  cable.show(view === 'relay');
+  play($(`#view-${view}`), [{ opacity: 0 }, { opacity: 1 }], { ms: 180, easing: 'ease-out' });
+}
+
+// ------------------------------------------------------------------ the row menu
+
+function menuItems(type, item) {
+  const id = item.id;
+  const pinned = Boolean(S.pinned && S.pinned.id === id);
+  const list = type === 'account' ? S.accounts : S.keys;
+  const index = list.findIndex((x) => x.id === id);
+  const items = [{ act: 'connect', target: `${type}:${id}`, label: type === 'account' ? 'Use This Account' : 'Use This Key', icon: 'plug', disabled: pinned }];
+  if (type === 'account') {
+    items.push({ act: 'check-account', label: 'Check Usage', icon: 'test' });
+    items.push({ act: 'login-account', label: 'Sign In Again…', icon: 'signin' });
+  } else {
+    items.push({ act: 'test-key', label: 'Test Key', icon: 'test' });
+  }
+  items.push({ sep: true });
+  items.push({ act: 'rename', label: 'Rename', icon: 'edit' });
+  items.push({ act: `move-${type}`, dir: 'up', label: 'Move Up', icon: 'up', disabled: index === 0 });
+  items.push({ act: `move-${type}`, dir: 'down', label: 'Move Down', icon: 'down', disabled: index === list.length - 1 });
+  if (type === 'key' || item.kind === 'profile') {
+    items.push({ sep: true });
+    items.push({ act: 'ask-remove', label: 'Remove…', icon: 'trash', danger: true });
+  }
+  return items;
+}
+
+function openMenu(btn, viaKeyboard) {
+  const { type, id } = btn.dataset;
+  if (ui.menu && ui.menu.id === id) { closeMenu(); return; }
+  closeMenu(true);
+  const item = itemFor(type, id);
+  if (!item) return;
+  ui.menu = { type, id };
+  const menu = $('#menu');
+  menu.setAttribute('aria-label', `Actions for ${item.label}`);
+  menu.innerHTML = menuItems(type, item).map((m) => (m.sep
+    ? '<div class="menu-sep" role="separator"></div>'
+    : `<button class="menu-item${m.danger ? ' danger' : ''}" type="button" role="menuitem" tabindex="-1" data-act="${m.act}" data-id="${esc(id)}" data-type="${type}"${m.target ? ` data-target="${esc(m.target)}"` : ''}${m.dir ? ` data-dir="${m.dir}"` : ''}${m.disabled ? ' disabled' : ''}>${icon(m.icon)}${esc(m.label)}</button>`)).join('');
+  menu.getAnimations().forEach((a) => a.cancel());
+  menu.hidden = false;
+  btn.setAttribute('aria-expanded', 'true');
+  positionMenu();
+  play(menu, [{ opacity: 0, transform: 'scale(0.94)' }, { opacity: 1, transform: 'none' }]);
+  const first = $('.menu-item:not(:disabled)', menu);
+  if (viaKeyboard && first) first.focus();
+  else menu.focus({ preventScroll: true });
+}
+
+function positionMenu() {
+  const btn = ui.menu && $(`.more[data-id="${CSS.escape(ui.menu.id)}"]`);
+  if (!btn) { closeMenu(true); return; }
+  btn.setAttribute('aria-expanded', 'true');
+  const menu = $('#menu');
+  const r = btn.getBoundingClientRect();
+  const w = menu.offsetWidth;
+  const h = menu.offsetHeight;
+  const left = Math.max(8, Math.min(r.right - w, window.innerWidth - w - 8));
+  let top = r.bottom + 6;
+  let below = true;
+  if (top + h > window.innerHeight - 8 && r.top - h - 6 > 60) { top = r.top - h - 6; below = false; }
+  menu.style.left = `${left + window.scrollX}px`;
+  menu.style.top = `${top + window.scrollY}px`;
+  // Grow out of the button that opened it.
+  menu.style.transformOrigin = `${r.left + r.width / 2 - left}px ${below ? '0' : '100%'}`;
+}
+
+function closeMenu(silent) {
+  if (!ui.menu) return;
+  const id = ui.menu.id;
+  ui.menu = null;
+  const menu = $('#menu');
+  const btn = $(`.more[data-id="${CSS.escape(id)}"]`);
+  if (btn) btn.setAttribute('aria-expanded', 'false');
+  const hadFocus = menu.contains(document.activeElement) || document.activeElement === menu;
+  if (silent || reduced.matches) menu.hidden = true;
+  else play(menu, [{ opacity: 1 }, { opacity: 0 }], { ms: 120, easing: 'ease-out', fill: 'forwards' }).then((a) => { if (!ui.menu) menu.hidden = true; if (a) a.cancel(); });
+  if (hadFocus && btn) btn.focus({ preventScroll: true });
+}
+
+$('#menu').addEventListener('keydown', (e) => {
+  const items = $$('.menu-item:not(:disabled)', $('#menu'));
+  const i = items.indexOf(document.activeElement);
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    const next = i < 0 ? (e.key === 'ArrowDown' ? 0 : items.length - 1) : (i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+    items[next].focus();
+  } else if (e.key === 'Home' || e.key === 'End') {
+    e.preventDefault();
+    items[e.key === 'Home' ? 0 : items.length - 1].focus();
+  } else if (e.key === 'Escape') {
+    e.preventDefault();
+    e.stopPropagation();
+    closeMenu();
+  } else if (e.key === 'Tab') {
+    closeMenu();
+  }
+});
+$('#menu').addEventListener('pointermove', (e) => {
+  const item = e.target.closest('.menu-item:not(:disabled)');
+  if (item && document.activeElement !== item) item.focus({ preventScroll: true });
+});
+document.addEventListener('pointerdown', (e) => {
+  if (!ui.menu) return;
+  if ($('#menu').contains(e.target) || e.target.closest('.more')) return;
+  closeMenu(true);
+});
+window.addEventListener('resize', () => { if (ui.menu) positionMenu(); });
+
+// ------------------------------------------------------------------ sheets
+
+let sheetReturn = null;
+
+function sheetContent() {
+  const sh = ui.sheet;
+  if (sh.kind === 'add-account') {
+    return `<form data-form="add-account" autocomplete="off">
+      <h2 id="sheet-title">Add a subscription account</h2>
+      <p class="lede">Your browser opens Anthropic's sign-in page. Sign in with the account you want to add, and it joins the relay after the others.</p>
+      <div class="fields"><div class="field"><label for="f-label">Name</label><input id="f-label" name="label" maxlength="60" placeholder="Work, Personal…" autofocus spellcheck="false"></div></div>
+      <p class="sheet-error" id="sheet-error" role="alert" hidden></p>
+      <div class="sheet-actions"><button class="btn large" type="button" data-act="close-sheet">Cancel</button><button class="btn large primary" type="submit">Add and Sign In</button></div>
+    </form>`;
+  }
+  if (sh.kind === 'add-key') {
+    return `<form data-form="add-key" autocomplete="off">
+      <h2 id="sheet-title">Add an API key</h2>
+      <p class="lede">Used once every account is out. It's tested as soon as you save it. <a href="${KEYS_URL}" target="_blank" rel="noopener noreferrer">Get a key from Anthropic</a></p>
+      <div class="fields">
+        <div class="field"><label for="f-label">Name</label><input id="f-label" name="label" maxlength="60" placeholder="Personal, Team…" autofocus spellcheck="false"></div>
+        <div class="field"><label for="f-key">Key</label><input id="f-key" class="mono-input" name="key" type="password" placeholder="sk-ant-api03-…" spellcheck="false" autocapitalize="off" autocomplete="off"></div>
+      </div>
+      <p class="hint">Encrypted on this computer, with the encryption key kept in ${esc(S.keystore || 'your system keychain')}. It's only ever sent to Anthropic.</p>
+      <p class="sheet-error" id="sheet-error" role="alert" hidden></p>
+      <div class="sheet-actions"><button class="btn large" type="button" data-act="close-sheet">Cancel</button><button class="btn large primary" type="submit">Save and Test</button></div>
+    </form>`;
+  }
+  if (sh.kind === 'confirm') {
+    const item = itemFor(sh.type, sh.id);
+    const name = esc(item ? item.label : 'this line');
+    const what = sh.type === 'account' ? "It's signed out on this computer and leaves the relay." : 'The key is deleted from this computer. It keeps working on your Anthropic account.';
+    return `<h2 id="sheet-title">Remove ${name}?</h2><p>${what}</p>
+      <div class="sheet-actions"><button class="btn large" type="button" data-act="close-sheet" autofocus>Cancel</button><button class="btn large danger" type="button" data-act="remove-${sh.type}" data-id="${esc(sh.id)}">Remove</button></div>`;
+  }
+  return jobHtml();
+}
+
+function jobHtml() {
+  const account = S && ui.job && S.accounts.find((a) => a.id === ui.job.accountId);
+  const name = esc(account ? account.label : 'the account');
+  const v = ui.jobView || {};
+  const phase = jobPhase();
+  ui.sheet.phase = phase;
+  const details = `<details class="details" id="job-details"${v.output ? '' : ' hidden'}><summary>Details</summary><pre id="job-output">${esc(v.output || '')}</pre></details>`;
+  if (phase === 'ok') {
+    return `<div class="result">${icon('check-circle')}<h2 id="sheet-title">${name} is signed in</h2><p>It's back in the relay.</p></div>
+      <div class="sheet-actions"><button class="btn large primary" type="button" data-act="close-sheet" autofocus>Done</button></div>`;
+  }
+  if (phase === 'fail') {
+    return `<div class="result fail">${icon('alert')}<h2 id="sheet-title">Sign-in didn't finish</h2><p>Nothing changed for ${name}. You can try again.</p></div>${details}
+      <div class="sheet-actions"><button class="btn large" type="button" data-act="close-sheet">Close</button><button class="btn large primary" type="button" data-act="job-retry" autofocus>Try Again</button></div>`;
+  }
+  return `<h2 id="sheet-title">Signing in to ${name}</h2>
+    <div class="job-status">${SPINNER}<p>Finish signing in in the browser window that opened. This updates by itself.</p></div>
+    <p class="hint" id="job-link"${v.url ? '' : ' hidden'}>No browser window? <a id="job-url" href="${esc(v.url || '#')}" target="_blank" rel="noopener noreferrer">Open the sign-in page</a></p>
+    <form class="fields code-field" data-form="job-input" autocomplete="off"><div class="field"><label for="job-code">Code</label><input id="job-code" class="mono-input" name="text" placeholder="Paste it if the page shows one" spellcheck="false" autocapitalize="off"><button class="btn" type="submit">Send</button></div></form>
+    ${details}
+    <div class="sheet-actions"><button class="btn large" type="button" data-act="close-sheet">Hide</button></div>`;
+}
+
+function focusSheet() {
+  const dlg = $('#sheet');
+  const target = $('[autofocus]', dlg) || $('input', dlg) || $('.btn.primary', dlg) || $('.btn', dlg);
+  if (target) target.focus();
+}
+
+function setSheetContent() {
+  const panel = $('#sheet .sheet-panel');
+  if (!panel) return;
+  panel.className = `sheet-panel${ui.sheet.kind === 'confirm' ? ' narrow' : ''}`;
+  panel.innerHTML = sheetContent();
+  focusSheet();
+  play(panel, [{ opacity: 0.4 }, { opacity: 1 }], { ms: 200, easing: 'ease-out' });
+}
+
+function openSheet(kind, data = {}) {
+  closeMenu(true);
+  const dlg = $('#sheet');
+  ui.sheet = { kind, ...data };
+  if (dlg.open) { setSheetContent(); return; }
+  sheetReturn = document.activeElement;
+  dlg.innerHTML = `<div class="scrim" data-act="close-sheet"></div><div class="sheet-panel${kind === 'confirm' ? ' narrow' : ''}">${sheetContent()}</div>`;
+  dlg.showModal();
+  focusSheet();
+  play($('.scrim', dlg), [{ opacity: 0 }, { opacity: 1 }], { ms: 240, easing: 'ease-out' });
+  play($('.sheet-panel', dlg), narrow.matches
+    ? [{ transform: 'translateY(100%)' }, { transform: 'none' }]
+    : [{ opacity: 0, transform: 'translateY(-14px) scale(0.97)', filter: 'blur(5px)' }, { opacity: 1, transform: 'none', filter: 'blur(0)' }]);
+}
+
+// Leaves the way it came in.
+async function closeSheet() {
+  const dlg = $('#sheet');
+  if (!dlg.open || dlg.dataset.closing) return;
+  dlg.dataset.closing = '1';
+  await Promise.all([
+    play($('.scrim', dlg), [{ opacity: 1 }, { opacity: 0 }], { ms: 200, easing: 'ease-in', fill: 'forwards' }),
+    play($('.sheet-panel', dlg), narrow.matches
+      ? [{ transform: 'none' }, { transform: 'translateY(100%)' }]
+      : [{ opacity: 1, transform: 'none', filter: 'blur(0)' }, { opacity: 0, transform: 'translateY(-14px) scale(0.97)', filter: 'blur(5px)' }], { ...EXIT, fill: 'forwards' }),
+  ]);
+  dlg.close();
+  dlg.innerHTML = '';
+  delete dlg.dataset.closing;
+  ui.sheet = null;
+  if (sheetReturn && sheetReturn.isConnected) sheetReturn.focus({ preventScroll: true });
+  sheetReturn = null;
+}
+
+function updateJobSheet() {
+  if (!ui.sheet || ui.sheet.kind !== 'job') return;
+  if (jobPhase() !== ui.sheet.phase) { setSheetContent(); return; }
+  const v = ui.jobView;
+  if (!v) return;
+  if (v.url && $('#job-link')) { $('#job-link').hidden = false; $('#job-url').href = v.url; }
+  if (v.output && $('#job-output')) { $('#job-details').hidden = false; $('#job-output').textContent = v.output; }
+}
+
+function sheetError(text) {
+  const el = $('#sheet-error');
+  if (!el) { toast(text, true); return; }
+  el.textContent = text;
+  el.hidden = false;
+}
+
+$('#sheet').addEventListener('cancel', (e) => { e.preventDefault(); closeSheet(); });
+
 // ------------------------------------------------------------------ actions
 
+async function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+  const area = document.createElement('textarea');
+  area.value = text;
+  area.setAttribute('readonly', '');
+  area.style.position = 'fixed';
+  area.style.opacity = '0';
+  document.body.appendChild(area);
+  area.select();
+  document.execCommand('copy');
+  area.remove();
+}
+
 const actions = {
-  'add-account': () => { ui.adding = 'account'; render(); $('#account-label').focus(); },
-  'add-key': () => { ui.adding = 'key'; render(); $('#key-label').focus(); },
-  'cancel-add': () => { ui.adding = null; ui.forms.keyValue = ''; render(); },
-  'cancel-confirm': () => { ui.confirm = null; render(); },
-  'ask-remove': (id) => { ui.confirm = id; render(); },
-  'rename-account': (id) => { ui.renaming = id; render(); },
-  'rename-key': (id) => { ui.renaming = id; render(); },
+  menu: (id, el, ev) => openMenu(el, Boolean(ev && ev.detail === 0)),
+  'add-account': () => openSheet('add-account'),
+  'add-key': () => { if (ui.view !== 'relay') showView('relay'); openSheet('add-key'); },
+  'close-sheet': () => closeSheet(),
+  'ask-remove': (id, el) => openSheet('confirm', { type: el.dataset.type, id }),
+  rename: (id, el) => {
+    const item = itemFor(el.dataset.type, id);
+    if (!item) return;
+    ui.renaming = id;
+    ui.renameValue = item.label;
+    ui.renameFresh = true;
+    render();
+  },
+  connect: async (id, el) => {
+    const [type, lineId] = el.dataset.target.split(':');
+    await api('PUT', '/api/pin', { type, id: lineId });
+    await refresh();
+    const item = itemFor(type, lineId) || {};
+    const name = item.label || 'that line';
+    const st = type === 'account' ? accountState(item) : keyState(item);
+    toast(!st.ready ? `${name} isn't usable right now, so the relay carries on with the next line.` : type === 'key' ? `Plugged into ${name}. Every gateway request uses it now.` : `Plugged into ${name}. New sessions start on it.`);
+  },
+  unpin: async () => {
+    await api('DELETE', '/api/pin');
+    await refresh();
+    toast('Back to automatic.');
+  },
   'check-account': (id) => withBusy(id, async () => {
     const r = await api('POST', `/api/accounts/${id}/check`);
     await refresh();
@@ -837,16 +2423,19 @@ const actions = {
   'login-account': async (id) => {
     const r = await api('POST', `/api/accounts/${id}/login`);
     startJob(r.job, id);
+    openSheet('job');
   },
-  'toggle-account': async (id) => {
+  'job-retry': () => actions['login-account'](ui.job.accountId),
+  'toggle-account': async (id, el) => {
     const a = S.accounts.find((x) => x.id === id);
+    el.setAttribute('aria-checked', String(!a.enabled));
     await api('PATCH', `/api/accounts/${id}`, { enabled: !a.enabled });
     await refresh();
   },
   'move-account': async (id, el) => { await api('POST', `/api/accounts/${id}/move`, { direction: el.dataset.dir }); await refresh(); },
   'move-key': async (id, el) => { await api('POST', `/api/keys/${id}/move`, { direction: el.dataset.dir }); await refresh(); },
-  'remove-account': async (id) => { ui.confirm = null; await api('DELETE', `/api/accounts/${id}`); toast('Account signed out and removed.'); await refresh(); },
-  'remove-key': async (id) => { ui.confirm = null; await api('DELETE', `/api/keys/${id}`); toast('Key removed.'); await refresh(); },
+  'remove-account': async (id) => { await closeSheet(); await api('DELETE', `/api/accounts/${id}`); toast('Account signed out and removed.'); await refresh(); },
+  'remove-key': async (id) => { await closeSheet(); await api('DELETE', `/api/keys/${id}`); toast('Key removed.'); await refresh(); },
   'test-key': (id) => withBusy(id, async () => {
     const r = await api('POST', `/api/keys/${id}/check`);
     await refresh();
@@ -860,53 +2449,66 @@ const actions = {
   'recheck-everything': async () => {
     await api('DELETE', '/api/cooldowns');
     await refresh();
-    toast('Cooldowns cleared. Every line will be checked again on the next session.');
+    toast('Cooldowns forgotten. Every line is tried again on the next session.');
   },
-  copy: async (id, el) => { await navigator.clipboard.writeText(el.dataset.value); toast('Copied.'); },
+  copy: async (id, el) => { await copyText(el.dataset.value); toast('Copied.'); },
   'copy-token': async () => {
     if (!desktopInfo) return;
-    await navigator.clipboard.writeText(desktopInfo.settings.inferenceGatewayApiKey);
+    await copyText(desktopInfo.settings.inferenceGatewayApiKey);
     toast('Gateway key copied.');
   },
   'toggle-token': () => { ui.showToken = !ui.showToken; render(); },
   'reveal-desktop': async () => { await api('POST', '/api/desktop/reveal'); },
+  'feed-toggle': () => { ui.feedAll = !ui.feedAll; renderFeed(); },
 };
 
 document.addEventListener('click', async (event) => {
+  const tab = event.target.closest('.seg');
+  if (tab) { showView(tab.dataset.view); return; }
   const el = event.target.closest('[data-act]');
   if (!el || el.disabled) return;
   const fn = actions[el.dataset.act];
   if (!fn) return;
   event.preventDefault();
+  if (el.closest('#menu')) closeMenu();
   try {
-    await fn(el.dataset.id, el);
+    await fn(el.dataset.id, el, event);
   } catch (err) {
     toast(err.message, true);
     render();
   }
 });
 
+$('.segmented').addEventListener('keydown', (e) => {
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+  const tabs = $$('.seg');
+  const i = tabs.indexOf(document.activeElement);
+  const next = e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : (i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+  tabs[next].focus();
+  showView(tabs[next].dataset.view);
+  e.preventDefault();
+});
+
 document.addEventListener('input', (event) => {
-  const t = event.target;
-  if (t.id === 'account-label') ui.forms.accountLabel = t.value;
-  if (t.id === 'key-label') ui.forms.keyLabel = t.value;
-  if (t.id === 'key-value') ui.forms.keyValue = t.value;
+  if (event.target.classList.contains('rename-input')) ui.renameValue = event.target.value;
 });
 
 document.addEventListener('keydown', (event) => {
-  if (event.key !== 'Escape') return;
-  if (ui.renaming || ui.adding || ui.confirm) {
-    ui.renaming = null;
-    ui.adding = null;
-    ui.confirm = null;
-    render();
-  }
+  if (event.key !== 'Escape' || $('#sheet').open) return;
+  if (ui.menu) { closeMenu(); return; }
+  if (ui.renaming) { ui.renaming = null; render(); }
 });
 
 document.addEventListener('focusout', (event) => {
   const form = event.target.closest && event.target.closest('form[data-form="rename"]');
-  if (form && !form.contains(event.relatedTarget)) form.requestSubmit();
+  if (form && !form.contains(event.relatedTarget) && ui.renaming) form.requestSubmit();
 });
+
+for (const id of ['cooldown', 'recheck']) {
+  const input = document.getElementById(id);
+  input.addEventListener('change', () => $('#settings-form').requestSubmit());
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); input.blur(); } });
+}
 
 document.addEventListener('submit', async (event) => {
   const form = event.target;
@@ -914,61 +2516,61 @@ document.addEventListener('submit', async (event) => {
   const kind = form.dataset.form || form.id;
   const data = Object.fromEntries(new FormData(form));
   const submit = form.querySelector('[type="submit"]');
+  const label = submit ? submit.innerHTML : '';
   if (submit) submit.disabled = true;
   try {
     if (kind === 'add-account') {
+      if (!String(data.label || '').trim()) { sheetError('Give the account a name, like Work or Personal.'); return; }
+      submit.innerHTML = `${SPINNER}Adding…`;
       const r = await api('POST', '/api/accounts', { label: data.label });
-      ui.adding = null;
-      ui.forms.accountLabel = '';
       await refresh();
       startJob(r.job, r.id);
+      openSheet('job');
     } else if (kind === 'add-key') {
+      if (!String(data.key || '').trim()) { sheetError('Paste the API key. It starts with sk-ant-api.'); return; }
+      submit.innerHTML = `${SPINNER}Testing…`;
       const r = await api('POST', '/api/keys', { label: data.label, key: data.key });
-      ui.adding = null;
-      ui.forms.keyLabel = '';
-      ui.forms.keyValue = '';
+      await closeSheet();
       await refresh();
-      toast(r.check.verdict === 'ok' ? 'Key saved, and it works.' : r.check.verdict === 'used-up' ? `Key saved, but it's used up: ${r.check.detail || `HTTP ${r.check.status}`}` : `Key saved. Test said: ${r.check.detail || (r.check.status ? `HTTP ${r.check.status}` : 'no answer')}`);
+      toast(r.check.verdict === 'ok' ? 'Key saved, and it works.' : r.check.verdict === 'used-up' ? `Key saved, but it's used up: ${r.check.detail || `HTTP ${r.check.status}`}` : `Key saved. The test said: ${r.check.detail || (r.check.status ? `HTTP ${r.check.status}` : 'no answer')}`);
     } else if (kind === 'rename') {
+      const name = String(data.label || '').trim();
       const id = form.dataset.id;
-      const label = String(data.label || '').trim();
       ui.renaming = null;
-      if (label) await api('PATCH', `/api/${form.dataset.type === 'account' ? 'accounts' : 'keys'}/${id}`, { label });
+      if (name && name !== (itemFor(form.dataset.type, id) || {}).label) {
+        await api('PATCH', `/api/${form.dataset.type === 'account' ? 'accounts' : 'keys'}/${id}`, { label: name });
+      }
       await refresh();
+      const more = $(`.more[data-id="${CSS.escape(id)}"]`);
+      if (more && (!document.activeElement || document.activeElement === document.body)) more.focus({ preventScroll: true });
     } else if (kind === 'job-input') {
       await api('POST', `/api/jobs/${ui.job.id}/input`, { text: data.text });
       form.reset();
       toast('Code sent.');
     } else if (kind === 'settings-form') {
       await api('PATCH', '/api/settings', { cooldownMinutes: Number(data.cooldownMinutes), accountRecheckMinutes: Number(data.accountRecheckMinutes) });
-      document.activeElement.blur();
       await refresh();
-      toast('Timing saved.');
+      toast('Saved.');
     }
   } catch (err) {
-    toast(err.message, true);
+    if (form.closest('#sheet')) sheetError(err.message);
+    else toast(err.message, true);
     render();
   } finally {
-    if (submit && submit.isConnected) submit.disabled = false;
+    if (submit && submit.isConnected) { submit.disabled = false; submit.innerHTML = label; }
   }
 });
 
-window.addEventListener('resize', () => positionCord());
-const layoutWatch = new ResizeObserver(() => positionCord());
-layoutWatch.observe($('#wrap'));
-layoutWatch.observe($('#field'));
-layoutWatch.observe($('#plate'));
-if (document.fonts) document.fonts.ready.then(() => positionCord());
-document.addEventListener('visibilitychange', () => positionCord());
+const toolbar = $('#toolbar');
+window.addEventListener('scroll', () => toolbar.classList.toggle('scrolled', window.scrollY > 2), { passive: true });
 window.addEventListener('focus', () => { refresh(); refreshLogins(); });
-
-// Keep the board current while it's open, without disturbing anything being typed.
 setInterval(() => {
   const typing = document.activeElement && /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);
-  if (!typing && !document.hidden) refresh();
-}, 15000);
+  if (!typing && !document.hidden && !ui.menu) refresh();
+  renderFeed();
+}, 20000);
 
-refresh().then(() => { refreshLogins(); loadDesktop(); });
+refresh().then(() => { refreshLogins(); loadDesktop(); connectEvents(); });
 </script>
 </body>
 </html>

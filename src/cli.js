@@ -28,6 +28,7 @@ Setup:
   claude-nonstop setup               everything at once (the installers run this)
   claude-nonstop service install | uninstall | status
   claude-nonstop shell install | uninstall
+  claude-nonstop update               install the newest version now (it also updates itself daily)
   claude-nonstop uninstall [--purge]
 `;
 
@@ -65,6 +66,7 @@ async function main(argv) {
     case 'setup':
     case 'service':
     case 'shell':
+    case 'update':
     case 'uninstall':
     case 'reset':
       return commands()[cmd](rest);

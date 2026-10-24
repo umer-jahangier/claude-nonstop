@@ -8,6 +8,7 @@ const paths = require('./paths');
 const config = require('./config');
 const vault = require('./vault');
 const keys = require('./keys');
+const relay = require('./relay');
 const accounts = require('./accounts');
 const state = require('./state');
 const claude = require('./claude');
@@ -64,7 +65,7 @@ function helperCommand() {
 }
 
 async function firstAccountWithUsage(cfg, bin) {
-  for (const account of cfg.accounts.filter((a) => a.enabled)) {
+  for (const account of relay.accountOrder(cfg)) {
     const recent = state.load().accounts[account.id];
     if (recent && !recent.ok && accounts.isLimitReason(recent.reason) && Date.now() - recent.at < cfg.accountRecheckMinutes * 60000) {
       say(`${account.label}: ${recent.reason} (checked ${minutesAgo(recent.at)})`);
@@ -95,7 +96,7 @@ async function launchOnKeys(bin, args, cfg) {
     state.setCurrent('API keys (gateway)');
     return claude.runInteractive(bin, args, env);
   }
-  const entry = await keys.pick(v.keys, cfg);
+  const entry = await keys.pick(relay.keyOrder(cfg, v.keys), cfg);
   if (!entry) {
     say('every API key is used up right now. Top one up or add another with `claude-nonstop ui`.');
     return 1;
@@ -137,7 +138,8 @@ async function launch(args, { mode = 'auto' } = {}) {
 // a helper that prints anything besides the key). Problems go to the log file.
 async function keyHelper() {
   try {
-    const entry = await keys.pick(vault.load().keys, config.load());
+    const cfg = config.load();
+    const entry = await keys.pick(relay.keyOrder(cfg, vault.load().keys), cfg);
     if (!entry) {
       log('key helper: no working API key left');
       return 1;

@@ -15,11 +15,13 @@ const state = require('./state');
 const claude = require('./claude');
 const keystore = require('./keystore');
 const desktop = require('./desktop');
+const hostsfile = require('./hostsfile');
 const service = require('./service');
 const shell = require('./shell');
 const prompt = require('./prompt');
 const { gatewayRunning, gatewayUrl } = require('./launch');
-const { ensureHome, log } = require('./files');
+const { FRIENDLY_HOST } = require('./hosts');
+const { ensureHome, readJson, log } = require('./files');
 const pkg = require('../package.json');
 
 const out = (line = '') => process.stdout.write(`${line}\n`);
@@ -122,10 +124,17 @@ async function ui(args = []) {
     say(`couldn't start the local server; details are in ${paths.GATEWAY_LOG}`);
     return 1;
   }
-  const url = `${gatewayUrl(cfg)}/auth?t=${encodeURIComponent(v.uiToken)}`;
+  const url = `${uiUrl(cfg)}/auth?t=${encodeURIComponent(v.uiToken)}`;
   if (!args.includes('--no-open') && openBrowser(url)) out(`Opened the claude-nonstop web UI. If no browser window appeared, open:\n  ${url}`);
   else out(`Open the claude-nonstop web UI at:\n  ${url}`);
   return 0;
+}
+
+// The web UI's address, as the running server reported it: http://claude-nonstop.localhost
+// when it could take port 80, otherwise the same name with the gateway's port.
+function uiUrl(cfg) {
+  const info = readJson(paths.SERVER, null);
+  return (info && info.uiUrl) || `http://${FRIENDLY_HOST}:${cfg.port}`;
 }
 
 async function status() {
@@ -138,6 +147,8 @@ async function status() {
   out(`  Claude Code        ${claude.findClaude() || 'not found'}`);
   out(`  Secrets            encrypted, key in ${keystore.describe()}`);
   out(`  Gateway            ${running ? `running on ${gatewayUrl(cfg)}` : 'not running'}${service.status().installed ? ', starts at login' : ''}`);
+  if (running) out(`  Web UI             ${uiUrl(cfg)}  (open it with \`claude-nonstop ui\`)`);
+  out(`  Updates            ${cfg.autoUpdate === false ? 'off' : 'install themselves'}`);
   out(`  claude shortcut    ${shell.status().installed ? 'on' : 'off'}`);
   out(`  In use             ${s.current || 'nothing yet'}`);
   out('');
@@ -313,6 +324,10 @@ async function setup(args = []) {
   const v = vault.loadWithTokens();
   out(`- Secrets are stored encrypted; the encryption key is in ${keystore.describe()}.`);
   if (!claude.findClaude()) out('! Claude Code was not found. Install it (https://code.claude.com/docs/en/setup), then run `claude-nonstop setup` again.');
+  if (!args.includes('--no-hosts') && !process.env.CI) {
+    if (hostsfile.install()) out(`- The web UI has a short address: http://${hostsfile.PRIMARY} (also http://${hostsfile.NAMES[1]})`);
+    else out(`- The web UI is at http://${FRIENDLY_HOST}. For the short address http://${hostsfile.PRIMARY}, run \`claude-nonstop setup\` again and allow the change.`);
+  }
   if (!args.includes('--no-service')) {
     try {
       out(`- The gateway starts whenever you log in: ${service.install()}`);
@@ -368,6 +383,26 @@ function shellCommand(args = []) {
   return 0;
 }
 
+// ---------------------------------------------------------------- update
+
+async function updateCommand() {
+  const result = await require('./update').checkAndInstall();
+  if (!result.updated) {
+    out(result.note || `claude-nonstop ${result.version} is the latest version.`);
+    return 0;
+  }
+  out(`Updated claude-nonstop ${result.from} → ${result.version}.`);
+  if (service.status().installed) {
+    try {
+      service.install();
+      out('The gateway restarted on the new version.');
+    } catch (err) {
+      say(`the gateway didn't restart (${err.message}); it picks up the new version at your next login.`);
+    }
+  }
+  return 0;
+}
+
 // ---------------------------------------------------------------- uninstall / reset
 
 function removeData() {
@@ -384,6 +419,8 @@ async function uninstall(args = []) {
   out('- The gateway is stopped and no longer starts at login.');
   shell.uninstall();
   out('- Plain `claude` runs Claude Code directly again (in new terminals).');
+  if (hostsfile.uninstall()) out(`- The short address ${hostsfile.PRIMARY} is removed from this computer.`);
+  else out(`! Couldn't remove the ${hostsfile.PRIMARY} lines from ${hostsfile.hostsPath()} (it needs administrator rights). They're harmless; delete them by hand if you like.`);
   if (purge) {
     const bin = claude.findClaude();
     for (const account of config.load().accounts.filter((a) => a.kind === 'profile')) {
@@ -448,6 +485,7 @@ module.exports = {
   setup,
   service: serviceCommand,
   shell: shellCommand,
+  update: updateCommand,
   uninstall,
   reset,
 };

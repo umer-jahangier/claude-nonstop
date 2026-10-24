@@ -13,6 +13,7 @@ const DEFAULTS = {
   helperTtlMs: 120000, // how often a CLI session without the gateway asks for a key again
   probeModel: 'claude-haiku-5-5', // cheapest model, used for the 1-token key checks
   upstream: 'https://api.anthropic.com',
+  autoUpdate: true, // the gateway installs new releases by itself
 };
 
 const DEFAULT_ACCOUNT = { id: 'default', label: 'Main account', kind: 'default', enabled: true };

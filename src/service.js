@@ -37,7 +37,8 @@ const mac = {
   file: path.join(os.homedir(), 'Library', 'LaunchAgents', `${LABEL}.plist`),
   domain: () => `gui/${process.getuid()}`,
   install() {
-    const env = serviceEnv();
+    // launchd restarts the gateway when it exits non-zero, e.g. after installing an update.
+    const env = { ...serviceEnv(), CLAUDE_NONSTOP_SUPERVISED: '1' };
     const plist = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -87,6 +88,7 @@ const linux = {
   install() {
     const env = serviceEnv();
     if (this.hasSystemd()) {
+      env.CLAUDE_NONSTOP_SUPERVISED = '1'; // systemd restarts it on a non-zero exit, e.g. after an update
       const unit = `[Unit]
 Description=claude-nonstop gateway and web UI
 After=network-online.target

@@ -10,11 +10,11 @@ account 1  →  account 2  →  …  →  API key 1  →  API key 2  →  …
 - **Keys switch mid-session.** A local gateway sends each request with your first working key. If a key runs out of credit, the same request is sent again on the next key, and the session never notices.
 - **Works in the terminal and the Claude desktop app** on macOS, Windows and Linux.
 - **Secrets stay on your computer, encrypted.** API keys are stored with AES-256-GCM. The encryption key is held by the macOS Keychain, Windows DPAPI or the Linux Secret Service. Keys are only ever sent to Anthropic.
-- **A web UI** to add accounts, sign in, add and test keys, reorder the relay, and set up the desktop app.
+- **A web page at `http://claude.nonstop`** to add accounts, sign in, add and test keys, and set up the desktop app. Drag its cable onto any account or key to switch to it on the spot, and watch every request fly to Anthropic on the globe.
 
 ## Install
 
-You need [Node.js](https://nodejs.org) 18 or newer and [Claude Code](https://code.claude.com/docs/en/setup).
+One command installs everything, including its own copy of Node.js and [Claude Code](https://code.claude.com/docs/en/setup) if it's missing.
 
 **macOS and Linux**
 
@@ -28,22 +28,23 @@ curl -fsSL https://raw.githubusercontent.com/umer-jahangier/claude-nonstop/main/
 irm https://raw.githubusercontent.com/umer-jahangier/claude-nonstop/main/install.ps1 | iex
 ```
 
-No admin rights needed. The installer:
+The installer:
 
-1. installs claude-nonstop into `~/.claude-nonstop` (`%USERPROFILE%\.claude-nonstop` on Windows);
-2. starts the local gateway now and every time you log in;
-3. asks whether plain `claude` should go through claude-nonstop (recommended);
-4. opens the web UI so you can add your accounts and API keys.
+1. installs claude-nonstop, and a private Node.js, into `~/.claude-nonstop` (`%USERPROFILE%\.claude-nonstop` on Windows), plus Claude Code if it isn't installed;
+2. gives the web page its short address, `http://claude.nonstop` (also `http://claude-nonstop`). This adds one line to your computer's hosts file, so it asks for your password once (one confirmation on Windows). Say no and the page lives at `http://claude-nonstop.localhost` instead, which needs nothing;
+3. starts the local gateway now and every time you log in;
+4. makes plain `claude` go through claude-nonstop;
+5. opens the web page so you can add your accounts and API keys.
 
-Run the same command again to update. Prefer npm? `npm install -g github:umer-jahangier/claude-nonstop`, then run `claude-nonstop setup`.
+It keeps itself up to date after that (`claude-nonstop update` updates right away). Prefer npm? `npm install -g github:umer-jahangier/claude-nonstop`, then run `claude-nonstop setup`.
 
 ## Set it up (about two minutes)
 
-Run `claude-nonstop ui`. The page opens in your browser through a one-time link, so only you can use it.
+Run `claude-nonstop ui`, or open `http://claude.nonstop`. The first visit goes through a one-time link from `claude-nonstop ui`, so only you can use the page.
 
-1. **Accounts.** Your normal Claude Code login is already line 01. Click **Add an account** for each extra subscription you have. Anthropic's own sign-in page opens in your browser; sign in, and the account joins the relay.
-2. **API keys.** Click **Add an API key**, paste a key from [platform.claude.com/settings/keys](https://platform.claude.com/settings/keys), and save. Each key is tested on the spot.
-3. **Order.** Use the arrows to set the order. The top working line is used first.
+1. **Accounts.** Your normal Claude Code login is already the first account. Click **Add Account…** for each extra subscription you have. Anthropic's own sign-in page opens in your browser; sign in, and the account joins the relay.
+2. **API keys.** Click **Add API Key…**, paste a key from [platform.claude.com/settings/keys](https://platform.claude.com/settings/keys), and save. Each key is tested on the spot.
+3. **Order.** Use **Move Up** and **Move Down** in a line's **…** menu. The top working line is used first. To use a particular line right now, drag the cable's plug onto it (or choose **Use This Key** in its menu); **Use Automatic** hands control back.
 
 From then on, just run `claude` (or `claude-nonstop`) as usual:
 
@@ -75,7 +76,7 @@ From then on, the desktop sign-in screen offers both: **Claude.ai** for your sub
 | `claude-nonstop [claude args]` | Start Claude Code on the first account or key with usage left |
 | `claude-nonstop --api [args]` | Skip subscriptions and use API keys |
 | `claude-nonstop --sub [args]` | Use subscription accounts only |
-| `claude-nonstop ui` | Open the web UI |
+| `claude-nonstop ui` | Open the web page |
 | `claude-nonstop status` | Show what's set up and what's in use |
 | `claude-nonstop keys` | Test every API key |
 | `claude-nonstop keys add [name]` | Save a key (typed hidden, or piped on stdin) |
@@ -90,6 +91,7 @@ From then on, the desktop sign-in screen offers both: **Claude.ai** for your sub
 | `claude-nonstop setup` | Run the whole setup again |
 | `claude-nonstop service install / uninstall` | Start the gateway at login, or stop doing so |
 | `claude-nonstop shell install / uninstall` | Make plain `claude` go through claude-nonstop, or undo it |
+| `claude-nonstop update` | Install the newest version now (it also updates itself daily) |
 | `claude-nonstop uninstall [--purge]` | Remove claude-nonstop (`--purge` also deletes your saved keys) |
 
 Claude Code's own subcommands (`claude mcp`, `claude doctor`, `claude update`, `claude --version`, …) pass straight through without any account checks.
@@ -106,7 +108,8 @@ Claude Code's own subcommands (`claude mcp`, `claude doctor`, `claude update`, `
 
 ## Security
 
-- Everything runs on your computer. The gateway and web UI listen on `127.0.0.1` only, and answer only to `127.0.0.1` and `localhost` host names.
+- Everything runs on your computer. The gateway and web page accept connections from this computer only, and answer only to their own names: `127.0.0.1`, `localhost`, `claude-nonstop.localhost`, and `claude.nonstop` / `claude-nonstop` while your hosts file points them here.
+- The globe's "This computer" spot is guessed from your timezone inside the page. It's never sent anywhere.
 - API keys are encrypted at rest. The encryption key lives in the macOS Keychain, Windows DPAPI or the Linux Secret Service; headless Linux machines without one fall back to a file readable only by you (shown in the UI).
 - The web UI needs a one-time link from `claude-nonstop ui`, which becomes an HttpOnly, SameSite=Strict cookie. Every API call also needs a custom header that other websites can't send, so pages you visit can't reach it.
 - Full keys are never shown again after you save them; the UI shows a masked form.
@@ -125,6 +128,7 @@ claude-nonstop is an independent project and isn't affiliated with or endorsed b
 - **An account says "Not signed in".** Run `claude-nonstop accounts login <n>`, or click the sign-in button on its line in the web UI.
 - **Every key shows "used up".** Top one up at [platform.claude.com/settings/billing](https://platform.claude.com/settings/billing), then click **Test** on its line (or **Forget cooldowns**).
 - **The desktop app says "Gateway was unreachable".** The gateway isn't running. Run `claude-nonstop service install` to start it now and at every login.
+- **`claude.nonstop` doesn't open.** Run `claude-nonstop setup` again and allow the change when asked, or use `http://claude-nonstop.localhost`. Typing it in the address bar? Include `http://` the first time, so the browser doesn't search for it.
 - **Logs.** `~/.claude-nonstop/claude-nonstop.log` (choices and key switches) and `~/.claude-nonstop/gateway.log`.
 
 ## Uninstall

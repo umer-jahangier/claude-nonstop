@@ -55,8 +55,10 @@ function posixTargets() {
   return targets;
 }
 
+// Runs on the same Node.js as claude-nonstop itself (its own private copy when installed
+// by the installer), so the shortcut keeps working whatever Node the user has, if any.
 function windowsShim() {
-  return `@echo off\r\nnode "${paths.APP_SCRIPT}" run %*\r\n`;
+  return `@echo off\r\n"${process.execPath}" "${paths.APP_SCRIPT}" run %*\r\n`;
 }
 
 function install({ binDir } = {}) {

@@ -20,6 +20,8 @@ const desktop = require('./desktop');
 const service = require('./service');
 const shell = require('./shell');
 const { sameToken, readBody } = require('./gateway');
+const hosts = require('./hosts');
+const events = require('./events');
 const { log } = require('./files');
 const pkg = require('../package.json');
 
@@ -62,9 +64,8 @@ function cookieToken(req) {
   return match ? decodeURIComponent(match[1]) : '';
 }
 
-function originAllowed(req, port) {
-  const origin = req.headers.origin;
-  return !origin || origin === `http://127.0.0.1:${port}` || origin === `http://localhost:${port}`;
+function originAllowed(req) {
+  return hosts.originAllowed(req.headers.origin, req.allowedPorts || new Set([req.socket.localPort]));
 }
 
 async function readJsonBody(req) {
@@ -129,7 +130,9 @@ function snapshot(ctx) {
       lastCheck: s.keys[k.id] || null,
       coolingDown: state.isCoolingDown(k.id, cfg.cooldownMinutes),
     })),
+    pinned: cfg.pinned || null,
     settings: { cooldownMinutes: cfg.cooldownMinutes, accountRecheckMinutes: cfg.accountRecheckMinutes },
+    traffic: events.stats(),
     shell: shell.status(),
     service: service.status(),
     desktop: { ...desktop.status(), steps: desktop.STEPS, baseUrl: `http://127.0.0.1:${cfg.port}` },
@@ -156,7 +159,9 @@ async function addKey(body) {
 async function checkKey(id) {
   const entry = vault.load().keys.find((k) => k.id === id);
   if (!entry) throw httpError(404, 'That key no longer exists.');
-  return keys.check(entry, config.load());
+  const result = await keys.check(entry, config.load());
+  events.emit('check', { label: entry.label, verdict: result.verdict, status: result.status });
+  return result;
 }
 
 async function checkAllKeys() {
@@ -180,6 +185,7 @@ function removeKey(id) {
     v.keys = v.keys.filter((k) => k.id !== id);
   });
   state.forgetKey(id);
+  unpinIf('key', id);
   log('removed an API key');
 }
 
@@ -268,7 +274,34 @@ async function removeAccount(id) {
   config.update((c) => {
     c.accounts = c.accounts.filter((a) => a.id !== id);
   });
+  unpinIf('account', id);
   log(`removed account "${account.label}"`);
+}
+
+// ---------------------------------------------------------------- the rope
+
+// Plugging the rope into a line pins it: see relay.js for what that changes.
+function setPin(body) {
+  const type = body.type === 'key' ? 'key' : body.type === 'account' ? 'account' : null;
+  const id = String(body.id || '');
+  if (!type) throw httpError(400, 'Pin an account or an API key.');
+  if (type === 'key' && !vault.load().keys.some((k) => k.id === id)) throw httpError(404, 'That key no longer exists.');
+  config.update((c) => {
+    if (type === 'account') {
+      const account = c.accounts.find((a) => a.id === id);
+      if (!account) throw httpError(404, 'That account no longer exists.');
+      account.enabled = true;
+    }
+    c.pinned = { type, id };
+  });
+  log(`rope plugged into ${type} ${id}`);
+  events.emit('pin', { pinType: type, id });
+}
+
+function unpinIf(type, id) {
+  config.update((c) => {
+    if (c.pinned && c.pinned.type === type && c.pinned.id === id) c.pinned = null;
+  });
 }
 
 // ---------------------------------------------------------------- settings & desktop
@@ -317,13 +350,31 @@ async function route(method, pathname, body, ctx) {
   if (area === 'desktop' && method === 'POST' && !id) return desktopSetup(ctx);
   if (area === 'desktop' && method === 'POST' && id === 'reveal') return desktop.reveal();
   if (area === 'settings' && method === 'PATCH') return editSettings(body);
+  if (area === 'pin' && method === 'PUT') return setPin(body);
+  if (area === 'pin' && method === 'DELETE') {
+    config.update((c) => (c.pinned = null));
+    events.emit('pin', { pinType: null });
+    return { ok: true };
+  }
   if (area === 'cooldowns' && method === 'DELETE') return state.clearCooldowns();
   throw httpError(404, 'unknown request');
 }
 
+function streamEvents(req, res) {
+  res.writeHead(200, { ...SECURITY_HEADERS, 'content-type': 'text/event-stream; charset=utf-8', connection: 'keep-alive' });
+  const send = (event) => res.write(`data: ${JSON.stringify(event)}\n\n`);
+  for (const event of events.recent()) send({ ...event, backlog: true });
+  events.bus.on('event', send);
+  const ping = setInterval(() => res.write(': ping\n\n'), 25000);
+  req.on('close', () => {
+    clearInterval(ping);
+    events.bus.removeListener('event', send);
+  });
+}
+
 async function handle(req, res, ctx) {
   const url = new URL(req.url, 'http://127.0.0.1');
-  const { vault: v, cfg } = ctx.current();
+  const { vault: v } = ctx.current();
   if (url.pathname === '/auth') {
     if (!sameToken(url.searchParams.get('t'), v.uiToken)) {
       html(res, 403, messagePage('This link has expired', 'Run <code>claude-nonstop ui</code> in a terminal to open the web UI.'));
@@ -346,11 +397,21 @@ async function handle(req, res, ctx) {
     html(res, 200, fs.readFileSync(PAGE, 'utf8'));
     return;
   }
+  // The live stream: EventSource can't send custom headers, so it needs only the cookie.
+  // It's read-only, and a SameSite=Strict cookie never reaches it from another site.
+  if (url.pathname === '/api/events') {
+    if (!signedIn || !originAllowed(req)) {
+      json(res, 403, { error: 'Not allowed. Reopen the UI with `claude-nonstop ui`.' });
+      return;
+    }
+    streamEvents(req, res);
+    return;
+  }
   if (!url.pathname.startsWith('/api/')) {
     json(res, 404, { error: 'not found' });
     return;
   }
-  if (!signedIn || req.headers['x-claude-nonstop'] !== '1' || !originAllowed(req, cfg.port)) {
+  if (!signedIn || req.headers['x-claude-nonstop'] !== '1' || !originAllowed(req)) {
     json(res, 403, { error: 'Not allowed. Reopen the UI with `claude-nonstop ui`.' });
     return;
   }

@@ -1,6 +1,7 @@
 'use strict';
 
 const { test, before, after } = require('node:test');
+const http = require('http');
 const assert = require('node:assert/strict');
 const { isolate, installFakeClaude, startFakeApi, testKey, call } = require('./helpers');
 
@@ -120,4 +121,35 @@ test('writes the desktop app file with the gateway address and token', async () 
   assert.equal(r.settings.inferenceProvider, 'gateway');
   assert.match(r.settings.inferenceGatewayBaseUrl, /^http:\/\/127\.0\.0\.1:\d+$/);
   assert.equal(r.settings.inferenceGatewayApiKey, vault.loadWithTokens().gatewayToken);
+});
+
+test('the live stream needs the cookie', async () => {
+  assert.equal((await call(`${base}/api/events`)).status, 403);
+});
+
+test('plugging the rope into a line pins it, and the live stream reports it', async () => {
+  const s = JSON.parse((await apiCall('GET', '/api/state')).body);
+  const key = s.keys[0];
+  const chunks = [];
+  const req = await new Promise((resolve) => {
+    const r = http.get(`${base}/api/events`, { headers: { cookie } }, (res) => {
+      assert.equal(res.headers['content-type'], 'text/event-stream; charset=utf-8');
+      res.setEncoding('utf8');
+      res.on('data', (d) => chunks.push(d));
+      resolve(r);
+    });
+  });
+  try {
+    assert.equal((await apiCall('PUT', '/api/pin', { type: 'key', id: key.id })).status, 200);
+    assert.deepEqual(JSON.parse((await apiCall('GET', '/api/state')).body).pinned, { type: 'key', id: key.id });
+    assert.equal((await apiCall('PUT', '/api/pin', { type: 'key', id: 'missing' })).status, 404);
+    assert.equal((await apiCall('PUT', '/api/pin', { type: 'nonsense', id: key.id })).status, 400);
+    assert.equal((await apiCall('DELETE', '/api/pin')).status, 200);
+    assert.equal(JSON.parse((await apiCall('GET', '/api/state')).body).pinned, null);
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    const events = chunks.join('').split('\n\n').filter((x) => x.startsWith('data: ')).map((x) => JSON.parse(x.slice(6)));
+    assert.deepEqual(events.filter((e) => e.type === 'pin').map((e) => e.pinType), ['key', null]);
+  } finally {
+    req.destroy();
+  }
 });

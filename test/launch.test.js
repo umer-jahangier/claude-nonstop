@@ -121,6 +121,32 @@ test("keeps Claude Code's exit code", async () => {
   assert.equal(r.code, 7);
 });
 
+test('a pinned account is tried first', async () => {
+  reset();
+  config.update((c) => (c.pinned = { type: 'account', id: profile.id }));
+  try {
+    const r = await runCli(['run'], { env });
+    assert.equal(r.code, 0, r.stderr);
+    assert.deepEqual(readFakeLog().filter((e) => e.kind === 'probe').map((e) => e.account), [profile.id]);
+    assert.equal(sessions()[0].account, profile.id);
+  } finally {
+    config.update((c) => (c.pinned = null));
+  }
+});
+
+test('a pinned API key skips the accounts and goes first', async () => {
+  reset();
+  config.update((c) => (c.pinned = { type: 'key', id: keys.fingerprint(testKey('ok')) }));
+  try {
+    const r = await runCli(['run'], { env });
+    assert.equal(r.code, 0, r.stderr);
+    assert.equal(readFakeLog().filter((e) => e.kind === 'probe').length, 0);
+    assert.equal(sessions()[0].helperOutput, `${testKey('ok')}\n`);
+  } finally {
+    config.update((c) => (c.pinned = null));
+  }
+});
+
 test('says what to do when every key is used up', async () => {
   reset();
   vault.update((v) => {

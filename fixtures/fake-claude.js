@@ -28,7 +28,12 @@ if (args.includes('-p')) {
 
 if (args[0] === 'auth' && args[1] === 'status') {
   record({ kind: 'auth-status', account });
-  process.stdout.write(`${JSON.stringify({ loggedIn: true, authMethod: 'claude.ai', account: { email: `${account}@example.com` } })}\n`);
+  // Pretty-printed across several lines, exactly like the real `claude auth status --json`.
+  const signedOut = (process.env.FAKE_CLAUDE_SIGNED_OUT || '').split(',').includes(account);
+  const status = signedOut
+    ? { loggedIn: false, authMethod: 'none', apiProvider: 'firstParty' }
+    : { loggedIn: true, authMethod: 'claude.ai', apiProvider: 'firstParty', email: `${account}@example.com` };
+  process.stdout.write(`${JSON.stringify(status, null, 2)}\n`);
   process.exit(0);
 }
 

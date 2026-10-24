@@ -9,6 +9,7 @@ isolate();
 const vault = require('../src/vault');
 const keys = require('../src/keys');
 const state = require('../src/state');
+const config = require('../src/config');
 const { createServer, createContext } = require('../src/server');
 
 let api;
@@ -125,4 +126,17 @@ test('forwards model listing for the desktop app', async () => {
   useKeys('ok');
   const r = await call(`${base}/v1/models`, { headers: { 'x-api-key': token } });
   assert.equal(r.status, 200);
+});
+
+test('a key pinned from the web UI takes every request at once', async () => {
+  useKeys('ok', 'second');
+  config.update((c) => (c.pinned = { type: 'key', id: keys.fingerprint(testKey('second')) }));
+  try {
+    api.requests.length = 0;
+    const r = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token } });
+    assert.equal(JSON.parse(r.body).id, 'msg_second');
+    assert.deepEqual(api.requests.map((q) => q.key), [testKey('second')]);
+  } finally {
+    config.update((c) => (c.pinned = null));
+  }
 });

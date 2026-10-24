@@ -120,11 +120,19 @@ function lastLine(text) {
   return String(text || '').trim().split(/\r?\n/).filter(Boolean).pop() || '';
 }
 
+// Claude Code prints JSON either pretty-printed across many lines (`auth status`) or as
+// one line, sometimes after other output. Try the whole text, then the last {...} block,
+// then each line from the end.
 function parseJsonOutput(stdout) {
-  const lines = String(stdout || '').trim().split(/\r?\n/).reverse();
-  for (const line of lines) {
+  const text = String(stdout || '').trim();
+  const attempts = [text];
+  const start = text.lastIndexOf('\n{');
+  if (start >= 0) attempts.push(text.slice(start + 1));
+  attempts.push(...text.split(/\r?\n/).reverse());
+  for (const candidate of attempts) {
     try {
-      return JSON.parse(line);
+      const value = JSON.parse(candidate);
+      if (value && typeof value === 'object') return value;
     } catch {}
   }
   return null;
@@ -158,6 +166,7 @@ function findEmail(value) {
 }
 
 async function status(account, bin) {
+  ensureHome();
   const r = await claude.capture(bin, ['auth', 'status', '--json'], { env: env(account), cwd: paths.HOME, timeoutMs: 30000 });
   const parsed = parseJsonOutput(r.stdout);
   if (!parsed) return { loggedIn: false, email: null, error: lastLine(r.stderr) || lastLine(r.stdout) };
@@ -167,6 +176,7 @@ async function status(account, bin) {
 const LOGIN_ARGS = ['auth', 'login', '--claudeai'];
 
 function logout(account, bin) {
+  ensureHome();
   return claude.capture(bin, ['auth', 'logout'], { env: env(account), cwd: paths.HOME, timeoutMs: 30000 });
 }
 
@@ -202,6 +212,7 @@ module.exports = {
   remove,
   logout,
   isLimitReason,
+  parseJsonOutput,
   LOGIN_ARGS,
   PROBE_ARGS,
 };
