@@ -30,6 +30,10 @@ function settings(cfg, v) {
     inferenceGatewayBaseUrl: `http://127.0.0.1:${cfg.port}`,
     inferenceGatewayApiKey: v.gatewayToken,
     inferenceGatewayAuthScheme: 'bearer',
+    // Third-party mode keeps its own history, so turn on Anthropic's import: Settings →
+    // Import & export brings over your claude.ai chats and the Code and Cowork sessions
+    // already on this computer, and a new chat offers it when it finds earlier sessions.
+    claudeAiImport: JSON.stringify({ enabled: true, automatic3pImport: true, bannerBehavior: 'detect' }),
   };
 }
 
@@ -119,7 +123,7 @@ function managedRemoval() {
   if (process.platform === 'darwin' || !current()) return null;
   if (process.platform === 'win32') {
     const key = 'HKLM:\\SOFTWARE\\Policies\\Claude';
-    const names = ['inferenceProvider', 'inferenceGatewayBaseUrl', 'inferenceGatewayApiKey', 'inferenceGatewayAuthScheme'];
+    const names = ['inferenceProvider', 'inferenceGatewayBaseUrl', 'inferenceGatewayApiKey', 'inferenceGatewayAuthScheme', 'claudeAiImport'];
     return { ps: names.map((n) => `Remove-ItemProperty -Path ${psQuote(key)} -Name ${psQuote(n)} -ErrorAction SilentlyContinue`).join('; ') };
   }
   return { sh: () => `rm -f ${LINUX_FILE}` };

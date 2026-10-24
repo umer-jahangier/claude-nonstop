@@ -146,7 +146,10 @@ async function status() {
   const s = state.load();
   const running = await gatewayRunning(cfg);
   out(`claude-nonstop ${pkg.version}`);
-  out(`  Claude Code        ${claude.findClaude() || 'not found'}`);
+  const bin = claude.findClaude();
+  const cv = bin ? await claude.version(bin) : null;
+  const note = cv && !claude.atLeast(cv) ? ', update it with `claude update` so sessions continue by themselves after limits' : '';
+  out(`  Claude Code        ${bin ? `${bin}${cv ? ` (${cv.join('.')}${note})` : ''}` : 'not found'}`);
   out(`  Secrets            encrypted, key in ${keystore.describe()}`);
   out(`  Gateway            ${running ? `running on ${gatewayUrl(cfg)}` : 'not running'}${service.status().installed ? ', starts at login' : ''}`);
   if (running) out(`  Web UI             ${uiUrl(cfg)}  (open it with \`claude-nonstop ui\`)`);
@@ -352,12 +355,26 @@ function optionValue(args, name) {
   return i >= 0 ? args[i + 1] : undefined;
 }
 
+// Brings an older Claude Code up to the version that continues by itself after a usage
+// limit, with Claude Code's own updater.
+async function keepClaudeCurrent(bin) {
+  const v = await claude.version(bin);
+  if (!v || claude.atLeast(v)) return;
+  out(`- Updating Claude Code ${v.join('.')}, so sessions continue by themselves after a usage limit...`);
+  const r = await claude.capture(bin, ['update'], { timeoutMs: 300000 });
+  const after = await claude.version(bin);
+  if (after && claude.atLeast(after)) out(`- Claude Code is now ${after.join('.')}.`);
+  else out(`! Couldn't update Claude Code (${(r.stderr || r.stdout).trim().split('\n').pop() || `exit ${r.code}`}). Run \`claude update\` to get automatic continue after limits.`);
+}
+
 async function setup(args = []) {
   const yes = args.includes('--yes') || args.includes('-y');
   ensureHome();
   const v = vault.loadWithTokens();
   out(`- Secrets are stored encrypted; the encryption key is in ${keystore.describe()}.`);
-  if (!claude.findClaude()) out('! Claude Code was not found. Install it (https://code.claude.com/docs/en/setup), then run `claude-nonstop setup` again.');
+  const bin = claude.findClaude();
+  if (!bin) out('! Claude Code was not found. Install it (https://code.claude.com/docs/en/setup), then run `claude-nonstop setup` again.');
+  else await keepClaudeCurrent(bin);
   if (!args.includes('--no-system') && !process.env.CI) {
     // One admin prompt covers the short address and, on Windows and Linux, the desktop app.
     const desktopSettings = args.includes('--no-desktop') ? null : desktop.settings(config.load(), v);

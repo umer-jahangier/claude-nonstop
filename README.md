@@ -38,7 +38,9 @@ account 1  →  account 2  →  …  →  API key 1  →  API key 2  →  …
 ## What you get
 
 - **Subscriptions first.** Every session starts on the first account that still has usage left. API keys are only used once every account is out.
-- **Keys switch mid-session.** A local gateway sends each request with your first working key. If a key runs out of credit, the same request goes out again on the next key, and your session never notices.
+- **Never stalls at a limit.** If an account runs out in the middle of your work, the same conversation reopens on your next account, then on your API keys, and carries on by itself. With nothing else left, it waits for the reset and continues on its own.
+- **Keys switch mid-request.** A local gateway sends each request with your first working key. If a key runs out of credit, the same request goes out again on the next key, and your session never notices.
+- **Your chats stay.** Every account and key shares one Claude Code history, so it's always the same conversation, and `claude --resume` shows all of them. In the desktop app, your claude.ai chats and earlier sessions can be brought into third-party mode with one import.
 - **One command to install, nothing to configure by hand.** It brings its own Node.js, installs Claude Code if you don't have it, and sets everything up.
 - **A web page at `https://claude.nonstop`** to add accounts and keys, see what's in use, and switch lines by dragging a cable. Dark by default, with Light and Automatic (your computer's setting) one click away.
 - **Works in the terminal and in the Claude desktop app**, on macOS, Windows and Linux.
@@ -63,7 +65,7 @@ irm https://raw.githubusercontent.com/umer-jahangier/claude-nonstop/main/install
 
 The installer takes about a minute. It:
 
-1. installs claude-nonstop and its own copy of Node.js into `~/.claude-nonstop` (`%USERPROFILE%\.claude-nonstop` on Windows), and Claude Code too if it isn't installed;
+1. installs claude-nonstop and its own copy of Node.js into `~/.claude-nonstop` (`%USERPROFILE%\.claude-nonstop` on Windows), and installs Claude Code too, or updates it if it's older than 2.1.234;
 2. gives the web page its short address, `https://claude.nonstop`, with a certificate your computer trusts;
 3. sets up the Claude desktop app to run on your API keys, if you have it;
 4. starts the local gateway now, and every time you log in;
@@ -103,8 +105,9 @@ claude-nonstop: using Work (subscription)
 ## Everyday use
 
 - **Just type `claude`.** claude-nonstop picks the first account with usage left, or your first working key when every account is out. Everything else about Claude Code stays the same.
-- **Hit a limit in the middle of a session?** Type `/exit`, then `claude -c`. The next session starts on the next line and continues the same conversation. Your history is shared across all your accounts.
-- **Running on API keys?** Nothing to do: when a key runs out mid-session, the next key takes over on the very same request.
+- **Hit a limit in the middle of your work?** Nothing to do. claude-nonstop reopens the same conversation on your next account (or your API keys) and tells Claude to continue where it left off. You'll see Claude Code restart for a moment, then the work carries on.
+- **Only one account, or everything is out?** Claude Code waits in the open session and continues the task by itself when your limit resets (shown as *Continuing automatically at 3:45pm*). On API keys, claude-nonstop does the waiting and continues as soon as an account or a key has usage again. Leave the terminal open.
+- **Running on API keys?** When a key runs out, the next key takes over on the very same request.
 - **Want a particular line right now?** On the web page, drag the cable's plug onto it, or choose **Use This Account** / **Use This Key** in its **…** menu. A key switches at once, even mid-session; an account applies to your next session. Click **Use Automatic** to hand control back.
 - **Force a mode for one session:** `claude-nonstop --api` uses only API keys, `claude-nonstop --sub` only subscription accounts.
 - **Keep an eye on it.** The page's **Activity** list shows every request, switch and new session as it happens, and its tab icon turns red when every API key is used up.
@@ -143,6 +146,8 @@ The installer sets it up for you using the settings locations Anthropic document
 
 Then **quit and reopen the desktop app.** Its sign-in screen offers the third-party option, which runs on your API keys through claude-nonstop, and **Claude.ai** for your subscription. Pick the third-party option when your subscription is out.
 
+**Your chats come along.** Third-party mode keeps its own history, separate from claude.ai. claude-nonstop turns on Anthropic's [import](https://claude.com/docs/third-party/claude-desktop/import): in the desktop app, open **Settings → Import & export → Import…** to bring over your claude.ai chats and projects and the Code and Cowork sessions already on this computer. A new chat also offers the import when it finds earlier sessions. It's a copy: your claude.ai history stays where it is, and running it again adds only what's new.
+
 Installed the desktop app later? Run `claude-nonstop desktop`, or click **Set Up Automatically** on the page's **Desktop App** tab.
 
 ## Commands
@@ -178,6 +183,8 @@ Claude Code's own subcommands (`claude mcp`, `claude doctor`, `claude update`, `
 **Choosing an account.** Before a session starts, claude-nonstop asks each account, in order, whether it has usage left. Each check is one tiny Haiku request run by Claude Code itself. An account that hit its limit is skipped for 10 minutes before it's asked again (change this in **Settings**).
 
 **Extra accounts.** Each extra account is its own Claude Code configuration folder (`CLAUDE_CONFIG_DIR`, the [documented way](https://code.claude.com/docs/en/authentication#log-in-with-multiple-accounts) to stay signed in to several accounts). You sign in on Anthropic's own page, and Claude Code stores the login in its own credential store; claude-nonstop never sees or stores subscription credentials. Your history, settings, plugins, skills and MCP servers are shared by every account, so they all feel the same and `claude -c` works across them.
+
+**Mid-session.** claude-nonstop starts Claude Code with a few background hooks ([`StopFailure`](https://code.claude.com/docs/en/hooks#stopfailure) and friends, documented Claude Code features). When a turn stops on a usage limit or a used-up key, the hook tells claude-nonstop, which checks the next lines in your relay. If one has usage, it reopens the same conversation there with `claude --resume <session> "Continue where you left off."`, keeping the flags you started with. If nothing has usage, it leaves the session alone: on a claude.ai account, Claude Code's own [automatic continue](https://code.claude.com/docs/en/interactive-mode.md#wait-for-a-usage-limit-to-reset) picks the task up at the reset; on API keys, claude-nonstop checks again every few minutes and reopens the conversation when something frees up. Your own hooks and `--settings` keep working alongside.
 
 **API keys.** Claude Code talks to the gateway at `http://127.0.0.1:43117`, which forwards each request to Anthropic with your first working key. A key that answers *credit balance too low*, *spend limit reached*, *invalid* or *not allowed* is marked used up, the same request is sent again on the next key, and the used-up key is skipped for 30 minutes before it's tried again, in case you topped it up. If the gateway isn't running, claude-nonstop hands Claude Code a key helper instead, which picks a key again every two minutes.
 
@@ -226,6 +233,7 @@ Start with `claude-nonstop status`: it shows what's set up, what's in use and ho
 - **The page doesn't open.** Make sure the gateway runs: `claude-nonstop service install` starts it now and at every login. Then run `claude-nonstop ui`. `http://claude-nonstop.localhost` always works as a fallback.
 - **`claude.nonstop` isn't found, or shows "Not secure".** Run `claude-nonstop setup` again and allow the prompts. Typing it into the address bar for the first time? Include `https://`, so the browser doesn't search for it.
 - **Linux: the certificate wasn't trusted.** Browsers there read certificates through NSS. Install its tools (`sudo apt install libnss3-tools` on Debian and Ubuntu, `sudo dnf install nss-tools` on Fedora), then run `claude-nonstop setup` again.
+- **A session didn't continue by itself after a limit.** Check `claude-nonstop status`: the **Claude Code** line should show 2.1.234 or newer (run `claude update` if not). Keep the terminal open while it waits, and start sessions with `claude` (or `claude-nonstop`) so claude-nonstop can look after them.
 - **An account says "Not signed in".** Click **Sign In…** in its alert, or run `claude-nonstop accounts login <n>`.
 - **Every key shows "Used up".** Top one up at [platform.claude.com/settings/billing](https://platform.claude.com/settings/billing), then click **Test Now** on it, or **Forget All Cooldowns** in **Settings**.
 - **The desktop app doesn't offer the third-party option.** Quit it completely and reopen it. On macOS, check the profile is installed under **System Settings → General → Device Management**. Then run `claude-nonstop status`: the **Desktop app** line should say it's set up.
@@ -258,11 +266,15 @@ When you install the desktop app profile, macOS shows *"The author of this profi
 
 The claude-nonstop profile isn't signed because it's made on your own Mac during setup: it holds your computer's private gateway key, so no one could sign it in advance. It's safe to install, and you can check exactly what it does before you click **Install**:
 
-- **What it contains:** four settings for the Claude desktop app. Its third-party provider is set to *gateway*, the gateway address is `http://127.0.0.1:43117` (this computer), the gateway key is your local claude-nonstop token, and the auth scheme is *bearer*. In System Settings, click the profile, then **Settings** to see them.
+- **What it contains:** five settings for the Claude desktop app. Its third-party provider is set to *gateway*, the gateway address is `http://127.0.0.1:43117` (this computer), the gateway key is your local claude-nonstop token, the auth scheme is *bearer*, and the import of your earlier chats is turned on. In System Settings, click the profile, then **Settings** to see them.
 - **What it doesn't do:** it installs no certificates, changes no system settings, and touches no other app.
 - **Undoing it:** remove it any time in **System Settings → General → Device Management**. The file is also saved at `~/.claude-nonstop/claude-nonstop-desktop.mobileconfig` if you'd like to read it.
 
 Rather not install a profile at all? Set the desktop app up by hand with the values on the page's **Desktop App** tab.
+
+### Will I still see limit messages?
+
+Only when every account and key is out. When one line runs out, Claude Code may show its limit notice for a second or two while the conversation reopens on the next line; then it carries on. When everything is out, you'll see Claude Code's own *Continuing automatically at …* line while it waits for the reset.
 
 ### Do I need API keys?
 

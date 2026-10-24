@@ -106,6 +106,58 @@ function runInteractive(bin, args, env) {
   });
 }
 
+// Like runInteractive, but hands back the child too, so a supervisor can stop it.
+function spawnInteractive(bin, args, env) {
+  const c = command(bin, args);
+  const child = spawn(c.file, c.args, { ...c.options, env, stdio: 'inherit' });
+  const ignore = () => {};
+  const forwardTerm = () => child.kill('SIGTERM');
+  const forwardHup = () => child.kill('SIGHUP');
+  process.on('SIGINT', ignore);
+  process.on('SIGTERM', forwardTerm);
+  process.on('SIGHUP', forwardHup);
+  const exited = new Promise((resolve) => {
+    const done = (code) => {
+      process.removeListener('SIGINT', ignore);
+      process.removeListener('SIGTERM', forwardTerm);
+      process.removeListener('SIGHUP', forwardHup);
+      resolve(code);
+    };
+    child.on('error', (err) => {
+      process.stderr.write(`claude-nonstop: could not start Claude Code: ${err.message}\n`);
+      done(1);
+    });
+    child.on('exit', (code, signal) => done(exitCodeOf(code, signal)));
+  });
+  return { child, exited };
+}
+
+// Ends a Claude Code session started with spawnInteractive, then puts the terminal back
+// the way a normal exit would leave it (in case Claude Code had no chance to).
+async function stopInteractive({ child, exited }) {
+  if (isWin) {
+    // Takes Claude Code down with anything it started, e.g. when cmd.exe launched it.
+    require('child_process').spawnSync('taskkill', ['/pid', String(child.pid), '/T', '/F'], { stdio: 'ignore', windowsHide: true });
+  } else {
+    child.kill('SIGTERM');
+    const timer = setTimeout(() => child.kill('SIGKILL'), 3000);
+    await exited;
+    clearTimeout(timer);
+  }
+  await exited;
+  if (process.stdout.isTTY) {
+    // Leave the alternate screen, and turn off mouse, focus, paste and keyboard modes.
+    process.stdout.write('\x1b[?1049l\x1b[?1000l\x1b[?1002l\x1b[?1003l\x1b[?1006l\x1b[?1004l\x1b[?2004l\x1b[<u\x1b[0m\x1b[?25h\r\n');
+  }
+  if (process.stdin.isTTY) {
+    if (isWin) {
+      try { process.stdin.setRawMode(false); } catch {}
+    } else {
+      require('child_process').spawnSync('stty', ['sane'], { stdio: 'inherit' });
+    }
+  }
+}
+
 // Starts Claude Code with piped output; returns the child process.
 function start(bin, args, { env, cwd } = {}) {
   const c = command(bin, args);
@@ -147,4 +199,19 @@ function capture(bin, args, { env, cwd, timeoutMs = 60000, input = '' } = {}) {
   });
 }
 
-module.exports = { findClaude, command, runInteractive, start, capture };
+// Claude Code 2.1.234 added automatic continue after a usage limit, which a single
+// account relies on to pick work up again at the reset.
+const MIN_VERSION = [2, 1, 234];
+
+async function version(bin) {
+  const r = await capture(bin, ['--version'], { timeoutMs: 20000 });
+  const m = /(\d+)\.(\d+)\.(\d+)/.exec(r.stdout || '');
+  return m ? m.slice(1).map(Number) : null;
+}
+
+function atLeast(v, min = MIN_VERSION) {
+  for (let i = 0; i < 3; i++) if (v[i] !== min[i]) return v[i] > min[i];
+  return true;
+}
+
+module.exports = { findClaude, command, runInteractive, spawnInteractive, stopInteractive, start, capture, version, atLeast, MIN_VERSION };

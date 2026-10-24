@@ -3,6 +3,8 @@
 // Starting Claude Code on the first subscription account with usage left, then on
 // API keys: through the local gateway when it's running (keys switch mid-request),
 // otherwise through Claude Code's apiKeyHelper (keys switch every couple of minutes).
+// Interactive sessions are then supervised (supervise.js): when a line runs out mid-way,
+// the same conversation moves on to the next line and carries on by itself.
 
 const paths = require('./paths');
 const config = require('./config');
@@ -12,6 +14,7 @@ const relay = require('./relay');
 const accounts = require('./accounts');
 const state = require('./state');
 const claude = require('./claude');
+const supervise = require('./supervise');
 const { request } = require('./http');
 const { log, ensureHome } = require('./files');
 
@@ -79,32 +82,57 @@ async function firstAccountWithUsage(cfg, bin) {
   return null;
 }
 
-async function launchOnKeys(bin, args, cfg) {
-  const v = vault.loadWithTokens();
-  if (!v.keys.length) {
-    say('no API keys saved yet. Add some with `claude-nonstop ui` (or `claude-nonstop keys add`).');
-    return 1;
+// The first line a session starts on: an account with usage left, or else the API keys.
+async function firstLine(cfg, bin, mode) {
+  if (mode !== 'api') {
+    const account = await firstAccountWithUsage(cfg, bin);
+    if (account) {
+      say(`using ${account.label} (subscription)`);
+      return { kind: 'account', account };
+    }
+    if (mode === 'sub') {
+      say('no subscription account has usage left right now');
+      return null;
+    }
+    say('no subscription account has usage left, switching to API keys');
   }
+  if (!vault.load().keys.length) {
+    say('no API keys saved yet. Add some with `claude-nonstop ui` (or `claude-nonstop keys add`).');
+    return null;
+  }
+  return { kind: 'keys' };
+}
+
+// The environment (and settings) that run Claude Code on a line, or null if it can't be used.
+async function prepareLine(line, cfg, first) {
+  if (line.kind === 'account') {
+    const { account } = line;
+    log(`launch: ${account.label}`);
+    state.setCurrent(account.label);
+    if (account.kind === 'profile') accounts.syncSharedFiles(account.configDir);
+    return { env: accounts.env(account) };
+  }
+  const v = vault.loadWithTokens();
   const env = { ...process.env };
   delete env.ANTHROPIC_API_KEY;
   delete env.ANTHROPIC_AUTH_TOKEN;
   if (await gatewayRunning(cfg)) {
     env.ANTHROPIC_BASE_URL = gatewayUrl(cfg);
     env.ANTHROPIC_AUTH_TOKEN = v.gatewayToken;
-    say('using your API keys through the local gateway (it switches keys mid-session)');
+    if (first) say('using your API keys through the local gateway (it switches keys mid-session)');
     log('launch: API keys through the gateway');
     state.setCurrent('API keys (gateway)');
-    return claude.runInteractive(bin, args, env);
+    return { env };
   }
   const entry = await keys.pick(relay.keyOrder(cfg, v.keys), cfg);
   if (!entry) {
     say('every API key is used up right now. Top one up or add another with `claude-nonstop ui`.');
-    return 1;
+    return null;
   }
-  say(`using API key "${entry.label}"`);
+  if (first) say(`using API key "${entry.label}"`);
   log(`launch: API key "${entry.label}" through the key helper`);
   env.CLAUDE_CODE_API_KEY_HELPER_TTL_MS = String(cfg.helperTtlMs);
-  return claude.runInteractive(bin, ['--settings', JSON.stringify({ apiKeyHelper: helperCommand() }), ...args], env);
+  return { env, settings: { apiKeyHelper: helperCommand() } };
 }
 
 async function launch(args, { mode = 'auto' } = {}) {
@@ -116,22 +144,18 @@ async function launch(args, { mode = 'auto' } = {}) {
   if (!startsSession(args)) return claude.runInteractive(bin, args, process.env);
   ensureHome();
   const cfg = config.load();
-  if (mode !== 'api') {
-    const account = await firstAccountWithUsage(cfg, bin);
-    if (account) {
-      say(`using ${account.label} (subscription)`);
-      log(`launch: ${account.label}`);
-      state.setCurrent(account.label);
-      if (account.kind === 'profile') accounts.syncSharedFiles(account.configDir);
-      return claude.runInteractive(bin, args, accounts.env(account));
-    }
-    if (mode === 'sub') {
-      say('no subscription account has usage left right now');
-      return 1;
-    }
-    say('no subscription account has usage left, switching to API keys');
-  }
-  return launchOnKeys(bin, args, cfg);
+  const line = await firstLine(cfg, bin, mode);
+  if (!line) return 1;
+  let first = true;
+  const prepare = async (l) => {
+    const prepared = await prepareLine(l, cfg, first);
+    first = false;
+    return prepared;
+  };
+  if (supervise.supervisable(args)) return supervise.run({ bin, args, cfg, mode, line, prepare });
+  const prepared = await prepare(line);
+  if (!prepared) return 1;
+  return claude.runInteractive(bin, prepared.settings ? ['--settings', JSON.stringify(prepared.settings), ...args] : args, prepared.env);
 }
 
 // apiKeyHelper mode: print the first working key and nothing else (Claude Code rejects

@@ -47,6 +47,8 @@ async function main(argv) {
       return launch().launch(rest, { mode: 'sub' });
     case 'key-helper':
       return launch().keyHelper();
+    case 'hook':
+      return require('./supervise').hook();
     case 'help':
     case '--help':
     case '-h':
