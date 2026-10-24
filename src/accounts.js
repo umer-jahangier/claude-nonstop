@@ -168,6 +168,8 @@ function findEmail(value) {
 async function status(account, bin) {
   ensureHome();
   const r = await claude.capture(bin, ['auth', 'status', '--json'], { env: env(account), cwd: paths.HOME, timeoutMs: 30000 });
+  // Without Claude Code there's no telling whether the account is signed in, so don't say it isn't.
+  if (r.notStarted) return { loggedIn: null, email: null, error: lastLine(r.stderr) };
   const parsed = parseJsonOutput(r.stdout);
   if (!parsed) return { loggedIn: false, email: null, error: lastLine(r.stderr) || lastLine(r.stdout) };
   return { loggedIn: Boolean(parsed.loggedIn), email: findEmail(parsed), method: parsed.authMethod || null };

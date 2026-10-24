@@ -10,7 +10,6 @@ const os = require('os');
 const path = require('path');
 const { spawn, spawnSync } = require('child_process');
 const paths = require('./paths');
-const claude = require('./claude');
 const { ensureHome, readJson } = require('./files');
 
 const LABEL = 'dev.claude-nonstop.gateway';
@@ -25,11 +24,11 @@ const run = (cmd, args) => {
 };
 
 // The service needs to find Claude Code (for signing in accounts from the web UI) even
-// though login services start with a bare PATH, so it gets this shell's PATH.
+// though login services start with a bare PATH, so it gets this shell's PATH and looks
+// Claude Code up each time. Saving where it is today would break once it moves.
 function serviceEnv() {
   const env = { PATH: process.env.PATH || '' };
-  const bin = claude.findClaude();
-  if (bin) env.CLAUDE_NONSTOP_CLAUDE = bin;
+  if (process.env.CLAUDE_NONSTOP_CLAUDE) env.CLAUDE_NONSTOP_CLAUDE = process.env.CLAUDE_NONSTOP_CLAUDE;
   if (process.env.CLAUDE_NONSTOP_HOME) env.CLAUDE_NONSTOP_HOME = process.env.CLAUDE_NONSTOP_HOME;
   return env;
 }

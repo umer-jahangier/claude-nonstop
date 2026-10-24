@@ -23,7 +23,10 @@ function isExecutable(p) {
 const samePath = (a, b) => (isWin ? path.resolve(a).toLowerCase() === path.resolve(b).toLowerCase() : path.resolve(a) === path.resolve(b));
 
 function findClaude() {
-  if (process.env.CLAUDE_NONSTOP_CLAUDE) return process.env.CLAUDE_NONSTOP_CLAUDE;
+  // A location given in advance only counts while Claude Code is still there: it moves when
+  // you switch between the npm and native installs.
+  const given = process.env.CLAUDE_NONSTOP_CLAUDE;
+  if (given && isExecutable(given)) return given;
   const exts = isWin ? ['.exe', '.cmd', '.bat'] : [''];
   const ownShims = path.join(paths.HOME, 'shims');
   const dirs = (process.env.PATH || process.env.Path || '').split(path.delimiter);
@@ -165,23 +168,26 @@ function start(bin, args, { env, cwd } = {}) {
 }
 
 // Runs Claude Code to completion and collects its output. Never rejects.
+// `notStarted` tells "Claude Code isn't there" apart from Claude Code reporting a problem.
 function capture(bin, args, { env, cwd, timeoutMs = 60000, input = '' } = {}) {
+  const why = (err) => (err.code === 'ENOENT' ? `Claude Code wasn't found at ${bin}` : err.message);
   return new Promise((resolve) => {
     let child;
     try {
       child = start(bin, args, { env, cwd });
     } catch (err) {
-      resolve({ code: 1, stdout: '', stderr: err.message });
+      resolve({ code: 1, stdout: '', stderr: why(err), notStarted: true });
       return;
     }
     let stdout = '';
     let stderr = '';
     let settled = false;
+    let notStarted = false;
     const finish = (code) => {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
-      resolve({ code, stdout, stderr });
+      resolve(notStarted ? { code, stdout, stderr, notStarted } : { code, stdout, stderr });
     };
     const timer = setTimeout(() => {
       stderr += `\ntimed out after ${Math.round(timeoutMs / 1000)}s`;
@@ -190,7 +196,8 @@ function capture(bin, args, { env, cwd, timeoutMs = 60000, input = '' } = {}) {
     child.stdout.on('data', (d) => (stdout += d));
     child.stderr.on('data', (d) => (stderr += d));
     child.on('error', (err) => {
-      stderr += err.message;
+      stderr += why(err);
+      notStarted = !child.pid;
       finish(1);
     });
     child.on('close', (code, signal) => finish(exitCodeOf(code, signal)));

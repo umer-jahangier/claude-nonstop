@@ -978,7 +978,7 @@ function accountState(a) {
   const login = logins[a.id];
   const c = a.lastCheck;
   if (!a.enabled) return { s: 'off', word: 'Off', ready: false };
-  if (login && !login.loggedIn) return { s: 'dead', word: 'Not signed in', ready: false };
+  if (login && login.loggedIn === false) return { s: 'dead', word: 'Not signed in', ready: false };
   if (c && !c.ok && /limit/i.test(c.reason || '')) return { s: 'warn', word: 'Limit reached', ready: false };
   if (c && !c.ok) return { s: 'warn', word: 'Check failed', ready: true };
   return { s: c && c.ok ? 'ready' : '', word: c && c.ok ? 'Ready' : 'Not checked', ready: true };
@@ -1066,7 +1066,7 @@ function renderAlerts() {
   if (!S.claudeFound) alerts.push({ tone: 'dead', text: "Claude Code isn't installed on this computer, so accounts can't be checked or signed in." });
   for (const a of S.accounts) {
     const login = logins[a.id];
-    if (a.enabled && login && !login.loggedIn) alerts.push({ tone: 'dead', text: `${a.label} isn't signed in.`, acts: `<button class="btn" type="button" data-act="login-account" data-id="${esc(a.id)}" data-fk="alert-login:${esc(a.id)}">Sign In…</button>` });
+    if (a.enabled && login && login.loggedIn === false) alerts.push({ tone: 'dead', text: `${a.label} isn't signed in.`, acts: `<button class="btn" type="button" data-act="login-account" data-id="${esc(a.id)}" data-fk="alert-login:${esc(a.id)}">Sign In…</button>` });
   }
   for (const k of S.keys) {
     if (keyState(k).s !== 'dead') continue;
@@ -1083,7 +1083,7 @@ function renderAlerts() {
 function readoutFor(type, item) {
   if (type === 'account') {
     const login = logins[item.id];
-    const who = !login ? 'Checking sign-in…' : login.loggedIn ? login.email || 'Signed in' : 'Signed out';
+    const who = !login ? 'Checking sign-in…' : login.loggedIn ? login.email || 'Signed in' : login.loggedIn === false ? 'Signed out' : "Couldn't check sign-in";
     const c = item.lastCheck;
     return { ident: esc(who), when: c ? `checked ${ago(c.at)}` : '', why: c && !c.ok ? c.reason : '' };
   }

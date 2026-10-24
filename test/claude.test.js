@@ -32,6 +32,19 @@ test("finds Claude Code on PATH but never claude-nonstop's own shim", () => {
   }
 });
 
+test('a saved Claude Code location that no longer exists is looked up again', () => {
+  const moved = makeClaude(path.join(root, 'native bin'));
+  const before = process.env.PATH;
+  process.env.PATH = path.dirname(moved);
+  process.env.CLAUDE_NONSTOP_CLAUDE = path.join(root, 'uninstalled', 'claude');
+  try {
+    assert.equal(claude.findClaude(), moved);
+  } finally {
+    process.env.PATH = before;
+    delete process.env.CLAUDE_NONSTOP_CLAUDE;
+  }
+});
+
 // Windows runs .cmd files through cmd.exe, which re-parses arguments. This checks that
 // awkward prompts reach the program exactly as typed.
 test('passes awkward arguments through a .cmd file unchanged', { skip: process.platform !== 'win32' }, async () => {

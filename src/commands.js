@@ -236,8 +236,8 @@ async function listAccounts() {
   const s = state.load();
   out('Subscription accounts, tried in this order:');
   for (const [i, a] of cfg.accounts.entries()) {
-    const login = bin ? await accounts.status(a, bin) : { loggedIn: false };
-    const who = login.loggedIn ? `signed in${login.email ? ` as ${login.email}` : ''}` : 'not signed in';
+    const login = bin ? await accounts.status(a, bin) : { loggedIn: null, error: 'Claude Code was not found' };
+    const who = login.loggedIn ? `signed in${login.email ? ` as ${login.email}` : ''}` : login.loggedIn === false ? 'not signed in' : `sign-in not checked (${login.error})`;
     out(`  ${i + 1}. ${a.label}${a.enabled === false ? ' (off)' : ''}: ${who}; ${describeAccountCheck(s.accounts[a.id])}`);
   }
   out('');
