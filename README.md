@@ -78,7 +78,7 @@ Steps 2 and 3 change things outside your home folder, so your computer asks firs
 | --- | --- | --- | --- |
 | Short address `claude.nonstop` | Your password, once | One "Allow changes?" confirmation | Your password (sudo), once |
 | Trusted certificate (no "Not secure") | Your password again, to trust it | One "Install this certificate?" confirmation | Nothing to approve (needs `certutil`, see [Troubleshooting](#troubleshooting)) |
-| Claude desktop app | System Settings opens with a profile: double-click it, click **Install** | Included in the confirmation above | Included in the password prompt above |
+| Claude desktop app | System Settings opens with a profile: double-click it, click **Install** ([why it says "author unknown"](#why-does-macos-say-the-profiles-author-is-unknown)) | Included in the confirmation above | Included in the password prompt above |
 
 Say no to the short address and the page lives at `http://claude-nonstop.localhost` instead, which works on every computer with no setup at all.
 
@@ -139,7 +139,7 @@ The installer sets it up for you using the settings locations Anthropic document
 
 - **Windows:** registry policy under `HKLM\SOFTWARE\Policies\Claude`, in the installer's one confirmation.
 - **Linux:** `/etc/claude-desktop/managed-settings.json`, in the installer's one password prompt.
-- **macOS:** a configuration profile. macOS only lets you approve profiles yourself, so System Settings opens with it: double-click **claude-nonstop for the Claude desktop app**, then click **Install**. (If you closed it, it's under **System Settings → General → Device Management**.)
+- **macOS:** a configuration profile. macOS only lets you approve profiles yourself, so System Settings opens with it: double-click **claude-nonstop for the Claude desktop app**, then click **Install**. (If you closed it, it's under **System Settings → General → Device Management**.) macOS will say *"The author of this profile is unknown"*: that's expected, and [here's why](#why-does-macos-say-the-profiles-author-is-unknown).
 
 Then **quit and reopen the desktop app.** Its sign-in screen offers the third-party option, which runs on your API keys through claude-nonstop, and **Claude.ai** for your subscription. Pick the third-party option when your subscription is out.
 
@@ -244,15 +244,37 @@ This stops the gateway, removes the `claude` shortcut, the short address, the tr
 
 ## FAQ
 
-**Is this allowed?** claude-nonstop runs the unmodified Claude Code and uses only documented features. Every account and key you add must be your own: each teammate installs claude-nonstop and adds their own. Sharing a subscription account between people is against Anthropic's terms.
+### Is this allowed?
 
-**Why does it ask for my password?** Only for the short address, the trusted certificate and the desktop app settings, which live outside your home folder. Decline and everything else still works, at `http://claude-nonstop.localhost`.
+claude-nonstop runs the unmodified Claude Code and uses only documented features. Every account and key you add must be your own: each teammate installs claude-nonstop and adds their own. Sharing a subscription account between people is against Anthropic's terms.
 
-**Do I need API keys?** No. With only subscription accounts, claude-nonstop moves from one to the next. Keys are the fallback for when every account is out.
+### Why does it ask for my password?
 
-**Does it change how Claude Code behaves?** No. It picks which account or key a session uses, then runs Claude Code as usual.
+Only for the short address, the trusted certificate and the desktop app settings, which live outside your home folder. Decline and everything else still works, at `http://claude-nonstop.localhost`.
 
-**Can my teammates use it?** Yes. Send them this page; each of them installs it and adds their own accounts and keys.
+### Why does macOS say the profile's author is unknown?
+
+When you install the desktop app profile, macOS shows *"The author of this profile is unknown. Make sure you trust the sender before installing."* It says this about **every profile that isn't digitally signed**, whatever is inside.
+
+The claude-nonstop profile isn't signed because it's made on your own Mac during setup: it holds your computer's private gateway key, so no one could sign it in advance. It's safe to install, and you can check exactly what it does before you click **Install**:
+
+- **What it contains:** four settings for the Claude desktop app. Its third-party provider is set to *gateway*, the gateway address is `http://127.0.0.1:43117` (this computer), the gateway key is your local claude-nonstop token, and the auth scheme is *bearer*. In System Settings, click the profile, then **Settings** to see them.
+- **What it doesn't do:** it installs no certificates, changes no system settings, and touches no other app.
+- **Undoing it:** remove it any time in **System Settings → General → Device Management**. The file is also saved at `~/.claude-nonstop/claude-nonstop-desktop.mobileconfig` if you'd like to read it.
+
+Rather not install a profile at all? Set the desktop app up by hand with the values on the page's **Desktop App** tab.
+
+### Do I need API keys?
+
+No. With only subscription accounts, claude-nonstop moves from one to the next. Keys are the fallback for when every account is out.
+
+### Does it change how Claude Code behaves?
+
+No. It picks which account or key a session uses, then runs Claude Code as usual.
+
+### Can my teammates use it?
+
+Yes. Send them this page; each of them installs it and adds their own accounts and keys.
 
 ## Advanced options
 
