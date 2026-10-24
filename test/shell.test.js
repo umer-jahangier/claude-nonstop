@@ -35,8 +35,9 @@ for (const sh of ['bash', 'zsh']) {
     const rc = path.join(dir, 'rc');
     fs.writeFileSync(rc, `alias claude="echo real-claude"\n${shell.posixBlock(dir)}\n`);
     const script = sh === 'bash' ? `shopt -s expand_aliases; source "${rc}"; claude --model opus "two words"` : `source "${rc}"; claude --model opus "two words"`;
-    const r = spawnSync(sh, ['-c', script], { encoding: 'utf8', env: { PATH: '/usr/bin:/bin' } });
-    assert.equal(r.stderr, '');
+    // HOME is set because some systems' shell startup files (Homebrew's, on CI Macs) complain without it.
+    const r = spawnSync(sh, ['-c', script], { encoding: 'utf8', env: { PATH: '/usr/bin:/bin', HOME: env.HOME } });
+    assert.doesNotMatch(r.stderr, /claude|syntax|parse|not found/i);
     assert.equal(r.stdout.trim(), 'claude-nonstop run --model opus two words');
   });
 }
@@ -44,7 +45,7 @@ for (const sh of ['bash', 'zsh']) {
 test('without claude-nonstop installed, the block leaves `claude` alone', { skip: !posix }, () => {
   const rc = path.join(env.HOME, 'rc-missing');
   fs.writeFileSync(rc, `${shell.posixBlock()}\n`);
-  const r = spawnSync('bash', ['-c', `source "${rc}"; type -t claude || echo none`], { encoding: 'utf8', env: { PATH: '/usr/bin:/bin' } });
+  const r = spawnSync('bash', ['-c', `source "${rc}"; type -t claude || echo none`], { encoding: 'utf8', env: { PATH: '/usr/bin:/bin', HOME: env.HOME } });
   assert.equal(r.stdout.trim(), 'none');
 });
 

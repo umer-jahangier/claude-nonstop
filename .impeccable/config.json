@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "src/ui/index.html"
+        ],
+        "createdAt": "2026-10-24T15:10:59.227Z",
+        "reason": "agent decided: the only hit is .board, whose full-bleed bank sections carry their own 12-16px legend and row padding; no text is flush with the board edge"
+      }
+    ]
+  }
+}
