@@ -14,7 +14,7 @@
   --rule-strong: #8f978f;
   --ink: #1b1f22;
   --ink-2: #4a524d;
-  --ink-3: #5e6762;
+  --ink-3: #545c57;
   --strip: #f6f1e3;
   --strip-ink: #2b2620;
   --brass: #9a7542;
@@ -223,6 +223,7 @@ button, input { font: inherit; color: inherit; }
 @media (min-width: 720px) { .form { grid-template-columns: minmax(0, 220px) minmax(0, 1fr) auto; align-items: end; } }
 .form label { display: grid; gap: 5px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
 .form .hint { grid-column: 1 / -1; margin: 0; color: var(--ink-2); font-size: 13px; }
+.form .hint.inline { grid-column: auto; align-self: center; }
 .form .row-actions { display: flex; gap: 8px; }
 .input { width: 100%; min-height: 36px; padding: 7px 10px; border-radius: 6px; border: 1px solid var(--rule-strong); background: var(--field); color: var(--ink); font-size: 14px; }
 .input::placeholder { color: var(--ink-3); }
@@ -236,7 +237,7 @@ button, input { font: inherit; color: inherit; }
 .job form .input { flex: 1 1 220px; }
 
 .confirm { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; font-size: 13px; font-weight: 600; }
-.btn.danger { background: var(--dead); border-color: var(--dead); color: #fff; }
+.btn.danger { background: var(--dead-ring); border-color: var(--dead-ring); color: #fff; }
 
 /* skeleton */
 .skeleton { height: 14px; border-radius: 3px; background: var(--rule); opacity: 0.6; }
@@ -621,7 +622,7 @@ function renderBanks(lines, live) {
 function accountForm() {
   return `<form class="form" data-form="add-account" autocomplete="off">
     <label>Name<input class="input" name="label" id="account-label" maxlength="60" placeholder="Work, Personal…" value="${esc(ui.forms.accountLabel)}"></label>
-    <p class="hint" style="grid-column:auto;align-self:center">Your browser opens Anthropic's sign-in page. Sign in with the account you want to add.</p>
+    <p class="hint inline">Your browser opens Anthropic's sign-in page. Sign in with the account you want to add.</p>
     <div class="row-actions"><button class="btn primary" type="submit">${icon('signin')}Add and sign in</button><button class="btn" type="button" data-act="cancel-add">Cancel</button></div>
   </form>`;
 }

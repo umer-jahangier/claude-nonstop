@@ -1,0 +1,769 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-24T15:20:02+00:00",
+  "title": "Design System: claude-nonstop",
+  "extensions": {
+    "colorMeta": {
+      "panel": {
+        "role": "neutral",
+        "displayName": "Enamel Panel",
+        "canonical": "#e3e6e0",
+        "tonalRamp": [
+          "oklch(15% 0.009 128.6)",
+          "oklch(26% 0.009 128.6)",
+          "oklch(38% 0.009 128.6)",
+          "oklch(50% 0.009 128.6)",
+          "oklch(62% 0.009 128.6)",
+          "oklch(74% 0.009 128.6)",
+          "oklch(85% 0.009 128.6)",
+          "oklch(95% 0.009 128.6)"
+        ],
+        "dark": "#1b1f22"
+      },
+      "bank": {
+        "role": "neutral",
+        "displayName": "Bank Steel",
+        "canonical": "#d9ddd6",
+        "tonalRamp": [
+          "oklch(15% 0.010 131.4)",
+          "oklch(26% 0.010 131.4)",
+          "oklch(38% 0.010 131.4)",
+          "oklch(50% 0.010 131.4)",
+          "oklch(62% 0.010 131.4)",
+          "oklch(74% 0.010 131.4)",
+          "oklch(85% 0.010 131.4)",
+          "oklch(95% 0.010 131.4)"
+        ],
+        "dark": "#22272b"
+      },
+      "legend": {
+        "role": "neutral",
+        "displayName": "Legend Band",
+        "canonical": "#d1d6ce",
+        "tonalRamp": [
+          "oklch(15% 0.012 133.4)",
+          "oklch(26% 0.012 133.4)",
+          "oklch(38% 0.012 133.4)",
+          "oklch(50% 0.012 133.4)",
+          "oklch(62% 0.012 133.4)",
+          "oklch(74% 0.012 133.4)",
+          "oklch(85% 0.012 133.4)",
+          "oklch(95% 0.012 133.4)"
+        ],
+        "dark": "#262c30"
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "canonical": "#bcc2ba",
+        "tonalRamp": [
+          "oklch(15% 0.013 137.8)",
+          "oklch(26% 0.013 137.8)",
+          "oklch(38% 0.013 137.8)",
+          "oklch(50% 0.013 137.8)",
+          "oklch(62% 0.013 137.8)",
+          "oklch(74% 0.013 137.8)",
+          "oklch(85% 0.013 137.8)",
+          "oklch(95% 0.013 137.8)"
+        ],
+        "dark": "#343b40"
+      },
+      "rule-strong": {
+        "role": "neutral",
+        "displayName": "Strong Rule",
+        "canonical": "#8f978f",
+        "tonalRamp": [
+          "oklch(15% 0.015 145.4)",
+          "oklch(26% 0.015 145.4)",
+          "oklch(38% 0.015 145.4)",
+          "oklch(50% 0.015 145.4)",
+          "oklch(62% 0.015 145.4)",
+          "oklch(74% 0.015 145.4)",
+          "oklch(85% 0.015 145.4)",
+          "oklch(95% 0.015 145.4)"
+        ],
+        "dark": "#4f585e"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#1b1f22",
+        "tonalRamp": [
+          "oklch(15% 0.008 240.2)",
+          "oklch(26% 0.008 240.2)",
+          "oklch(38% 0.008 240.2)",
+          "oklch(50% 0.008 240.2)",
+          "oklch(62% 0.008 240.2)",
+          "oklch(74% 0.008 240.2)",
+          "oklch(85% 0.008 240.2)",
+          "oklch(95% 0.008 240.2)"
+        ],
+        "dark": "#e8eae5"
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Ink 2",
+        "canonical": "#4a524d",
+        "tonalRamp": [
+          "oklch(15% 0.013 158.4)",
+          "oklch(26% 0.013 158.4)",
+          "oklch(38% 0.013 158.4)",
+          "oklch(50% 0.013 158.4)",
+          "oklch(62% 0.013 158.4)",
+          "oklch(74% 0.013 158.4)",
+          "oklch(85% 0.013 158.4)",
+          "oklch(95% 0.013 158.4)"
+        ],
+        "dark": "#b0b7b2"
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Ink 3",
+        "canonical": "#545c57",
+        "tonalRamp": [
+          "oklch(15% 0.013 158.5)",
+          "oklch(26% 0.013 158.5)",
+          "oklch(38% 0.013 158.5)",
+          "oklch(50% 0.013 158.5)",
+          "oklch(62% 0.013 158.5)",
+          "oklch(74% 0.013 158.5)",
+          "oklch(85% 0.013 158.5)",
+          "oklch(95% 0.013 158.5)"
+        ],
+        "dark": "#8f9792"
+      },
+      "field": {
+        "role": "neutral",
+        "displayName": "Field White",
+        "canonical": "#f2f3ef",
+        "tonalRamp": [
+          "oklch(15% 0.005 117.9)",
+          "oklch(26% 0.005 117.9)",
+          "oklch(38% 0.005 117.9)",
+          "oklch(50% 0.005 117.9)",
+          "oklch(62% 0.005 117.9)",
+          "oklch(74% 0.005 117.9)",
+          "oklch(85% 0.005 117.9)",
+          "oklch(95% 0.005 117.9)"
+        ],
+        "dark": "#262b30"
+      },
+      "strip": {
+        "role": "neutral",
+        "displayName": "Ivory Strip",
+        "canonical": "#f6f1e3",
+        "tonalRamp": [
+          "oklch(15% 0.019 90.5)",
+          "oklch(26% 0.019 90.5)",
+          "oklch(38% 0.019 90.5)",
+          "oklch(50% 0.019 90.5)",
+          "oklch(62% 0.019 90.5)",
+          "oklch(74% 0.019 90.5)",
+          "oklch(85% 0.019 90.5)",
+          "oklch(95% 0.019 90.5)"
+        ],
+        "dark": "#ebe3cc"
+      },
+      "strip-ink": {
+        "role": "neutral",
+        "displayName": "Strip Ink",
+        "canonical": "#2b2620",
+        "tonalRamp": [
+          "oklch(15% 0.013 72.3)",
+          "oklch(26% 0.013 72.3)",
+          "oklch(38% 0.013 72.3)",
+          "oklch(50% 0.013 72.3)",
+          "oklch(62% 0.013 72.3)",
+          "oklch(74% 0.013 72.3)",
+          "oklch(85% 0.013 72.3)",
+          "oklch(95% 0.013 72.3)"
+        ],
+        "dark": "#29241d"
+      },
+      "brass": {
+        "role": "secondary",
+        "displayName": "Holder Brass",
+        "canonical": "#9a7542",
+        "tonalRamp": [
+          "oklch(15% 0.082 73.9)",
+          "oklch(26% 0.082 73.9)",
+          "oklch(38% 0.082 73.9)",
+          "oklch(50% 0.082 73.9)",
+          "oklch(62% 0.082 73.9)",
+          "oklch(74% 0.082 73.9)",
+          "oklch(85% 0.082 73.9)",
+          "oklch(95% 0.082 73.9)"
+        ],
+        "dark": "#a8824d"
+      },
+      "plate": {
+        "role": "neutral",
+        "displayName": "Plate Graphite",
+        "canonical": "#23282c",
+        "tonalRamp": [
+          "oklch(15% 0.010 242.1)",
+          "oklch(26% 0.010 242.1)",
+          "oklch(38% 0.010 242.1)",
+          "oklch(50% 0.010 242.1)",
+          "oklch(62% 0.010 242.1)",
+          "oklch(74% 0.010 242.1)",
+          "oklch(85% 0.010 242.1)",
+          "oklch(95% 0.010 242.1)"
+        ],
+        "dark": "#0f1214"
+      },
+      "plate-2": {
+        "role": "neutral",
+        "displayName": "Plate Graphite 2",
+        "canonical": "#2e3439",
+        "tonalRamp": [
+          "oklch(15% 0.012 243.2)",
+          "oklch(26% 0.012 243.2)",
+          "oklch(38% 0.012 243.2)",
+          "oklch(50% 0.012 243.2)",
+          "oklch(62% 0.012 243.2)",
+          "oklch(74% 0.012 243.2)",
+          "oklch(85% 0.012 243.2)",
+          "oklch(95% 0.012 243.2)"
+        ],
+        "dark": "#191d20"
+      },
+      "plate-ink": {
+        "role": "neutral",
+        "displayName": "Plate Ink",
+        "canonical": "#eef0ea",
+        "tonalRamp": [
+          "oklch(15% 0.008 121.6)",
+          "oklch(26% 0.008 121.6)",
+          "oklch(38% 0.008 121.6)",
+          "oklch(50% 0.008 121.6)",
+          "oklch(62% 0.008 121.6)",
+          "oklch(74% 0.008 121.6)",
+          "oklch(85% 0.008 121.6)",
+          "oklch(95% 0.008 121.6)"
+        ],
+        "dark": "#eef0ea"
+      },
+      "plate-ink-2": {
+        "role": "neutral",
+        "displayName": "Plate Ink 2",
+        "canonical": "#b4bbb5",
+        "tonalRamp": [
+          "oklch(15% 0.011 149.8)",
+          "oklch(26% 0.011 149.8)",
+          "oklch(38% 0.011 149.8)",
+          "oklch(50% 0.011 149.8)",
+          "oklch(62% 0.011 149.8)",
+          "oklch(74% 0.011 149.8)",
+          "oklch(85% 0.011 149.8)",
+          "oklch(95% 0.011 149.8)"
+        ],
+        "dark": "#a9b0aa"
+      },
+      "cord": {
+        "role": "primary",
+        "displayName": "Cloth-Cord Rust",
+        "canonical": "#8f3a20",
+        "tonalRamp": [
+          "oklch(15% 0.122 37.4)",
+          "oklch(26% 0.122 37.4)",
+          "oklch(38% 0.122 37.4)",
+          "oklch(50% 0.122 37.4)",
+          "oklch(62% 0.122 37.4)",
+          "oklch(74% 0.122 37.4)",
+          "oklch(85% 0.122 37.4)",
+          "oklch(95% 0.122 37.4)"
+        ],
+        "dark": "#a8452a"
+      },
+      "cord-hi": {
+        "role": "primary",
+        "displayName": "Cord Weave",
+        "canonical": "#c06a48",
+        "tonalRamp": [
+          "oklch(15% 0.120 41.9)",
+          "oklch(26% 0.120 41.9)",
+          "oklch(38% 0.120 41.9)",
+          "oklch(50% 0.120 41.9)",
+          "oklch(62% 0.120 41.9)",
+          "oklch(74% 0.120 41.9)",
+          "oklch(85% 0.120 41.9)",
+          "oklch(95% 0.120 41.9)"
+        ],
+        "dark": "#d27a55"
+      },
+      "action": {
+        "role": "primary",
+        "displayName": "Action Rust",
+        "canonical": "#8f3a20",
+        "tonalRamp": [
+          "oklch(15% 0.122 37.4)",
+          "oklch(26% 0.122 37.4)",
+          "oklch(38% 0.122 37.4)",
+          "oklch(50% 0.122 37.4)",
+          "oklch(62% 0.122 37.4)",
+          "oklch(74% 0.122 37.4)",
+          "oklch(85% 0.122 37.4)",
+          "oklch(95% 0.122 37.4)"
+        ],
+        "dark": "#a8452a"
+      },
+      "action-hover": {
+        "role": "primary",
+        "displayName": "Action Rust Pressed",
+        "canonical": "#79301a",
+        "tonalRamp": [
+          "oklch(15% 0.108 37.2)",
+          "oklch(26% 0.108 37.2)",
+          "oklch(38% 0.108 37.2)",
+          "oklch(50% 0.108 37.2)",
+          "oklch(62% 0.108 37.2)",
+          "oklch(74% 0.108 37.2)",
+          "oklch(85% 0.108 37.2)",
+          "oklch(95% 0.108 37.2)"
+        ],
+        "dark": "#bd5332"
+      },
+      "action-ink": {
+        "role": "primary",
+        "displayName": "Action Ink",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(26% 0.000 89.9)",
+          "oklch(38% 0.000 89.9)",
+          "oklch(50% 0.000 89.9)",
+          "oklch(62% 0.000 89.9)",
+          "oklch(74% 0.000 89.9)",
+          "oklch(85% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "live": {
+        "role": "tertiary",
+        "displayName": "Live Green",
+        "canonical": "#2e9a46",
+        "tonalRamp": [
+          "oklch(15% 0.156 147.2)",
+          "oklch(26% 0.156 147.2)",
+          "oklch(38% 0.156 147.2)",
+          "oklch(50% 0.156 147.2)",
+          "oklch(62% 0.156 147.2)",
+          "oklch(74% 0.156 147.2)",
+          "oklch(85% 0.156 147.2)",
+          "oklch(95% 0.156 147.2)"
+        ],
+        "dark": "#4fb35f"
+      },
+      "live-ring": {
+        "role": "tertiary",
+        "displayName": "Live Ring",
+        "canonical": "#1f6e31",
+        "tonalRamp": [
+          "oklch(15% 0.121 147.4)",
+          "oklch(26% 0.121 147.4)",
+          "oklch(38% 0.121 147.4)",
+          "oklch(50% 0.121 147.4)",
+          "oklch(62% 0.121 147.4)",
+          "oklch(74% 0.121 147.4)",
+          "oklch(85% 0.121 147.4)",
+          "oklch(95% 0.121 147.4)"
+        ],
+        "dark": "#2f7a3b"
+      },
+      "warn": {
+        "role": "tertiary",
+        "displayName": "Warn Amber",
+        "canonical": "#d48a14",
+        "tonalRamp": [
+          "oklch(15% 0.145 70.5)",
+          "oklch(26% 0.145 70.5)",
+          "oklch(38% 0.145 70.5)",
+          "oklch(50% 0.145 70.5)",
+          "oklch(62% 0.145 70.5)",
+          "oklch(74% 0.145 70.5)",
+          "oklch(85% 0.145 70.5)",
+          "oklch(95% 0.145 70.5)"
+        ],
+        "dark": "#e8a33a"
+      },
+      "warn-ring": {
+        "role": "tertiary",
+        "displayName": "Warn Ring",
+        "canonical": "#9a630b",
+        "tonalRamp": [
+          "oklch(15% 0.115 70.6)",
+          "oklch(26% 0.115 70.6)",
+          "oklch(38% 0.115 70.6)",
+          "oklch(50% 0.115 70.6)",
+          "oklch(62% 0.115 70.6)",
+          "oklch(74% 0.115 70.6)",
+          "oklch(85% 0.115 70.6)",
+          "oklch(95% 0.115 70.6)"
+        ],
+        "dark": "#a8701d"
+      },
+      "dead": {
+        "role": "tertiary",
+        "displayName": "Dead Red",
+        "canonical": "#c0392b",
+        "tonalRamp": [
+          "oklch(15% 0.174 29.7)",
+          "oklch(26% 0.174 29.7)",
+          "oklch(38% 0.174 29.7)",
+          "oklch(50% 0.174 29.7)",
+          "oklch(62% 0.174 29.7)",
+          "oklch(74% 0.174 29.7)",
+          "oklch(85% 0.174 29.7)",
+          "oklch(95% 0.174 29.7)"
+        ],
+        "dark": "#e0503f"
+      },
+      "dead-ring": {
+        "role": "tertiary",
+        "displayName": "Dead Ring",
+        "canonical": "#8a2419",
+        "tonalRamp": [
+          "oklch(15% 0.139 30.0)",
+          "oklch(26% 0.139 30.0)",
+          "oklch(38% 0.139 30.0)",
+          "oklch(50% 0.139 30.0)",
+          "oklch(62% 0.139 30.0)",
+          "oklch(74% 0.139 30.0)",
+          "oklch(85% 0.139 30.0)",
+          "oklch(95% 0.139 30.0)"
+        ],
+        "dark": "#9c3024"
+      },
+      "unlit": {
+        "role": "tertiary",
+        "displayName": "Unlit Ring",
+        "canonical": "#8e968f",
+        "tonalRamp": [
+          "oklch(15% 0.014 149.2)",
+          "oklch(26% 0.014 149.2)",
+          "oklch(38% 0.014 149.2)",
+          "oklch(50% 0.014 149.2)",
+          "oklch(62% 0.014 149.2)",
+          "oklch(74% 0.014 149.2)",
+          "oklch(85% 0.014 149.2)",
+          "oklch(95% 0.014 149.2)"
+        ],
+        "dark": "#59626a"
+      },
+      "jack": {
+        "role": "neutral",
+        "displayName": "Jack Black",
+        "canonical": "#2a2f33",
+        "tonalRamp": [
+          "oklch(15% 0.010 242.0)",
+          "oklch(26% 0.010 242.0)",
+          "oklch(38% 0.010 242.0)",
+          "oklch(50% 0.010 242.0)",
+          "oklch(62% 0.010 242.0)",
+          "oklch(74% 0.010 242.0)",
+          "oklch(85% 0.010 242.0)",
+          "oklch(95% 0.010 242.0)"
+        ],
+        "dark": "#0b0d0f"
+      },
+      "jack-ring": {
+        "role": "neutral",
+        "displayName": "Jack Ring",
+        "canonical": "#737b75",
+        "tonalRamp": [
+          "oklch(15% 0.013 153.5)",
+          "oklch(26% 0.013 153.5)",
+          "oklch(38% 0.013 153.5)",
+          "oklch(50% 0.013 153.5)",
+          "oklch(62% 0.013 153.5)",
+          "oklch(74% 0.013 153.5)",
+          "oklch(85% 0.013 153.5)",
+          "oklch(95% 0.013 153.5)"
+        ],
+        "dark": "#59626a"
+      },
+      "focus": {
+        "role": "neutral",
+        "displayName": "Focus Blue",
+        "canonical": "#1f5fd1",
+        "tonalRamp": [
+          "oklch(15% 0.188 261.0)",
+          "oklch(26% 0.188 261.0)",
+          "oklch(38% 0.188 261.0)",
+          "oklch(50% 0.188 261.0)",
+          "oklch(62% 0.188 261.0)",
+          "oklch(74% 0.188 261.0)",
+          "oklch(85% 0.188 261.0)",
+          "oklch(95% 0.188 261.0)"
+        ],
+        "dark": "#79b0ff"
+      }
+    },
+    "colorSchemes": {
+      "default": "light",
+      "darkOverride": "@media (prefers-color-scheme: dark)",
+      "derived": {
+        "live-tint": {
+          "light": "rgba(46, 154, 70, 0.09)",
+          "dark": "rgba(79, 179, 95, 0.10)"
+        }
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Live Line",
+        "purpose": "The live-line name on the connected plate; the only 20px text."
+      },
+      "title": {
+        "displayName": "Wordmark",
+        "purpose": "The claude-nonstop wordmark."
+      },
+      "title-small": {
+        "displayName": "Next Line",
+        "purpose": "The \"if it runs out\" line on the plate."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Prose, trouble messages, inputs, toasts; panel prose capped at 68ch."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Buttons, plate slot terms, form labels."
+      },
+      "bank-legend": {
+        "displayName": "Bank Legend",
+        "purpose": "Uppercase bank and panel headings."
+      },
+      "designation": {
+        "displayName": "Designation",
+        "purpose": "Uppercase line name on its ivory strip."
+      },
+      "readout": {
+        "displayName": "Readout",
+        "purpose": "Mono for identifiers, numbers and times only."
+      }
+    },
+    "shadows": [
+      {
+        "name": "plate-lift",
+        "value": "0 1px 2px rgba(20, 24, 26, 0.12), 0 4px 14px rgba(20, 24, 26, 0.06)",
+        "dark": "0 1px 2px rgba(0, 0, 0, 0.5), 0 6px 18px rgba(0, 0, 0, 0.25)",
+        "purpose": "Connected plate and toast only."
+      },
+      {
+        "name": "jack-ring",
+        "value": "inset 0 0 0 2px var(--jack-ring)",
+        "purpose": "Idle jack; brass ring when live, rule-strong ring on a spare."
+      },
+      {
+        "name": "socket",
+        "value": "inset 0 0 0 2px var(--brass), inset 0 0 0 5px var(--plate-2), inset 0 0 0 7px #000",
+        "purpose": "Plate socket where the cord plugs in."
+      },
+      {
+        "name": "strip-face",
+        "value": "inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(60, 45, 20, 0.12)",
+        "purpose": "Ivory designation label face."
+      },
+      {
+        "name": "lever-bat",
+        "value": "inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 1px 2px rgba(0, 0, 0, 0.35)",
+        "purpose": "The brass lever bat."
+      }
+    ],
+    "motion": [
+      {
+        "name": "cord-reroute",
+        "value": "220ms, 1 - 2^(-10t) (exponential ease-out), requestAnimationFrame",
+        "purpose": "Cord end travels to the new live jack; only on a live-line change; snaps on layout shift, hidden tab, or reduced motion."
+      },
+      {
+        "name": "control-color",
+        "value": "150ms ease-out",
+        "purpose": "Button and icon-button background, border and color."
+      },
+      {
+        "name": "lever-throw",
+        "value": "180ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "purpose": "Lever bat up/down."
+      },
+      {
+        "name": "toast-enter",
+        "value": "opacity 180ms ease-out, transform 220ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Toast rise-in."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "transition-duration: 0ms; animation-duration: 0ms",
+        "purpose": "Global prefers-reduced-motion override."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "values-row",
+        "value": "560px"
+      },
+      {
+        "name": "line-two-row",
+        "value": "640px"
+      },
+      {
+        "name": "gutter-wide",
+        "value": "720px"
+      },
+      {
+        "name": "line-one-row",
+        "value": "900px"
+      }
+    ],
+    "focus": {
+      "value": "2px solid var(--focus)",
+      "offset": "2px",
+      "radius": "4px"
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single rust primary action in a form.",
+      "html": "<button class=\"ds-btn ds-primary\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M9.5 2.5h4v11h-4M1.5 8h8M6.5 5l3 3-3 3\"/></svg>Add and sign in</button>",
+      "css": ":host{--panel:#e3e6e0;--bank:#d9ddd6;--legend:#d1d6ce;--rule:#bcc2ba;--rule-strong:#8f978f;--ink:#1b1f22;--ink-2:#4a524d;--ink-3:#545c57;--strip:#f6f1e3;--strip-ink:#2b2620;--brass:#9a7542;--plate:#23282c;--plate-2:#2e3439;--plate-ink:#eef0ea;--plate-ink-2:#b4bbb5;--live:#2e9a46;--live-ring:#1f6e31;--warn:#d48a14;--warn-ring:#9a630b;--dead:#c0392b;--dead-ring:#8a2419;--unlit:#8e968f;--cord:#8f3a20;--action:#8f3a20;--action-hover:#79301a;--field:#f2f3ef;--jack:#2a2f33;--jack-ring:#737b75;--live-tint:rgba(46,154,70,0.09);--focus:#1f5fd1;--sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,sans-serif;--mono:ui-monospace,\"SF Mono\",SFMono-Regular,Menlo,Consolas,\"Liberation Mono\",monospace;--shadow:0 1px 2px rgba(20,24,26,0.12),0 4px 14px rgba(20,24,26,0.06)}.ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:34px;padding:0 14px;border-radius:6px;border:1px solid var(--rule-strong);background:var(--field);color:var(--ink);font:600 13px var(--sans);cursor:pointer;white-space:nowrap;transition:background-color 150ms ease-out,border-color 150ms ease-out}.ds-btn:hover{border-color:var(--ink-3)}.ds-btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}.ds-primary{background:var(--action);border-color:var(--action);color:#fff}.ds-primary:hover{background:var(--action-hover);border-color:var(--action-hover)}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Field-white button with a strong-rule border for every other action.",
+      "html": "<button class=\"ds-btn\" type=\"button\">Test all keys</button>",
+      "css": ":host{--panel:#e3e6e0;--bank:#d9ddd6;--legend:#d1d6ce;--rule:#bcc2ba;--rule-strong:#8f978f;--ink:#1b1f22;--ink-2:#4a524d;--ink-3:#545c57;--strip:#f6f1e3;--strip-ink:#2b2620;--brass:#9a7542;--plate:#23282c;--plate-2:#2e3439;--plate-ink:#eef0ea;--plate-ink-2:#b4bbb5;--live:#2e9a46;--live-ring:#1f6e31;--warn:#d48a14;--warn-ring:#9a630b;--dead:#c0392b;--dead-ring:#8a2419;--unlit:#8e968f;--cord:#8f3a20;--action:#8f3a20;--action-hover:#79301a;--field:#f2f3ef;--jack:#2a2f33;--jack-ring:#737b75;--live-tint:rgba(46,154,70,0.09);--focus:#1f5fd1;--sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,sans-serif;--mono:ui-monospace,\"SF Mono\",SFMono-Regular,Menlo,Consolas,\"Liberation Mono\",monospace;--shadow:0 1px 2px rgba(20,24,26,0.12),0 4px 14px rgba(20,24,26,0.06)}.ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:34px;padding:0 14px;border-radius:6px;border:1px solid var(--rule-strong);background:var(--field);color:var(--ink);font:600 13px var(--sans);cursor:pointer;white-space:nowrap;transition:background-color 150ms ease-out,border-color 150ms ease-out}.ds-btn:hover{border-color:var(--ink-3)}.ds-btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}"
+    },
+    {
+      "name": "Icon Button",
+      "kind": "button",
+      "refersTo": "icon-button",
+      "description": "Transparent 34px line control; gains field fill and a rule border on hover.",
+      "html": "<button class=\"ds-icon-btn\" type=\"button\" aria-label=\"Test\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3\"/></svg></button>",
+      "css": ":host{--panel:#e3e6e0;--bank:#d9ddd6;--legend:#d1d6ce;--rule:#bcc2ba;--rule-strong:#8f978f;--ink:#1b1f22;--ink-2:#4a524d;--ink-3:#545c57;--strip:#f6f1e3;--strip-ink:#2b2620;--brass:#9a7542;--plate:#23282c;--plate-2:#2e3439;--plate-ink:#eef0ea;--plate-ink-2:#b4bbb5;--live:#2e9a46;--live-ring:#1f6e31;--warn:#d48a14;--warn-ring:#9a630b;--dead:#c0392b;--dead-ring:#8a2419;--unlit:#8e968f;--cord:#8f3a20;--action:#8f3a20;--action-hover:#79301a;--field:#f2f3ef;--jack:#2a2f33;--jack-ring:#737b75;--live-tint:rgba(46,154,70,0.09);--focus:#1f5fd1;--sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,sans-serif;--mono:ui-monospace,\"SF Mono\",SFMono-Regular,Menlo,Consolas,\"Liberation Mono\",monospace;--shadow:0 1px 2px rgba(20,24,26,0.12),0 4px 14px rgba(20,24,26,0.06)}.ds-icon-btn{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--ink-2);cursor:pointer;transition:background-color 150ms ease-out,color 150ms ease-out}.ds-icon-btn:hover{background:var(--field);border-color:var(--rule);color:var(--ink)}:focus-visible{outline:2px solid var(--focus);outline-offset:2px}"
+    },
+    {
+      "name": "Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Field-white text input; mono at 13px for numbers and keys.",
+      "html": "<label class=\"ds-label\">Name<input class=\"ds-input\" placeholder=\"Work, Personal…\"></label>",
+      "css": ":host{--panel:#e3e6e0;--bank:#d9ddd6;--legend:#d1d6ce;--rule:#bcc2ba;--rule-strong:#8f978f;--ink:#1b1f22;--ink-2:#4a524d;--ink-3:#545c57;--strip:#f6f1e3;--strip-ink:#2b2620;--brass:#9a7542;--plate:#23282c;--plate-2:#2e3439;--plate-ink:#eef0ea;--plate-ink-2:#b4bbb5;--live:#2e9a46;--live-ring:#1f6e31;--warn:#d48a14;--warn-ring:#9a630b;--dead:#c0392b;--dead-ring:#8a2419;--unlit:#8e968f;--cord:#8f3a20;--action:#8f3a20;--action-hover:#79301a;--field:#f2f3ef;--jack:#2a2f33;--jack-ring:#737b75;--live-tint:rgba(46,154,70,0.09);--focus:#1f5fd1;--sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,sans-serif;--mono:ui-monospace,\"SF Mono\",SFMono-Regular,Menlo,Consolas,\"Liberation Mono\",monospace;--shadow:0 1px 2px rgba(20,24,26,0.12),0 4px 14px rgba(20,24,26,0.06)}.ds-label{display:grid;gap:5px;font:600 13px var(--sans);color:var(--ink-2)}.ds-input{width:100%;min-height:36px;padding:7px 10px;border-radius:6px;border:1px solid var(--rule-strong);background:var(--field);color:var(--ink);font:400 14px var(--sans)}.ds-input::placeholder{color:var(--ink-3)}.ds-input:focus-visible{outline:2px solid var(--focus);outline-offset:2px}"
+    },
+    {
+      "name": "Lamp",
+      "kind": "chip",
+      "refersTo": "lamp",
+      "description": "Binary lamp cap: live, warn, dead, unlit, off (dashed).",
+      "html": "<span class=\"ds-row\"><span class=\"ds-lamp\" data-s=\"live\"></span><span class=\"ds-lamp\" data-s=\"warn\"></span><span class=\"ds-lamp\" data-s=\"dead\"></span><span class=\"ds-lamp\"></span><span class=\"ds-lamp\" data-s=\"off\"></span></span>",
+      "css": ":host{--panel:#e3e6e0;--bank:#d9ddd6;--legend:#d1d6ce;--rule:#bcc2ba;--rule-strong:#8f978f;--ink:#1b1f22;--ink-2:#4a524d;--ink-3:#545c57;--strip:#f6f1e3;--strip-ink:#2b2620;--brass:#9a7542;--plate:#23282c;--plate-2:#2e3439;--plate-ink:#eef0ea;--plate-ink-2:#b4bbb5;--live:#2e9a46;--live-ring:#1f6e31;--warn:#d48a14;--warn-ring:#9a630b;--dead:#c0392b;--dead-ring:#8a2419;--unlit:#8e968f;--cord:#8f3a20;--action:#8f3a20;--action-hover:#79301a;--field:#f2f3ef;--jack:#2a2f33;--jack-ring:#737b75;--live-tint:rgba(46,154,70,0.09);--focus:#1f5fd1;--sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,sans-serif;--mono:ui-monospace,\"SF Mono\",SFMono-Regular,Menlo,Consolas,\"Liberation Mono\",monospace;--shadow:0 1px 2px rgba(20,24,26,0.12),0 4px 14px rgba(20,24,26,0.06)}.ds-lamp{width:12px;height:12px;border-radius:50%;flex:none;display:inline-block;border:2px solid var(--unlit);background:transparent}.ds-lamp[data-s=live]{background:var(--live);border-color:var(--live-ring)}.ds-lamp[data-s=warn]{background:var(--warn);border-color:var(--warn-ring)}.ds-lamp[data-s=dead]{background:var(--dead);border-color:var(--dead-ring)}.ds-lamp[data-s=off]{border-style:dashed}.ds-row{display:inline-flex;gap:12px;padding:8px;background:var(--bank)}"
+    },
+    {
+      "name": "Designation Strip",
+      "kind": "custom",
+      "refersTo": "designation-strip",
+      "description": "Ivory caps label in a brass holder carrying a line name.",
+      "html": "<span class=\"ds-strip\"><span>Work account</span></span>",
+      "css": ":host{--panel:#e3e6e0;--bank:#d9ddd6;--legend:#d1d6ce;--rule:#bcc2ba;--rule-strong:#8f978f;--ink:#1b1f22;--ink-2:#4a524d;--ink-3:#545c57;--strip:#f6f1e3;--strip-ink:#2b2620;--brass:#9a7542;--plate:#23282c;--plate-2:#2e3439;--plate-ink:#eef0ea;--plate-ink-2:#b4bbb5;--live:#2e9a46;--live-ring:#1f6e31;--warn:#d48a14;--warn-ring:#9a630b;--dead:#c0392b;--dead-ring:#8a2419;--unlit:#8e968f;--cord:#8f3a20;--action:#8f3a20;--action-hover:#79301a;--field:#f2f3ef;--jack:#2a2f33;--jack-ring:#737b75;--live-tint:rgba(46,154,70,0.09);--focus:#1f5fd1;--sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,sans-serif;--mono:ui-monospace,\"SF Mono\",SFMono-Regular,Menlo,Consolas,\"Liberation Mono\",monospace;--shadow:0 1px 2px rgba(20,24,26,0.12),0 4px 14px rgba(20,24,26,0.06)}.ds-strip{min-width:0;display:flex;padding:2px;border-radius:3px;background:var(--brass);border:0;text-align:left}.ds-strip>span{display:block;width:100%;padding:4px 9px;border-radius:2px;background:var(--strip);color:var(--strip-ink);font:650 13px var(--sans);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(60,45,20,.12)}"
+    },
+    {
+      "name": "Line",
+      "kind": "card",
+      "refersTo": "line",
+      "description": "One relay line on the board: number, lamp, strip, mono readout, controls; the live line carries a green wash.",
+      "html": "<ol class=\"ds-board\"><li class=\"ds-line\" data-live><span class=\"ds-num\">01</span><span class=\"ds-lamp\" data-s=\"live\"></span><span class=\"ds-strip\"><span>Work</span></span><span class=\"ds-readout\"><b>Live</b><span class=\"ds-mono\">5h 42% · 7d 18%</span></span><button class=\"ds-icon-btn\" type=\"button\" aria-label=\"Test\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3\"/></svg></button></li><li class=\"ds-line\"><span class=\"ds-num\">02</span><span class=\"ds-lamp\" data-s=\"dead\"></span><span class=\"ds-strip\"><span>Top-up key</span></span><span class=\"ds-readout\"><b>Used up</b><span class=\"ds-mono\">sk-ant-…a91f</span></span><button class=\"ds-icon-btn\" type=\"button\" aria-label=\"Test\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3\"/></svg></button></li></ol>",
+      "css": ":host{--panel:#e3e6e0;--bank:#d9ddd6;--legend:#d1d6ce;--rule:#bcc2ba;--rule-strong:#8f978f;--ink:#1b1f22;--ink-2:#4a524d;--ink-3:#545c57;--strip:#f6f1e3;--strip-ink:#2b2620;--brass:#9a7542;--plate:#23282c;--plate-2:#2e3439;--plate-ink:#eef0ea;--plate-ink-2:#b4bbb5;--live:#2e9a46;--live-ring:#1f6e31;--warn:#d48a14;--warn-ring:#9a630b;--dead:#c0392b;--dead-ring:#8a2419;--unlit:#8e968f;--cord:#8f3a20;--action:#8f3a20;--action-hover:#79301a;--field:#f2f3ef;--jack:#2a2f33;--jack-ring:#737b75;--live-tint:rgba(46,154,70,0.09);--focus:#1f5fd1;--sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,sans-serif;--mono:ui-monospace,\"SF Mono\",SFMono-Regular,Menlo,Consolas,\"Liberation Mono\",monospace;--shadow:0 1px 2px rgba(20,24,26,0.12),0 4px 14px rgba(20,24,26,0.06)}.ds-lamp{width:12px;height:12px;border-radius:50%;flex:none;display:inline-block;border:2px solid var(--unlit);background:transparent}.ds-lamp[data-s=live]{background:var(--live);border-color:var(--live-ring)}.ds-lamp[data-s=warn]{background:var(--warn);border-color:var(--warn-ring)}.ds-lamp[data-s=dead]{background:var(--dead);border-color:var(--dead-ring)}.ds-lamp[data-s=off]{border-style:dashed}.ds-strip{min-width:0;display:flex;padding:2px;border-radius:3px;background:var(--brass);border:0;text-align:left}.ds-strip>span{display:block;width:100%;padding:4px 9px;border-radius:2px;background:var(--strip);color:var(--strip-ink);font:650 13px var(--sans);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(60,45,20,.12)}.ds-board{list-style:none;margin:0;padding:0;background:var(--bank);border:1px solid var(--rule);border-radius:3px;font:14px/1.45 var(--sans);color:var(--ink)}.ds-line{display:grid;grid-template-columns:26px 12px minmax(120px,200px) minmax(0,1fr) auto;align-items:center;gap:6px 12px;padding:10px 12px 10px 14px;min-height:56px}.ds-line+.ds-line{border-top:1px solid var(--rule)}.ds-line[data-live]{background:var(--live-tint)}.ds-num,.ds-mono{font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink-3)}.ds-readout{display:flex;gap:10px;align-items:baseline;font-size:13px;color:var(--ink-2)}.ds-readout b{color:var(--ink)}.ds-icon-btn{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--ink-2);cursor:pointer}.ds-icon-btn:hover{background:var(--field);border-color:var(--rule);color:var(--ink)}:focus-visible{outline:2px solid var(--focus);outline-offset:2px}"
+    },
+    {
+      "name": "Spare Jack",
+      "kind": "button",
+      "refersTo": "designation-strip",
+      "description": "Dashed empty holder that ends each bank and is its add action.",
+      "html": "<button class=\"ds-spare\" type=\"button\"><span><svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M8 3v10M3 8h10\"/></svg>Add an API key</span></button>",
+      "css": ":host{--panel:#e3e6e0;--bank:#d9ddd6;--legend:#d1d6ce;--rule:#bcc2ba;--rule-strong:#8f978f;--ink:#1b1f22;--ink-2:#4a524d;--ink-3:#545c57;--strip:#f6f1e3;--strip-ink:#2b2620;--brass:#9a7542;--plate:#23282c;--plate-2:#2e3439;--plate-ink:#eef0ea;--plate-ink-2:#b4bbb5;--live:#2e9a46;--live-ring:#1f6e31;--warn:#d48a14;--warn-ring:#9a630b;--dead:#c0392b;--dead-ring:#8a2419;--unlit:#8e968f;--cord:#8f3a20;--action:#8f3a20;--action-hover:#79301a;--field:#f2f3ef;--jack:#2a2f33;--jack-ring:#737b75;--live-tint:rgba(46,154,70,0.09);--focus:#1f5fd1;--sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,sans-serif;--mono:ui-monospace,\"SF Mono\",SFMono-Regular,Menlo,Consolas,\"Liberation Mono\",monospace;--shadow:0 1px 2px rgba(20,24,26,0.12),0 4px 14px rgba(20,24,26,0.06)}.ds-spare{display:flex;min-width:220px;padding:0;border:1px dashed var(--rule-strong);border-radius:3px;background:transparent;cursor:pointer}.ds-spare>span{display:flex;align-items:center;gap:8px;padding:6px 9px;color:var(--ink-2);font:650 13px var(--sans);letter-spacing:.04em;text-transform:uppercase}.ds-spare:hover>span{color:var(--ink)}:focus-visible{outline:2px solid var(--focus);outline-offset:2px}"
+    },
+    {
+      "name": "Connected Plate",
+      "kind": "card",
+      "refersTo": "connected-plate",
+      "description": "Reversed graphite plate naming the live line, the next line and any trouble.",
+      "html": "<section class=\"ds-plate\"><span class=\"ds-socket\"></span><dl class=\"ds-slots\"><dt>Live line</dt><dd><p class=\"ds-v\"><span class=\"ds-lamp\" data-s=\"live\"></span>Work</p><p class=\"ds-sub\">Subscription, since 12 min ago</p></dd><dt>If it runs out</dt><dd><p class=\"ds-v ds-small\">Personal</p><p class=\"ds-sub\">Another subscription account</p></dd></dl></section>",
+      "css": ":host{--panel:#e3e6e0;--bank:#d9ddd6;--legend:#d1d6ce;--rule:#bcc2ba;--rule-strong:#8f978f;--ink:#1b1f22;--ink-2:#4a524d;--ink-3:#545c57;--strip:#f6f1e3;--strip-ink:#2b2620;--brass:#9a7542;--plate:#23282c;--plate-2:#2e3439;--plate-ink:#eef0ea;--plate-ink-2:#b4bbb5;--live:#2e9a46;--live-ring:#1f6e31;--warn:#d48a14;--warn-ring:#9a630b;--dead:#c0392b;--dead-ring:#8a2419;--unlit:#8e968f;--cord:#8f3a20;--action:#8f3a20;--action-hover:#79301a;--field:#f2f3ef;--jack:#2a2f33;--jack-ring:#737b75;--live-tint:rgba(46,154,70,0.09);--focus:#1f5fd1;--sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,sans-serif;--mono:ui-monospace,\"SF Mono\",SFMono-Regular,Menlo,Consolas,\"Liberation Mono\",monospace;--shadow:0 1px 2px rgba(20,24,26,0.12),0 4px 14px rgba(20,24,26,0.06)}.ds-lamp{width:12px;height:12px;border-radius:50%;flex:none;display:inline-block;border:2px solid var(--unlit);background:transparent}.ds-lamp[data-s=live]{background:var(--live);border-color:var(--live-ring)}.ds-lamp[data-s=warn]{background:var(--warn);border-color:var(--warn-ring)}.ds-lamp[data-s=dead]{background:var(--dead);border-color:var(--dead-ring)}.ds-lamp[data-s=off]{border-style:dashed}.ds-plate{position:relative;background:var(--plate);color:var(--plate-ink);border-radius:4px;padding:18px 22px 18px 56px;box-shadow:var(--shadow);font:14px/1.45 var(--sans)}.ds-socket{position:absolute;left:16px;top:19px;width:24px;height:24px;border-radius:50%;background:var(--plate-2);box-shadow:inset 0 0 0 2px var(--brass),inset 0 0 0 5px var(--plate-2),inset 0 0 0 7px #000}.ds-slots{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:12px 18px;align-items:baseline;margin:0}.ds-slots dt{font-size:13px;font-weight:600;color:var(--plate-ink-2)}.ds-slots dd{margin:0}.ds-v{margin:0;font-size:20px;font-weight:650;line-height:1.25}.ds-v .ds-lamp{margin-right:10px}.ds-small{font-size:16px;font-weight:600}.ds-sub{margin:3px 0 0;color:var(--plate-ink-2);font-size:13px}"
+    },
+    {
+      "name": "Lever Key",
+      "kind": "custom",
+      "refersTo": "line",
+      "description": "Brass bat in a slot: up for on, down (unlit) for off.",
+      "html": "<span class=\"ds-pair\"><button class=\"ds-lever\" role=\"switch\" aria-checked=\"true\" aria-label=\"On\"></button><button class=\"ds-lever\" role=\"switch\" aria-checked=\"false\" aria-label=\"Off\"></button></span>",
+      "css": ":host{--panel:#e3e6e0;--bank:#d9ddd6;--legend:#d1d6ce;--rule:#bcc2ba;--rule-strong:#8f978f;--ink:#1b1f22;--ink-2:#4a524d;--ink-3:#545c57;--strip:#f6f1e3;--strip-ink:#2b2620;--brass:#9a7542;--plate:#23282c;--plate-2:#2e3439;--plate-ink:#eef0ea;--plate-ink-2:#b4bbb5;--live:#2e9a46;--live-ring:#1f6e31;--warn:#d48a14;--warn-ring:#9a630b;--dead:#c0392b;--dead-ring:#8a2419;--unlit:#8e968f;--cord:#8f3a20;--action:#8f3a20;--action-hover:#79301a;--field:#f2f3ef;--jack:#2a2f33;--jack-ring:#737b75;--live-tint:rgba(46,154,70,0.09);--focus:#1f5fd1;--sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,sans-serif;--mono:ui-monospace,\"SF Mono\",SFMono-Regular,Menlo,Consolas,\"Liberation Mono\",monospace;--shadow:0 1px 2px rgba(20,24,26,0.12),0 4px 14px rgba(20,24,26,0.06)}.ds-pair{display:inline-flex;gap:12px;padding:8px;background:var(--bank)}.ds-lever{position:relative;width:24px;height:36px;padding:0;border:0;background:transparent;cursor:pointer}.ds-lever::before{content:\"\";position:absolute;left:9px;top:3px;width:6px;height:30px;border-radius:3px;background:var(--jack);box-shadow:inset 0 0 0 1px var(--jack-ring)}.ds-lever::after{content:\"\";position:absolute;left:3px;top:4px;width:18px;height:11px;border-radius:2px;background:var(--brass);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 2px rgba(0,0,0,.35);transform:translateY(17px);transition:transform 180ms cubic-bezier(.2,.8,.2,1),background-color 150ms ease-out}.ds-lever[aria-checked=true]::after{transform:translateY(0)}.ds-lever[aria-checked=false]::after{background:var(--unlit)}:focus-visible{outline:2px solid var(--focus);outline-offset:2px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Switchboard Line Field",
+    "overview": "**Creative North Star: \"The Switchboard Line Field\"**\n\nThe relay is a telephone switchboard. Accounts and API keys are numbered lines in a fixed order on one painted-steel field panel: pale enamel by default, graphite under a dark color scheme. Each line carries an ivory designation strip in a brass holder, a flat round lamp, a monospace readout and, for accounts, a brass lever key. A rust cloth cord leaves the socket on the reversed \"connected\" plate at the top and runs down the left gutter into the live jack. When the live line changes, the cord re-routes.\n\nThis is an Operate surface. It is dense and quiet, and it reads at a glance. A healthy board is mostly neutral steel and ivory. Color shows up only where a lamp is lit, where the cord runs, and on the one primary action. Every line uses the same scale on one baseline, so the order of the lines is the main thing the eye reads. The field grid is the structure: banks are separated by rules on a single continuous board, never by stacked cards.\n\nEverything is drawn from system resources. Only system font stacks are used, because the CSP forbids external fonts, and all icons are inline SVG line icons at 16px on a 1.5 stroke.",
+    "keyCharacteristics": [
+      "One continuous board, divided by rules into banks and lines, never broken into cards.",
+      "One reversed plate on top names the live line, the next line, and any trouble.",
+      "Binary lamps: lit solid with a darker ring, or unlit as an empty ring. No glow, no gradient.",
+      "Ivory designation strips in brass holders carry each line's name in caps.",
+      "The rust cord is the one moving signature. It re-routes to the live jack over 220 ms.",
+      "Monospace only for identifiers, numbers and times."
+    ],
+    "rules": [
+      {
+        "name": "The Lit-Or-Dark Rule",
+        "body": "A lamp is either lit (a solid fill inside a darker ring of the same hue) or unlit (an empty ring). There are no glows, no pulses, no gradients and no half states.",
+        "section": "colors"
+      },
+      {
+        "name": "The Quiet Board Rule",
+        "body": "Saturated color appears only for a lamp state, the cord, or the single primary action in a form. A healthy board is steel and ivory.",
+        "section": "colors"
+      },
+      {
+        "name": "The Shared Rust Rule",
+        "body": "The primary action uses the cord's rust and no other accent. A second accent hue is not part of this world.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Scale Rule",
+        "body": "No size outside 20 / 17 / 16 / 14 / 13 / 12.5 px. To raise something's rank, change its weight, case or reversal (light on plate), not its size.",
+        "section": "typography"
+      },
+      {
+        "name": "The Readout Rule",
+        "body": "Monospace is used only for identifiers, numbers and times. Sentences, including the words of a state (\"Used up\", \"Works\"), stay in the sans.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Field Rule",
+        "body": "The board, banks and lines never cast shadows. Only the plate and transient overlays lift off the field.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** show every account and key as a numbered line on the one board, in relay order, with the same row scale.",
+      "**Do** give every line a lamp and a readout beside it. Use a lit lamp only for live, warn or dead states.",
+      "**Do** keep type to 20 / 17 / 16 / 14 / 13 / 12.5 px and rank by weight, caps and reversal.",
+      "**Do** use the rust action color for the single primary action in a form, and nowhere else except the cord.",
+      "**Do** end each bank with a spare jack as its add action.",
+      "**Do** keep the 3px board, 4px plate, 6px control radius split.",
+      "**Do** honor reduced motion: every transition goes to 0ms, and the cord snaps."
+    ],
+    "donts": [
+      "**Don't** break the board into stacked cards or status pills; banks are divided by rules.",
+      "**Don't** add glow, pulse, gradient or partial fills to lamps.",
+      "**Don't** set sentences or state words in monospace.",
+      "**Don't** load external fonts, scripts, images or icon fonts; system stacks and inline SVG only.",
+      "**Don't** cast shadows from the board, banks or lines; only the plate and toasts lift.",
+      "**Don't** animate the cord on layout changes; it moves only when the live line changes."
+    ]
+  }
+}
