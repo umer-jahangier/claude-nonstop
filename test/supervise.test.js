@@ -37,7 +37,9 @@ function setup({ withWork, withKeys }) {
 }
 
 const run = (env) => runCli(['run'], { env: { CLAUDE_NONSTOP_SUPERVISE: '1', FAKE_CLAUDE_LIMITED_FILE: limitedFile, FAKE_CLAUDE_WAIT_MS: '2500', ...env } });
-const log = () => readFakeLog().filter((e) => e.kind !== 'probe' && e.kind !== 'auth-status');
+// Sessions as they started and ended. A stopped session only gets to record its stop on
+// macOS and Linux (Windows ends it with taskkill), so stops are left out.
+const log = () => readFakeLog().filter((e) => !['probe', 'auth-status', 'stopped'].includes(e.kind));
 
 test('reopening keeps your flags, drops the old prompt, and resumes the same conversation', () => {
   assert.deepEqual(supervise.resumeArgs(['--model', 'opus', 'fix the bug'], 'S1'), ['--model', 'opus', '--resume', 'S1', CONTINUE]);
@@ -64,8 +66,8 @@ test('when an account runs out mid-session, the same conversation continues on t
   const r = await run({ FAKE_CLAUDE_HIT_LIMIT: 'default' });
   assert.equal(r.code, 0, r.stderr);
   const events = log();
-  assert.deepEqual(events.map((e) => `${e.kind}:${e.account === 'default' ? 'main' : 'work'}`), ['session:main', 'stopped:main', 'session:work']);
-  const [first, , second] = events;
+  assert.deepEqual(events.map((e) => `${e.kind}:${e.account === 'default' ? 'main' : 'work'}`), ['session:main', 'session:work']);
+  const [first, second] = events;
   assert.deepEqual(second.args.slice(-3), ['--resume', first.session, CONTINUE], 'reopened the same conversation and asked Claude to carry on');
   assert.match(r.stderr, /Main account reached its limit, so this conversation continues on Work/);
   assert.equal(state.load().current, 'Work');
@@ -84,8 +86,8 @@ test('when every account is out, the conversation continues on your API keys', a
   const r = await run({ FAKE_CLAUDE_HIT_LIMIT: 'default' });
   assert.equal(r.code, 0, r.stderr);
   const events = log();
-  assert.deepEqual(events.map((e) => e.kind), ['session', 'stopped', 'session']);
-  const onKeys = events[2];
+  assert.deepEqual(events.map((e) => e.kind), ['session', 'session'], 'Main was stopped, not left to continue');
+  const onKeys = events[1];
   assert.match(onKeys.helperOutput, /sk-ant-api03-test-ok-/, 'runs on the working key');
   assert.deepEqual(onKeys.args.slice(-3), ['--resume', events[0].session, CONTINUE]);
   assert.match(r.stderr, /continues on your API keys/);
@@ -101,8 +103,8 @@ test('when nothing is free yet, it keeps looking and moves the conversation as s
   config.update((c) => { c.accountRecheckMinutes = 10; });
   assert.equal(r.code, 0, r.stderr);
   const events = log();
-  assert.deepEqual(events.map((e) => `${e.kind}:${e.account === 'default' ? 'main' : 'work'}`), ['session:main', 'stopped:main', 'session:work']);
-  assert.deepEqual(events[2].args.slice(-3), ['--resume', events[0].session, CONTINUE]);
+  assert.deepEqual(events.map((e) => `${e.kind}:${e.account === 'default' ? 'main' : 'work'}`), ['session:main', 'session:work']);
+  assert.deepEqual(events[1].args.slice(-3), ['--resume', events[0].session, CONTINUE]);
 });
 
 test('`claude -p` runs are left alone', () => {
