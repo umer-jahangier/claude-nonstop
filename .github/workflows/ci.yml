@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Tests (${{ matrix.os }}, Node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [18, 20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm test
+
+  install:
+    name: Installer (${{ matrix.os }})
+    needs: test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    env:
+      CLAUDE_NONSTOP_REF: ${{ github.sha }}
+      CLAUDE_NONSTOP_SETUP_ARGS: --yes --no-open
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install (macOS and Linux)
+        if: runner.os != 'Windows'
+        run: |
+          sh install.sh
+          "$HOME/.local/bin/claude-nonstop" --version
+          "$HOME/.local/bin/claude-nonstop" status
+          "$HOME/.local/bin/claude-nonstop" uninstall --purge
+          test ! -e "$HOME/.claude-nonstop/app"
+      - name: Install (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          ./install.ps1
+          & "$env:USERPROFILE\.claude-nonstop\bin\claude-nonstop.cmd" --version
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          & "$env:USERPROFILE\.claude-nonstop\bin\claude-nonstop.cmd" status
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          & "$env:USERPROFILE\.claude-nonstop\bin\claude-nonstop.cmd" uninstall --purge
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          Start-Sleep -Seconds 6
+          if (Test-Path "$env:USERPROFILE\.claude-nonstop\app") { exit 1 }
+          exit 0

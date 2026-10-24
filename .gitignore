@@ -1,0 +1,8 @@
+node_modules/
+.DS_Store
+*.log
+.impeccable/review/
+.impeccable/build/
+.impeccable/mocks/
+.impeccable/config.local.json
+.impeccable/hook.cache.json

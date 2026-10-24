@@ -1,0 +1,36 @@
+{
+  "name": "claude-nonstop",
+  "version": "1.0.0",
+  "description": "Keep your coding agent working through plan limits: when a Claude subscription hits its session or weekly limit, claude-nonstop moves to your next account, then to your API keys, one by one.",
+  "bin": {
+    "claude-nonstop": "bin/claude-nonstop.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "claude-code",
+    "anthropic",
+    "api-keys",
+    "failover",
+    "rate-limit",
+    "usage-limit",
+    "cli"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/umer-jahangier/claude-nonstop.git"
+  },
+  "homepage": "https://github.com/umer-jahangier/claude-nonstop#readme",
+  "bugs": "https://github.com/umer-jahangier/claude-nonstop/issues",
+  "license": "MIT"
+}

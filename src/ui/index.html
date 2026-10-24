@@ -1,0 +1,961 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>claude-nonstop</title>
+<style>
+:root {
+  --panel: #e3e6e0;
+  --bank: #d9ddd6;
+  --legend: #d1d6ce;
+  --rule: #bcc2ba;
+  --rule-strong: #8f978f;
+  --ink: #1b1f22;
+  --ink-2: #4a524d;
+  --ink-3: #5e6762;
+  --strip: #f6f1e3;
+  --strip-ink: #2b2620;
+  --brass: #9a7542;
+  --plate: #23282c;
+  --plate-2: #2e3439;
+  --plate-ink: #eef0ea;
+  --plate-ink-2: #b4bbb5;
+  --live: #2e9a46;
+  --live-ring: #1f6e31;
+  --warn: #d48a14;
+  --warn-ring: #9a630b;
+  --dead: #c0392b;
+  --dead-ring: #8a2419;
+  --unlit: #8e968f;
+  --cord: #8f3a20;
+  --cord-hi: #c06a48;
+  --action: #8f3a20;
+  --action-hover: #79301a;
+  --action-ink: #ffffff;
+  --field: #f2f3ef;
+  --jack: #2a2f33;
+  --jack-ring: #737b75;
+  --live-tint: rgba(46, 154, 70, 0.09);
+  --focus: #1f5fd1;
+  --shadow: 0 1px 2px rgba(20, 24, 26, 0.12), 0 4px 14px rgba(20, 24, 26, 0.06);
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --panel: #1b1f22;
+    --bank: #22272b;
+    --legend: #262c30;
+    --rule: #343b40;
+    --rule-strong: #4f585e;
+    --ink: #e8eae5;
+    --ink-2: #b0b7b2;
+    --ink-3: #8f9792;
+    --strip: #ebe3cc;
+    --strip-ink: #29241d;
+    --brass: #a8824d;
+    --plate: #0f1214;
+    --plate-2: #191d20;
+    --plate-ink: #eef0ea;
+    --plate-ink-2: #a9b0aa;
+    --live: #4fb35f;
+    --live-ring: #2f7a3b;
+    --warn: #e8a33a;
+    --warn-ring: #a8701d;
+    --dead: #e0503f;
+    --dead-ring: #9c3024;
+    --unlit: #59626a;
+    --cord: #a8452a;
+    --cord-hi: #d27a55;
+    --action: #a8452a;
+    --action-hover: #bd5332;
+    --field: #262b30;
+    --jack: #0b0d0f;
+    --jack-ring: #59626a;
+    --live-tint: rgba(79, 179, 95, 0.10);
+    --focus: #79b0ff;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 6px 18px rgba(0, 0, 0, 0.25);
+  }
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--panel);
+  color: var(--ink);
+  font: 14px/1.45 var(--sans);
+  caret-color: var(--cord);
+  scrollbar-color: var(--rule-strong) transparent;
+}
+::selection { background: color-mix(in srgb, var(--cord) 32%, transparent); }
+a { color: inherit; text-underline-offset: 3px; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.mono { font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+
+.wrap { position: relative; max-width: 1120px; margin: 0 auto; padding: 20px 16px 72px; }
+@media (min-width: 720px) { .wrap { padding: 28px 32px 88px; } }
+
+/* masthead */
+.masthead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; margin-bottom: 18px; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand .i { width: 20px; height: 20px; color: var(--cord); }
+.wordmark { margin: 0; font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+.brand .ver { color: var(--ink-3); }
+.facts { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--ink-2); font-size: 13px; }
+.facts span { display: inline-flex; align-items: center; gap: 7px; }
+
+/* lamps: lit or dark, nothing in between */
+.lamp { width: 12px; height: 12px; border-radius: 50%; flex: none; display: inline-block; border: 2px solid var(--unlit); background: transparent; }
+.lamp[data-s="live"] { background: var(--live); border-color: var(--live-ring); }
+.lamp[data-s="warn"] { background: var(--warn); border-color: var(--warn-ring); }
+.lamp[data-s="dead"] { background: var(--dead); border-color: var(--dead-ring); }
+.lamp[data-s="off"] { border-style: dashed; }
+
+/* the connected plate */
+.plate { position: relative; background: var(--plate); color: var(--plate-ink); border-radius: 4px; padding: 16px 18px 16px 52px; box-shadow: var(--shadow); }
+@media (min-width: 720px) { .plate { padding: 18px 22px 18px 56px; } }
+.socket { position: absolute; left: 14px; top: 17px; width: 24px; height: 24px; border-radius: 50%; background: var(--plate-2); box-shadow: inset 0 0 0 2px var(--brass), inset 0 0 0 5px var(--plate-2), inset 0 0 0 7px #000; }
+@media (min-width: 720px) { .socket { left: 16px; top: 19px; } }
+.slots { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 12px 18px; align-items: baseline; margin: 0; }
+@media (min-width: 720px) { .slots { grid-template-columns: max-content minmax(0, 1.3fr) max-content minmax(0, 1fr); column-gap: 20px; } }
+.slots dt { font-size: 13px; font-weight: 600; color: var(--plate-ink-2); }
+.slots dd { margin: 0; min-width: 0; }
+.slot-value { margin: 0; font-size: 20px; font-weight: 650; line-height: 1.25; overflow-wrap: anywhere; }
+.slot-value.small { font-size: 16px; font-weight: 600; }
+.slot-value .lamp { margin-right: 10px; vertical-align: 0.05em; }
+.slot-sub { margin: 3px 0 0; color: var(--plate-ink-2); font-size: 13px; }
+.trouble { list-style: none; margin: 14px 0 0; padding: 12px 0 0; border-top: 1px solid rgba(255, 255, 255, 0.12); display: grid; gap: 8px; }
+.trouble li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font-size: 14px; }
+.trouble .msg { display: inline-flex; gap: 10px; align-items: baseline; flex: 1 1 280px; }
+.trouble .lamp { transform: translateY(1px); }
+.trouble .acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.all-ready { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.12); color: var(--plate-ink-2); font-size: 13px; }
+
+/* buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 34px; padding: 0 14px; border-radius: 6px; border: 1px solid var(--rule-strong); background: var(--field); color: var(--ink); font-weight: 600; font-size: 13px; cursor: pointer; white-space: nowrap; text-decoration: none; transition: background-color 150ms ease-out, border-color 150ms ease-out; }
+.btn:hover { border-color: var(--ink-3); }
+.btn.primary { background: var(--action); border-color: var(--action); color: var(--action-ink); }
+.btn.primary:hover { background: var(--action-hover); border-color: var(--action-hover); }
+.btn.on-plate { background: transparent; color: var(--plate-ink); border-color: rgba(255, 255, 255, 0.28); }
+.btn.on-plate:hover { border-color: rgba(255, 255, 255, 0.6); }
+.btn:disabled, .icon-btn:disabled { opacity: 0.5; cursor: progress; }
+.icon-btn { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 6px; border: 1px solid transparent; background: transparent; color: var(--ink-2); cursor: pointer; transition: background-color 150ms ease-out, color 150ms ease-out; }
+.icon-btn:hover { background: var(--field); border-color: var(--rule); color: var(--ink); }
+.icon-btn.danger:hover { color: var(--dead); }
+.spin .i { animation: spin 900ms linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* the jack field: one continuous panel */
+.field { position: relative; margin-top: 18px; padding-left: 40px; }
+@media (min-width: 720px) { .field { padding-left: 56px; } }
+.board { background: var(--bank); border: 1px solid var(--rule); border-radius: 3px; }
+.bank + .bank { border-top: 1px solid var(--rule-strong); }
+.bank-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; padding: 12px 16px 10px; background: var(--legend); }
+.bank-head h2 { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.bank-head p { margin: 0; color: var(--ink-2); font-size: 13px; flex: 1 1 260px; }
+.bank-head .btn { min-height: 30px; }
+.lines { list-style: none; margin: 0; padding: 0; }
+.line {
+  position: relative;
+  display: grid;
+  grid-template-columns: 26px 12px minmax(0, 1fr) auto;
+  grid-template-areas: "num lamp strip lever" ". . readout readout" ". . controls controls";
+  align-items: center;
+  gap: 6px 10px;
+  padding: 10px 12px 10px 14px;
+  border-top: 1px solid var(--rule);
+  min-height: 56px;
+}
+@media (min-width: 640px) {
+  .line { grid-template-columns: 26px 12px minmax(0, 1fr) auto auto; grid-template-areas: "num lamp strip controls lever" ". . readout readout readout"; gap: 6px 12px; }
+}
+@media (min-width: 900px) {
+  .line { grid-template-columns: 26px 12px minmax(160px, 236px) minmax(0, 1fr) auto auto; grid-template-areas: "num lamp strip readout controls lever"; padding-right: 10px; }
+}
+.line[data-live] { background: var(--live-tint); }
+.line .num { grid-area: num; color: var(--ink-3); }
+.line .lamp, .line .gap { grid-area: lamp; }
+.line .strip { grid-area: strip; }
+.line .controls { grid-area: controls; display: flex; align-items: center; justify-content: flex-start; gap: 2px; flex-wrap: wrap; margin-left: -8px; }
+@media (min-width: 640px) { .line .controls { justify-content: flex-end; margin-left: 0; } }
+.line .lever, .line .confirm { grid-area: lever; }
+.line .confirm { grid-column: 3 / -1; }
+@media (min-width: 640px) { .line .confirm { grid-area: controls; grid-column: auto / span 2; } }
+.jack { position: absolute; top: 50%; left: -31px; width: 16px; height: 16px; margin-top: -8px; border-radius: 50%; background: var(--jack); box-shadow: inset 0 0 0 2px var(--jack-ring); }
+@media (min-width: 720px) { .jack { left: -39px; } }
+.line[data-live] .jack { box-shadow: inset 0 0 0 2px var(--brass); }
+
+/* the readout: identifiers and numbers in mono, sentences in the sans */
+.readout { grid-area: readout; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 1px 10px; color: var(--ink-2); font-size: 13px; }
+.readout .state { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.readout .ident, .readout .meta { font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.readout .ident { min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.readout .meta { color: var(--ink-3); }
+.readout .why { flex-basis: 100%; }
+
+/* designation strip: an ivory label in a brass holder */
+.strip { min-width: 0; display: flex; padding: 2px; border-radius: 3px; background: var(--brass); border: 0; text-align: left; cursor: text; }
+.strip > span { display: block; width: 100%; min-width: 0; padding: 4px 9px; border-radius: 2px; background: var(--strip); color: var(--strip-ink); font-size: 13px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(60, 45, 20, 0.12); }
+.line[data-off] .strip { opacity: 0.55; }
+.strip input { width: 100%; padding: 3px 8px; border: 0; border-radius: 2px; background: var(--strip); color: var(--strip-ink); font-size: 13px; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; }
+
+/* lever key: a brass bat in a slot, thrown up for on, down for off */
+.lever { position: relative; width: 24px; height: 36px; padding: 0; margin: 0 2px; border: 0; background: transparent; cursor: pointer; justify-self: end; }
+.lever::before { content: ""; position: absolute; left: 9px; top: 3px; width: 6px; height: 30px; border-radius: 3px; background: var(--jack); box-shadow: inset 0 0 0 1px var(--jack-ring); }
+.lever::after { content: ""; position: absolute; left: 3px; top: 4px; width: 18px; height: 11px; border-radius: 2px; background: var(--brass); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 1px 2px rgba(0, 0, 0, 0.35); transform: translateY(17px); transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), background-color 150ms ease-out; }
+.lever[aria-checked="true"]::after { transform: translateY(0); }
+.lever[aria-checked="false"]::after { background: var(--unlit); }
+
+/* a spare jack is the add action */
+.line.spare .strip { background: transparent; border: 1px dashed var(--rule-strong); padding: 0; cursor: pointer; }
+.line.spare .strip > span { background: transparent; box-shadow: none; color: var(--ink-2); display: flex; align-items: center; gap: 8px; padding: 6px 9px; }
+.line.spare .strip:hover > span { color: var(--ink); }
+.line.spare .jack { box-shadow: inset 0 0 0 2px var(--rule-strong); background: transparent; }
+
+.form { display: grid; gap: 10px; padding: 12px 14px 16px 52px; border-top: 1px solid var(--rule); grid-template-columns: 1fr; }
+@media (min-width: 720px) { .form { grid-template-columns: minmax(0, 220px) minmax(0, 1fr) auto; align-items: end; } }
+.form label { display: grid; gap: 5px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.form .hint { grid-column: 1 / -1; margin: 0; color: var(--ink-2); font-size: 13px; }
+.form .row-actions { display: flex; gap: 8px; }
+.input { width: 100%; min-height: 36px; padding: 7px 10px; border-radius: 6px; border: 1px solid var(--rule-strong); background: var(--field); color: var(--ink); font-size: 14px; }
+.input::placeholder { color: var(--ink-3); }
+.input.mono { font-size: 13px; }
+
+.job { margin: 0 14px 14px 52px; padding: 12px 14px; border-radius: 4px; background: var(--plate); color: var(--plate-ink); display: grid; gap: 10px; }
+.job p { margin: 0; }
+.job pre { margin: 0; max-height: 9.5em; overflow: auto; font: 12.5px/1.45 var(--mono); color: var(--plate-ink-2); white-space: pre-wrap; overflow-wrap: anywhere; }
+.job .input { background: var(--plate-2); color: var(--plate-ink); border-color: rgba(255, 255, 255, 0.28); }
+.job form { display: flex; flex-wrap: wrap; gap: 8px; }
+.job form .input { flex: 1 1 220px; }
+
+.confirm { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; font-size: 13px; font-weight: 600; }
+.btn.danger { background: var(--dead); border-color: var(--dead); color: #fff; }
+
+/* skeleton */
+.skeleton { height: 14px; border-radius: 3px; background: var(--rule); opacity: 0.6; }
+
+/* the cord, drawn over the gutter */
+.cord { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 2; }
+.cord .sheath { stroke: var(--cord); stroke-width: 5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.cord .weave { stroke: var(--cord-hi); stroke-width: 1.4; fill: none; stroke-dasharray: 2 4; stroke-linecap: round; }
+.cord .tip { fill: var(--brass); }
+
+/* the lower section of the same panel */
+.aux { display: grid; grid-template-columns: 1fr; align-items: start; border-top: 1px solid var(--rule-strong); }
+@media (min-width: 900px) {
+  .aux { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+  .aux .panel:first-child { border-right: 1px solid var(--rule); }
+}
+.panel { padding: 16px 18px 18px; }
+.panel + .panel { border-top: 1px solid var(--rule); }
+@media (min-width: 900px) { .panel + .panel { border-top: 0; } }
+.panel h2 { margin: 0 0 6px; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.panel > p { margin: 0 0 12px; color: var(--ink-2); max-width: 68ch; }
+.steps { margin: 0 0 14px; padding-left: 20px; display: grid; gap: 6px; }
+.steps li::marker { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.values { margin: 0 0 14px; display: grid; gap: 8px; }
+.values div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; align-items: center; }
+.values dt { grid-column: 1 / -1; color: var(--ink-2); font-size: 13px; }
+@media (min-width: 560px) { .values div { grid-template-columns: 140px minmax(0, 1fr) auto; } .values dt { grid-column: auto; } }
+.values dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.values .acts { display: flex; gap: 2px; }
+.panel .btn-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.file { margin: 10px 0 0; color: var(--ink-2); font-size: 13px; overflow-wrap: anywhere; }
+.settings { display: grid; gap: 14px; }
+.setting { display: grid; grid-template-columns: minmax(0, 1fr) 92px; gap: 4px 12px; align-items: center; }
+.setting label { font-weight: 600; }
+.setting p { grid-column: 1; margin: 0; color: var(--ink-2); font-size: 13px; }
+.setting .input { grid-column: 2; grid-row: 1 / span 2; text-align: right; }
+.setup-facts { margin: 14px 0 0; padding: 12px 0 0; border-top: 1px solid var(--rule); display: grid; gap: 6px; color: var(--ink-2); font-size: 13px; }
+.setup-facts code, .panel code { font-family: var(--mono); font-size: 12.5px; color: var(--ink); }
+
+/* toast */
+.toast { position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, 16px); opacity: 0; max-width: min(560px, calc(100% - 32px)); padding: 11px 16px; border-radius: 6px; background: var(--plate); color: var(--plate-ink); box-shadow: var(--shadow); font-size: 14px; transition: opacity 180ms ease-out, transform 220ms cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; z-index: 5; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.toast.error { background: var(--dead-ring); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0ms !important; animation-duration: 0ms !important; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-plug" viewBox="0 0 16 16"><path d="M5.5 1.5v3M10.5 1.5v3M3.5 4.5h9V7a4.5 4.5 0 0 1-9 0zM8 11.5v3"/></symbol>
+  <symbol id="i-test" viewBox="0 0 16 16"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3"/></symbol>
+  <symbol id="i-up" viewBox="0 0 16 16"><path d="M8 12.5v-9M4 7.5l4-4 4 4"/></symbol>
+  <symbol id="i-down" viewBox="0 0 16 16"><path d="M8 3.5v9M4 8.5l4 4 4-4"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 16 16"><path d="M10.5 2.5l3 3L6 13H3v-3z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 16 16"><path d="M2.5 4.5h11M6.5 4.5V2.5h3v2M4 4.5l.6 9h6.8l.6-9"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 16 16"><path d="M5.5 5.5h8v8h-8zM2.5 10.5v-8h8"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 16 16"><path d="M1.5 8S4 3.5 8 3.5 14.5 8 14.5 8 12 12.5 8 12.5 1.5 8 1.5 8z"/><circle cx="8" cy="8" r="2"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 16 16"><path d="M1.5 3.5h4.5l1.5 1.5h7v8h-13z"/></symbol>
+  <symbol id="i-signin" viewBox="0 0 16 16"><path d="M9.5 2.5h4v11h-4M1.5 8h8M6.5 5l3 3-3 3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 16 16"><path d="M8 3v10M3 8h10"/></symbol>
+  <symbol id="i-out" viewBox="0 0 16 16"><path d="M9.5 2.5h4v4M13.5 2.5 7.5 8.5M11.5 9.5v4h-9v-9h4"/></symbol>
+</svg>
+
+<div class="wrap" id="wrap">
+  <header class="masthead">
+    <div class="brand"><svg class="i" aria-hidden="true"><use href="#i-plug"/></svg><h1 class="wordmark">claude-nonstop</h1><span class="ver mono" id="ver"></span></div>
+    <div class="facts" id="facts"></div>
+  </header>
+
+  <main>
+    <section class="plate" id="plate" aria-label="What's running now">
+      <span class="socket" id="socket" aria-hidden="true"></span>
+      <dl class="slots">
+        <dt>Live line</dt>
+        <dd>
+          <p class="slot-value" id="live-value"><span class="skeleton" style="display:inline-block;width:12rem"></span></p>
+          <p class="slot-sub" id="live-sub"></p>
+        </dd>
+        <dt>If it runs out</dt>
+        <dd>
+          <p class="slot-value small" id="next-value"></p>
+          <p class="slot-sub" id="next-sub"></p>
+        </dd>
+      </dl>
+      <div id="trouble"></div>
+    </section>
+
+    <div class="field" id="field">
+      <div class="board">
+        <section class="bank" aria-labelledby="accounts-title">
+          <div class="bank-head">
+            <h2 id="accounts-title">Subscription accounts</h2>
+            <p>Tried first, top to bottom. Each one signs in on Anthropic's own page.</p>
+          </div>
+          <ol class="lines" id="accounts"><li class="line"><span class="gap"></span><span class="skeleton strip"></span></li></ol>
+          <div id="account-extra"></div>
+        </section>
+
+        <section class="bank" aria-labelledby="keys-title">
+          <div class="bank-head">
+            <h2 id="keys-title">API keys</h2>
+            <p>Used after every account hits its limit. A used-up key is skipped, then checked again later.</p>
+            <button class="btn" type="button" data-act="check-all-keys" id="check-all">Test all keys</button>
+          </div>
+          <ol class="lines" id="keys"><li class="line"><span class="gap"></span><span class="skeleton strip"></span></li></ol>
+          <div id="key-extra"></div>
+        </section>
+
+        <div class="aux">
+          <section class="panel" aria-labelledby="desktop-title">
+            <h2 id="desktop-title">Claude desktop app</h2>
+            <p>The desktop app can run on your API keys through this gateway. Your subscription stays one choice away on its sign-in screen.</p>
+            <ol class="steps" id="desktop-steps"></ol>
+            <dl class="values" id="desktop-values"></dl>
+            <div class="btn-row">
+              <button class="btn" type="button" data-act="reveal-desktop"><svg class="i" aria-hidden="true"><use href="#i-folder"/></svg>Show the import file</button>
+            </div>
+            <p class="file mono" id="desktop-file"></p>
+          </section>
+
+          <section class="panel" aria-labelledby="settings-title">
+            <h2 id="settings-title">Timing</h2>
+            <form class="settings" id="settings-form">
+              <div class="setting">
+                <label for="cooldown">Key cooldown</label>
+                <input class="input mono" id="cooldown" name="cooldownMinutes" type="number" min="1" max="1440" step="1" inputmode="numeric">
+                <p>Minutes a used-up key is skipped before it's checked again.</p>
+              </div>
+              <div class="setting">
+                <label for="recheck">Account recheck</label>
+                <input class="input mono" id="recheck" name="accountRecheckMinutes" type="number" min="1" max="1440" step="1" inputmode="numeric">
+                <p>Minutes an account that hit its limit is skipped.</p>
+              </div>
+              <div class="btn-row">
+                <button class="btn primary" type="submit">Save timing</button>
+                <button class="btn" type="button" data-act="recheck-everything">Forget cooldowns</button>
+              </div>
+            </form>
+            <div class="setup-facts" id="setup-facts"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+  <svg class="cord" id="cord" aria-hidden="true"><path class="sheath" id="cord-sheath"/><path class="weave" id="cord-weave"/><circle class="tip" id="cord-tip" r="5"/></svg>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+const $ = (sel, el = document) => el.querySelector(sel);
+const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const icon = (name) => `<svg class="i" aria-hidden="true"><use href="#i-${name}"/></svg>`;
+const pad = (n) => String(n).padStart(2, '0');
+const trimEnd = (s) => String(s || '').replace(/[.\s]+$/, '');
+const BILLING_URL = 'https://platform.claude.com/settings/billing';
+const KEYS_URL = 'https://platform.claude.com/settings/keys';
+
+let S = null;
+let logins = {};
+let desktopInfo = null;
+const busy = new Set();
+const ui = { adding: null, job: null, jobView: null, confirm: null, renaming: null, showToken: false, forms: { accountLabel: '', keyLabel: '', keyValue: '' } };
+
+async function api(method, path, body) {
+  const res = await fetch(path, {
+    method,
+    headers: { 'x-claude-nonstop': '1', ...(body ? { 'content-type': 'application/json' } : {}) },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  let data = {};
+  try { data = await res.json(); } catch {}
+  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+  return data;
+}
+
+let toastTimer = null;
+function toast(text, isError) {
+  const el = $('#toast');
+  el.textContent = text;
+  el.classList.toggle('error', Boolean(isError));
+  el.setAttribute('role', isError ? 'alert' : 'status');
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), isError ? 6000 : 3200);
+}
+
+function ago(at) {
+  if (!at) return '';
+  const m = Math.max(0, Math.round((Date.now() - at) / 60000));
+  if (m === 0) return 'just now';
+  if (m < 60) return `${m} min ago`;
+  const h = Math.round(m / 60);
+  return h < 48 ? `${h} h ago` : `${Math.round(h / 24)} days ago`;
+}
+
+// ------------------------------------------------------------------ line states
+
+function accountState(a) {
+  const login = logins[a.id];
+  const c = a.lastCheck;
+  if (!a.enabled) return { lamp: 'off', word: 'Off', ready: false };
+  if (login && !login.loggedIn) return { lamp: 'dead', word: 'Not signed in', ready: false };
+  if (c && !c.ok && /limit/i.test(c.reason || '')) return { lamp: 'warn', word: 'Limit reached', ready: false };
+  if (c && !c.ok) return { lamp: 'warn', word: 'Check failed', ready: true };
+  return { lamp: '', word: c && c.ok ? 'Ready' : 'Not checked yet', ready: true };
+}
+
+function keyState(k) {
+  const c = k.lastCheck;
+  if (c && c.verdict === 'used-up' && k.coolingDown) return { lamp: 'dead', word: 'Used up', ready: false };
+  if (c && c.verdict === 'keep') return { lamp: 'warn', word: 'Kept', ready: true };
+  if (c && c.verdict === 'ok') return { lamp: '', word: 'Works', ready: true };
+  return { lamp: '', word: 'Not checked yet', ready: true };
+}
+
+// The relay in order: enabled accounts, then keys.
+function relay() {
+  const out = [];
+  for (const a of S.accounts) if (a.enabled) out.push({ type: 'account', item: a, st: accountState(a) });
+  for (const k of S.keys) out.push({ type: 'key', item: k, st: keyState(k) });
+  return out;
+}
+
+// The line carrying sessions: the last one used, or the next ready one after it if it has gone dead.
+function liveIndex(lines) {
+  const cur = S.current || '';
+  let i = lines.findIndex((l) => (l.type === 'account' ? l.item.label === cur : `API key: ${l.item.label}` === cur));
+  if (i < 0 && cur === 'API keys (gateway)') i = lines.findIndex((l) => l.type === 'key');
+  if (i < 0) return -1;
+  for (let j = i; j < lines.length; j++) if (lines[j].st.ready) return j;
+  return -1;
+}
+
+function lineName(l) {
+  return l.type === 'account' ? l.item.label : `${l.item.label} (API key)`;
+}
+
+// ------------------------------------------------------------------ render
+
+function renderFacts() {
+  $('#ver').textContent = `v${S.version}`;
+  $('#facts').innerHTML = [
+    `<span><span class="lamp" data-s="live"></span>Gateway <span class="mono">${esc(S.gatewayUrl.replace('http://', ''))}</span></span>`,
+    `<span>Secrets: ${esc(S.keystore || 'not set up yet')}</span>`,
+  ].join('');
+}
+
+function renderPlate(lines, live) {
+  const liveLine = live >= 0 ? lines[live] : null;
+  if (liveLine) {
+    $('#live-value').innerHTML = `<span class="lamp" data-s="live"></span>${esc(lineName(liveLine))}`;
+    const since = S.currentAt ? `since ${ago(S.currentAt)}` : '';
+    $('#live-sub').textContent = liveLine.type === 'account' ? `Subscription${since ? `, ${since}` : ''}` : `Your API key${since ? `, ${since}` : ''}`;
+  } else {
+    const first = lines.find((l) => l.st.ready);
+    $('#live-value').innerHTML = `<span class="lamp"></span>${first ? 'Nothing running yet' : 'No line ready'}`;
+    $('#live-sub').textContent = first ? `Your next session starts on ${lineName(first)}.` : 'Add an account or an API key below.';
+  }
+  const next = live >= 0 ? lines.slice(live + 1).find((l) => l.st.ready) : null;
+  $('#next-value').textContent = next ? lineName(next) : live >= 0 ? 'Nothing after this line' : '–';
+  $('#next-sub').textContent = next ? (next.type === 'account' ? 'Another subscription account' : 'Billed to that API key') : live >= 0 ? 'Add an API key so sessions keep going.' : '';
+
+  const issues = [];
+  if (!S.claudeFound) issues.push({ lamp: 'dead', text: "Claude Code isn't installed on this computer, so accounts can't be checked or signed in." });
+  for (const a of S.accounts) {
+    const login = logins[a.id];
+    if (a.enabled && login && !login.loggedIn) {
+      issues.push({ lamp: 'dead', text: `${a.label} isn't signed in.`, acts: `<button class="btn on-plate" type="button" data-act="login-account" data-id="${esc(a.id)}">${icon('signin')}Sign in</button>` });
+    }
+  }
+  for (const k of S.keys) {
+    if (keyState(k).lamp !== 'dead') continue;
+    const left = Math.max(1, S.settings.cooldownMinutes - Math.round((Date.now() - k.lastCheck.at) / 60000));
+    const why = trimEnd(k.lastCheck.detail);
+    issues.push({
+      lamp: 'dead',
+      text: `${k.label} is used up${why ? `: ${why}` : ''}. Top it up; it's checked again in ${left} min.`,
+      acts: `<a class="btn on-plate" href="${BILLING_URL}" target="_blank" rel="noopener noreferrer">${icon('out')}Top up</a><button class="btn on-plate" type="button" data-act="test-key" data-id="${esc(k.id)}">${icon('test')}Test now</button>`,
+    });
+  }
+  if (!S.keys.length) {
+    issues.push({
+      lamp: 'warn',
+      text: 'No API keys yet. When every account hits its limit, sessions have nothing to fall back on.',
+      acts: `<a class="btn on-plate" href="${KEYS_URL}" target="_blank" rel="noopener noreferrer">${icon('out')}Get a key</a><button class="btn on-plate" type="button" data-act="add-key">${icon('plus')}Add a key</button>`,
+    });
+  }
+  $('#trouble').innerHTML = issues.length
+    ? `<ul class="trouble" aria-label="Needs attention">${issues.map((i) => `<li><span class="msg"><span class="lamp" data-s="${i.lamp}"></span><span>${esc(i.text)}</span></span>${i.acts ? `<span class="acts">${i.acts}</span>` : ''}</li>`).join('')}</ul>`
+    : '<p class="all-ready">Every line is ready.</p>';
+}
+
+function controls(type, item, index, count) {
+  const id = esc(item.id);
+  if (ui.confirm === item.id) {
+    return `<div class="confirm" role="group" aria-label="Confirm removal"><span>Remove ${esc(item.label)}?</span><button class="btn danger" type="button" data-act="remove-${type}" data-id="${id}">Remove</button><button class="btn" type="button" data-act="cancel-confirm">Keep</button></div>`;
+  }
+  const isBusy = busy.has(item.id);
+  const parts = [];
+  if (type === 'account') {
+    parts.push(`<button class="icon-btn${isBusy ? ' spin' : ''}" type="button" data-act="check-account" data-id="${id}" ${isBusy ? 'disabled aria-busy="true"' : ''} title="Check usage (one tiny request)" aria-label="Check usage on ${esc(item.label)}">${icon('test')}</button>`);
+    parts.push(`<button class="icon-btn" type="button" data-act="login-account" data-id="${id}" title="Sign in again" aria-label="Sign in to ${esc(item.label)} again">${icon('signin')}</button>`);
+  } else {
+    parts.push(`<button class="icon-btn${isBusy ? ' spin' : ''}" type="button" data-act="test-key" data-id="${id}" ${isBusy ? 'disabled aria-busy="true"' : ''} title="Test this key" aria-label="Test ${esc(item.label)}">${icon('test')}</button>`);
+  }
+  parts.push(`<button class="icon-btn" type="button" data-act="rename-${type}" data-id="${id}" title="Rename" aria-label="Rename ${esc(item.label)}">${icon('edit')}</button>`);
+  parts.push(`<button class="icon-btn" type="button" data-act="move-${type}" data-dir="up" data-id="${id}" ${index === 0 ? 'disabled' : ''} title="Move up" aria-label="Move ${esc(item.label)} up">${icon('up')}</button>`);
+  parts.push(`<button class="icon-btn" type="button" data-act="move-${type}" data-dir="down" data-id="${id}" ${index === count - 1 ? 'disabled' : ''} title="Move down" aria-label="Move ${esc(item.label)} down">${icon('down')}</button>`);
+  if (type === 'key' || item.kind === 'profile') {
+    parts.push(`<button class="icon-btn danger" type="button" data-act="ask-remove" data-id="${id}" title="Remove" aria-label="Remove ${esc(item.label)}">${icon('trash')}</button>`);
+  }
+  const lever = type === 'account'
+    ? `<button class="lever" type="button" role="switch" aria-checked="${item.enabled}" data-act="toggle-account" data-id="${id}" title="${item.enabled ? 'On: tried in order' : 'Off: skipped'}" aria-label="Use ${esc(item.label)}"></button>`
+    : '';
+  return `<div class="controls">${parts.join('')}</div>${lever}`;
+}
+
+function strip(type, item) {
+  if (ui.renaming === item.id) {
+    return `<form class="strip" data-form="rename" data-type="${type}" data-id="${esc(item.id)}"><input name="label" value="${esc(item.label)}" maxlength="60" aria-label="New name" autocomplete="off" spellcheck="false"></form>`;
+  }
+  return `<button class="strip" type="button" data-act="rename-${type}" data-id="${esc(item.id)}" title="Rename"><span>${esc(item.label)}</span></button>`;
+}
+
+function readout(word, ident, meta, why) {
+  return `<span class="state">${esc(word)}</span><span class="ident" title="${esc(ident)}">${esc(ident)}</span>${meta ? `<span class="meta">${esc(meta)}</span>` : ''}${why ? `<span class="why">${esc(why)}</span>` : ''}`;
+}
+
+function accountReadout(a, word) {
+  const login = logins[a.id];
+  const who = !login ? 'checking sign-in…' : login.loggedIn ? (login.email || 'signed in') : 'signed out';
+  const c = a.lastCheck;
+  if (busy.has(a.id)) return readout(word, who, '', 'Checking usage…');
+  if (!c) return readout(word, who, '', '');
+  return readout(word, who, ago(c.at), c.ok ? '' : c.reason);
+}
+
+function keyReadout(k, word) {
+  const c = k.lastCheck;
+  if (busy.has(k.id)) return readout(word, k.masked, '', 'Testing…');
+  if (!c) return readout(word, k.masked, '', '');
+  return readout(word, k.masked, `${c.status ? `HTTP ${c.status}` : 'no answer'} · ${ago(c.at)}`, trimEnd(c.detail));
+}
+
+function renderBanks(lines, live) {
+  const liveItem = live >= 0 ? lines[live].item.id : null;
+  let n = 0;
+  const row = (type, item, i, count) => {
+    n += 1;
+    const st = type === 'account' ? accountState(item) : keyState(item);
+    const isLive = item.id === liveItem;
+    const lamp = isLive ? 'live' : st.lamp;
+    const word = isLive ? 'Live' : st.word;
+    return `<li class="line" data-id="${esc(item.id)}"${isLive ? ' data-live' : ''}${type === 'account' && !item.enabled ? ' data-off' : ''}>
+      <span class="jack" aria-hidden="true"></span>
+      <span class="num mono">${pad(n)}</span>
+      <span class="lamp" data-s="${lamp}"><span class="vh">${esc(word)}</span></span>
+      ${strip(type, item)}
+      <span class="readout">${type === 'account' ? accountReadout(item, word) : keyReadout(item, word)}</span>
+      ${controls(type, item, i, count)}
+    </li>`;
+  };
+  const spare = (type) => `<li class="line spare">
+      <span class="jack" aria-hidden="true"></span>
+      <span class="num mono"></span>
+      <span class="gap"></span>
+      <button class="strip" type="button" data-act="add-${type}"><span>${icon('plus')}${type === 'account' ? 'Add an account' : 'Add an API key'}</span></button>
+    </li>`;
+
+  $('#accounts').innerHTML = S.accounts.map((a, i) => row('account', a, i, S.accounts.length)).join('') + spare('account');
+  $('#keys').innerHTML = S.keys.map((k, i) => row('key', k, i, S.keys.length)).join('') + spare('key');
+  $('#check-all').hidden = S.keys.length < 2;
+
+  $('#account-extra').innerHTML = (ui.adding === 'account' ? accountForm() : '') + jobPanel();
+  $('#key-extra').innerHTML = ui.adding === 'key' ? keyForm() : '';
+}
+
+function accountForm() {
+  return `<form class="form" data-form="add-account" autocomplete="off">
+    <label>Name<input class="input" name="label" id="account-label" maxlength="60" placeholder="Work, Personal…" value="${esc(ui.forms.accountLabel)}"></label>
+    <p class="hint" style="grid-column:auto;align-self:center">Your browser opens Anthropic's sign-in page. Sign in with the account you want to add.</p>
+    <div class="row-actions"><button class="btn primary" type="submit">${icon('signin')}Add and sign in</button><button class="btn" type="button" data-act="cancel-add">Cancel</button></div>
+  </form>`;
+}
+
+function keyForm() {
+  return `<form class="form" data-form="add-key" autocomplete="off">
+    <label>Name<input class="input" name="label" id="key-label" maxlength="60" placeholder="Personal, Team…" value="${esc(ui.forms.keyLabel)}"></label>
+    <label>API key<input class="input mono" name="key" id="key-value" type="password" placeholder="sk-ant-api03-…" spellcheck="false" autocapitalize="off" value="${esc(ui.forms.keyValue)}"></label>
+    <div class="row-actions"><button class="btn primary" type="submit">${icon('plug')}Save and test</button><button class="btn" type="button" data-act="cancel-add">Cancel</button></div>
+    <p class="hint">Stored encrypted on this computer, with the key held by ${esc(S.keystore || 'your system keychain')}. It's only ever sent to Anthropic.</p>
+  </form>`;
+}
+
+function jobPanel() {
+  const v = ui.jobView;
+  if (!ui.job) return '';
+  const account = S.accounts.find((a) => a.id === ui.job.accountId);
+  const name = account ? account.label : 'the account';
+  let status = `Finish signing in to ${esc(name)} in the browser window that opened.`;
+  if (v && v.done) status = v.ok ? `${esc(name)} is signed in.` : `Sign-in for ${esc(name)} didn't finish. Try again with the sign-in button on its line.`;
+  const link = v && v.url && !v.done ? `<p>No browser window? <a href="${esc(v.url)}" target="_blank" rel="noopener noreferrer">Open the sign-in page</a>.</p>` : '';
+  const code = v && !v.done ? `<form data-form="job-input"><input class="input mono" name="text" placeholder="Paste the code here if the page shows one" aria-label="Sign-in code" autocomplete="off" spellcheck="false"><button class="btn on-plate" type="submit">Send code</button></form>` : '';
+  const output = v && v.output ? `<pre aria-label="Sign-in output">${esc(v.output)}</pre>` : '';
+  return `<div class="job" role="status" aria-live="polite"><p>${status}</p>${link}${output}${code}</div>`;
+}
+
+function renderDesktop() {
+  $('#desktop-steps').innerHTML = S.desktop.steps.map((s) => `<li>${esc(s)}</li>`).join('');
+  const token = desktopInfo ? desktopInfo.settings.inferenceGatewayApiKey : '';
+  const shown = ui.showToken ? token : token ? `${token.slice(0, 6)}${'•'.repeat(18)}` : 'creating…';
+  $('#desktop-values').innerHTML = `
+    <div><dt>Gateway base URL</dt><dd class="mono">${esc(S.desktop.baseUrl)}</dd><span class="acts"><button class="icon-btn" type="button" data-act="copy" data-value="${esc(S.desktop.baseUrl)}" aria-label="Copy the base URL" title="Copy">${icon('copy')}</button></span></div>
+    <div><dt>Gateway API key</dt><dd class="mono">${esc(shown)}</dd><span class="acts"><button class="icon-btn" type="button" data-act="toggle-token" aria-label="${ui.showToken ? 'Hide' : 'Show'} the gateway key" title="${ui.showToken ? 'Hide' : 'Show'}">${icon('eye')}</button><button class="icon-btn" type="button" data-act="copy-token" aria-label="Copy the gateway key" title="Copy">${icon('copy')}</button></span></div>
+    <div><dt>Auth scheme</dt><dd class="mono">Bearer</dd><span></span></div>`;
+  $('#desktop-file').textContent = desktopInfo ? desktopInfo.file : '';
+}
+
+function renderSettings() {
+  const form = $('#settings-form');
+  if (!form.contains(document.activeElement)) {
+    $('#cooldown').value = S.settings.cooldownMinutes;
+    $('#recheck').value = S.settings.accountRecheckMinutes;
+  }
+  const shell = S.shell.installed ? 'Plain <code>claude</code> goes through claude-nonstop.' : 'Plain <code>claude</code> runs directly. Turn the shortcut on with <code>claude-nonstop shell install</code>.';
+  const service = S.service.installed ? 'The gateway starts when you log in.' : 'The gateway stops when you restart. Keep it on with <code>claude-nonstop service install</code>.';
+  $('#setup-facts').innerHTML = `<span>${shell}</span><span>${service}</span>`;
+}
+
+// ------------------------------------------------------------------ the cord
+
+const cord = { y: null, anim: 0 };
+
+// The cord leaves the socket, drops into a lane just left of the jack column so it
+// hangs clear of every jack it passes, and turns into the live jack at the end.
+function cordPath(x0, y0, x1, y1, lane) {
+  const drop = y1 - y0;
+  if (drop < 90) return `M ${x0} ${y0} C ${lane} ${y0 + drop * 0.45}, ${lane} ${y1 - drop * 0.2}, ${x1} ${y1}`;
+  return `M ${x0} ${y0} C ${x0} ${y0 + 22}, ${lane} ${y0 + 18}, ${lane} ${y0 + 46} L ${lane} ${y1 - 30} C ${lane} ${y1 - 9}, ${x1 - 9} ${y1}, ${x1} ${y1}`;
+}
+
+function drawCord(endY, x0, y0, x1, lane, plugged) {
+  const d = plugged ? cordPath(x0, y0, x1, endY, lane) : `M ${x0} ${y0} C ${x0 - 14} ${y0 + 26}, ${x0 + 10} ${y0 + 40}, ${x0 - 2} ${y0 + 58}`;
+  $('#cord-sheath').setAttribute('d', d);
+  $('#cord-weave').setAttribute('d', d);
+  const tip = $('#cord-tip');
+  tip.setAttribute('cx', plugged ? x1 : x0 - 2);
+  tip.setAttribute('cy', plugged ? endY : y0 + 58);
+}
+
+function positionCord() {
+  const wrap = $('#wrap').getBoundingClientRect();
+  const socket = $('#socket').getBoundingClientRect();
+  const x0 = socket.left + socket.width / 2 - wrap.left;
+  const y0 = socket.top + socket.height / 2 - wrap.top;
+  const jack = document.querySelector('.line[data-live] .jack');
+  if (!jack) {
+    cord.y = null;
+    drawCord(0, x0, y0, x0, x0, false);
+    return;
+  }
+  const r = jack.getBoundingClientRect();
+  const x1 = r.left + r.width / 2 - wrap.left;
+  const lane = x1 - r.width / 2 - 7;
+  const target = r.top + r.height / 2 - wrap.top;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const from = cord.y;
+  cancelAnimationFrame(cord.anim);
+  if (from == null || reduce || Math.abs(from - target) < 1) {
+    cord.y = target;
+    drawCord(target, x0, y0, x1, lane, true);
+    return;
+  }
+  // The relay advancing: the cord re-routes to the new live jack.
+  const start = performance.now();
+  const step = (now) => {
+    const t = Math.min(1, (now - start) / 220);
+    const e = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+    cord.y = from + (target - from) * e;
+    drawCord(cord.y, x0, y0, x1, lane, true);
+    if (t < 1) cord.anim = requestAnimationFrame(step);
+  };
+  cord.anim = requestAnimationFrame(step);
+}
+
+// ------------------------------------------------------------------ render all
+
+function render() {
+  if (!S) return;
+  const active = document.activeElement;
+  const focusId = active && active.id;
+  const caret = active && typeof active.selectionStart === 'number' ? active.selectionStart : null;
+  const lines = relay();
+  const live = liveIndex(lines);
+  renderFacts();
+  renderPlate(lines, live);
+  renderBanks(lines, live);
+  renderDesktop();
+  renderSettings();
+  positionCord();
+  if (focusId) {
+    const el = document.getElementById(focusId);
+    if (el && el !== document.activeElement) {
+      el.focus();
+      if (caret != null && el.setSelectionRange) try { el.setSelectionRange(caret, caret); } catch {}
+    }
+  }
+  const renameInput = document.querySelector('form[data-form="rename"] input');
+  if (renameInput && document.activeElement !== renameInput) { renameInput.focus(); renameInput.select(); }
+}
+
+async function refresh() {
+  try {
+    S = await api('GET', '/api/state');
+    render();
+  } catch (err) {
+    toast(err.message, true);
+  }
+}
+
+async function refreshLogins() {
+  try {
+    logins = await api('GET', '/api/accounts/status');
+    render();
+  } catch {}
+}
+
+async function loadDesktop() {
+  try {
+    desktopInfo = await api('POST', '/api/desktop');
+    render();
+  } catch (err) {
+    toast(err.message, true);
+  }
+}
+
+async function withBusy(id, work) {
+  busy.add(id);
+  render();
+  try {
+    return await work();
+  } finally {
+    busy.delete(id);
+  }
+}
+
+let jobTimer = null;
+async function pollJob() {
+  clearTimeout(jobTimer);
+  if (!ui.job) return;
+  try {
+    ui.jobView = await api('GET', `/api/jobs/${ui.job.id}`);
+  } catch (err) {
+    ui.jobView = { done: true, ok: false, output: err.message };
+  }
+  render();
+  if (ui.jobView.done) {
+    toast(ui.jobView.ok ? 'Signed in. That account is now in the relay.' : "Sign-in didn't finish.", !ui.jobView.ok);
+    await refreshLogins();
+    if (ui.jobView.ok) setTimeout(() => { ui.job = null; ui.jobView = null; render(); }, 4000);
+    return;
+  }
+  jobTimer = setTimeout(pollJob, 1000);
+}
+
+function startJob(job, accountId) {
+  ui.job = { id: job, accountId };
+  ui.jobView = null;
+  pollJob();
+}
+
+// ------------------------------------------------------------------ actions
+
+const actions = {
+  'add-account': () => { ui.adding = 'account'; render(); $('#account-label').focus(); },
+  'add-key': () => { ui.adding = 'key'; render(); $('#key-label').focus(); },
+  'cancel-add': () => { ui.adding = null; ui.forms.keyValue = ''; render(); },
+  'cancel-confirm': () => { ui.confirm = null; render(); },
+  'ask-remove': (id) => { ui.confirm = id; render(); },
+  'rename-account': (id) => { ui.renaming = id; render(); },
+  'rename-key': (id) => { ui.renaming = id; render(); },
+  'check-account': (id) => withBusy(id, async () => {
+    const r = await api('POST', `/api/accounts/${id}/check`);
+    await refresh();
+    toast(r.ok ? 'That account has usage left.' : r.reason);
+  }),
+  'login-account': async (id) => {
+    const r = await api('POST', `/api/accounts/${id}/login`);
+    startJob(r.job, id);
+  },
+  'toggle-account': async (id) => {
+    const a = S.accounts.find((x) => x.id === id);
+    await api('PATCH', `/api/accounts/${id}`, { enabled: !a.enabled });
+    await refresh();
+  },
+  'move-account': async (id, el) => { await api('POST', `/api/accounts/${id}/move`, { direction: el.dataset.dir }); await refresh(); },
+  'move-key': async (id, el) => { await api('POST', `/api/keys/${id}/move`, { direction: el.dataset.dir }); await refresh(); },
+  'remove-account': async (id) => { ui.confirm = null; await api('DELETE', `/api/accounts/${id}`); toast('Account signed out and removed.'); await refresh(); },
+  'remove-key': async (id) => { ui.confirm = null; await api('DELETE', `/api/keys/${id}`); toast('Key removed.'); await refresh(); },
+  'test-key': (id) => withBusy(id, async () => {
+    const r = await api('POST', `/api/keys/${id}/check`);
+    await refresh();
+    toast(r.verdict === 'ok' ? 'That key works.' : r.verdict === 'used-up' ? `Used up: ${r.detail || `HTTP ${r.status}`}` : `Kept: ${r.detail || (r.status ? `HTTP ${r.status}` : 'no answer')}`);
+  }),
+  'check-all-keys': () => withBusy('all-keys', async () => {
+    await api('POST', '/api/keys/check-all');
+    await refresh();
+    toast('Every key was tested.');
+  }),
+  'recheck-everything': async () => {
+    await api('DELETE', '/api/cooldowns');
+    await refresh();
+    toast('Cooldowns cleared. Every line will be checked again on the next session.');
+  },
+  copy: async (id, el) => { await navigator.clipboard.writeText(el.dataset.value); toast('Copied.'); },
+  'copy-token': async () => {
+    if (!desktopInfo) return;
+    await navigator.clipboard.writeText(desktopInfo.settings.inferenceGatewayApiKey);
+    toast('Gateway key copied.');
+  },
+  'toggle-token': () => { ui.showToken = !ui.showToken; render(); },
+  'reveal-desktop': async () => { await api('POST', '/api/desktop/reveal'); },
+};
+
+document.addEventListener('click', async (event) => {
+  const el = event.target.closest('[data-act]');
+  if (!el || el.disabled) return;
+  const fn = actions[el.dataset.act];
+  if (!fn) return;
+  event.preventDefault();
+  try {
+    await fn(el.dataset.id, el);
+  } catch (err) {
+    toast(err.message, true);
+    render();
+  }
+});
+
+document.addEventListener('input', (event) => {
+  const t = event.target;
+  if (t.id === 'account-label') ui.forms.accountLabel = t.value;
+  if (t.id === 'key-label') ui.forms.keyLabel = t.value;
+  if (t.id === 'key-value') ui.forms.keyValue = t.value;
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key !== 'Escape') return;
+  if (ui.renaming || ui.adding || ui.confirm) {
+    ui.renaming = null;
+    ui.adding = null;
+    ui.confirm = null;
+    render();
+  }
+});
+
+document.addEventListener('focusout', (event) => {
+  const form = event.target.closest && event.target.closest('form[data-form="rename"]');
+  if (form && !form.contains(event.relatedTarget)) form.requestSubmit();
+});
+
+document.addEventListener('submit', async (event) => {
+  const form = event.target;
+  event.preventDefault();
+  const kind = form.dataset.form || form.id;
+  const data = Object.fromEntries(new FormData(form));
+  const submit = form.querySelector('[type="submit"]');
+  if (submit) submit.disabled = true;
+  try {
+    if (kind === 'add-account') {
+      const r = await api('POST', '/api/accounts', { label: data.label });
+      ui.adding = null;
+      ui.forms.accountLabel = '';
+      await refresh();
+      startJob(r.job, r.id);
+    } else if (kind === 'add-key') {
+      const r = await api('POST', '/api/keys', { label: data.label, key: data.key });
+      ui.adding = null;
+      ui.forms.keyLabel = '';
+      ui.forms.keyValue = '';
+      await refresh();
+      toast(r.check.verdict === 'ok' ? 'Key saved, and it works.' : r.check.verdict === 'used-up' ? `Key saved, but it's used up: ${r.check.detail || `HTTP ${r.check.status}`}` : `Key saved. Test said: ${r.check.detail || (r.check.status ? `HTTP ${r.check.status}` : 'no answer')}`);
+    } else if (kind === 'rename') {
+      const id = form.dataset.id;
+      const label = String(data.label || '').trim();
+      ui.renaming = null;
+      if (label) await api('PATCH', `/api/${form.dataset.type === 'account' ? 'accounts' : 'keys'}/${id}`, { label });
+      await refresh();
+    } else if (kind === 'job-input') {
+      await api('POST', `/api/jobs/${ui.job.id}/input`, { text: data.text });
+      form.reset();
+      toast('Code sent.');
+    } else if (kind === 'settings-form') {
+      await api('PATCH', '/api/settings', { cooldownMinutes: Number(data.cooldownMinutes), accountRecheckMinutes: Number(data.accountRecheckMinutes) });
+      document.activeElement.blur();
+      await refresh();
+      toast('Timing saved.');
+    }
+  } catch (err) {
+    toast(err.message, true);
+    render();
+  } finally {
+    if (submit && submit.isConnected) submit.disabled = false;
+  }
+});
+
+window.addEventListener('resize', () => positionCord());
+new ResizeObserver(() => positionCord()).observe($('#wrap'));
+window.addEventListener('focus', () => { refresh(); refreshLogins(); });
+
+// Keep the board current while it's open, without disturbing anything being typed.
+setInterval(() => {
+  const typing = document.activeElement && /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);
+  if (!typing && !document.hidden) refresh();
+}, 15000);
+
+refresh().then(() => { refreshLogins(); loadDesktop(); });
+</script>
+</body>
+</html>
