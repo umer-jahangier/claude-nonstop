@@ -87,7 +87,7 @@ function writeElevated(staged, { linuxPort80 = false } = {}) {
   }
   let script = `cp ${sh(staged)} ${sh(target)}`;
   if (process.platform === 'darwin') {
-    script += ' && (dscacheutil -flushcache; killall -HUP mDNSResponder) >/dev/null 2>&1; true';
+    script += ' && ((dscacheutil -flushcache; killall -HUP mDNSResponder) >/dev/null 2>&1 || true)';
     const why = 'claude-nonstop wants to open its web page at the short address claude.nonstop.';
     const apple = `do shell script "${script.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}" with prompt "${why}" with administrator privileges`;
     if (ok(spawnSync('osascript', ['-e', apple], { stdio: 'ignore' }))) return true;
