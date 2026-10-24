@@ -271,6 +271,7 @@ main { max-width: 1080px; margin: 0 auto; padding: 12px 20px 72px 44px; }
 .row-sub { font-size: 0.8125rem; line-height: 1.33; color: var(--label-2); letter-spacing: -0.003em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row-why { font-size: 0.8125rem; line-height: 1.38; color: var(--label-2); letter-spacing: -0.003em; overflow-wrap: anywhere; }
 .row[data-off] .row-title, .row[data-off] .symbol { opacity: 0.45; }
+.row-state { display: none; font-size: 0.8125rem; line-height: 1.33; font-weight: 500; color: var(--label); letter-spacing: -0.003em; }
 .rename { margin: 0; }
 .rename-input { width: 100%; height: 24px; margin: -2px 0 -1px -4px; padding: 0 4px; border: 0; border-radius: 5px; background: var(--fill); color: var(--label); }
 
@@ -595,6 +596,7 @@ main { max-width: 1080px; margin: 0 auto; padding: 12px 20px 72px 44px; }
   .globe-label { display: none; }
   .row { gap: 10px; padding-right: 8px; }
   .state:not([data-s="live"]) .state-word { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .row[data-line]:not([data-live]) .row-state { display: block; }
   .values .k { width: 96px; }
   .toast { top: 100px; }
   .alert-acts { width: 100%; margin-left: 34px; }
@@ -989,12 +991,17 @@ function rowHtml(type, item, liveId) {
     ? `<form class="rename" data-form="rename" data-type="${type}" data-id="${id}"><input class="rename-input row-title" name="label" value="${esc(ui.renameValue)}" maxlength="60" aria-label="New name for ${label}" autocomplete="off" spellcheck="false" data-fk="rename-input"></form>`
     : `<span class="row-title">${label}</span>`;
   let state;
+  let word;
   if (busy.has(item.id) || signingIn) {
-    state = `<span class="state">${SPINNER}<span class="state-word">${signingIn ? 'Signing in…' : type === 'account' ? 'Checking…' : 'Testing…'}</span></span>`;
+    word = signingIn ? 'Signing in…' : type === 'account' ? 'Checking…' : 'Testing…';
+    state = `<span class="state">${SPINNER}<span class="state-word">${word}</span></span>`;
   } else {
     const s = isLive ? 'live' : st.s;
-    state = `<span class="state" data-s="${s}"><span class="dot"></span><span class="state-word">${isLive ? 'In use' : esc(st.word)}</span></span>`;
+    word = isLive ? 'In use' : st.word;
+    state = `<span class="state" data-s="${s}"><span class="dot"></span><span class="state-word">${esc(word)}</span></span>`;
   }
+  // On narrow screens the status word moves under the name instead of leaving only a dot.
+  const inline = `<span class="row-state" aria-hidden="true">${esc(word)}</span>`;
   const toggle = type === 'account'
     ? `<button class="switch" type="button" role="switch" aria-checked="${item.enabled}" data-act="toggle-account" data-id="${id}" data-fk="toggle:${id}" aria-label="Use ${label} in the relay"></button>`
     : '';
@@ -1002,7 +1009,7 @@ function rowHtml(type, item, liveId) {
   return `<li class="row" data-line="${type}:${id}"${isLive ? ' data-live' : ''}${type === 'account' && !item.enabled ? ' data-off' : ''}>
     <button class="port" type="button" data-act="connect" data-target="${type}:${id}" data-fk="port:${id}" aria-label="Plug the cable into ${label}" title="Plug the cable in here"><span class="slot"></span></button>
     <span class="symbol" data-kind="${type}" aria-hidden="true">${icon(type === 'account' ? 'person' : 'key')}</span>
-    <div class="row-text">${title}<span class="row-sub">${r.ident}${r.when ? ` · ${esc(r.when)}` : ''}</span>${r.why ? `<span class="row-why">${esc(r.why)}</span>` : ''}</div>
+    <div class="row-text">${title}${inline}<span class="row-sub">${r.ident}${r.when ? ` · ${esc(r.when)}` : ''}</span>${r.why ? `<span class="row-why">${esc(r.why)}</span>` : ''}</div>
     ${state}${toggle}
     <button class="icon-btn more" type="button" data-act="menu" data-type="${type}" data-id="${id}" data-fk="menu:${id}" aria-haspopup="menu" aria-expanded="${expanded}" aria-label="Actions for ${label}" title="Actions">${icon('more')}</button>
   </li>`;

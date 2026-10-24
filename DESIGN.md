@@ -1,337 +1,408 @@
 ---
 name: claude-nonstop
-description: A switchboard line field for a relay of Claude accounts and API keys.
+description: A quiet Apple-style settings pane for a relay of Claude accounts and API keys, with one white cable plugged into the live line.
 colors:
-  panel: "#e3e6e0"
-  bank: "#d9ddd6"
-  legend: "#d1d6ce"
-  rule: "#bcc2ba"
-  rule-strong: "#8f978f"
-  ink: "#1b1f22"
-  ink-2: "#4a524d"
-  ink-3: "#545c57"
-  field: "#f2f3ef"
-  strip: "#f6f1e3"
-  strip-ink: "#2b2620"
-  brass: "#9a7542"
-  plate: "#23282c"
-  plate-2: "#2e3439"
-  plate-ink: "#eef0ea"
-  plate-ink-2: "#b4bbb5"
-  cord: "#8f3a20"
-  cord-hi: "#c06a48"
-  action: "#8f3a20"
-  action-hover: "#79301a"
-  action-ink: "#ffffff"
-  live: "#2e9a46"
-  live-ring: "#1f6e31"
-  warn: "#d48a14"
-  warn-ring: "#9a630b"
-  dead: "#c0392b"
-  dead-ring: "#8a2419"
-  unlit: "#8e968f"
-  jack: "#2a2f33"
-  jack-ring: "#737b75"
-  focus: "#1f5fd1"
-  # Dark-scheme values of the same roles (prefers-color-scheme: dark).
-  panel-dark: "#1b1f22"
-  bank-dark: "#22272b"
-  legend-dark: "#262c30"
-  rule-dark: "#343b40"
-  rule-strong-dark: "#4f585e"
-  ink-dark: "#e8eae5"
-  ink-2-dark: "#b0b7b2"
-  ink-3-dark: "#8f9792"
-  field-dark: "#262b30"
-  strip-dark: "#ebe3cc"
-  strip-ink-dark: "#29241d"
-  brass-dark: "#a8824d"
-  plate-dark: "#0f1214"
-  plate-2-dark: "#191d20"
-  plate-ink-2-dark: "#a9b0aa"
-  cord-dark: "#a8452a"
-  cord-hi-dark: "#d27a55"
-  action-dark: "#a8452a"
-  action-hover-dark: "#bd5332"
-  live-dark: "#4fb35f"
-  live-ring-dark: "#2f7a3b"
-  warn-dark: "#e8a33a"
-  warn-ring-dark: "#a8701d"
-  dead-dark: "#e0503f"
-  dead-ring-dark: "#9c3024"
-  unlit-dark: "#59626a"
-  jack-dark: "#0b0d0f"
-  jack-ring-dark: "#59626a"
-  focus-dark: "#79b0ff"
+  accent: "#0066cc"
+  accent-fill: "#0071e3"
+  accent-hover: "#0077ed"
+  accent-tint: "rgba(0, 113, 227, 0.1)"
+  focus: "rgba(0, 113, 227, 0.45)"
+  select: "rgba(0, 113, 227, 0.2)"
+  accent-dark: "#2997ff"
+  accent-tint-dark: "rgba(41, 151, 255, 0.16)"
+  focus-dark: "rgba(41, 151, 255, 0.55)"
+  green: "#34c759"
+  orange: "#ff9500"
+  red: "#ff3b30"
+  red-text: "#d70015"
+  gray: "#aeaeb2"
+  green-dark: "#30d158"
+  orange-dark: "#ff9f0a"
+  red-dark: "#ff453a"
+  red-text-dark: "#ff6961"
+  gray-dark: "#636366"
+  ground: "#f2f2f7"
+  group: "#ffffff"
+  label: "#1d1d1f"
+  label-2: "#6e6e73"
+  sep: "rgba(60, 60, 67, 0.17)"
+  fill: "rgba(120, 120, 128, 0.12)"
+  fill-2: "rgba(120, 120, 128, 0.2)"
+  track: "rgba(120, 120, 128, 0.16)"
+  key-tile: "#8e8e93"
+  bar: "rgba(242, 242, 247, 0.78)"
+  material: "rgba(251, 251, 253, 0.84)"
+  scrim: "rgba(0, 0, 0, 0.2)"
+  ground-dark: "#000000"
+  group-dark: "#1c1c1e"
+  sheet-group-dark: "#2c2c2e"
+  label-dark: "#f5f5f7"
+  label-2-dark: "#98989d"
+  sep-dark: "rgba(84, 84, 88, 0.55)"
+  thumb-dark: "#636366"
+  bar-dark: "rgba(22, 22, 24, 0.76)"
+  material-dark: "rgba(44, 44, 46, 0.86)"
+  cable: "#ffffff"
+  cable-dark: "#3a3a3c"
+  plug-bottom: "#e3e3e8"
+  port: "#dcdce1"
+  port-dark: "#0c0c0d"
 typography:
+  large-title:
+    fontFamily: "-apple-system, BlinkMacSystemFont, system-ui, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif"
+    fontSize: "1.75rem"
+    fontWeight: 700
+    lineHeight: 1.14
+    letterSpacing: "-0.024em"
   headline:
-    fontFamily: "ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif"
-    fontSize: "20px"
-    fontWeight: 650
-    lineHeight: 1.25
+    fontFamily: "-apple-system, BlinkMacSystemFont, system-ui, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif"
+    fontSize: "1.0625rem"
+    fontWeight: 600
+    lineHeight: 1.3
+    letterSpacing: "-0.022em"
   title:
-    fontFamily: "ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif"
-    fontSize: "17px"
-    fontWeight: 700
-    letterSpacing: "-0.01em"
-  title-small:
-    fontFamily: "ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif"
-    fontSize: "16px"
+    fontFamily: "-apple-system, BlinkMacSystemFont, system-ui, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif"
+    fontSize: "0.9375rem"
     fontWeight: 600
-    lineHeight: 1.25
+    lineHeight: 1.33
+    letterSpacing: "-0.015em"
   body:
-    fontFamily: "ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif"
-    fontSize: "14px"
+    fontFamily: "-apple-system, BlinkMacSystemFont, system-ui, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif"
+    fontSize: "0.9375rem"
     fontWeight: 400
-    lineHeight: 1.45
-  label:
-    fontFamily: "ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif"
-    fontSize: "13px"
+    lineHeight: 1.47
+    letterSpacing: "-0.01em"
+  callout:
+    fontFamily: "-apple-system, BlinkMacSystemFont, system-ui, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif"
+    fontSize: "0.875rem"
+    fontWeight: 400
+    lineHeight: 1.43
+    letterSpacing: "-0.01em"
+  footnote:
+    fontFamily: "-apple-system, BlinkMacSystemFont, system-ui, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif"
+    fontSize: "0.8125rem"
+    fontWeight: 400
+    lineHeight: 1.38
+    letterSpacing: "-0.003em"
+  control:
+    fontFamily: "-apple-system, BlinkMacSystemFont, system-ui, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif"
+    fontSize: "0.8125rem"
+    fontWeight: 500
+    lineHeight: 1.33
+    letterSpacing: "-0.005em"
+  caption:
+    fontFamily: "-apple-system, BlinkMacSystemFont, system-ui, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif"
+    fontSize: "0.75rem"
     fontWeight: 600
-  bank-legend:
-    fontFamily: "ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif"
-    fontSize: "13px"
-    fontWeight: 700
-    letterSpacing: "0.08em"
-  designation:
-    fontFamily: "ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif"
-    fontSize: "13px"
-    fontWeight: 650
-    letterSpacing: "0.04em"
-  readout:
+    lineHeight: 1.33
+    letterSpacing: "0"
+  mono:
     fontFamily: "ui-monospace, SF Mono, SFMono-Regular, Menlo, Consolas, Liberation Mono, monospace"
-    fontSize: "12.5px"
+    fontSize: "0.75rem"
     fontWeight: 400
-    fontFeature: "tnum"
+    lineHeight: 1.5
+    letterSpacing: "0"
 rounded:
-  strip-label: "2px"
-  board: "3px"
-  plate: "4px"
-  control: "6px"
-  lamp: "50%"
+  xs: "5px"
+  sm: "7px"
+  md: "8px"
+  seg: "9px"
+  fields: "10px"
+  group: "12px"
+  sheet: "14px"
+  toast: "20px"
+  pill: "999px"
 spacing:
-  line-y: "10px"
-  bank-x: "16px"
-  plate-x: "22px"
-  gutter-narrow: "40px"
-  gutter-wide: "56px"
-  container: "1120px"
+  hair: "1px"
+  xs: "4px"
+  sm: "8px"
+  md: "12px"
+  lg: "16px"
+  xl: "20px"
+  section: "32px"
 components:
+  button:
+    backgroundColor: "{colors.fill}"
+    textColor: "{colors.accent}"
+    typography: "{typography.control}"
+    rounded: "{rounded.md}"
+    padding: "0 12px"
+    height: "30px"
+  button-hover:
+    backgroundColor: "{colors.fill-2}"
   button-primary:
-    backgroundColor: "{colors.action}"
-    textColor: "{colors.action-ink}"
-    typography: "{typography.label}"
-    rounded: "{rounded.control}"
-    padding: "0 14px"
-    height: "34px"
+    backgroundColor: "{colors.accent-fill}"
+    textColor: "{colors.group}"
+    typography: "{typography.control}"
+    rounded: "{rounded.md}"
+    padding: "0 12px"
+    height: "30px"
   button-primary-hover:
-    backgroundColor: "{colors.action-hover}"
-    textColor: "{colors.action-ink}"
-  button-secondary:
-    backgroundColor: "{colors.field}"
-    textColor: "{colors.ink}"
-    typography: "{typography.label}"
-    rounded: "{rounded.control}"
-    padding: "0 14px"
-    height: "34px"
+    backgroundColor: "{colors.accent-hover}"
   button-danger:
-    backgroundColor: "{colors.dead-ring}"
-    textColor: "{colors.action-ink}"
-    rounded: "{rounded.control}"
+    backgroundColor: "{colors.fill}"
+    textColor: "{colors.red-text}"
+    rounded: "{rounded.md}"
+    height: "30px"
+  button-large:
+    padding: "0 16px"
     height: "34px"
   icon-button:
-    textColor: "{colors.ink-2}"
-    rounded: "{rounded.control}"
-    size: "34px"
-  input:
-    backgroundColor: "{colors.field}"
-    textColor: "{colors.ink}"
+    textColor: "{colors.label-2}"
+    rounded: "{rounded.pill}"
+    size: "30px"
+  segmented-control:
+    backgroundColor: "{colors.track}"
+    rounded: "{rounded.seg}"
+    padding: "2px"
+  segmented-item:
+    textColor: "{colors.label}"
+    typography: "{typography.control}"
+    rounded: "{rounded.sm}"
+    padding: "0 14px"
+    height: "28px"
+  segmented-thumb:
+    backgroundColor: "{colors.group}"
+    rounded: "{rounded.sm}"
+  group:
+    backgroundColor: "{colors.group}"
+    rounded: "{rounded.group}"
+  row:
+    textColor: "{colors.label}"
     typography: "{typography.body}"
-    rounded: "{rounded.control}"
-    padding: "7px 10px"
-    height: "36px"
-  connected-plate:
-    backgroundColor: "{colors.plate}"
-    textColor: "{colors.plate-ink}"
-    rounded: "{rounded.plate}"
-    padding: "18px 22px 18px 56px"
-  board:
-    backgroundColor: "{colors.bank}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.board}"
-  bank-legend:
-    backgroundColor: "{colors.legend}"
-    textColor: "{colors.ink}"
-    typography: "{typography.bank-legend}"
-    padding: "12px 16px 10px"
-  designation-strip:
-    backgroundColor: "{colors.strip}"
-    textColor: "{colors.strip-ink}"
-    typography: "{typography.designation}"
-    rounded: "{rounded.board}"
-    padding: "4px 9px"
-  line:
-    textColor: "{colors.ink}"
-    padding: "10px 12px 10px 14px"
-    height: "56px"
-  lamp:
-    rounded: "{rounded.lamp}"
-    size: "12px"
+    padding: "10px 12px 10px 16px"
+    height: "52px"
+  symbol-tile:
+    backgroundColor: "{colors.accent-fill}"
+    textColor: "{colors.group}"
+    rounded: "{rounded.sm}"
+    size: "30px"
+  symbol-tile-key:
+    backgroundColor: "{colors.key-tile}"
+  live-pill:
+    backgroundColor: "{colors.accent-tint}"
+    textColor: "{colors.accent}"
+    typography: "{typography.caption}"
+    rounded: "{rounded.pill}"
+    padding: "3px 9px"
+  switch:
+    backgroundColor: "{colors.track}"
+    rounded: "13px"
+    width: "42px"
+    height: "26px"
+  switch-on:
+    backgroundColor: "{colors.green}"
+  number-field:
+    backgroundColor: "{colors.fill}"
+    textColor: "{colors.label}"
+    rounded: "{rounded.sm}"
+    padding: "0 8px"
+    width: "64px"
+    height: "30px"
+  menu:
+    backgroundColor: "{colors.material}"
+    rounded: "{rounded.group}"
+    padding: "5px"
+    width: "228px"
+  menu-item:
+    textColor: "{colors.label}"
+    typography: "{typography.callout}"
+    rounded: "{rounded.sm}"
+    padding: "0 10px"
+    height: "32px"
+  menu-item-hover:
+    backgroundColor: "{colors.accent-fill}"
+    textColor: "{colors.group}"
+  sheet:
+    backgroundColor: "{colors.ground}"
+    rounded: "{rounded.sheet}"
+    padding: "22px 20px 20px"
+    width: "460px"
+  sheet-fields:
+    backgroundColor: "{colors.group}"
+    rounded: "{rounded.fields}"
+    padding: "0 8px 0 14px"
+    height: "44px"
+  toast:
+    backgroundColor: "{colors.material}"
+    textColor: "{colors.label}"
+    typography: "{typography.callout}"
+    rounded: "{rounded.toast}"
+    padding: "10px 16px"
+  toolbar:
+    backgroundColor: "{colors.bar}"
+    height: "52px"
+    padding: "0 20px"
 ---
 
 # Design System: claude-nonstop
 
 ## Overview
 
-**Creative North Star: "The Switchboard Line Field"**
+**Creative North Star: "The Quiet Settings Pane"**
 
-The relay is a telephone switchboard. Accounts and API keys are numbered lines in a fixed order on one painted-steel field panel: pale enamel by default, graphite under a dark color scheme. Each line carries an ivory designation strip in a brass holder, a flat round lamp, a monospace readout and, for accounts, a brass lever key. A rust cloth cord leaves the socket on the reversed "connected" plate at the top and runs down the left gutter into the live jack. When the live line changes, the cord re-routes.
+The UI reads like a pane of Apple's System Settings: a pale ground, white inset groups with hairline separators, plain sentences, the platform font, and a single system-blue accent reserved for controls and the live line. Density is comfortable and list-driven; nothing is a card grid, and nothing glows for its own sake. Light and dark are both first-class, declared as one token set on `:root` and swapped under `prefers-color-scheme: dark`.
 
-This is an Operate surface. It is dense and quiet, and it reads at a glance. A healthy board is mostly neutral steel and ivory. Color shows up only where a lamp is lit, where the cord runs, and on the one primary action. Every line uses the same scale on one baseline, so the order of the lines is the main thing the eye reads. The field grid is the structure: banks are separated by rules on a single continuous board, never by stacked cards.
+Exactly one physical object lives on the page: a cable (white like an Apple USB-C cable in light mode, graphite in dark) that runs from a boot on the status card's left edge to a port on the live row. Its plug carries a MagSafe-style status light. The status card's right side holds a WebGL dotted globe where each gateway request flies as a light from this computer to Anthropic. These two are the only illustrative elements; everything else is platform chrome.
 
-Everything is drawn from system resources. Only system font stacks are used, because the CSP forbids external fonts, and all icons are inline SVG line icons at 16px on a 1.5 stroke.
+Motion is one physics. A critically damped spring is sampled into a CSS `linear()` easing at load and shared by CSS transitions and WAAPI animations; only a thrown plug is allowed to bounce. Exits are short and accelerate away.
 
 **Key Characteristics:**
-- One continuous board, divided by rules into banks and lines, never broken into cards.
-- One reversed plate on top names the live line, the next line, and any trouble.
-- Binary lamps: lit solid with a darker ring, or unlit as an empty ring. No glow, no gradient.
-- Ivory designation strips in brass holders carry each line's name in caps.
-- The rust cord is the one moving signature. It re-routes to the live jack over 220 ms.
-- Monospace only for identifiers, numbers and times.
+- Grouped inset lists on a tinted ground; hairline separators inset to the text column.
+- One accent (system blue), semantic dots only (green, orange, red, gray).
+- Platform font with size-specific negative tracking; mono only for keys, URLs, tokens.
+- Translucency only where content passes beneath: toolbar, menu, toast.
+- A single cable-and-plug object and a dotted globe as the only illustration.
+- Spring motion, critically damped by default; reduced motion keeps every function.
 
 ## Colors
 
-A restrained steel-and-ivory field. Rust and three lamp hues are the only saturated colors, and each one appears only because of a state or an action. Light values are listed in the frontmatter. The `prefers-color-scheme: dark` override swaps every token to a graphite counterpart (listed in the sidecar).
+A neutral Apple grouped-list palette with one blue voice and three semantic status hues; every value has a dark counterpart.
 
 ### Primary
-- **Cloth-Cord Rust** (cord / action): the cord sheath, the brand plug glyph, the text caret, the selection tint, and the background of the one primary button per form ("Save timing", "Add and sign in"). The cord and the primary action share this hue on purpose: the action is what plugs a line in.
-- **Cord Weave** (cord-hi): the dashed highlight stitched along the cord sheath. Never used elsewhere.
+- **System Blue** (`accent`; dark `accent-dark`): link and control text: button labels, text buttons, add rows, the live pill's word.
+- **System Blue Fill** (`accent-fill`, hover `accent-hover`): filled surfaces only: primary button, highlighted menu item, account symbol tiles and avatar, the cable's request glint, the active port ring, the caret. Not overridden in dark.
+- **Blue Tint** (`accent-tint`; dark `accent-tint-dark`): the live pill background, port hover halo, a freshly arrived activity row.
+- **Focus Blue** (`focus`; dark `focus-dark`) and **Selection Blue** (`select`): the 3px focus outline and text selection.
 
-### Secondary
-- **Holder Brass** (brass): strip holders, the cord tip, the plate socket ring, lever bats in the "on" position, and the ring of the live jack. Brass always marks hardware, never text.
-
-### Tertiary (lamp states)
-- **Live Green** (live, with live-ring): the line carrying sessions, and the gateway-up lamp in the masthead. The live row also gets a 9 to 10% green wash (live-tint).
-- **Warn Amber** (warn, with warn-ring): limit reached, check failed, or key kept.
-- **Dead Red** (dead, with dead-ring): not signed in, or used up. The darker dead ring fills the destructive confirm button and the error toast, so their white text holds contrast in both schemes.
-- **Unlit Ring** (unlit): standby. An empty 2px ring with no fill, dashed when the line is switched off.
+### Semantic
+- **Ready Green** (`green` / `green-dark`): ready dots, switch on, plug light OK, success result icon.
+- **Limited Orange** (`orange` / `orange-dark`): warning dots, plug light warn, gateway down, warning alert icon.
+- **Used-up Red** (`red` / `red-dark`): exhausted dots, error alert and toast icons, destructive menu item highlight.
+- **Destructive Text Red** (`red-text` / `red-text-dark`): destructive button and menu text, sheet errors. Darker than `red` so it holds text contrast.
+- **Idle Gray** (`gray` / `gray-dark`): unknown state dots, off-state ring, idle plug light.
 
 ### Neutral
-- **Enamel Panel / Graphite Panel** (panel): the page ground.
-- **Bank Steel** (bank): the board surface under the lines.
-- **Legend Band** (legend): the bank heading band, one step deeper than the bank.
-- **Rule / Strong Rule** (rule, rule-strong): line dividers and bank dividers. A strong rule separates banks, and also outlines buttons and inputs.
-- **Field White** (field): input and secondary-button fill.
-- **Ink, Ink 2, Ink 3** (ink, ink-2, ink-3): primary text, secondary prose, and quiet metadata (line numbers, readout meta, version). Ink 3 is the lightest text allowed. It passes AA (4.5:1 or better) on the bank in both schemes for its 12.5px mono uses.
-- **Ivory Strip / Strip Ink** (strip, strip-ink): the designation label face and its text.
-- **Plate Graphite** (plate, plate-2, plate-ink, plate-ink-2): the reversed connected plate, the sign-in job panel, and toasts.
-- **Jack Black / Jack Ring** (jack, jack-ring): jack sockets and lever slots.
-- **Focus Blue** (focus): the 2px focus outline. It is the only blue, and it is reserved for keyboard focus.
+- **Grouped Ground** (`ground` / `ground-dark` pure black): page background and sheet panel.
+- **Group White** (`group` / `group-dark`; sheet field groups use `sheet-group-dark` in dark): inset groups.
+- **Label** (`label` / `label-dark`) and **Secondary Label** (`label-2` / `label-2-dark`): primary and secondary text.
+- **Separator** (`sep` / `sep-dark`): hairlines between rows, menu separators.
+- **Fills** (`fill`, `fill-2`, `track`): tonal backgrounds for buttons, inputs, code, the segmented track and switch track; `fill-2` is the hover/pressed step.
+- **Key Tile Gray** (`key-tile`): API-key symbol tiles and avatar, distinguishing keys from blue accounts.
+- **Bar and Material** (`bar`, `material` and dark pair): translucent toolbar and menu/toast backgrounds. **Scrim** (`scrim`) dims behind sheets.
+- **Cable materials** (`cable`, `plug-bottom`, `port` and dark pair): white cable body and plug gradient, recessed port slots; dark mode is graphite on near-black ports.
 
-### Named Rules
-**The Lit-Or-Dark Rule.** A lamp is either lit (a solid fill inside a darker ring of the same hue) or unlit (an empty ring). There are no glows, no pulses, no gradients and no half states.
+The globe takes its own RGB triplet tokens (`--globe-body`, `--globe-rim`, `--globe-dot`, `--globe-dot-back`, `--globe-arc`, `--globe-aura`, `--globe-aura-a`), recorded in the sidecar; its arc and aura are the system blue.
 
-**The Quiet Board Rule.** Saturated color appears only for a lamp state, the cord, or the single primary action in a form. A healthy board is steel and ivory.
+**The One Voice Rule.** Blue appears only on controls, the live line and request traffic. Status is never blue; it is a green, orange, red or gray dot.
 
-**The Shared Rust Rule.** The primary action uses the cord's rust and no other accent. A second accent hue is not part of this world.
+**The Dot, Not Paint Rule.** Semantic hues appear as small dots (7-8px), icons, the plug light or the switch, never as row or card backgrounds.
 
 ## Typography
 
-**Display Font:** none. The largest type is the 20px live-line name.
-**Body Font:** system sans (ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial)
-**Label/Mono Font:** system mono (ui-monospace, SF Mono, Menlo, Consolas, Liberation Mono), with tabular figures
+**Font:** the platform face (`-apple-system, BlinkMacSystemFont, system-ui`, falling back to Segoe UI, Roboto, Helvetica Neue, Arial).
+**Mono:** `ui-monospace` / SF Mono, for API keys, URLs, tokens and log detail only.
 
-**Character:** a timetable voice. There is one sans on one tight scale (20 / 17 / 16 / 14 / 13 / 12.5 px), and rank comes from weight, case and reversal, not from size jumps.
+**Character:** Apple's own text style ladder, with tracking tightened as size grows. In this world the system face is the material, not a fallback.
 
 ### Hierarchy
-- **Headline** (650, 20px, 1.25): the live-line name on the plate. It is the only 20px text.
-- **Title** (700, 17px, -0.01em): the wordmark.
-- **Title Small** (600, 16px, 1.25): the "if it runs out" line on the plate.
-- **Body** (400, 14px, 1.45): prose, trouble messages, inputs, toasts. Panel prose is capped at 68ch.
-- **Label** (600, 13px): buttons, plate slot terms, form labels. Readout states use 700.
-- **Bank Legend** (700, 13px, 0.08em, uppercase): bank and panel headings ("Subscription accounts", "API keys", "Timing").
-- **Designation** (650, 13px, 0.04em, uppercase): the line name on its ivory strip.
-- **Readout** (mono, 12.5px, tabular): line numbers, identifiers, usage numbers, times, the gateway URL, the version, file paths.
+- **Large Title** (700, 28px, 1.14, -0.024em; 22px at 640px and below): the status card's "Running on ..." and the Desktop App and Settings view titles. Its dimmed part drops to 600 in secondary label.
+- **Headline** (600, 17px, 1.3, -0.022em): sheet titles.
+- **Title** (600, 15px, -0.015em): group headings. Row titles use the same size at 500.
+- **Body** (400, 15px, 1.47, -0.01em): page default, add rows, step text; the view lede is capped at 60ch.
+- **Callout** (14px, 1.43): alert text, sheet ledes, menu items, toasts (toasts at 500).
+- **Footnote** (13px, 1.33-1.38, -0.003em): row subtitles, group footers (capped at 64ch), hints, activity text, the toolbar status.
+- **Control** (500, 13px, -0.005em): buttons and segmented items. Large buttons step up to 14px.
+- **Caption** (600, 12px, 0 tracking): live pill, step numbers, timestamps (400). The globe labels use 11px at 600.
+- **Mono** (12px; 13px in sheet inputs; inline code at 0.8125em): secrets and addresses.
 
-### Named Rules
-**The One Scale Rule.** No size outside 20 / 17 / 16 / 14 / 13 / 12.5 px. To raise something's rank, change its weight, case or reversal (light on plate), not its size.
+**The Tracking Ladder Rule.** Every size carries its own letter-spacing (from -0.024em at 28px to 0 at 12px and below). Don't reuse one tracking value across sizes.
 
-**The Readout Rule.** Monospace is used only for identifiers, numbers and times. Sentences, including the words of a state ("Used up", "Works"), stay in the sans.
+**The Numbers Line Up Rule.** Counts, times, durations and step numbers use tabular figures.
 
 ## Layout
 
-There is a single centered column (max 1120px). Wrap padding is 20px 16px 72px on narrow screens and 28px 32px 88px from 720px. The masthead (wordmark and facts) comes first, then the connected plate, then the field. The field reserves a left gutter for the cord (40px narrow, 56px from 720px), and each line's jack sits in that gutter.
-
-The board holds the accounts bank, the keys bank, and a lower aux section (desktop-app setup and timing) as one panel. Each bank ends with a spare jack whose dashed strip is the add action.
-
-Each line is a grid: number (26px), lamp (12px), strip, readout, controls, lever (a fixed 28px column on every line, so strips and controls align across both banks). Below 640px the readout and controls drop to their own rows under the strip. From 640px the controls join the first row. From 900px everything sits on one row, with the strip at 160 to 236px. Line padding is 10px vertical, and the minimum row height is 56px. The aux section splits into two columns (1.25fr / 1fr) from 900px. Breakpoints in use: 560, 640, 720, 900px.
+- **Container:** content max 1080px, centred. Main padding is `12px 20px 72px 44px`; the extra left gutter holds the cable and the ports that straddle each group's left edge.
+- **Relay view:** two columns (main up to 640px, side 320px, 40px gap). The Activity column is sticky under the toolbar with its own scroll. Below 1100px it collapses to one 660px column with Activity after the lists.
+- **Other views:** single 660px column with a large title and lede.
+- **Status card:** a grid of heading and key/value rows on the left and a 280px globe on the right, the globe faded in from its left edge by a 40px mask. At 640px and below the globe shrinks to 124px beside the heading, the avatar and globe labels hide, and the rows span the full width.
+- **Rhythm:** 32px above each group heading, 8px between heading and group, 8px to the footer, 16px between stacked groups. Rows are 52px minimum (46-50px in compact lists, 44px in sheet fields).
+- **Separators** start at the text column (`--sep-left`: 58px for rows with a symbol, 50px for alerts and steps, 37px in Activity, 16px in plain lists), never full-bleed.
+- **Breakpoints:** 1099px (one column), 760px (tighter gutters), 640px (toolbar wraps to two rows with a full-width segmented control, sheets become bottom sheets, state words go screen-reader only).
 
 ## Elevation & Depth
 
-The board is flat: depth comes from tonal steps (panel, bank, legend) and from rules. Only things that sit on top of the field get a soft lift: the connected plate and the toast share one two-layer ambient shadow. Hardware is drawn with inset rings rather than cast shadows. The socket uses stacked brass, plate and black insets, jacks use a 2px inset ring, and strips use a hairline inner highlight and an inner bottom shade. The lever bat is the one small physical object, with a 1px drop.
+Depth comes from tone first: tinted ground, white groups, no shadow on groups at rest. Shadows exist only on things that float above content or that are physical objects.
 
 ### Shadow Vocabulary
-- **Plate lift** (`box-shadow: 0 1px 2px rgba(20,24,26,0.12), 0 4px 14px rgba(20,24,26,0.06)`; dark: `0 1px 2px rgba(0,0,0,0.5), 0 6px 18px rgba(0,0,0,0.25)`): the connected plate and the toast only.
-- **Jack ring** (`box-shadow: inset 0 0 0 2px <jack-ring | brass | rule-strong>`): idle, live, and spare jacks.
-- **Strip face** (`box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(60,45,20,0.12)`): ivory designation labels.
+- **Menu / toast** (`--shadow-menu`): a 0.5px ring plus a soft 12px/32px drop; stronger in dark.
+- **Sheet** (`--shadow-sheet`): a 0.5px ring plus a long 30px/80px drop.
+- **Thumb** (`--shadow-thumb`): segmented-control thumb; the switch knob uses its own small 2px/4px drop.
+- **Plug**: a 0.5px edge plus a 1px and a 4px/10px drop; lifted, it becomes 8px/18px and scales 1.16.
+- **Port slot**: an inset 1px/2px shadow with a 1px ring, so it reads as a recess.
 
-### Named Rules
-**The Flat Field Rule.** The board, banks and lines never cast shadows. Only the plate and transient overlays lift off the field.
+Translucency is `saturate(180%) blur(20-24px)` on the toolbar, menu and toast, and 8px blur on the globe labels. The toolbar gains a hairline bottom edge only once the page has scrolled.
+
+**The Floats Only Rule.** Groups never cast shadows. Only menus, toasts, sheets, the segmented thumb, the switch knob and the plug do.
+
+**The Glass Where It Passes Rule.** Blur only surfaces that content scrolls or sits beneath; never blur a static group for effect.
 
 ## Shapes
 
-The geometry is tight and machined. The board has 3px corners, as does the brass strip holder (the ivory label inside it uses 2px). The connected plate and the job panel use 4px. Interactive controls (buttons, icon buttons, inputs, toasts) use 6px, which is slightly softer so that controls read as touchable and separate from the hardware. Lamps, jacks, the socket and the cord tip are true circles. The cord is a 5px round-capped stroke with a 2/4 dashed weave on top. Dashed outlines always mean something is not live yet: the spare-jack strip, and the ring of a lamp that is switched off.
+Continuous, modest rounding that scales with the container: 5px (inline code, rename input), 7px (segmented items and thumb, symbol tiles, menu items, number fields), 8px (buttons, port hit areas), 9px (segmented track), 10px (sheet field groups), 12px (groups, menus), 14px (sheets; top corners only as a bottom sheet), 20px (toasts), and full pills or circles for the live pill, dots, avatar, icon buttons and the switch. Only the first and last row of a list take the group's corner radius. The app icon is a squircle tile. Icons are inline SVG line glyphs, 1.6 stroke, round caps.
 
 ## Components
 
+### Toolbar
+Sticky, translucent bar 52px tall over a three-part grid: app icon and name (600, 15px), the segmented control centred, gateway status (dot and 13px secondary label) at the end. At 640px and below it wraps: brand and status on top, segmented control full width beneath.
+
+### Segmented Control
+A 2px-padded track with a white (dark: gray) thumb that slides under the selected item on the shared spring. Unselected items dim to 0.72 on hover and 0.55 on press. Implemented as a tablist with roving tabindex.
+
+### Groups and Rows
+White inset groups, no border. A row is a symbol tile (30px, blue for accounts, gray for keys), a title and subtitle, a trailing state and actions. States: a dot plus a word; the live line instead gets a blue tint pill. Turned-off rows dim the title and tile to 0.45. Add rows are full-width blue text with a plus icon; hover and press step through `fill` and `fill-2`. Group footers explain behaviour in a plain sentence.
+
 ### Buttons
-Compact and quiet. They are labeled with verbs and sit at the right edge of their line.
-- **Shape:** gently squared (6px), 34px tall (30px in a bank legend), 14px side padding, with an optional 16px SVG icon at a 7px gap.
-- **Primary:** rust fill with white label. Use one per form.
-- **Secondary:** field-white fill with a strong-rule border. On hover the border darkens to ink-3.
-- **On plate:** transparent with a 28% white border. On hover the border goes to 60%.
-- **Danger:** dead-ring red fill and border with white label, used only inside a remove confirmation.
-- **Icon button:** 34px square, transparent until hover (field fill plus rule border). The danger variant turns red on hover.
-- **Hover / Focus:** 150ms ease-out color transitions. Keyboard focus is a 2px focus-blue outline offset 2px. Busy controls drop to 50% opacity with a progress cursor.
+- **Shape:** 8px radius, 30px tall (34px large).
+- **Default:** tonal gray fill with blue text; hover steps to `fill-2`.
+- **Primary:** blue fill, white text; hover lightens slightly.
+- **Destructive:** default fill with red text.
+- **Press:** scales to 0.97 (icon buttons 0.92). Disabled drops to 0.45 opacity.
+- **Text and icon buttons:** borderless blue text; circular 30px gray icon buttons that fill on hover or while their menu is open.
 
-### Inputs / Fields
-- **Style:** field-white fill, strong-rule border, 6px corners, min height 36px, 14px text (13px mono for numbers and keys). Placeholders use ink-3.
-- **On plate:** plate-2 fill, plate-ink text, 28% white border.
-- **Focus:** the shared 2px focus-blue outline.
+### Switch
+42 by 26px track, gray off, green on; a white 22px knob slides on the spring and widens to 26px while pressed.
 
-### Connected Plate (signature)
-A reversed graphite plate that answers "what runs now". A brass-ringed socket sits at top left, where the cord plugs in. A definition grid pairs the Live line (lamp and 20px name) with "If it runs out" (16px). Below a 12% white rule comes a trouble list: each problem gets a red lamp, a sentence, and on-plate fix buttons. With no trouble, it shows one quiet all-ready line.
+### Inputs
+Number fields are 64px tonal wells with right-aligned tabular numbers. Sheet fields sit in a grouped field block (44px rows, 72px labels, inset hairlines); focus draws a 2px inset blue ring on the whole field row rather than an outline. Secret and URL inputs use mono.
 
-### Line (signature)
-One row per account or key: jack in the gutter, mono number, lamp, designation strip, readout (bold state word, then mono identifier and meta), icon controls, lever. The live line gets the green wash and a brass jack ring. A line that is switched off fades its strip to 55%.
+### Menu
+Translucent 228px popover, 12px radius, 5px inset. Items are 32px with a leading gray icon; hover and keyboard focus fill the item blue with white text (red fill for destructive). Opens from the button that triggered it with scale 0.94 to 1 on the spring; closes with a 120ms fade.
 
-### Designation Strip
-An ivory label (strip-ink, 650, caps, 0.04em) in a 2px brass holder. It is also the rename affordance: it turns into an inline input with the same type. On the spare jack it becomes a dashed empty holder containing a plus icon and "Add an account" or "Add an API key".
-
-### Lever Key
-A 24 by 36px switch. A brass bat in a dark slot is thrown up for on and down for off, where it turns unlit grey. It moves over 180ms on cubic-bezier(0.2, 0.8, 0.2, 1). It exposes a switch role through aria-checked.
-
-### Cord (signature interaction)
-An SVG over the wrap. It drops from the plate socket, runs down a lane just left of the jack column, and turns into the live jack, ending in a brass tip. Only a change of live line animates. The end point travels over 220ms with an exponential ease-out (1 − 2^(−10t)). Layout shifts, hidden tabs and `prefers-reduced-motion` all snap it into place. With no live line, it hangs loose from the socket.
+### Sheet
+A modal dialog over a scrim. Centred 460px panel (340px narrow, centred text, full-width actions) entering from 14px above with scale 0.97 and a 5px blur; at 640px and below it is a bottom sheet sliding up from the edge with safe-area padding. It leaves the way it came on the exit easing. Actions sit bottom right; errors are footnote red text.
 
 ### Toast
-A plate-graphite pill at bottom center with 6px corners and the plate-lift shadow. It enters over 180ms opacity and 220ms cubic-bezier(0.16, 1, 0.3, 1) translate. The error variant uses the dead-ring red and the alert role.
+Translucent 20px pill, top centre below the toolbar, callout 500. It drops in from 12px above at 0.96 scale and leaves the same way on the exit easing; errors carry a red icon and stay longer.
+
+### Cable, Plug and Ports (signature)
+The cable is four stacked SVG strokes (shade 6, edge 4.6, body 3.3, highlight 1) from the status card's boot to the live row's port. Ports are recessed 6 by 20px slots on each group's left edge; hover adds a blue tint halo, and a port in magnetic reach stretches and takes a blue ring. The plug (22px, 19px on narrow screens) has a top-to-bottom gradient body and a 4px status light: green ready, orange limited, gray idle, and a white blink for each request while a blue glint travels the cable. Grabbed, it lifts; it tracks the pointer 1:1, ports pull it in, and release hands the pointer's velocity to a 2D spring (damping 0.8 after a throw, otherwise 1). Keyboard: arrow keys and Return. Reduced motion draws a still curve.
+
+### Globe (signature)
+A dotted Earth in plain WebGL inside the status card: land dots on a soft body with a blue rim and aura, back-face dots dimmed. "This computer" (guessed from the timezone) and "Anthropic" carry small translucent labels. Each gateway request sends a blue light along an arc and back. Drag tracks 1:1, coasts, then springs home; hover tilts it slightly. Its colours come from tokens and swap with the colour scheme; if WebGL is lost the art hides.
+
+### Motion and Accessibility
+- **Spring:** `springCurve(0.42, 1)`, a critically damped step response sampled into 41 `linear()` stops, written to `--spring` and `--spring-ms` at load. The fallback is `cubic-bezier(0.2, 0.8, 0.2, 1)` at 420ms.
+- **Exit:** `cubic-bezier(0.4, 0, 1, 1)` at 200ms for toasts and sheets; scrims fade in over 240ms and out over 200ms.
+- **Micro:** 0.12s ease for press and hover feedback; activity rows arrive on `cubic-bezier(0.16, 1, 0.3, 1)` over 0.6s.
+- **Reduced motion:** spring transitions collapse to 0.01ms; WAAPI keeps only its opacity frames, capped at 160ms; the cable draws still; no globe comets, logo or favicon glints; the spinner slows to 2.4s.
+- **Reduced transparency:** toolbar, menu and toast become solid ground or group colour with no blur.
+- **Increased contrast:** separators and secondary labels darken (lighten in dark), and groups gain a 1px ring.
+- **Focus:** 3px blue outline at 2px offset on `:focus-visible`; plugs and fields draw a ring instead.
+- **Hairlines:** 1px, 0.5px on 2x displays.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** show every account and key as a numbered line on the one board, in relay order, with the same row scale.
-- **Do** give every line a lamp and a readout beside it. Use a lit lamp only for live, warn or dead states.
-- **Do** keep type to 20 / 17 / 16 / 14 / 13 / 12.5 px and rank by weight, caps and reversal.
-- **Do** use the rust action color for the single primary action in a form, and nowhere else except the cord.
-- **Do** end each bank with a spare jack as its add action.
-- **Do** keep the 3px board, 4px plate, 6px control radius split.
-- **Do** honor reduced motion: every transition goes to 0ms, and the cord snaps.
+- **Do** build every new screen from inset groups on the grouped ground, with hairlines inset to the text column.
+- **Do** keep blue for controls, the live line and request traffic; show status with a green, orange, red or gray dot plus a word.
+- **Do** move things on the shared `--spring` / `--spring-ms` and leave on the exit easing; keep springs critically damped unless the user threw something.
+- **Do** define every new colour as a `:root` token with a dark value, and check it under reduced transparency and increased contrast.
+- **Do** use the platform font with its per-size tracking, and mono only for secrets, URLs and tokens.
 
 ### Don't:
-- **Don't** break the board into stacked cards or status pills; banks are divided by rules.
-- **Don't** add glow, pulse, gradient or partial fills to lamps.
-- **Don't** set sentences or state words in monospace.
-- **Don't** load external fonts, scripts, images or icon fonts; system stacks and inline SVG only.
-- **Don't** cast shadows from the board, banks or lines; only the plate and toasts lift.
-- **Don't** animate the cord on layout changes; it moves only when the live line changes.
+- **Don't** add a second physical object or illustration beyond the cable, plug and globe.
+- **Don't** use a dashboard card grid, glow or decorative glass; blur only the toolbar, menus, toasts and labels that float over content.
+- **Don't** put shadows on groups at rest.
+- **Don't** paint rows or groups in semantic colours.
+- **Don't** let meaning depend on motion; every function must still work with reduced motion.
