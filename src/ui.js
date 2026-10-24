@@ -8,6 +8,7 @@
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+const { spawn } = require('child_process');
 const paths = require('./paths');
 const config = require('./config');
 const vault = require('./vault');
@@ -135,7 +136,7 @@ function snapshot(ctx) {
     traffic: events.stats(),
     shell: shell.status(),
     service: service.status(),
-    desktop: { ...desktop.status(), steps: desktop.STEPS, baseUrl: `http://127.0.0.1:${cfg.port}` },
+    desktop: { ...desktop.status(desktop.settings(cfg, v)), platform: process.platform, steps: desktop.STEPS, baseUrl: `http://127.0.0.1:${cfg.port}` },
   };
 }
 
@@ -317,6 +318,16 @@ function editSettings(body) {
   });
 }
 
+// Runs `claude-nonstop desktop --quiet` in its own process: the system's admin prompt can
+// stay open for a while, and the gateway must keep serving meanwhile.
+function desktopAuto() {
+  return new Promise((resolve) => {
+    const child = spawn(process.execPath, [paths.APP_SCRIPT, 'desktop', '--quiet'], { stdio: 'ignore', windowsHide: true });
+    child.on('error', () => resolve({ ok: false }));
+    child.on('exit', (code) => resolve({ ok: code === 0 }));
+  });
+}
+
 function desktopSetup(ctx) {
   const { cfg, vault: v } = ctx.current();
   const file = desktop.write(cfg, v);
@@ -349,6 +360,7 @@ async function route(method, pathname, body, ctx) {
   }
   if (area === 'desktop' && method === 'POST' && !id) return desktopSetup(ctx);
   if (area === 'desktop' && method === 'POST' && id === 'reveal') return desktop.reveal();
+  if (area === 'desktop' && method === 'POST' && id === 'auto') return desktopAuto();
   if (area === 'settings' && method === 'PATCH') return editSettings(body);
   if (area === 'pin' && method === 'PUT') return setPin(body);
   if (area === 'pin' && method === 'DELETE') {
@@ -382,7 +394,7 @@ async function handle(req, res, ctx) {
     }
     res.writeHead(302, {
       ...SECURITY_HEADERS,
-      'set-cookie': `cn_ui=${encodeURIComponent(v.uiToken)}; HttpOnly; SameSite=Strict; Path=/`,
+      'set-cookie': `cn_ui=${encodeURIComponent(v.uiToken)}; HttpOnly; SameSite=Strict; Path=/${req.secure ? '; Secure' : ''}`,
       location: '/',
     });
     res.end();

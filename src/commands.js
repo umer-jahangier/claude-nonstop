@@ -16,6 +16,8 @@ const claude = require('./claude');
 const keystore = require('./keystore');
 const desktop = require('./desktop');
 const hostsfile = require('./hostsfile');
+const system = require('./system');
+const tls = require('./tls');
 const service = require('./service');
 const shell = require('./shell');
 const prompt = require('./prompt');
@@ -150,6 +152,8 @@ async function status() {
   if (running) out(`  Web UI             ${uiUrl(cfg)}  (open it with \`claude-nonstop ui\`)`);
   out(`  Updates            ${cfg.autoUpdate === false ? 'off' : 'install themselves'}`);
   out(`  claude shortcut    ${shell.status().installed ? 'on' : 'off'}`);
+  const d = desktop.status(desktop.settings(cfg, v));
+  out(`  Desktop app        ${!d.installed ? 'not installed' : d.automatic ? 'set up to use the gateway' : 'not set up yet (run `claude-nonstop desktop`)'}`);
   out(`  In use             ${s.current || 'nothing yet'}`);
   out('');
   out('Subscription accounts, tried in this order:');
@@ -293,21 +297,51 @@ async function accountsCommand([sub, ...rest] = []) {
 
 // ---------------------------------------------------------------- desktop
 
-function desktopCommand() {
+// Sets the desktop app up through its documented managed settings and says what happened.
+// The web page runs this with --quiet and reads only the exit code.
+function setUpDesktop(quiet) {
+  const cfg = config.load();
+  const v = vault.loadWithTokens();
+  const want = desktop.settings(cfg, v);
+  const tell = quiet ? () => {} : out;
+  if (process.env.CLAUDE_NONSTOP_DESKTOP_MANAGED === '0') return 'manual';
+  if (!desktop.appInstalled()) {
+    tell("- The Claude desktop app isn't installed. Run `claude-nonstop desktop` after installing it (claude.com/download).");
+    return 'missing';
+  }
+  if (desktop.applied(want)) {
+    tell('- The Claude desktop app is set up. On its sign-in screen, pick the third-party option to run on your API keys, or Claude.ai for your subscription.');
+    return 'done';
+  }
+  if (process.platform === 'darwin') {
+    if (!desktop.macProfile(want)) return 'manual';
+    tell('- Claude desktop app: System Settings just opened. Double-click "claude-nonstop for the Claude desktop app", click Install, then quit and reopen the app.');
+    return 'profile';
+  }
+  if (system.apply({ hosts: false, desktopSettings: want }).desktop) {
+    tell('- The Claude desktop app is set up. Quit and reopen it, then pick the third-party option on its sign-in screen to run on your API keys.');
+    return 'done';
+  }
+  tell("! The Claude desktop app wasn't set up (the administrator prompt was declined). Run `claude-nonstop desktop` to try again.");
+  return 'declined';
+}
+
+function desktopCommand(args = []) {
   ensureHome();
+  const quiet = args.includes('--quiet');
+  const outcome = setUpDesktop(quiet);
+  if (outcome === 'done' || outcome === 'profile') return 0;
+  if (quiet) return 1;
   const cfg = config.load();
   const v = vault.loadWithTokens();
   const file = desktop.write(cfg, v);
-  out('To run the Claude desktop app on your API keys through claude-nonstop:');
-  desktop.STEPS.forEach((step, i) => out(`  ${i + 1}. ${step}`));
   out('');
-  out(`File to import:    ${file}`);
-  out('Or type these in:');
+  out(outcome === 'manual' ? 'To run the Claude desktop app on your API keys through claude-nonstop:' : 'To set it up by hand instead:');
+  desktop.STEPS.forEach((step, i) => out(`  ${i + 1}. ${step}`));
   out(`  Gateway base URL  ${gatewayUrl(cfg)}`);
   out(`  Gateway API key   ${v.gatewayToken}`);
   out('  Auth scheme       Bearer');
-  out('');
-  out('The gateway has to be running for this. `claude-nonstop service install` starts it whenever you log in.');
+  out(`  (also saved in ${file})`);
   return 0;
 }
 
@@ -324,9 +358,17 @@ async function setup(args = []) {
   const v = vault.loadWithTokens();
   out(`- Secrets are stored encrypted; the encryption key is in ${keystore.describe()}.`);
   if (!claude.findClaude()) out('! Claude Code was not found. Install it (https://code.claude.com/docs/en/setup), then run `claude-nonstop setup` again.');
-  if (!args.includes('--no-hosts') && !process.env.CI) {
-    if (hostsfile.install()) out(`- The web UI has a short address: http://${hostsfile.PRIMARY} (also http://${hostsfile.NAMES[1]})`);
-    else out(`- The web UI is at http://${FRIENDLY_HOST}. For the short address http://${hostsfile.PRIMARY}, run \`claude-nonstop setup\` again and allow the change.`);
+  if (!args.includes('--no-system') && !process.env.CI) {
+    // One admin prompt covers the short address and, on Windows and Linux, the desktop app.
+    const desktopSettings = args.includes('--no-desktop') ? null : desktop.settings(config.load(), v);
+    const done = system.apply({ hosts: !args.includes('--no-hosts'), desktopSettings });
+    if (done.hosts) {
+      const secure = tls.setup();
+      out(`- The web page is at ${secure ? 'https' : 'http'}://${hostsfile.PRIMARY} (also ${hostsfile.NAMES[1]})${secure ? ', with a certificate this computer trusts' : ''}.`);
+    } else {
+      out(`- The web page is at http://${FRIENDLY_HOST}. For the short address ${hostsfile.PRIMARY}, run \`claude-nonstop setup\` again and allow the change.`);
+    }
+    if (desktopSettings && desktop.appInstalled()) setUpDesktop(false);
   }
   if (!args.includes('--no-service')) {
     try {
@@ -335,7 +377,7 @@ async function setup(args = []) {
       out(`! Couldn't set the gateway to start at login (${err.message}). \`claude-nonstop ui\` starts it when needed.`);
     }
   }
-  out(`- File for the Claude desktop app: ${desktop.write(config.load(), v)} (steps: \`claude-nonstop desktop\`)`);
+  desktop.write(config.load(), v);
   if (!args.includes('--no-shell')) {
     if (yes || (await prompt.confirm('Make plain `claude` go through claude-nonstop in your terminals?', true))) {
       try {
@@ -419,8 +461,14 @@ async function uninstall(args = []) {
   out('- The gateway is stopped and no longer starts at login.');
   shell.uninstall();
   out('- Plain `claude` runs Claude Code directly again (in new terminals).');
-  if (hostsfile.uninstall()) out(`- The short address ${hostsfile.PRIMARY} is removed from this computer.`);
+  if (system.remove().hosts) out(`- The short address ${hostsfile.PRIMARY} and the desktop app's settings are removed from this computer.`);
   else out(`! Couldn't remove the ${hostsfile.PRIMARY} lines from ${hostsfile.hostsPath()} (it needs administrator rights). They're harmless; delete them by hand if you like.`);
+  tls.uninstall();
+  out('- The local certificate is deleted and no longer trusted.');
+  if (process.platform === 'darwin' && fs.existsSync(desktop.PROFILE)) {
+    out('- To undo the desktop app setup, remove "claude-nonstop for the Claude desktop app" in System Settings → General → Device Management.');
+    fs.rmSync(desktop.PROFILE, { force: true });
+  }
   if (purge) {
     const bin = claude.findClaude();
     for (const account of config.load().accounts.filter((a) => a.kind === 'profile')) {

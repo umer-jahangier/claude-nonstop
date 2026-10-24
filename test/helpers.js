@@ -26,6 +26,9 @@ function isolate() {
     CLAUDE_NONSTOP_KEYSTORE: 'file',
     FAKE_CLAUDE_LOG: path.join(root, 'fake-claude.log'),
     CLAUDE_NONSTOP_HOSTS_FILE: path.join(root, 'hosts'),
+    // Tests never touch the system's trusted roots or the desktop app's managed settings.
+    CLAUDE_NONSTOP_NO_TLS: '1',
+    CLAUDE_NONSTOP_DESKTOP_MANAGED: '0',
   };
   for (const dir of [env.HOME, env.CLAUDE_CONFIG_DIR]) fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(env.CLAUDE_NONSTOP_HOSTS_FILE, '127.0.0.1 localhost\n');

@@ -6,10 +6,14 @@
 //   port 80          when the system allows it, so the web UI opens with no port number:
 //                    http://claude.nonstop once setup has added it to the hosts file,
 //                    http://claude-nonstop.localhost otherwise
+//   port 443         HTTPS with the certificate setup made and this computer trusts
+//                    (tls.js), so https://claude.nonstop shows no "Not secure" warning;
+//                    plain-http visits to the short names are sent there
 // Every connection that doesn't come from this computer is closed before it's read.
 
 const fs = require('fs');
 const http = require('http');
+const https = require('https');
 const paths = require('./paths');
 const config = require('./config');
 const vault = require('./vault');
@@ -18,7 +22,8 @@ const gateway = require('./gateway');
 const ui = require('./ui');
 const events = require('./events');
 const hostsfile = require('./hostsfile');
-const { FRIENDLY_HOST, allowShortNames, hostAllowed, isLoopback } = require('./hosts');
+const tls = require('./tls');
+const { FRIENDLY_HOST, allowShortNames, hostAllowed, isShortName, isLoopback } = require('./hosts');
 const { ensureHome, writeJson, readJson, log } = require('./files');
 const pkg = require('../package.json');
 
@@ -61,20 +66,28 @@ function createContext() {
   };
 }
 
-function createServer(ctx) {
-  const server = http.createServer((req, res) => {
+function createServer(ctx, tlsOptions = null) {
+  const onRequest = (req, res) => {
     const fail = (err) => {
       log(`server error: ${err && err.stack ? err.stack : err}`);
       if (!res.headersSent) gateway.sendError(res, 500, 'api_error', `claude-nonstop: ${err.message}`);
       else res.destroy();
     };
     // Only answer under our own names: this blocks DNS-rebinding tricks from web pages.
+    const secure = Boolean(req.socket.encrypted);
+    req.secure = secure;
     req.allowedPorts = ctx.ports || new Set([server.address().port]);
-    if (!hostAllowed(req.headers.host, req.allowedPorts)) {
+    if (!hostAllowed(req.headers.host, req.allowedPorts, secure ? 443 : 80)) {
       gateway.sendError(res, 403, 'permission_error', 'claude-nonstop only answers on this computer');
       return;
     }
     const url = req.url || '/';
+    if (!secure && ctx.tlsPort && isShortName(req.headers.host) && url !== '/health' && !url.startsWith('/v1/')) {
+      const host = String(req.headers.host).toLowerCase().replace(/:\d+$/, '');
+      res.writeHead(308, { location: `https://${host}${ctx.tlsPort === 443 ? '' : `:${ctx.tlsPort}`}${url}` });
+      res.end();
+      return;
+    }
     if (url === '/health') {
       const body = JSON.stringify({ name: 'claude-nonstop', version: pkg.version, pid: process.pid });
       res.writeHead(200, { 'content-type': 'application/json', 'content-length': Buffer.byteLength(body) });
@@ -85,7 +98,9 @@ function createServer(ctx) {
     Promise.resolve()
       .then(() => handler(req, res, ctx))
       .catch(fail);
-  });
+  };
+  const server = tlsOptions ? https.createServer(tlsOptions, onRequest) : http.createServer(onRequest);
+  // For HTTPS too this fires on the raw connection, before any TLS handshake.
   server.on('connection', (socket) => {
     if (!isLoopback(socket.remoteAddress)) socket.destroy();
   });
@@ -113,12 +128,12 @@ function listen(server, options) {
 // allows it on the all-interfaces address (the loopback check keeps it private); Linux
 // allows it once setup has given the private Node runtime that right, and otherwise the
 // address carries the port instead.
-async function listenOnPort80(ctx) {
+async function listenLow(ctx, port, tlsOptions = null) {
   if (process.env.CLAUDE_NONSTOP_NO_PORT80 === '1') return null;
-  const attempts = [{ port: 80, host: '127.0.0.1' }];
-  if (process.platform === 'darwin') attempts.push({ port: 80, host: '::', ipv6Only: false });
+  const attempts = [{ port, host: '127.0.0.1' }];
+  if (process.platform === 'darwin') attempts.push({ port, host: '::', ipv6Only: false });
   for (const options of attempts) {
-    const server = createServer(ctx);
+    const server = createServer(ctx, tlsOptions);
     if (!(await listen(server, options))) return server;
   }
   return null;
@@ -139,17 +154,26 @@ async function serve({ port } = {}) {
   const ipv6 = createServer(ctx);
   if (!(await listen(ipv6, { port: mainPort, host: '::1', ipv6Only: true }))) servers.push(ipv6);
 
-  const port80 = await listenOnPort80(ctx);
+  const port80 = await listenLow(ctx, 80);
   if (port80) {
     servers.push(port80);
     ctx.ports.add(80);
+  }
+  const tlsOptions = tls.serverOptions();
+  const port443 = tlsOptions ? await listenLow(ctx, 443, tlsOptions) : null;
+  if (port443) {
+    servers.push(port443);
+    ctx.ports.add(443);
   }
   const startedAt = new Date().toISOString();
   let uiUrl = '';
   const publish = () => {
     const short = hostsfile.mapped();
     allowShortNames(short);
-    const next = `http://${short ? hostsfile.PRIMARY : FRIENDLY_HOST}${port80 ? '' : `:${mainPort}`}`;
+    ctx.tlsPort = short && port443 ? 443 : null;
+    const next = ctx.tlsPort
+      ? `https://${hostsfile.PRIMARY}`
+      : `http://${short ? hostsfile.PRIMARY : FRIENDLY_HOST}${port80 ? '' : `:${mainPort}`}`;
     if (next === uiUrl) return;
     uiUrl = next;
     writeJson(paths.SERVER, { pid: process.pid, port: mainPort, uiUrl, version: pkg.version, startedAt });

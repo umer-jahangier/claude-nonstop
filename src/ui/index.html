@@ -6,6 +6,15 @@
 <meta name="color-scheme" content="light dark">
 <title>claude-nonstop</title>
 <link rel="icon" id="favicon" href="data:,">
+<script>
+// Appearance: the saved choice (Automatic, Light or Dark), resolved before the first paint.
+(function () {
+  var pref = 'system';
+  try { pref = localStorage.getItem('cn-theme') || 'system'; } catch (e) {}
+  var dark = pref === 'dark' || (pref === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+})();
+</script>
 <style>
 :root {
   color-scheme: light dark;
@@ -65,10 +74,13 @@
   --globe-arc: 0 113 227;
   --globe-aura: 0 113 227;
   --globe-aura-a: 0.1;
+  --star: 60 60 67;
+  --star-a: 0.32;
+  --star-line-a: 0.12;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
+:root[data-theme="dark"] {
+    color-scheme: dark;
     --ground: #000000;
     --group: #1c1c1e;
     --sheet: #1c1c1e;
@@ -114,8 +126,11 @@
     --globe-arc: 41 151 255;
     --globe-aura: 41 151 255;
     --globe-aura-a: 0.24;
-  }
+    --star: 235 235 245;
+    --star-a: 0.42;
+    --star-line-a: 0.14;
 }
+:root[data-theme="light"] { color-scheme: light; }
 
 @media (min-resolution: 2dppx) { :root { --hair: 0.5px; } }
 
@@ -123,8 +138,8 @@
   :root { --sep: rgba(60, 60, 67, 0.45); --label-2: #48484a; --fill: rgba(120, 120, 128, 0.22); }
   .group { box-shadow: 0 0 0 1px var(--sep); }
 }
-@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
-  :root { --sep: rgba(235, 235, 245, 0.4); --label-2: #c7c7cc; }
+@media (prefers-contrast: more) {
+  :root[data-theme="dark"] { --sep: rgba(235, 235, 245, 0.4); --label-2: #c7c7cc; }
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -572,6 +587,31 @@ main { max-width: 1080px; margin: 0 auto; padding: 12px 20px 72px 44px; }
 .toast.show { opacity: 1; visibility: visible; }
 .toast .i { width: 18px; height: 18px; color: var(--red); }
 
+/* ---------------------------------------------------------------- appearance, constellation, desktop */
+
+.tool-end { justify-self: end; display: flex; align-items: center; gap: 6px; }
+.tool-end .status { justify-self: auto; margin-right: 4px; }
+.theme-btn .i { width: 18px; height: 18px; }
+.menu-item .check { width: 16px; height: 16px; flex: none; }
+.menu-item[aria-checked="false"] .check { visibility: hidden; }
+
+.mini-seg { position: relative; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; flex: none; padding: 2px; border-radius: 8px; background: var(--track); }
+.mini-seg .seg-thumb { width: calc((100% - 4px) / 3); border-radius: 6px; }
+.mini-seg button { position: relative; z-index: 1; height: 26px; padding: 0 12px; border: 0; border-radius: 6px; background: none; font-size: 0.8125rem; font-weight: 500; cursor: pointer; white-space: nowrap; transition: opacity 0.12s ease; }
+.mini-seg button:active { opacity: 0.55; }
+
+#stars { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+main { position: relative; z-index: 1; }
+
+.desk-card { display: flex; align-items: flex-start; gap: 14px; margin-top: 20px; padding: 18px 18px 18px 16px; }
+.desk-card .desk-icon { width: 30px; height: 30px; border-radius: 7px; display: grid; place-items: center; flex: none; color: #fff; background: var(--accent-fill); }
+.desk-card[data-state="done"] .desk-icon { background: var(--green); }
+.desk-card[data-state="missing"] .desk-icon { background: var(--key-tile); }
+.desk-card .desk-icon .i { width: 18px; height: 18px; stroke-width: 1.8; }
+.desk-card h2 { margin: 2px 0 4px; font-size: 0.9375rem; font-weight: 600; letter-spacing: -0.015em; }
+.desk-card p { margin: 0; color: var(--label-2); font-size: 0.875rem; line-height: 1.43; letter-spacing: -0.01em; max-width: 58ch; }
+.desk-card .desk-acts { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+
 /* ---------------------------------------------------------------- responsive */
 
 @media (max-width: 1099px) {
@@ -586,7 +626,7 @@ main { max-width: 1080px; margin: 0 auto; padding: 12px 20px 72px 44px; }
   :root { --plug-len: 19px; --boot-len: 10px; --avatar: 42px; --now-pad: 16px; }
   .toolbar-inner { height: auto; grid-template-columns: 1fr auto; grid-template-areas: "brand status" "seg seg"; row-gap: 8px; padding: 8px 16px 10px; }
   .brand { grid-area: brand; }
-  .status { grid-area: status; }
+  .tool-end { grid-area: status; }
   .segmented { grid-area: seg; min-width: 0; }
   main { padding: 6px 14px 48px 32px; }
   .now h1 { font-size: 1.375rem; }
@@ -633,8 +673,15 @@ main { max-width: 1080px; margin: 0 auto; padding: 12px 20px 72px 44px; }
   <symbol id="i-folder" viewBox="0 0 20 20"><path d="M2.5 5.5a1 1 0 0 1 1-1h4l1.6 1.8h7.4a1 1 0 0 1 1 1v8.2a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1z"/></symbol>
   <symbol id="i-out" viewBox="0 0 20 20"><path d="M7 13 13.5 6.5M8 6.5h5.5V12"/></symbol>
   <symbol id="i-plug" viewBox="0 0 20 20"><path d="M7 2.5v4M13 2.5v4M5 6.5h10v2.5a5 5 0 0 1-10 0zM10 14v3.5"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 20 20"><circle cx="10" cy="10" r="3.4"/><path d="M10 2.2v1.9M10 15.9v1.9M2.2 10h1.9M15.9 10h1.9M4.5 4.5l1.35 1.35M14.15 14.15l1.35 1.35M4.5 15.5l1.35-1.35M14.15 5.85l1.35-1.35"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 20 20"><path d="M16.2 12.4A6.6 6.6 0 0 1 7.6 3.8a6.6 6.6 0 1 0 8.6 8.6z"/></symbol>
+  <symbol id="i-auto-theme" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/><path d="M10 3a7 7 0 0 1 0 14z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-check" viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 6.6"/></symbol>
+  <symbol id="i-desktop" viewBox="0 0 20 20"><rect x="2.6" y="3.6" width="14.8" height="10" rx="1.8"/><path d="M7.4 16.6h5.2M10 13.6v3"/></symbol>
   <symbol id="i-spinner" viewBox="0 0 20 20"><g stroke-width="2"><path d="M10 2.2v3.2"/><path d="M15.5 4.5l-2.2 2.2" opacity=".86"/><path d="M17.8 10h-3.2" opacity=".72"/><path d="M15.5 15.5l-2.2-2.2" opacity=".6"/><path d="M10 17.8v-3.2" opacity=".48"/><path d="M4.5 15.5l2.2-2.2" opacity=".36"/><path d="M2.2 10h3.2" opacity=".26"/><path d="M4.5 4.5l2.2 2.2" opacity=".18"/></g></symbol>
 </svg>
+
+<canvas id="stars" aria-hidden="true"></canvas>
 
 <header class="toolbar" id="toolbar">
   <div class="toolbar-inner">
@@ -655,7 +702,10 @@ main { max-width: 1080px; margin: 0 auto; padding: 12px 20px 72px 44px; }
       <button class="seg" role="tab" id="tab-desktop" aria-controls="view-desktop" aria-selected="false" data-view="desktop" tabindex="-1">Desktop App</button>
       <button class="seg" role="tab" id="tab-settings" aria-controls="view-settings" aria-selected="false" data-view="settings" tabindex="-1">Settings</button>
     </div>
-    <span class="status" id="pill"><span class="dot"></span><span id="pill-text">Connecting…</span></span>
+    <div class="tool-end">
+      <span class="status" id="pill"><span class="dot"></span><span id="pill-text">Connecting…</span></span>
+      <button class="icon-btn theme-btn" type="button" id="theme-btn" data-act="theme-menu" data-fk="theme" aria-haspopup="menu" aria-expanded="false" aria-label="Appearance" title="Appearance"><svg class="i" aria-hidden="true"><use href="#i-auto-theme"/></svg></button>
+    </div>
   </div>
 </header>
 
@@ -712,19 +762,31 @@ main { max-width: 1080px; margin: 0 auto; padding: 12px 20px 72px 44px; }
   <section id="view-desktop" role="tabpanel" aria-labelledby="tab-desktop" hidden>
     <div class="view">
       <h1 class="view-title">Claude desktop app</h1>
-      <p class="view-lede">The desktop app can run on your API keys through this gateway, which switches keys by itself when one runs out. Your subscription stays one choice away on the app's sign-in screen.</p>
-      <div class="group-head"><h2>Set it up once</h2></div>
+      <p class="view-lede">The desktop app can run on your API keys through this gateway, which switches keys by itself when one runs out. Your Claude.ai subscription stays one click away on the app's sign-in screen.</p>
+      <div class="group desk-card" id="desktop-auto" aria-live="polite"></div>
+      <div class="group-head"><h2>Or set it up by hand</h2></div>
       <ol class="group list steps" id="desktop-steps"></ol>
       <div class="group-head"><h2>Connection details</h2></div>
       <div class="group list values" id="desktop-values"></div>
       <p class="group-foot" id="desktop-file"></p>
-      <div class="view-actions"><button class="btn" type="button" data-act="reveal-desktop" data-fk="reveal"><svg class="i" aria-hidden="true"><use href="#i-folder"/></svg>Show the Import File</button></div>
     </div>
   </section>
 
   <section id="view-settings" role="tabpanel" aria-labelledby="tab-settings" hidden>
     <div class="view">
       <h1 class="view-title">Settings</h1>
+      <div class="group-head"><h2>Appearance</h2></div>
+      <div class="group">
+        <div class="row">
+          <span class="row-text"><span class="row-title" id="theme-label">Theme</span><span class="row-sub">Automatic follows your computer's setting</span></span>
+          <div class="mini-seg" role="radiogroup" aria-labelledby="theme-label" id="theme-seg">
+            <span class="seg-thumb" aria-hidden="true"></span>
+            <button type="button" role="radio" data-act="theme-set" data-value="system" aria-checked="true">Automatic</button>
+            <button type="button" role="radio" data-act="theme-set" data-value="light" aria-checked="false">Light</button>
+            <button type="button" role="radio" data-act="theme-set" data-value="dark" aria-checked="false">Dark</button>
+          </div>
+        </div>
+      </div>
       <div class="group-head"><h2>Cooldowns</h2></div>
       <form class="group list flat" id="settings-form">
         <label class="row field-row" for="cooldown">
@@ -849,6 +911,55 @@ async function hideToast() {
   if (a) a.cancel();
 }
 const announce = (text) => { $('#sr').textContent = text; };
+
+// ------------------------------------------------------------------ appearance
+
+// Automatic (the computer's setting, the default), Light or Dark. The head script applies
+// the saved choice before the first paint; this keeps it in step afterwards.
+const theme = (() => {
+  const media = window.matchMedia('(prefers-color-scheme: dark)');
+  const get = () => { try { return localStorage.getItem('cn-theme') || 'system'; } catch { return 'system'; } };
+  const resolve = (pref) => (pref === 'dark' || (pref === 'system' && media.matches) ? 'dark' : 'light');
+
+  function controls() {
+    const pref = get();
+    const resolved = document.documentElement.getAttribute('data-theme');
+    const btn = $('#theme-btn');
+    const glyph = pref === 'system' ? 'auto-theme' : resolved === 'dark' ? 'moon' : 'sun';
+    btn.innerHTML = icon(glyph);
+    const name = { system: 'Automatic', light: 'Light', dark: 'Dark' }[pref];
+    btn.setAttribute('aria-label', `Appearance: ${name}`);
+    btn.title = `Appearance: ${name}`;
+    $$('#theme-seg [role="radio"]').forEach((b, i) => {
+      const on = b.dataset.value === pref;
+      b.setAttribute('aria-checked', String(on));
+      b.tabIndex = on ? 0 : -1;
+      if (on) $('#theme-seg').style.setProperty('--i', i);
+    });
+  }
+
+  function apply(pref, animate) {
+    const root = document.documentElement;
+    const next = resolve(pref);
+    const change = () => {
+      root.setAttribute('data-theme', next);
+      window.dispatchEvent(new Event('themechange'));
+      controls();
+    };
+    // A soft cross-fade instead of an abrupt flash, where the browser can do it.
+    if (animate && root.getAttribute('data-theme') !== next && document.startViewTransition && !reduced.matches) document.startViewTransition(change);
+    else change();
+  }
+
+  function set(pref) {
+    try { localStorage.setItem('cn-theme', pref); } catch {}
+    apply(pref, true);
+    announce(`Appearance: ${{ system: 'Automatic', light: 'Light', dark: 'Dark' }[pref]}`);
+  }
+
+  media.addEventListener('change', () => { if (get() === 'system') apply('system', true); });
+  return { get, set, controls };
+})();
 
 function ago(at) {
   if (!at) return '';
@@ -1038,7 +1149,32 @@ function renderDesktop() {
     <div class="row"><span class="k">Base URL</span><span class="v mono">${esc(S.desktop.baseUrl)}</span><span class="acts"><button class="icon-btn" type="button" data-act="copy" data-value="${esc(S.desktop.baseUrl)}" data-fk="copy-url" aria-label="Copy the base URL" title="Copy">${icon('copy')}</button></span></div>
     <div class="row"><span class="k">API key</span><span class="v mono">${esc(shown)}</span><span class="acts"><button class="icon-btn" type="button" data-act="toggle-token" data-fk="toggle-token" aria-label="${ui.showToken ? 'Hide' : 'Show'} the gateway key" title="${ui.showToken ? 'Hide' : 'Show'}">${icon('eye')}</button><button class="icon-btn" type="button" data-act="copy-token" data-fk="copy-token" aria-label="Copy the gateway key" title="Copy">${icon('copy')}</button></span></div>
     <div class="row"><span class="k">Auth scheme</span><span class="v">Bearer</span></div>`;
-  $('#desktop-file').textContent = desktopInfo ? `The import file is ${desktopInfo.file}` : '';
+  $('#desktop-file').textContent = desktopInfo ? `The same values are saved in ${desktopInfo.file}` : '';
+  renderDesktopCard();
+}
+
+const DOWNLOAD_URL = 'https://claude.com/download';
+function renderDesktopCard() {
+  const d = S.desktop;
+  const card = $('#desktop-auto');
+  const how = { profile: 'System Settings opens with a profile to approve: double-click it and click Install.', registry: 'Windows asks for your permission once.', file: 'Your password is asked for once.' }[d.method] || '';
+  let state = 'todo';
+  let body;
+  if (!d.installed) {
+    state = 'missing';
+    body = `<h2>The Claude desktop app isn't installed</h2><p>Install it, then come back here to set it up with one click.</p>
+      <div class="desk-acts"><a class="btn" href="${DOWNLOAD_URL}" target="_blank" rel="noopener noreferrer">Download Claude${icon('out')}</a></div>`;
+  } else if (d.automatic) {
+    state = 'done';
+    body = `<h2>Set up</h2><p>Quit and reopen the Claude desktop app. On its sign-in screen, pick the third-party option to run on your API keys, or Claude.ai for your subscription.</p>`;
+  } else if (busy.has('desktop')) {
+    body = `<h2>Waiting for your approval…</h2><p>${esc(how)}</p><div class="desk-acts"><button class="btn primary" type="button" disabled>${SPINNER}Setting Up…</button></div>`;
+  } else {
+    body = `<h2>Set it up automatically</h2><p>claude-nonstop writes the app's documented settings for you. ${esc(how)}</p>
+      <div class="desk-acts"><button class="btn primary" type="button" data-act="desktop-auto" data-fk="desktop-auto">Set Up Automatically</button></div>`;
+  }
+  card.dataset.state = state;
+  card.innerHTML = `<span class="desk-icon">${icon(state === 'done' ? 'check' : 'desktop')}</span><div>${body}</div>`;
 }
 
 function renderSettings() {
@@ -1066,7 +1202,9 @@ function render() {
   renderLists(rel);
   renderDesktop();
   renderSettings();
-  cable.setTarget(rel.live ? lineKey(rel.live) : null, rel.live ? rel.live.st.s : null);
+  // With nothing running yet, the cable sits in the line the next session will start on.
+  const plugged = rel.live || rel.first;
+  cable.setTarget(plugged ? lineKey(plugged) : null, plugged ? plugged.st.s : null);
   favicon.setAlert(S.keys.length > 0 && S.keys.every((k) => keyState(k).s === 'dead') && !rel.live);
   if (fk) {
     const el = document.querySelector(`[data-fk="${CSS.escape(fk)}"]`);
@@ -1475,7 +1613,8 @@ const cable = (() => {
     },
     show(on) {
       visible = on;
-      svg.hidden = !on;
+      // An <svg> has no `hidden` property, so set the attribute itself.
+      svg.toggleAttribute('hidden', !on);
       plug.hidden = !on;
       if (on) { settledKey = null; wake(); }
     },
@@ -1886,7 +2025,7 @@ const globe = (() => {
   readColors();
   resize();
   if (window.ResizeObserver) new ResizeObserver(() => { resize(); draw(performance.now()); }).observe(art);
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { readColors(); draw(performance.now()); });
+  window.addEventListener('themechange', () => { readColors(); draw(performance.now()); });
   if (window.IntersectionObserver) new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; if (visible) wake(); }).observe(art);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) wake(); });
   draw(performance.now());
@@ -1899,6 +2038,135 @@ const globe = (() => {
       wake();
     },
   };
+})();
+
+// ------------------------------------------------------------------ the constellation
+
+// A quiet field of points behind the page. Points close to each other are joined by faint
+// lines; points near the pointer lean toward it and join it, so the background answers the
+// mouse. It draws at 30 frames a second, sleeps while the tab is hidden, and holds still
+// under reduced motion.
+(() => {
+  const canvas = $('#stars');
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  const LINK = 128;
+  const REACH = 170;
+  const pointer = { x: 0, y: 0, on: false };
+  let W = 0;
+  let H = 0;
+  let pts = [];
+  let tone = { star: '60,60,67', a: 0.32, line: 0.12, accent: '0,113,227' };
+  let last = 0;
+  let running = false;
+
+  function readColors() {
+    const cs = getComputedStyle(document.documentElement);
+    const rgb = (name) => cs.getPropertyValue(name).trim().split(/\s+/).join(',');
+    tone = { star: rgb('--star'), a: Number(cs.getPropertyValue('--star-a')) || 0.3, line: Number(cs.getPropertyValue('--star-line-a')) || 0.12, accent: rgb('--globe-arc') };
+  }
+
+  function seed() {
+    const count = Math.min(140, Math.round((W * H) / 12500));
+    pts = Array.from({ length: count }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 14, vy: (Math.random() - 0.5) * 14, r: 0.7 + Math.random() * 1.1 }));
+  }
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    seed();
+    draw();
+  }
+
+  function step(dt) {
+    for (const p of pts) {
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      if (pointer.on) {
+        const dx = pointer.x - p.x;
+        const dy = pointer.y - p.y;
+        const d = Math.hypot(dx, dy);
+        if (d < REACH && d > 24) {
+          const pull = (1 - d / REACH) * 34 * dt;
+          p.x += (dx / d) * pull;
+          p.y += (dy / d) * pull;
+        }
+      }
+      if (p.x < -24) p.x = W + 24; else if (p.x > W + 24) p.x = -24;
+      if (p.y < -24) p.y = H + 24; else if (p.y > H + 24) p.y = -24;
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.lineWidth = 0.75;
+    for (let i = 0; i < pts.length; i++) {
+      const a = pts[i];
+      for (let j = i + 1; j < pts.length; j++) {
+        const b = pts[j];
+        const d = Math.hypot(a.x - b.x, a.y - b.y);
+        if (d >= LINK) continue;
+        ctx.strokeStyle = `rgba(${tone.star},${(tone.line * (1 - d / LINK)).toFixed(3)})`;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+      if (pointer.on) {
+        const d = Math.hypot(pointer.x - a.x, pointer.y - a.y);
+        if (d < REACH) {
+          ctx.strokeStyle = `rgba(${tone.accent},${(0.32 * (1 - d / REACH)).toFixed(3)})`;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(pointer.x, pointer.y);
+          ctx.stroke();
+        }
+      }
+    }
+    for (const p of pts) {
+      const near = pointer.on ? Math.max(0, 1 - Math.hypot(pointer.x - p.x, pointer.y - p.y) / REACH) : 0;
+      ctx.fillStyle = near > 0 ? `rgba(${tone.accent},${(tone.a + near * 0.5).toFixed(3)})` : `rgba(${tone.star},${tone.a})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r + near * 0.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function frame(now) {
+    if (document.hidden || reduced.matches) { running = false; return; }
+    if (now - last >= 32) {
+      step(Math.min(0.05, (now - last) / 1000 || 1 / 30));
+      draw();
+      last = now;
+    }
+    requestAnimationFrame(frame);
+  }
+  function start() {
+    if (running || document.hidden || reduced.matches) return;
+    running = true;
+    last = performance.now();
+    requestAnimationFrame(frame);
+  }
+
+  window.addEventListener('pointermove', (e) => {
+    if (e.pointerType !== 'mouse') return;
+    pointer.x = e.clientX;
+    pointer.y = e.clientY;
+    pointer.on = true;
+  }, { passive: true });
+  document.addEventListener('pointerleave', () => { pointer.on = false; });
+  window.addEventListener('blur', () => { pointer.on = false; });
+  window.addEventListener('resize', resize);
+  window.addEventListener('themechange', () => { readColors(); draw(); });
+  document.addEventListener('visibilitychange', start);
+  reduced.addEventListener('change', () => { draw(); start(); });
+  readColors();
+  resize();
+  start();
 })();
 
 // ------------------------------------------------------------------ the app icon and tab icon
@@ -2169,30 +2437,47 @@ function menuItems(type, item) {
   return items;
 }
 
-function openMenu(btn, viaKeyboard) {
-  const { type, id } = btn.dataset;
-  if (ui.menu && ui.menu.id === id) { closeMenu(); return; }
+// One popover menu serves every button that opens one: each line's "…" and the
+// appearance button. It's anchored to the button by that button's data-fk.
+const menuAnchor = () => ui.menu && document.querySelector(`[data-fk="${CSS.escape(ui.menu.fk)}"]`);
+
+function showMenu(btn, label, html, viaKeyboard) {
+  const fk = btn.dataset.fk;
+  if (ui.menu && ui.menu.fk === fk) { closeMenu(); return; }
   closeMenu(true);
-  const item = itemFor(type, id);
-  if (!item) return;
-  ui.menu = { type, id };
+  ui.menu = { fk, id: btn.dataset.id || null };
   const menu = $('#menu');
-  menu.setAttribute('aria-label', `Actions for ${item.label}`);
-  menu.innerHTML = menuItems(type, item).map((m) => (m.sep
-    ? '<div class="menu-sep" role="separator"></div>'
-    : `<button class="menu-item${m.danger ? ' danger' : ''}" type="button" role="menuitem" tabindex="-1" data-act="${m.act}" data-id="${esc(id)}" data-type="${type}"${m.target ? ` data-target="${esc(m.target)}"` : ''}${m.dir ? ` data-dir="${m.dir}"` : ''}${m.disabled ? ' disabled' : ''}>${icon(m.icon)}${esc(m.label)}</button>`)).join('');
+  menu.setAttribute('aria-label', label);
+  menu.innerHTML = html;
   menu.getAnimations().forEach((a) => a.cancel());
   menu.hidden = false;
   btn.setAttribute('aria-expanded', 'true');
   positionMenu();
   play(menu, [{ opacity: 0, transform: 'scale(0.94)' }, { opacity: 1, transform: 'none' }]);
-  const first = $('.menu-item:not(:disabled)', menu);
+  const first = $('.menu-item[aria-checked="true"]', menu) || $('.menu-item:not(:disabled)', menu);
   if (viaKeyboard && first) first.focus();
   else menu.focus({ preventScroll: true });
 }
 
+function openMenu(btn, viaKeyboard) {
+  const { type, id } = btn.dataset;
+  const item = itemFor(type, id);
+  if (!item) return;
+  const html = menuItems(type, item).map((m) => (m.sep
+    ? '<div class="menu-sep" role="separator"></div>'
+    : `<button class="menu-item${m.danger ? ' danger' : ''}" type="button" role="menuitem" tabindex="-1" data-act="${m.act}" data-id="${esc(id)}" data-type="${type}"${m.target ? ` data-target="${esc(m.target)}"` : ''}${m.dir ? ` data-dir="${m.dir}"` : ''}${m.disabled ? ' disabled' : ''}>${icon(m.icon)}${esc(m.label)}</button>`)).join('');
+  showMenu(btn, `Actions for ${item.label}`, html, viaKeyboard);
+}
+
+const THEMES = [['system', 'Automatic', 'auto-theme'], ['light', 'Light', 'sun'], ['dark', 'Dark', 'moon']];
+function openThemeMenu(btn, viaKeyboard) {
+  const pref = theme.get();
+  const html = THEMES.map(([value, label, glyph]) => `<button class="menu-item" type="button" role="menuitemradio" tabindex="-1" aria-checked="${pref === value}" data-act="theme-set" data-value="${value}">${icon(glyph)}<span style="flex:1">${label}</span><svg class="i check" aria-hidden="true"><use href="#i-check"/></svg></button>`).join('');
+  showMenu(btn, 'Appearance', html, viaKeyboard);
+}
+
 function positionMenu() {
-  const btn = ui.menu && $(`.more[data-id="${CSS.escape(ui.menu.id)}"]`);
+  const btn = menuAnchor();
   if (!btn) { closeMenu(true); return; }
   btn.setAttribute('aria-expanded', 'true');
   const menu = $('#menu');
@@ -2211,10 +2496,9 @@ function positionMenu() {
 
 function closeMenu(silent) {
   if (!ui.menu) return;
-  const id = ui.menu.id;
+  const btn = menuAnchor();
   ui.menu = null;
   const menu = $('#menu');
-  const btn = $(`.more[data-id="${CSS.escape(id)}"]`);
   if (btn) btn.setAttribute('aria-expanded', 'false');
   const hadFocus = menu.contains(document.activeElement) || document.activeElement === menu;
   if (silent || reduced.matches) menu.hidden = true;
@@ -2246,7 +2530,7 @@ $('#menu').addEventListener('pointermove', (e) => {
 });
 document.addEventListener('pointerdown', (e) => {
   if (!ui.menu) return;
-  if ($('#menu').contains(e.target) || e.target.closest('.more')) return;
+  if ($('#menu').contains(e.target) || e.target.closest('[aria-haspopup="menu"]')) return;
   closeMenu(true);
 });
 window.addEventListener('resize', () => { if (ui.menu) positionMenu(); });
@@ -2396,6 +2680,15 @@ async function copyText(text) {
 
 const actions = {
   menu: (id, el, ev) => openMenu(el, Boolean(ev && ev.detail === 0)),
+  'theme-menu': (id, el, ev) => openThemeMenu(el, Boolean(ev && ev.detail === 0)),
+  'theme-set': (id, el) => theme.set(el.dataset.value),
+  'desktop-auto': () => withBusy('desktop', async () => {
+    const r = await api('POST', '/api/desktop/auto');
+    await refresh();
+    if (!r.ok) toast("The desktop app wasn't set up. The system's permission prompt was closed; try again when you're ready.", true);
+    else if (S.desktop.automatic) toast('The desktop app is set up. Quit and reopen it to use your API keys.');
+    else if (S.desktop.method === 'profile') toast('Approve the claude-nonstop profile in System Settings, then reopen the Claude desktop app.');
+  }),
   'add-account': () => openSheet('add-account'),
   'add-key': () => { if (ui.view !== 'relay') showView('relay'); openSheet('add-key'); },
   'close-sheet': () => closeSheet(),
@@ -2484,6 +2777,16 @@ document.addEventListener('click', async (event) => {
     toast(err.message, true);
     render();
   }
+});
+
+$('#theme-seg').addEventListener('keydown', (e) => {
+  if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) return;
+  e.preventDefault();
+  const radios = $$('#theme-seg [role="radio"]');
+  const i = radios.findIndex((r) => r.getAttribute('aria-checked') === 'true');
+  const next = radios[(i + (e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1) + radios.length) % radios.length];
+  theme.set(next.dataset.value);
+  next.focus();
 });
 
 $('.segmented').addEventListener('keydown', (e) => {
@@ -2577,6 +2880,7 @@ setInterval(() => {
   renderFeed();
 }, 20000);
 
+theme.controls();
 refresh().then(() => { refreshLogins(); loadDesktop(); connectEvents(); });
 </script>
 </body>

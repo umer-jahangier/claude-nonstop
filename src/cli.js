@@ -22,7 +22,7 @@ Accounts and keys:
   claude-nonstop accounts login <n>  sign in again
   claude-nonstop accounts check      check which accounts have usage left
   claude-nonstop accounts remove <n> sign out and remove account n
-  claude-nonstop desktop             set up the Claude desktop app to use your keys
+  claude-nonstop desktop             set the Claude desktop app up to use your keys
 
 Setup:
   claude-nonstop setup               everything at once (the installers run this)

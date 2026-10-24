@@ -17,12 +17,13 @@ function allowShortNames(on) {
 }
 
 // True when a Host header names this server: a known name on a port it listens on.
-function hostAllowed(host, ports) {
+// `defaultPort` is the port a browser leaves out: 80 for http, 443 for https.
+function hostAllowed(host, ports, defaultPort = 80) {
   const match = String(host || '')
     .toLowerCase()
     .match(/^(\[[0-9a-f:.]+\]|[^:]+)(?::(\d+))?$/);
   if (!match || !NAMES.has(match[1])) return false;
-  return ports.has(match[2] ? Number(match[2]) : 80);
+  return ports.has(match[2] ? Number(match[2]) : defaultPort);
 }
 
 // A browser Origin header, if present, must be one of our own addresses.
@@ -30,12 +31,16 @@ function originAllowed(origin, ports) {
   if (!origin) return true;
   try {
     const url = new URL(origin);
+    if (url.protocol === 'https:') return hostAllowed(url.host, ports, 443);
     return url.protocol === 'http:' && hostAllowed(url.host, ports);
   } catch {
     return false;
   }
 }
 
+// True for the short names, which are the ones served over HTTPS.
+const isShortName = (host) => hostsfile.NAMES.includes(String(host || '').toLowerCase().replace(/:\d+$/, ''));
+
 const isLoopback = (address) => address === '127.0.0.1' || address === '::1' || address === '::ffff:127.0.0.1';
 
-module.exports = { FRIENDLY_HOST, allowShortNames, hostAllowed, originAllowed, isLoopback };
+module.exports = { FRIENDLY_HOST, allowShortNames, hostAllowed, originAllowed, isShortName, isLoopback };
