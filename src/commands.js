@@ -249,8 +249,13 @@ async function signIn(account, bin) {
   out(`Sign in to "${account.label}" in the browser window that opens (Anthropic's own sign-in page).`);
   const code = await claude.runInteractive(bin, accounts.LOGIN_ARGS, accounts.env(account));
   state.forgetAccount(account.id);
-  if (code !== 0) say(`sign-in didn't finish. Try again with \`claude-nonstop accounts login ${account.label}\`.`);
-  return code;
+  if (code !== 0) {
+    say(`sign-in didn't finish. Try again with \`claude-nonstop accounts login ${account.label}\`.`);
+    return code;
+  }
+  const check = await accounts.probe(account, bin);
+  out(`Signed in to "${account.label}": ${check.ok ? 'it has usage left' : check.reason}`);
+  return 0;
 }
 
 async function accountsCommand([sub, ...rest] = []) {

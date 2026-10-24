@@ -21,6 +21,7 @@ const state = require('./state');
 const gateway = require('./gateway');
 const ui = require('./ui');
 const events = require('./events');
+const checks = require('./checks');
 const hostsfile = require('./hostsfile');
 const tls = require('./tls');
 const { FRIENDLY_HOST, allowShortNames, hostAllowed, isShortName, isLoopback } = require('./hosts');
@@ -191,6 +192,10 @@ async function serve({ port } = {}) {
     if (now && now !== lastCurrent) events.emit('current', { label: now });
     lastCurrent = now;
   });
+
+  // Find out where every account and key stands. The gateway starts at login, so give the
+  // network a few seconds to come up first.
+  if (process.env.CLAUDE_NONSTOP_NO_STARTUP_CHECK !== '1') setTimeout(() => checks.all(), 5000).unref();
 
   const stop = (code = 0) => {
     const info = readJson(paths.SERVER, null);

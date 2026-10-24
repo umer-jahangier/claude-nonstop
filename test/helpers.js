@@ -28,6 +28,7 @@ function isolate() {
     CLAUDE_NONSTOP_HOSTS_FILE: path.join(root, 'hosts'),
     // Tests never touch the system's trusted roots or the desktop app's managed settings.
     CLAUDE_NONSTOP_NO_TLS: '1',
+    CLAUDE_NONSTOP_NO_STARTUP_CHECK: '1',
     CLAUDE_NONSTOP_DESKTOP_MANAGED: '0',
   };
   for (const dir of [env.HOME, env.CLAUDE_CONFIG_DIR]) fs.mkdirSync(dir, { recursive: true });

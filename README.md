@@ -89,8 +89,10 @@ Say no to the short address and the page lives at `http://claude-nonstop.localho
 ## Set it up in two minutes
 
 1. **Open the web page.** The installer opens it for you. Later, run `claude-nonstop ui` (it signs you in with a one-time link, so only you can use the page), or go to `https://claude.nonstop`.
-2. **Add your accounts.** Your normal Claude Code login is already there as **Main account**. For each extra Claude subscription, click **Add Account…**, give it a name, and sign in on Anthropic's page that opens in your browser.
+2. **Add your accounts.** Your normal Claude Code login is already there as **Main account**. For each extra Claude subscription, click **Add Account…**, give it a name, and sign in on Anthropic's page that opens in your browser. As soon as you're signed in, the page checks whether the account has usage left.
 3. **Add your API keys.** Click **Add API Key…** and paste a key from [platform.claude.com/settings/keys](https://platform.claude.com/settings/keys). Each key is tested as soon as you save it.
+
+You never need to press Check. The gateway checks every account and key when it starts, and the page checks again whenever you open it or switch back to it. Anything with a clear answer from the last 5 minutes is skipped. While a check runs, its row shows **Checking…**.
 
 That's it. From now on, just run `claude`:
 

@@ -23,6 +23,7 @@ const shell = require('./shell');
 const { sameToken, readBody } = require('./gateway');
 const hosts = require('./hosts');
 const events = require('./events');
+const checks = require('./checks');
 const { log } = require('./files');
 const pkg = require('../package.json');
 
@@ -116,6 +117,7 @@ function snapshot(ctx) {
     current: s.current,
     currentAt: s.currentAt,
     claudeFound: Boolean(claude.findClaude()),
+    checking: checks.checking(),
     accounts: cfg.accounts.map((a) => ({
       id: a.id,
       label: a.label,
@@ -154,13 +156,13 @@ async function addKey(body) {
     return created;
   });
   log(`added API key "${entry.label}"`);
-  return { id: entry.id, check: await keys.check(entry, config.load()) };
+  return { id: entry.id, check: await checks.key(entry) };
 }
 
 async function checkKey(id) {
   const entry = vault.load().keys.find((k) => k.id === id);
   if (!entry) throw httpError(404, 'That key no longer exists.');
-  const result = await keys.check(entry, config.load());
+  const result = await checks.key(entry);
   events.emit('check', { label: entry.label, verdict: result.verdict, status: result.status });
   return result;
 }
@@ -168,7 +170,7 @@ async function checkKey(id) {
 async function checkAllKeys() {
   const cfg = config.load();
   const results = {};
-  for (const entry of vault.load().keys) results[entry.id] = await keys.check(entry, cfg);
+  for (const entry of vault.load().keys) results[entry.id] = await checks.key(entry, cfg);
   return results;
 }
 
@@ -212,6 +214,8 @@ function startLogin(account, bin) {
     job.ok = code === 0;
     state.forgetAccount(account.id);
     log(`sign-in for "${account.label}" ${job.ok ? 'finished' : `ended with code ${code}`}`);
+    // Find out straight away whether the newly signed-in account has usage left.
+    if (job.ok) checks.account(account, bin);
   });
   // A sign-in left open in the browser is abandoned after 15 minutes.
   setTimeout(() => {
@@ -255,7 +259,14 @@ async function accountStatuses() {
 }
 
 function checkAccount(id) {
-  return accounts.probe(findAccount(id), requireClaude());
+  return checks.account(findAccount(id), requireClaude());
+}
+
+// The page asks for this whenever it opens; anything with a clear answer from the last
+// few minutes is left alone. Returns at once: the page hears when each check ends.
+function startChecks() {
+  checks.all({ freshMs: 5 * 60000 });
+  return { checking: checks.checking() };
 }
 
 function editAccount(id, body) {
@@ -337,6 +348,7 @@ function desktopSetup(ctx) {
 async function route(method, pathname, body, ctx) {
   const [, area, id, action] = pathname.split('/').filter(Boolean);
   if (area === 'state' && method === 'GET') return snapshot(ctx);
+  if (area === 'checks' && method === 'POST' && !id) return startChecks();
   if (area === 'keys') {
     if (method === 'POST' && !id) return addKey(body);
     if (method === 'POST' && id === 'check-all') return checkAllKeys();

@@ -99,6 +99,15 @@ test('adds an account, signs it in through Claude Code, and reports its status',
   }
   assert.equal(view.done, true);
   assert.equal(view.ok, true);
+  // Signing in is followed by a usage check without anyone asking for one.
+  let work;
+  for (let i = 0; i < 50; i++) {
+    const s = JSON.parse((await apiCall('GET', '/api/state')).body);
+    work = s.accounts.find((a) => a.id === id);
+    if (work.lastCheck && !s.checking.includes(id)) break;
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  assert.equal(work.lastCheck.ok, true, 'checked by itself after signing in');
   const statuses = JSON.parse((await apiCall('GET', '/api/accounts/status')).body);
   assert.equal(statuses[id].loggedIn, true);
   const check = JSON.parse((await apiCall('POST', `/api/accounts/${id}/check`)).body);

@@ -883,6 +883,8 @@ let logins = {};
 let desktopInfo = null;
 let requestsToday = 0;
 const busy = new Set();
+// Lines the gateway is checking in the background (on start, on open, after adding one).
+let checking = new Set();
 const ui = { view: 'relay', menu: null, sheet: null, renaming: null, renameValue: '', renameFresh: false, showToken: false, feedAll: false, job: null, jobView: null };
 
 async function api(method, path, body) {
@@ -1104,7 +1106,7 @@ function rowHtml(type, item, liveId) {
     : `<span class="row-title">${label}</span>`;
   let state;
   let word;
-  if (busy.has(item.id) || signingIn) {
+  if (busy.has(item.id) || checking.has(item.id) || signingIn) {
     word = signingIn ? 'Signing in…' : type === 'account' ? 'Checking…' : 'Testing…';
     state = `<span class="state">${SPINNER}<span class="state-word">${word}</span></span>`;
   } else {
@@ -2308,6 +2310,11 @@ function connectEvents() {
   es.onmessage = (m) => {
     let e;
     try { e = JSON.parse(m.data); } catch { return; }
+    if (e.type === 'checks') {
+      // The row keeps its spinner until the refresh brings in the new result.
+      if (e.checking) { checking.add(e.id); render(); } else scheduleRefresh();
+      return;
+    }
     addFeed(e);
     if (e.backlog) return;
     if (e.type === 'request') {
@@ -2331,11 +2338,21 @@ function connectEvents() {
 async function refresh() {
   try {
     S = await api('GET', '/api/state');
+    checking = new Set(S.checking || []);
     if (S.traffic && typeof S.traffic.requestsToday === 'number') requestsToday = Math.max(requestsToday, S.traffic.requestsToday);
     render();
   } catch (err) {
     toast(err.message, true);
   }
+}
+
+// Asks the gateway to check every line that hasn't had a clear answer in the last few
+// minutes, then shows which ones it's checking.
+async function startChecks() {
+  try {
+    await api('POST', '/api/checks');
+  } catch {}
+  await refresh();
 }
 
 async function refreshLogins() {
@@ -2874,7 +2891,7 @@ document.addEventListener('submit', async (event) => {
 
 const toolbar = $('#toolbar');
 window.addEventListener('scroll', () => toolbar.classList.toggle('scrolled', window.scrollY > 2), { passive: true });
-window.addEventListener('focus', () => { refresh(); refreshLogins(); });
+window.addEventListener('focus', () => { startChecks(); refreshLogins(); });
 setInterval(() => {
   const typing = document.activeElement && /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);
   if (!typing && !document.hidden && !ui.menu) refresh();
@@ -2882,7 +2899,7 @@ setInterval(() => {
 }, 20000);
 
 theme.controls();
-refresh().then(() => { refreshLogins(); loadDesktop(); connectEvents(); });
+refresh().then(() => { refreshLogins(); loadDesktop(); connectEvents(); startChecks(); });
 </script>
 </body>
 </html>

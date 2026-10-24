@@ -30,9 +30,14 @@ function emit(type, data = {}) {
   return event;
 }
 
+// Tells open pages that something changed, without adding it to the activity feed.
+function notify(type, data = {}) {
+  bus.emit('event', { type, at: Date.now(), ...data });
+}
+
 function stats() {
   rollDay();
   return { requestsToday: today.requests, errorsToday: today.errors, byKey: { ...today.byKey } };
 }
 
-module.exports = { bus, emit, stats, recent: () => recent.slice() };
+module.exports = { bus, emit, notify, stats, recent: () => recent.slice() };
