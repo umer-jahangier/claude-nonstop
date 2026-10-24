@@ -16,6 +16,9 @@ const { ensureHome, readJson } = require('./files');
 const LABEL = 'dev.claude-nonstop.gateway';
 const RUN_KEY = 'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run';
 
+// A short pause without a busy loop or a callback.
+const sleep = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+
 const run = (cmd, args) => {
   const r = spawnSync(cmd, args, { encoding: 'utf8', windowsHide: true, timeout: 30000 });
   return { ok: !r.error && r.status === 0, out: `${r.stdout || ''}${r.stderr || ''}`.trim() };
@@ -65,9 +68,19 @@ ${Object.entries(env)
 `;
     fs.mkdirSync(path.dirname(this.file), { recursive: true });
     fs.writeFileSync(this.file, plist);
-    run('launchctl', ['bootout', `${this.domain()}/${LABEL}`]);
-    const r = run('launchctl', ['bootstrap', this.domain(), this.file]);
-    if (!r.ok && !run('launchctl', ['load', '-w', this.file]).ok) throw new Error(`launchctl could not start the gateway: ${r.out}`);
+    const target = `${this.domain()}/${LABEL}`;
+    const loaded = () => run('launchctl', ['print', target]).ok;
+    // bootout returns before launchd has finished removing the old job, and bootstrapping
+    // into that gap fails, so wait for it to go and retry the start a few times.
+    run('launchctl', ['bootout', target]);
+    for (let i = 0; i < 50 && loaded(); i++) sleep(100);
+    let r = { ok: false, out: '' };
+    for (let i = 0; i < 5 && !r.ok; i++) {
+      r = run('launchctl', ['bootstrap', this.domain(), this.file]);
+      if (!r.ok) sleep(400);
+    }
+    if (!r.ok) run('launchctl', ['load', '-w', this.file]);
+    if (!loaded()) throw new Error(`launchctl could not start the gateway: ${r.out}`);
     return `LaunchAgent ${this.file}`;
   },
   uninstall() {
