@@ -134,8 +134,10 @@ function splitBetas(value) {
   return [...new Set(String(value || '').split(',').map((b) => b.trim()).filter(Boolean))];
 }
 
-// Claude Code's identity on an outgoing request, whoever sent it: the CLI user agent, x-app
-// and the claude-code beta. OAuth flags go unless the request carries a sign-in.
+// Claude Code's identity on an outgoing request, whoever sent it: the CLI user agent and
+// x-app. On an API key it carries the claude-code beta (the way keys are tested, keys.js);
+// on a subscription sign-in it carries the OAuth beta instead, which is what Claude Code
+// itself sends on an account: the claude-code beta is refused there.
 function asClaudeCode(headers, { oauth = false } = {}) {
   const out = {};
   for (const [name, value] of Object.entries(headers)) {
@@ -143,7 +145,7 @@ function asClaudeCode(headers, { oauth = false } = {}) {
     if (!DROP_REQUEST.has(lower) && !IDENTITY.has(lower)) out[lower] = value;
   }
   const betas = splitBetas(out['anthropic-beta']).filter((b) => !/^oauth-/i.test(b) && !/^claude-code(?:-|$)/i.test(b));
-  out['anthropic-beta'] = [...(oauth ? [OAUTH_BETA] : []), CLAUDE_CODE_BETA, ...betas].join(',');
+  out['anthropic-beta'] = [oauth ? OAUTH_BETA : CLAUDE_CODE_BETA, ...betas].join(',');
   out['user-agent'] = CLI_USER_AGENT;
   out['x-app'] = 'cli';
   out['accept-encoding'] = 'identity';

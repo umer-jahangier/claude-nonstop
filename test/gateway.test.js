@@ -204,7 +204,7 @@ test('the desktop app runs on your subscription accounts first, in your order, a
     assert.ok(api.requests.every((q) => !q.key));
     const second = api.requests[1];
     assert.match(second.headers['user-agent'], /^claude-cli\//, 'a subscription sign-in goes out as Claude Code');
-    assert.equal(second.headers['anthropic-beta'], 'oauth-2025-04-20,claude-code-20250219');
+    assert.equal(second.headers['anthropic-beta'], 'oauth-2025-04-20', 'the OAuth beta only: the claude-code beta is refused on a sign-in');
     const s = state.load();
     assert.equal(s.accounts['acct-limited-0'].ok, false, 'the limit is remembered');
     assert.match(s.desktop.label, /ok account 2/);
