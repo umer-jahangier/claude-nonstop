@@ -16,6 +16,7 @@ const state = require('./state');
 const claude = require('./claude');
 const keystore = require('./keystore');
 const desktop = require('./desktop');
+const marketplace = require('./marketplace');
 const hostsfile = require('./hostsfile');
 const system = require('./system');
 const tls = require('./tls');
@@ -106,6 +107,9 @@ async function serve(args) {
     service.startDetached();
     return 0;
   }
+  try {
+    marketplace.ensure();
+  } catch {}
   try {
     await require('./server').serve();
   } catch (err) {
@@ -445,6 +449,9 @@ async function setup(args = []) {
     }
   }
   desktop.write(config.load(), v);
+  const plugins = marketplace.ensure();
+  if (plugins === 'added') out("- Anthropic's plugin marketplace is listed in Claude Code's settings, so plugins work the same in the desktop app.");
+  else if (plugins === 'unreadable') out(`! ${marketplace.settingsFile()} isn't valid JSON, so Anthropic's plugin marketplace wasn't added. Fix the file and run \`claude-nonstop setup\` again.`);
   if (!args.includes('--no-shell')) {
     if (yes || (await prompt.confirm('Make plain `claude` go through claude-nonstop in your terminals?', true))) {
       try {
