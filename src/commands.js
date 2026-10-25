@@ -10,6 +10,7 @@ const paths = require('./paths');
 const config = require('./config');
 const vault = require('./vault');
 const keys = require('./keys');
+const relay = require('./relay');
 const accounts = require('./accounts');
 const state = require('./state');
 const claude = require('./claude');
@@ -159,12 +160,56 @@ async function status() {
   out(`  Desktop app        ${!d.installed ? 'not installed' : d.automatic ? 'set up to use the gateway' : 'not set up yet (run `claude-nonstop desktop`)'}`);
   out(`  In use             ${s.current || 'nothing yet'}`);
   out('');
-  out('Subscription accounts, tried in this order:');
-  cfg.accounts.forEach((a, i) => out(`  ${i + 1}. ${a.label}${a.enabled === false ? ' (off)' : ''}: ${describeAccountCheck(s.accounts[a.id])}`));
+  out('Your accounts and API keys, tried in this order:');
+  relay.lines(cfg, v.keys).forEach((l, i) => out(`  ${describeLine(cfg, s, l, i)}`));
+  if (!v.keys.length) out('  (no API keys yet. Add some with `claude-nonstop ui` or `claude-nonstop keys add`.)');
   out('');
-  out('API keys, tried after the accounts:');
-  if (!v.keys.length) out('  none yet. Add some with `claude-nonstop ui` or `claude-nonstop keys add`.');
-  v.keys.forEach((k, i) => out(`  ${i + 1}. ${k.label}  ${keys.mask(k.key)}  ${describeKeyCheck(s.keys[k.id])}`));
+  out('Change the order with `claude-nonstop move <n> up|down`, or drag lines in `claude-nonstop ui`.');
+  return 0;
+}
+
+function describeLine(cfg, s, l, i) {
+  const paused = relay.isPaused(cfg, l.type, l.item) ? ' (paused)' : '';
+  const what = l.type === 'account'
+    ? `${l.item.label} (account)${paused}: ${describeAccountCheck(s.accounts[l.item.id])}`
+    : `${l.item.label} (API key ${keys.mask(l.item.key)})${paused}: ${describeKeyCheck(s.keys[l.item.id])}`;
+  return `${i + 1}. ${what}`;
+}
+
+// ---------------------------------------------------------------- the relay order
+
+// `move <n> up|down`, `pause <n>`, `resume <n>`: n is a line's number in `status` or its name.
+function pickLine(ref) {
+  const all = relay.lines(config.load(), vault.loadWithTokens().keys);
+  const n = Number(ref);
+  const line = Number.isInteger(n) && n >= 1 ? all[n - 1] : all.find((l) => l.item.label.toLowerCase() === String(ref || '').toLowerCase());
+  if (!line) throw new Error(`no account or key "${ref || ''}". See the numbers with \`claude-nonstop status\`.`);
+  return line;
+}
+
+function moveCommand([ref, direction] = []) {
+  if (direction !== 'up' && direction !== 'down') {
+    say('usage: claude-nonstop move <n> up|down');
+    return 1;
+  }
+  const line = pickLine(ref);
+  const all = vault.load().keys;
+  config.update((c) => (c.order = relay.moved(c, all, line.type, line.item.id, direction)));
+  const v = vault.loadWithTokens();
+  const cfg = config.load();
+  const s = state.load();
+  out('Your accounts and API keys, tried in this order:');
+  relay.lines(cfg, v.keys).forEach((l, i) => out(`  ${describeLine(cfg, s, l, i)}`));
+  return 0;
+}
+
+function pauseCommand(paused, [ref] = []) {
+  const line = pickLine(ref);
+  config.update((c) => {
+    if (line.type === 'account') c.accounts.find((a) => a.id === line.item.id).enabled = !paused;
+    else c.pausedKeys = [...(c.pausedKeys || []).filter((k) => k !== line.item.id), ...(paused ? [line.item.id] : [])];
+  });
+  out(paused ? `${line.item.label} is paused. It stays saved but isn't used until you resume it.` : `${line.item.label} is back in use.`);
   return 0;
 }
 
@@ -551,6 +596,9 @@ module.exports = {
   status,
   keys: keysCommand,
   accounts: accountsCommand,
+  move: moveCommand,
+  pause: (args) => pauseCommand(true, args),
+  resume: (args) => pauseCommand(false, args),
   desktop: desktopCommand,
   setup,
   service: serviceCommand,

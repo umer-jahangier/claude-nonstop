@@ -75,16 +75,33 @@ test('refuses duplicates, subscription tokens and things that are not keys', asy
   assert.equal((await apiCall('POST', '/api/keys', { key: 'nope' })).status, 400);
 });
 
-test('reorders, renames and removes keys', async () => {
+test('reorders, pauses, renames and removes keys, mixing them with accounts', async () => {
   let s = JSON.parse((await apiCall('GET', '/api/state')).body);
-  const team = s.keys[1];
+  const [personal, team] = s.keys;
+  assert.deepEqual(s.order, ['account:default', `key:${personal.id}`, `key:${team.id}`]);
+  await apiCall('POST', `/api/keys/${team.id}/move`, { direction: 'up' });
   await apiCall('POST', `/api/keys/${team.id}/move`, { direction: 'up' });
   await apiCall('PATCH', `/api/keys/${team.id}`, { label: 'Team budget' });
   s = JSON.parse((await apiCall('GET', '/api/state')).body);
-  assert.deepEqual(s.keys.map((k) => k.label), ['Team budget', 'Personal']);
+  assert.deepEqual(s.order, [`key:${team.id}`, 'account:default', `key:${personal.id}`], 'a key can go before an account');
+  assert.equal(s.keys.find((k) => k.id === team.id).label, 'Team budget');
+
+  const reversed = [...s.order].reverse();
+  assert.equal((await apiCall('PUT', '/api/order', { order: reversed })).status, 200);
+  assert.equal((await apiCall('PUT', '/api/order', { order: reversed.slice(1) })).status, 409, 'an order missing a line is refused');
+  s = JSON.parse((await apiCall('GET', '/api/state')).body);
+  assert.deepEqual(s.order, reversed);
+
+  assert.equal((await apiCall('PATCH', `/api/keys/${personal.id}`, { enabled: false })).status, 200);
+  s = JSON.parse((await apiCall('GET', '/api/state')).body);
+  assert.equal(s.keys.find((k) => k.id === personal.id).enabled, false, 'paused, but still saved');
+  assert.equal(s.order.length, 3);
+  await apiCall('PATCH', `/api/keys/${personal.id}`, { enabled: true });
+
   await apiCall('DELETE', `/api/keys/${team.id}`);
   s = JSON.parse((await apiCall('GET', '/api/state')).body);
   assert.deepEqual(s.keys.map((k) => k.label), ['Personal']);
+  assert.deepEqual(s.order, [`key:${personal.id}`, 'account:default']);
 });
 
 test('adds an account, signs it in through Claude Code, and reports its status', async () => {

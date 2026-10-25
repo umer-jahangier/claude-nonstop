@@ -134,7 +134,7 @@ test('a pinned account is tried first', async () => {
   }
 });
 
-test('a pinned API key skips the accounts and goes first', async () => {
+test('a pinned API key goes before every account', async () => {
   reset();
   config.update((c) => (c.pinned = { type: 'key', id: keys.fingerprint(testKey('ok')) }));
   try {
@@ -154,5 +154,33 @@ test('says what to do when every key is used up', async () => {
   });
   const r = await runCli(['--api'], { env });
   assert.equal(r.code, 1);
-  assert.match(r.stderr, /every API key is used up/);
+  assert.match(r.stderr, /"Empty" is used up right now/);
+});
+
+test('a key placed before the accounts is used first, and paused lines are skipped', async () => {
+  reset();
+  vault.update((v) => {
+    v.keys = [keys.newEntry(testKey('credit'), 'Empty', 1), keys.newEntry(testKey('ok'), 'Personal', 2)];
+  });
+  const [empty, personal] = vault.load().keys;
+  config.update((c) => {
+    c.order = [`key:${personal.id}`, 'account:default', `key:${empty.id}`];
+  });
+  try {
+    let r = await runCli(['run'], { env });
+    assert.equal(r.code, 0, r.stderr);
+    assert.equal(readFakeLog().filter((e) => e.kind === 'probe').length, 0, 'no account was asked first');
+    assert.equal(sessions()[0].helperOutput, `${testKey('ok')}\n`);
+
+    reset();
+    config.update((c) => (c.pausedKeys = [personal.id]));
+    r = await runCli(['run'], { env });
+    assert.equal(r.code, 0, r.stderr);
+    assert.equal(sessions()[0].account, 'default', 'the paused key was passed over');
+  } finally {
+    config.update((c) => {
+      delete c.order;
+      delete c.pausedKeys;
+    });
+  }
 });

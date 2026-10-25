@@ -138,31 +138,49 @@ function supervisable(args) {
 
 // ---------------------------------------------------------------- lines
 
-const describe = (line) => (line.kind === 'account' ? line.account.label : 'your API keys');
+const describe = (line) => {
+  if (line.kind === 'account') return line.account.label;
+  if (line.keys.length === 1) return `API key "${line.keys[0].label}"`;
+  return `your API keys ${line.keys.map((k) => `"${k.label}"`).join(', ')}`;
+};
+
+// Two lines are the same if they're the same account, or groups sharing a key.
+const sameLine = (a, b) =>
+  a.kind === b.kind && (a.kind === 'account' ? a.account.id === b.account.id : a.keys.some((k) => b.keys.some((x) => x.id === k.id)));
 
 function recentlyLimited(account, cfg) {
   const r = state.load().accounts[account.id];
   return Boolean(r && !r.ok && accounts.isLimitReason(r.reason) && Date.now() - r.at < cfg.accountRecheckMinutes * 60000);
 }
 
-// Keys not waiting out a cooldown. The gateway marks a key used up the moment it fails.
-function freshKeys(cfg) {
-  return vault.load().keys.filter((k) => !state.isCoolingDown(k.id, cfg.cooldownMinutes));
+// A group's keys that are still in use and not waiting out a cooldown. The gateway marks a
+// key used up the moment it fails.
+function freshKeys(group, cfg) {
+  const ids = new Set(group.keys.map((k) => k.id));
+  return relay.keyOrder(cfg, vault.load().keys).filter((k) => ids.has(k.id) && !state.isCoolingDown(k.id, cfg.cooldownMinutes));
 }
 
-// The next line with usage, in relay order, other than the one that just stopped.
-// `liveKeyCheck` tests keys for real instead of trusting their cooldowns.
+// The next line with usage, in your relay order, other than the one that just stopped.
+// `liveKeyCheck` tests keys for real instead of trusting their cooldowns, and then also
+// counts the stopped group of keys once one of them works again.
 async function findNext(line, { cfg, bin, mode, liveKeyCheck = false }) {
-  if (mode !== 'api') {
-    const candidates = relay.accountOrder(cfg).filter((a) => !(line.kind === 'account' && a.id === line.account.id) && !recentlyLimited(a, cfg));
-    const results = await Promise.all(candidates.map((a) => accounts.probe(a, bin)));
-    const i = results.findIndex((r) => r.ok);
-    if (i >= 0) return { kind: 'account', account: candidates[i] };
+  const candidates = relay
+    .groups(cfg, vault.load().keys)
+    .filter((g) => !sameLine(g, line) && (g.kind === 'account' ? mode !== 'api' : mode !== 'sub'));
+  const probes = await Promise.all(candidates.map((g) => (g.kind === 'account' && !recentlyLimited(g.account, cfg) ? accounts.probe(g.account, bin) : null)));
+  for (const [i, g] of candidates.entries()) {
+    if (g.kind === 'account') {
+      if (probes[i] && probes[i].ok) return g;
+      continue;
+    }
+    const fresh = freshKeys(g, cfg);
+    if (fresh.length && (!liveKeyCheck || (await keys.pick(fresh, cfg)))) return g;
   }
-  if (mode === 'sub') return null;
-  if (line.kind === 'keys' && !liveKeyCheck) return null;
-  if (liveKeyCheck) return (await keys.pick(relay.keyOrder(cfg, freshKeys(cfg)), cfg)) ? { kind: 'keys' } : null;
-  return freshKeys(cfg).length ? { kind: 'keys' } : null;
+  if (line.kind === 'keys' && liveKeyCheck) {
+    const fresh = freshKeys(line, cfg);
+    if (fresh.length && (await keys.pick(fresh, cfg))) return { kind: 'keys', keys: fresh };
+  }
+  return null;
 }
 
 // Whether the stopped turn really ran out of usage (and not, say, a passing rate limit).
@@ -171,7 +189,10 @@ async function confirmLimit(line, event, { cfg, bin }) {
     const r = await accounts.probe(line.account, bin);
     return r.ok ? null : r.reason || event.message || 'its usage limit';
   }
-  return freshKeys(cfg).length ? null : 'every API key is used up';
+  // Without the gateway nothing marks a key used up as it fails, so test what's left.
+  const fresh = freshKeys(line, cfg);
+  if (fresh.length && (await keys.pick(fresh, cfg))) return null;
+  return `${line.keys.length > 1 ? 'every one of its keys is' : 'it is'} used up`;
 }
 
 // ---------------------------------------------------------------- one session

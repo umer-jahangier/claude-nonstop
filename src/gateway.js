@@ -31,7 +31,20 @@ const DROP_REQUEST = new Set([
   'accept-encoding',
   'authorization',
   'x-api-key',
+  'x-claude-nonstop-keys',
 ]);
+// A CLI session runs on one group of keys from your relay order (see relay.js) and names
+// them in this header, which Claude Code sends from ANTHROPIC_CUSTOM_HEADERS. Requests
+// without it (the desktop app) may use every key that isn't paused.
+const KEYS_HEADER = 'x-claude-nonstop-keys';
+
+function keysFor(req, cfg, all) {
+  const order = relay.keyOrder(cfg, all);
+  const named = req.headers[KEYS_HEADER];
+  if (!named) return order;
+  const ids = new Set(String(named).split(',').map((s) => s.trim()).filter(Boolean));
+  return order.filter((k) => ids.has(k.id));
+}
 const DROP_RESPONSE = new Set(['connection', 'keep-alive', 'transfer-encoding', 'content-length']);
 const agents = { 'http:': new http.Agent({ keepAlive: true }), 'https:': new https.Agent({ keepAlive: true }) };
 
@@ -130,7 +143,7 @@ async function handle(req, res, ctx) {
     sendError(res, 413, 'request_too_large', 'claude-nonstop gateway: request body is too large');
     return;
   }
-  for (const entry of relay.keyOrder(cfg, vault.keys)) {
+  for (const entry of keysFor(req, cfg, vault.keys)) {
     if (state.isCoolingDown(entry.id, cfg.cooldownMinutes)) continue;
     const { res: upRes, upstream, error } = await forward(cfg, req, body, entry.key);
     if (error) {
@@ -170,4 +183,4 @@ async function handle(req, res, ctx) {
   );
 }
 
-module.exports = { handle, sameToken, sendError, readBody };
+module.exports = { handle, sameToken, sendError, readBody, KEYS_HEADER };

@@ -11,6 +11,8 @@
 account 1  →  account 2  →  …  →  API key 1  →  API key 2  →  …
 ```
 
+That's the default order. Mix it however you like (say Work account, then a key, then Main account), and pause any account or key you want kept but not used.
+
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="docs/screenshot-light.jpg">
   <img alt="The claude-nonstop web page: the line in use, subscription accounts and API keys in grouped lists, a cable plugged into the live line, a globe showing requests travelling to Anthropic, and live activity." src="docs/screenshot-dark.jpg">
@@ -120,8 +122,7 @@ claude-nonstop: using Work (subscription)
 | --- | --- |
 | Status card | The line in use (or the one your next session starts on), what takes over if it runs out, and whether you're on **Automatic** |
 | Alerts | Anything that needs you: an account that isn't signed in, a used-up key (with a **Top Up** link), no keys yet |
-| Subscription accounts | Your accounts in the order they're tried. Each has an on/off switch and a **…** menu: Use This Account, Check Usage, Sign In Again, Rename, Move Up/Down, Remove |
-| API keys | Your keys in order, with Use This Key, Test Key, Rename, Move Up/Down, Remove. **Test All** checks every key |
+| Accounts and API keys | One list, tried top to bottom. Drag a line by its **≡** handle (or focus it and press ↑/↓) to mix accounts and keys in any order. Each line has a switch to pause it and a **…** menu: Use This Account/Key, Check Usage or Test Key, Sign In Again, Rename, Pause/Resume, Move Up/Down, Remove. **Test All Keys** tests every key |
 | The cable | Plugged into the line in use. Drag its plug onto another line to switch to it; the plug's light blinks for every request |
 | Globe | A light travels from your computer to Anthropic and back for every gateway request. Drag it to spin it |
 | Activity | Every request, key switch and new session, live |
@@ -161,7 +162,9 @@ Installed the desktop app later? Run `claude-nonstop desktop`, or click **Set Up
 | `claude-nonstop --api [args]` | Use API keys only |
 | `claude-nonstop --sub [args]` | Use subscription accounts only |
 | `claude-nonstop ui` | Open the web page |
-| `claude-nonstop status` | What's set up and what's in use |
+| `claude-nonstop status` | What's set up, what's in use, and your order |
+| `claude-nonstop move <n> up\|down` | Move account or key n (its number in `status`) one place |
+| `claude-nonstop pause <n>` / `resume <n>` | Stop using account or key n without removing it, or use it again |
 | `claude-nonstop keys` | Test every API key |
 | `claude-nonstop keys add [name]` | Save a key (typed hidden, or piped on stdin) |
 | `claude-nonstop keys remove <n>` | Remove key number n |
@@ -181,6 +184,8 @@ Installed the desktop app later? Run `claude-nonstop desktop`, or click **Set Up
 Claude Code's own subcommands (`claude mcp`, `claude doctor`, `claude update`, `claude --version`, …) pass straight through.
 
 ## How it works
+
+**Your order.** Accounts and keys sit in one list that you arrange, for example Work account, then a key, then Main account. A session starts on the first line with usage left and moves down the list as lines run out. A paused line keeps its place and its sign-in or key, but is skipped until you resume it. Keys next to each other in the list work as a team: when one runs out, the gateway sends the request again on the next one, mid-request. When the whole team is out, the session moves on to the line after it.
 
 **Choosing an account.** Before a session starts, claude-nonstop asks each account, in order, whether it has usage left. Each check is one tiny Haiku request run by Claude Code itself. An account that hit its limit is skipped for 10 minutes before it's asked again (change this in **Settings**).
 

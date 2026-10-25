@@ -3,8 +3,8 @@
 const pkg = require('../package.json');
 
 const HELP = `claude-nonstop ${pkg.version}
-Keeps Claude Code working through plan limits: it starts each session on your first
-subscription account with usage left, then on your API keys, one by one.
+Keeps Claude Code working through plan limits: it starts each session on the first of
+your subscription accounts and API keys with usage left, in the order you choose.
 
 Run Claude Code (after \`claude-nonstop setup\`, plain \`claude\` does this too):
   claude-nonstop [claude args]       first account or key with usage left
@@ -13,7 +13,10 @@ Run Claude Code (after \`claude-nonstop setup\`, plain \`claude\` does this too)
 
 Accounts and keys:
   claude-nonstop ui                  open the web UI: add, sign in, test, reorder
-  claude-nonstop status              what's set up and what's in use
+  claude-nonstop status              what's set up, what's in use, and your order
+  claude-nonstop move <n> up|down    move account or key n in the order
+  claude-nonstop pause <n>           keep account or key n but stop using it
+  claude-nonstop resume <n>          use it again
   claude-nonstop keys                check every API key
   claude-nonstop keys add [label]    save a key (typed hidden, or piped on stdin)
   claude-nonstop keys remove <n>     forget key number n
@@ -64,6 +67,9 @@ async function main(argv) {
     case 'status':
     case 'keys':
     case 'accounts':
+    case 'move':
+    case 'pause':
+    case 'resume':
     case 'desktop':
     case 'setup':
     case 'service':

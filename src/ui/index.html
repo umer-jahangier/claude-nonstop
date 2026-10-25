@@ -286,7 +286,15 @@ main { max-width: 1080px; margin: 0 auto; padding: 12px 20px 72px 44px; }
 .row-title { font-size: 0.9375rem; line-height: 1.33; font-weight: 500; letter-spacing: -0.015em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row-sub { font-size: 0.8125rem; line-height: 1.33; color: var(--label-2); letter-spacing: -0.003em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row-why { font-size: 0.8125rem; line-height: 1.38; color: var(--label-2); letter-spacing: -0.003em; overflow-wrap: anywhere; }
-.row[data-off] .row-title, .row[data-off] .symbol { opacity: 0.45; }
+.row[data-off] .row-title, .row[data-off] .symbol, .row[data-off] .row-sub { opacity: 0.45; }
+.grip { cursor: grab; touch-action: none; margin-right: -4px; }
+.grip:active { cursor: grabbing; }
+.inline-grip { font-weight: 600; color: var(--label); }
+/* Dragging a line: it follows the pointer 1:1 and the others slide out of its way. */
+.list.sorting .row[data-line] { transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.list.sorting .row.dragging { transition: none; z-index: 3; background: var(--group); border-radius: 12px; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22), 0 0 0 1px var(--sep); }
+.list.sorting .row.dragging::before, .list.sorting .row.dragging + .row::before { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .list.sorting .row[data-line] { transition: none; } }
 .row-state { display: none; font-size: 0.8125rem; line-height: 1.33; font-weight: 500; color: var(--label); letter-spacing: -0.003em; }
 .rename { margin: 0; }
 .rename-input { width: 100%; height: 24px; margin: -2px 0 -1px -4px; padding: 0 4px; border: 0; border-radius: 5px; background: var(--fill); color: var(--label); }
@@ -666,6 +674,9 @@ main { position: relative; z-index: 1; }
   <symbol id="i-test" viewBox="0 0 20 20"><path d="M16 10a6 6 0 1 1-1.8-4.3M16 3.8v3.4h-3.4"/></symbol>
   <symbol id="i-signin" viewBox="0 0 20 20"><path d="M11.5 3.5h4v13h-4M3.5 10h8.5M9 6.8l3.2 3.2L9 13.2"/></symbol>
   <symbol id="i-edit" viewBox="0 0 20 20"><path d="M13 3.8l3.2 3.2-8.6 8.6H4.4v-3.2z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 20 20"><path d="M7.5 5v10M12.5 5v10"/></symbol>
+  <symbol id="i-play" viewBox="0 0 20 20"><path d="M6.5 4.8v10.4L15 10z"/></symbol>
+  <symbol id="i-grip" viewBox="0 0 20 20"><path d="M4.5 7h11M4.5 10h11M4.5 13h11"/></symbol>
   <symbol id="i-up" viewBox="0 0 20 20"><path d="M10 15.5v-11M5.5 9 10 4.5 14.5 9"/></symbol>
   <symbol id="i-down" viewBox="0 0 20 20"><path d="M10 4.5v11M5.5 11 10 15.5 14.5 11"/></symbol>
   <symbol id="i-trash" viewBox="0 0 20 20"><path d="M3.8 5.5h12.4M8 5.5V3.8h4v1.7M5.4 5.5l.7 10.7h7.8l.7-10.7"/></symbol>
@@ -737,16 +748,10 @@ main { position: relative; z-index: 1; }
 
         <ul class="group list alerts" id="alerts" aria-label="Needs attention" hidden></ul>
 
-        <section aria-labelledby="accounts-title">
-          <div class="group-head"><h2 id="accounts-title">Subscription accounts</h2></div>
-          <ol class="group list" id="accounts"><li class="row"><span class="row-sub">Loading…</span></li></ol>
-          <p class="group-foot">Used first, top to bottom. Each one signs in on Anthropic's own page.</p>
-        </section>
-
-        <section aria-labelledby="keys-title">
-          <div class="group-head"><h2 id="keys-title">API keys</h2><button class="text-btn" type="button" id="check-all" data-act="check-all-keys" data-fk="check-all" hidden>Test All</button></div>
-          <ol class="group list" id="keys"><li class="row"><span class="row-sub">Loading…</span></li></ol>
-          <p class="group-foot">Used one at a time once every account is out. A used-up key is skipped, then tried again after the cooldown.</p>
+        <section aria-labelledby="lines-title">
+          <div class="group-head"><h2 id="lines-title">Accounts and API keys</h2><button class="text-btn" type="button" id="check-all" data-act="check-all-keys" data-fk="check-all" hidden>Test All Keys</button></div>
+          <ol class="group list" id="lines"><li class="row"><span class="row-sub">Loading…</span></li></ol>
+          <p class="group-foot">Tried top to bottom. Drag <span class="inline-grip" aria-hidden="true">≡</span> to put accounts and keys in any order. A paused line stays here but isn't used. Keys next to each other share the load: when one runs out, the next takes over mid-request.</p>
         </section>
       </div>
 
@@ -979,7 +984,7 @@ function ago(at) {
 function accountState(a) {
   const login = logins[a.id];
   const c = a.lastCheck;
-  if (!a.enabled) return { s: 'off', word: 'Off', ready: false };
+  if (!a.enabled) return { s: 'off', word: 'Paused', ready: false };
   if (login && login.loggedIn === false) return { s: 'dead', word: 'Not signed in', ready: false };
   if (c && !c.ok && /limit/i.test(c.reason || '')) return { s: 'warn', word: 'Limit reached', ready: false };
   if (c && !c.ok) return { s: 'warn', word: 'Check failed', ready: true };
@@ -988,6 +993,7 @@ function accountState(a) {
 
 function keyState(k) {
   const c = k.lastCheck;
+  if (!k.enabled) return { s: 'off', word: 'Paused', ready: false };
   if (c && c.verdict === 'used-up' && k.coolingDown) return { s: 'dead', word: 'Used up', ready: false };
   if (c && c.verdict === 'keep') return { s: 'warn', word: 'Kept', ready: true };
   if (c && c.verdict === 'ok') return { s: 'ready', word: 'Works', ready: true };
@@ -1003,19 +1009,21 @@ function nameForKey(key) {
   return item ? lineName({ type, item }) : 'that line';
 }
 
-// The relay order, mirroring the gateway: a pinned key skips the accounts and goes first;
-// a pinned account goes first among the accounts.
+// Every line in your order, paused ones included.
+function orderedLines() {
+  return S.order.map((key) => {
+    const [type, id] = key.split(':');
+    const item = itemFor(type, id);
+    return item && { type, item };
+  }).filter(Boolean);
+}
+
+// The relay order, mirroring the gateway: your order without paused lines, pinned line first.
 function relayOrder() {
-  const accounts = S.accounts.filter((a) => a.enabled).map((a) => ({ type: 'account', item: a, st: accountState(a) }));
-  const keys = S.keys.map((k) => ({ type: 'key', item: k, st: keyState(k) }));
+  const list = orderedLines().filter((l) => l.item.enabled).map((l) => ({ ...l, st: l.type === 'account' ? accountState(l.item) : keyState(l.item) }));
   const p = S.pinned;
-  const front = (list) => {
-    const i = list.findIndex((l) => l.item.id === p.id);
-    return i < 0 ? list : [list[i], ...list.slice(0, i), ...list.slice(i + 1)];
-  };
-  if (p && p.type === 'key') return front(keys);
-  if (p && p.type === 'account') return [...front(accounts), ...keys];
-  return [...accounts, ...keys];
+  const i = p ? list.findIndex((l) => l.type === p.type && l.item.id === p.id) : -1;
+  return i < 0 ? list : [list[i], ...list.slice(0, i), ...list.slice(i + 1)];
 }
 
 function liveAndNext() {
@@ -1057,10 +1065,11 @@ function renderNow(rel) {
     ? '<span>Your pick</span><button class="btn" type="button" data-act="unpin" data-fk="unpin">Use Automatic</button>'
     : '<span>Automatic</span>';
 
-  const keysOk = S.keys.filter((k) => keyState(k).ready).length;
+  const keysOn = S.keys.filter((k) => k.enabled);
+  const keysOk = keysOn.filter((k) => keyState(k).ready).length;
   const accts = S.accounts.filter((a) => a.enabled);
   const acctsOk = accts.filter((a) => accountState(a).ready).length;
-  $('#stats').innerHTML = `<span id="req-count">${requestsToday}</span> gateway ${requestsToday === 1 ? 'request' : 'requests'} today · ${keysOk} of ${plural(S.keys.length, 'key')} working · ${acctsOk} of ${plural(accts.length, 'account')} ready`;
+  $('#stats').innerHTML = `<span id="req-count">${requestsToday}</span> gateway ${requestsToday === 1 ? 'request' : 'requests'} today · ${keysOk} of ${plural(keysOn.length, 'key')} working · ${acctsOk} of ${plural(accts.length, 'account')} ready`;
 }
 
 function renderAlerts() {
@@ -1071,7 +1080,7 @@ function renderAlerts() {
     if (a.enabled && login && login.loggedIn === false) alerts.push({ tone: 'dead', text: `${a.label} isn't signed in.`, acts: `<button class="btn" type="button" data-act="login-account" data-id="${esc(a.id)}" data-fk="alert-login:${esc(a.id)}">Sign In…</button>` });
   }
   for (const k of S.keys) {
-    if (keyState(k).s !== 'dead') continue;
+    if (!k.enabled || keyState(k).s !== 'dead') continue;
     const left = Math.max(1, S.settings.cooldownMinutes - Math.round((Date.now() - k.lastCheck.at) / 60000));
     const why = trimEnd(k.lastCheck.detail);
     alerts.push({ tone: 'dead', text: `${k.label} is used up${why ? `: ${why}` : ''}. Top it up; it's tried again in ${left} min.`, acts: `<a class="btn" href="${BILLING_URL}" target="_blank" rel="noopener noreferrer">Top Up${icon('out')}</a><button class="btn" type="button" data-act="test-key" data-id="${esc(k.id)}" data-fk="alert-test:${esc(k.id)}">Test Now</button>` });
@@ -1116,16 +1125,16 @@ function rowHtml(type, item, liveId) {
   }
   // On narrow screens the status word moves under the name instead of leaving only a dot.
   const inline = `<span class="row-state" aria-hidden="true">${esc(word)}</span>`;
-  const toggle = type === 'account'
-    ? `<button class="switch" type="button" role="switch" aria-checked="${item.enabled}" data-act="toggle-account" data-id="${id}" data-fk="toggle:${id}" aria-label="Use ${label} in the relay"></button>`
-    : '';
+  const toggle = `<button class="switch" type="button" role="switch" aria-checked="${item.enabled}" data-act="toggle-${type}" data-id="${id}" data-fk="toggle:${id}" aria-label="Use ${label}" title="${item.enabled ? 'Pause' : 'Resume'}"></button>`;
+  const grip = `<button class="icon-btn grip" type="button" data-grip="${type}:${id}" data-fk="grip:${id}" aria-label="Move ${label}. Use the up and down arrow keys." title="Drag to reorder">${icon('grip')}</button>`;
   const expanded = Boolean(ui.menu && ui.menu.id === item.id);
-  return `<li class="row" data-line="${type}:${id}"${isLive ? ' data-live' : ''}${type === 'account' && !item.enabled ? ' data-off' : ''}>
+  return `<li class="row" data-line="${type}:${id}"${isLive ? ' data-live' : ''}${!item.enabled ? ' data-off' : ''}>
     <button class="port" type="button" data-act="connect" data-target="${type}:${id}" data-fk="port:${id}" aria-label="Plug the cable into ${label}" title="Plug the cable in here"><span class="slot"></span></button>
     <span class="symbol" data-kind="${type}" aria-hidden="true">${icon(type === 'account' ? 'person' : 'key')}</span>
     <div class="row-text">${title}${inline}<span class="row-sub">${r.ident}${r.when ? ` · ${esc(r.when)}` : ''}</span>${r.why ? `<span class="row-why">${esc(r.why)}</span>` : ''}</div>
     ${state}${toggle}
     <button class="icon-btn more" type="button" data-act="menu" data-type="${type}" data-id="${id}" data-fk="menu:${id}" aria-haspopup="menu" aria-expanded="${expanded}" aria-label="Actions for ${label}" title="Actions">${icon('more')}</button>
+    ${grip}
   </li>`;
 }
 
@@ -1136,8 +1145,9 @@ function addRowHtml(type) {
 
 function renderLists(rel) {
   const liveId = rel.live ? lineKey(rel.live) : null;
-  $('#accounts').innerHTML = S.accounts.map((a) => rowHtml('account', a, liveId)).join('') + addRowHtml('account');
-  $('#keys').innerHTML = S.keys.map((k) => rowHtml('key', k, liveId)).join('') + addRowHtml('key');
+  // Not while a line is being dragged: the rows under the pointer would be replaced.
+  if (drag) return;
+  $('#lines').innerHTML = orderedLines().map((l) => rowHtml(l.type, l.item, liveId)).join('') + addRowHtml('account') + addRowHtml('key');
   const checkAll = $('#check-all');
   checkAll.hidden = S.keys.length < 2;
   checkAll.disabled = busy.has('all-keys');
@@ -2435,8 +2445,8 @@ function showView(view) {
 function menuItems(type, item) {
   const id = item.id;
   const pinned = Boolean(S.pinned && S.pinned.id === id);
-  const list = type === 'account' ? S.accounts : S.keys;
-  const index = list.findIndex((x) => x.id === id);
+  const list = S.order;
+  const index = list.indexOf(`${type}:${id}`);
   const items = [{ act: 'connect', target: `${type}:${id}`, label: type === 'account' ? 'Use This Account' : 'Use This Key', icon: 'plug', disabled: pinned }];
   if (type === 'account') {
     items.push({ act: 'check-account', label: 'Check Usage', icon: 'test' });
@@ -2446,6 +2456,7 @@ function menuItems(type, item) {
   }
   items.push({ sep: true });
   items.push({ act: 'rename', label: 'Rename', icon: 'edit' });
+  items.push({ act: `toggle-${type}`, label: item.enabled ? 'Pause' : 'Resume', icon: item.enabled ? 'pause' : 'play' });
   items.push({ act: `move-${type}`, dir: 'up', label: 'Move Up', icon: 'up', disabled: index === 0 });
   items.push({ act: `move-${type}`, dir: 'down', label: 'Move Down', icon: 'down', disabled: index === list.length - 1 });
   if (type === 'key' || item.kind === 'profile') {
@@ -2746,9 +2757,17 @@ const actions = {
   'job-retry': () => actions['login-account'](ui.job.accountId),
   'toggle-account': async (id, el) => {
     const a = S.accounts.find((x) => x.id === id);
-    el.setAttribute('aria-checked', String(!a.enabled));
+    if (el.classList.contains('switch')) el.setAttribute('aria-checked', String(!a.enabled));
     await api('PATCH', `/api/accounts/${id}`, { enabled: !a.enabled });
     await refresh();
+    toast(a.enabled ? `${a.label} is paused. It stays signed in but isn't used.` : `${a.label} is back in use.`);
+  },
+  'toggle-key': async (id, el) => {
+    const k = S.keys.find((x) => x.id === id);
+    if (el.classList.contains('switch')) el.setAttribute('aria-checked', String(!k.enabled));
+    await api('PATCH', `/api/keys/${id}`, { enabled: !k.enabled });
+    await refresh();
+    toast(k.enabled ? `${k.label} is paused. It stays saved but isn't used.` : `${k.label} is back in use.`);
   },
   'move-account': async (id, el) => { await api('POST', `/api/accounts/${id}/move`, { direction: el.dataset.dir }); await refresh(); },
   'move-key': async (id, el) => { await api('POST', `/api/keys/${id}/move`, { direction: el.dataset.dir }); await refresh(); },
@@ -2887,6 +2906,95 @@ document.addEventListener('submit', async (event) => {
   } finally {
     if (submit && submit.isConnected) { submit.disabled = false; submit.innerHTML = label; }
   }
+});
+
+// ------------------------------------------------------------------ reordering
+
+// Drag a line by its handle: it follows the pointer 1:1 from where you grabbed it, the
+// other lines slide aside, and letting go saves the new order. The arrow keys move a
+// focused handle one place up or down.
+let drag = null;
+
+async function saveOrder(order, focusKey) {
+  const before = S.order;
+  S.order = order;
+  render();
+  if (focusKey) { const g = document.querySelector(`[data-grip="${CSS.escape(focusKey)}"]`); if (g) g.focus(); }
+  try {
+    await api('PUT', '/api/order', { order });
+  } catch (err) {
+    S.order = before;
+    toast(err.message, true);
+  }
+  await refresh();
+}
+
+document.addEventListener('pointerdown', (ev) => {
+  const handle = ev.target.closest('[data-grip]');
+  if (!handle || ev.button !== 0) return;
+  ev.preventDefault();
+  const list = $('#lines');
+  const rows = [...list.querySelectorAll('li.row[data-line]')];
+  const row = handle.closest('li.row[data-line]');
+  const from = rows.indexOf(row);
+  drag = { handle, row, rows, rects: rows.map((r) => r.getBoundingClientRect()), from, to: from, startY: ev.clientY, moved: false };
+  handle.setPointerCapture(ev.pointerId);
+  closeMenu(true);
+});
+
+document.addEventListener('pointermove', (ev) => {
+  if (!drag) return;
+  const { rows, rects, from, row } = drag;
+  const dy = ev.clientY - drag.startY;
+  if (!drag.moved) {
+    if (Math.abs(dy) < 4) return;
+    drag.moved = true;
+    row.classList.add('dragging');
+    $('#lines').classList.add('sorting');
+  }
+  // Stay within the list, with a little give at either end.
+  const min = rects[0].top - rects[from].top;
+  const max = rects[rects.length - 1].bottom - rects[from].bottom;
+  const y = dy < min ? min - Math.sqrt(min - dy) : dy > max ? max + Math.sqrt(dy - max) : dy;
+  row.style.transform = `translateY(${y}px)`;
+  const center = rects[from].top + rects[from].height / 2 + y;
+  const to = rects.filter((r, i) => i !== from && r.top + r.height / 2 < center).length;
+  drag.to = to;
+  const h = rects[from].height;
+  rows.forEach((r, i) => {
+    if (i === from) return;
+    const shift = from < to && i > from && i <= to ? -h : to < from && i >= to && i < from ? h : 0;
+    r.style.transform = shift ? `translateY(${shift}px)` : '';
+  });
+});
+
+function endDrag() {
+  if (!drag) return;
+  const { rows, from, to, moved, row } = drag;
+  drag = null;
+  $('#lines').classList.remove('sorting');
+  row.classList.remove('dragging');
+  rows.forEach((r) => (r.style.transform = ''));
+  if (!moved || from === to) { render(); return; }
+  const order = S.order.slice();
+  const [item] = order.splice(from, 1);
+  order.splice(to, 0, item);
+  saveOrder(order, item);
+}
+document.addEventListener('pointerup', endDrag);
+document.addEventListener('pointercancel', endDrag);
+
+document.addEventListener('keydown', (ev) => {
+  const handle = ev.target.closest && ev.target.closest('[data-grip]');
+  if (!handle || (ev.key !== 'ArrowUp' && ev.key !== 'ArrowDown')) return;
+  ev.preventDefault();
+  const key = handle.dataset.grip;
+  const order = S.order.slice();
+  const i = order.indexOf(key);
+  const j = ev.key === 'ArrowUp' ? i - 1 : i + 1;
+  if (i < 0 || j < 0 || j >= order.length) return;
+  [order[i], order[j]] = [order[j], order[i]];
+  saveOrder(order, key);
 });
 
 const toolbar = $('#toolbar');

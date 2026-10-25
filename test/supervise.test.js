@@ -90,7 +90,28 @@ test('when every account is out, the conversation continues on your API keys', a
   const onKeys = events[1];
   assert.match(onKeys.helperOutput, /sk-ant-api03-test-ok-/, 'runs on the working key');
   assert.deepEqual(onKeys.args.slice(-3), ['--resume', events[0].session, CONTINUE]);
-  assert.match(r.stderr, /continues on your API keys/);
+  assert.match(r.stderr, /continues on API key "Personal"/);
+});
+
+test('when a key placed before an account runs out, the conversation continues on that account', async () => {
+  setup({ withWork: false, withKeys: false });
+  vault.update((v) => { v.keys = [keys.newEntry(testKey('spent'), 'Personal', 1)]; });
+  process.env.FAKE_API_SPENT_FILE = limitedFile;
+  const [personal] = vault.load().keys;
+  config.update((c) => (c.order = [`key:${personal.id}`, 'account:default']));
+  try {
+    const r = await run({ FAKE_CLAUDE_HIT_LIMIT: 'keys' });
+    assert.equal(r.code, 0, r.stderr);
+    const events = log();
+    assert.deepEqual(events.map((e) => e.kind), ['session', 'session']);
+    assert.match(events[0].helperOutput, /sk-ant-api03-test-spent-/, 'started on the key, as ordered');
+    assert.equal(events[1].account, 'default');
+    assert.deepEqual(events[1].args.slice(-3), ['--resume', events[0].session, CONTINUE]);
+    assert.match(r.stderr, /API key "Personal" reached its limit, so this conversation continues on Main account/);
+  } finally {
+    config.update((c) => delete c.order);
+    delete process.env.FAKE_API_SPENT_FILE;
+  }
 });
 
 test('when nothing is free yet, it keeps looking and moves the conversation as soon as a line frees up', async () => {

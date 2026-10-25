@@ -90,7 +90,8 @@ fire('SessionStart');
 const hits = (process.env.FAKE_CLAUDE_HIT_LIMIT || '').split(',').filter(Boolean);
 const onKeys = Boolean(entry.env.ANTHROPIC_AUTH_TOKEN || settings.apiKeyHelper);
 if (hits.includes(onKeys ? 'keys' : account)) {
-  if (limitedFile && !onKeys) fs.appendFileSync(limitedFile, `${account}\n`);
+  // Keys running out are written as 'keys': the fake API then answers that its 'spent' key is used up.
+  if (limitedFile) fs.appendFileSync(limitedFile, `${onKeys ? 'keys' : account}\n`);
   process.on('SIGTERM', () => {
     record({ kind: 'stopped', account, session: sessionId });
     process.exit(143);

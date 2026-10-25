@@ -128,6 +128,29 @@ test('forwards model listing for the desktop app', async () => {
   assert.equal(r.status, 200);
 });
 
+test('a session sent to one group of keys uses only those, in your order, and skips paused keys', async () => {
+  useKeys('credit', 'ok', 'second');
+  const [credit, ok, second] = vault.load().keys;
+  const send = (group) => call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token, 'x-claude-nonstop-keys': group } });
+  api.requests.length = 0;
+  let r = await send(`${credit.id},${second.id}`);
+  assert.equal(JSON.parse(r.body).id, 'msg_second', 'moved past the used-up key, but not to the key outside the group');
+  assert.deepEqual(api.requests.map((q) => q.key), [credit.key, second.key]);
+  assert.equal(api.requests[1].headers['x-claude-nonstop-keys'], undefined, 'the group header stays on this computer');
+
+  config.update((c) => (c.pausedKeys = [second.id]));
+  try {
+    r = await send(`${credit.id},${second.id}`);
+    assert.equal(r.status, 402, 'nothing left in the group, so the session can move on');
+    api.requests.length = 0;
+    r = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token } });
+    assert.equal(JSON.parse(r.body).id, 'msg_ok', 'without a group (the desktop app), any key that is not paused');
+    assert.deepEqual(api.requests.map((q) => q.key), [ok.key]);
+  } finally {
+    config.update((c) => delete c.pausedKeys);
+  }
+});
+
 test('a key pinned from the web UI takes every request at once', async () => {
   useKeys('ok', 'second');
   config.update((c) => (c.pinned = { type: 'key', id: keys.fingerprint(testKey('second')) }));

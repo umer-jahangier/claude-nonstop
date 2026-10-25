@@ -24,6 +24,7 @@ const { sameToken, readBody } = require('./gateway');
 const hosts = require('./hosts');
 const events = require('./events');
 const checks = require('./checks');
+const relay = require('./relay');
 const { log } = require('./files');
 const pkg = require('../package.json');
 
@@ -96,14 +97,6 @@ function findAccount(id) {
   return account;
 }
 
-function move(list, id, direction) {
-  const i = list.findIndex((item) => item.id === id);
-  const j = direction === 'up' ? i - 1 : i + 1;
-  if (i < 0) throw httpError(404, 'not found');
-  if (j < 0 || j >= list.length) return;
-  [list[i], list[j]] = [list[j], list[i]];
-}
-
 // ---------------------------------------------------------------- state
 
 function snapshot(ctx) {
@@ -132,7 +125,10 @@ function snapshot(ctx) {
       addedAt: k.addedAt,
       lastCheck: s.keys[k.id] || null,
       coolingDown: state.isCoolingDown(k.id, cfg.cooldownMinutes),
+      enabled: !relay.isPaused(cfg, 'key', k),
     })),
+    // Your relay order, accounts and keys mixed, as "account:<id>" / "key:<id>".
+    order: relay.lines(cfg, v.keys).map((l) => relay.lineId(l.type, l.item.id)),
     pinned: cfg.pinned || null,
     settings: { cooldownMinutes: cfg.cooldownMinutes, accountRecheckMinutes: cfg.accountRecheckMinutes },
     traffic: events.stats(),
@@ -181,6 +177,35 @@ function editKey(id, body) {
     const label = clean(body.label);
     if (label) entry.label = label;
   });
+  if (typeof body.enabled === 'boolean') pauseKey(id, !body.enabled);
+}
+
+// A paused key stays saved but is never used, by sessions or the desktop app.
+function pauseKey(id, paused) {
+  config.update((c) => {
+    const rest = (c.pausedKeys || []).filter((k) => k !== id);
+    c.pausedKeys = paused ? [...rest, id] : rest;
+  });
+  log(`${paused ? 'paused' : 'resumed'} an API key`);
+}
+
+// Moves a line one place up or down in your relay order, past accounts and keys alike.
+function moveLine(type, id, direction) {
+  const all = vault.load().keys;
+  config.update((c) => {
+    const order = relay.moved(c, all, type, id, direction);
+    if (!order) throw httpError(404, 'That line no longer exists.');
+    c.order = order;
+  });
+}
+
+// A whole new order, from dragging a line in the web UI.
+function setOrder(body) {
+  const all = vault.load().keys;
+  config.update((c) => {
+    if (!relay.validOrder(c, all, body.order)) throw httpError(409, 'The list changed in the meantime. Try again.');
+    c.order = body.order;
+  });
 }
 
 function removeKey(id) {
@@ -189,6 +214,10 @@ function removeKey(id) {
   });
   state.forgetKey(id);
   unpinIf('key', id);
+  config.update((c) => {
+    c.pausedKeys = (c.pausedKeys || []).filter((k) => k !== id);
+    if (c.order) c.order = c.order.filter((l) => l !== relay.lineId('key', id));
+  });
   log('removed an API key');
 }
 
@@ -285,6 +314,7 @@ async function removeAccount(id) {
   await accounts.remove(account, claude.findClaude());
   config.update((c) => {
     c.accounts = c.accounts.filter((a) => a.id !== id);
+    if (c.order) c.order = c.order.filter((l) => l !== relay.lineId('account', id));
   });
   unpinIf('account', id);
   log(`removed account "${account.label}"`);
@@ -303,6 +333,8 @@ function setPin(body) {
       const account = c.accounts.find((a) => a.id === id);
       if (!account) throw httpError(404, 'That account no longer exists.');
       account.enabled = true;
+    } else {
+      c.pausedKeys = (c.pausedKeys || []).filter((k) => k !== id);
     }
     c.pinned = { type, id };
   });
@@ -349,11 +381,12 @@ async function route(method, pathname, body, ctx) {
   const [, area, id, action] = pathname.split('/').filter(Boolean);
   if (area === 'state' && method === 'GET') return snapshot(ctx);
   if (area === 'checks' && method === 'POST' && !id) return startChecks();
+  if (area === 'order' && method === 'PUT') return setOrder(body);
   if (area === 'keys') {
     if (method === 'POST' && !id) return addKey(body);
     if (method === 'POST' && id === 'check-all') return checkAllKeys();
     if (method === 'POST' && action === 'check') return checkKey(id);
-    if (method === 'POST' && action === 'move') return vault.update((v) => move(v.keys, id, body.direction));
+    if (method === 'POST' && action === 'move') return moveLine('key', id, body.direction);
     if (method === 'PATCH' && id) return editKey(id, body);
     if (method === 'DELETE' && id) return removeKey(id);
   }
@@ -362,7 +395,7 @@ async function route(method, pathname, body, ctx) {
     if (method === 'POST' && !id) return addAccount(body);
     if (method === 'POST' && action === 'login') return loginAccount(id);
     if (method === 'POST' && action === 'check') return checkAccount(id);
-    if (method === 'POST' && action === 'move') return config.update((c) => move(c.accounts, id, body.direction));
+    if (method === 'POST' && action === 'move') return moveLine('account', id, body.direction);
     if (method === 'PATCH' && id) return editAccount(id, body);
     if (method === 'DELETE' && id) return removeAccount(id);
   }

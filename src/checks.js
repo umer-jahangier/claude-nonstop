@@ -12,6 +12,7 @@ const accounts = require('./accounts');
 const state = require('./state');
 const claude = require('./claude');
 const events = require('./events');
+const relay = require('./relay');
 
 const running = new Map();
 
@@ -37,7 +38,7 @@ const key = (entry, cfg = config.load()) => once(entry.id, () => keys.check(entr
 const known = (c) => Boolean(c && (c.ok || accounts.isLimitReason(c.reason) || c.verdict === 'ok' || c.verdict === 'used-up'));
 const fresh = (c, freshMs) => known(c) && Date.now() - c.at < freshMs;
 
-// Checks every account that's on and every key, except those with a clear answer from the
+// Checks every account and key that isn't paused, except those with a clear answer from the
 // last `freshMs`. Returns once all the checks it started have finished.
 function all({ freshMs = 0 } = {}) {
   const cfg = config.load();
@@ -45,7 +46,7 @@ function all({ freshMs = 0 } = {}) {
   const bin = claude.findClaude();
   return Promise.all([
     ...cfg.accounts.filter((a) => a.enabled !== false && !fresh(s.accounts[a.id], freshMs)).map((a) => account(a, bin)),
-    ...vault.load().keys.filter((k) => !fresh(s.keys[k.id], freshMs)).map((k) => key(k, cfg)),
+    ...vault.load().keys.filter((k) => !relay.isPaused(cfg, 'key', k) && !fresh(s.keys[k.id], freshMs)).map((k) => key(k, cfg)),
   ]);
 }
 

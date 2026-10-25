@@ -84,7 +84,12 @@ function startFakeApi() {
       const body = Buffer.concat(chunks).toString('utf8');
       const key = String(req.headers['x-api-key'] || '');
       requests.push({ method: req.method, url: req.url, key, headers: req.headers, body });
-      const kind = (key.match(/^sk-ant-api03-test-([a-z0-9]+)-/) || [])[1] || 'invalid';
+      let kind = (key.match(/^sk-ant-api03-test-([a-z0-9]+)-/) || [])[1] || 'invalid';
+      // A 'spent' key works until a fake session's keys run out (FAKE_API_SPENT_FILE says 'keys').
+      if (kind === 'spent') {
+        const file = process.env.FAKE_API_SPENT_FILE;
+        kind = file && fs.existsSync(file) && fs.readFileSync(file, 'utf8').includes('keys') ? 'credit' : 'ok';
+      }
       const send = (status, value) => {
         const text = JSON.stringify(value);
         res.writeHead(status, { 'content-type': 'application/json', 'content-length': Buffer.byteLength(text) });
