@@ -72,6 +72,13 @@ function readFakeLog() {
 }
 
 const testKey = (kind) => `sk-ant-api03-test-${kind}-${'x'.repeat(24)}`;
+const testAccountToken = (kind) => `sk-ant-oat-test-${kind}`;
+
+// Signs a test account in, the way Claude Code stores a sign-in: a .credentials.json in its config folder.
+function signInFakeAccount(configDir, kind, { expiresAt = Date.now() + 3600000 } = {}) {
+  fs.mkdirSync(configDir, { recursive: true });
+  fs.writeFileSync(path.join(configDir, '.credentials.json'), JSON.stringify({ claudeAiOauth: { accessToken: testAccountToken(kind), expiresAt } }));
+}
 
 const apiError = (type, message) => ({ type: 'error', error: { type, message } });
 
@@ -84,8 +91,11 @@ function startFakeApi() {
     req.on('end', () => {
       const body = Buffer.concat(chunks).toString('utf8');
       const key = String(req.headers['x-api-key'] || '');
-      requests.push({ method: req.method, url: req.url, key, headers: req.headers, body });
-      let kind = (key.match(/^sk-ant-api03-test-([a-z0-9]+)-/) || [])[1] || 'invalid';
+      // A subscription sign-in: "Bearer sk-ant-oat-test-<kind>"; 'limited' is an account at its limit.
+      const bearer = String(req.headers.authorization || '').replace(/^Bearer /i, '');
+      requests.push({ method: req.method, url: req.url, key, bearer, headers: req.headers, body });
+      let kind = (key.match(/^sk-ant-api03-test-([a-z0-9]+)-/) || [])[1] || (bearer.match(/^sk-ant-oat-test-([a-z0-9]+)/) || [])[1] || 'invalid';
+      if (kind === 'limited') kind = 'oauthlimit';
       // A 'spent' key works until a fake session's keys run out (FAKE_API_SPENT_FILE says 'keys').
       if (kind === 'spent') {
         const file = process.env.FAKE_API_SPENT_FILE;
@@ -115,6 +125,7 @@ function startFakeApi() {
         badreq: [400, apiError('invalid_request_error', 'messages: field required')],
         billing: [402, apiError('billing_error', 'Billing problem')],
         ratelimit: [429, apiError('rate_limit_error', 'Too many requests')],
+        oauthlimit: [429, apiError('rate_limit_error', "You've hit your limit · resets 3pm")],
         overloaded: [529, apiError('overloaded_error', 'Overloaded')],
       };
       const [status, value] = errors[kind] || [401, apiError('authentication_error', 'invalid x-api-key')];
@@ -177,4 +188,4 @@ function call(url, { method = 'GET', headers = {}, body } = {}) {
   });
 }
 
-module.exports = { ROOT, BIN, isolate, installFakeClaude, readFakeLog, testKey, startFakeApi, freePort, runCli, call };
+module.exports = { ROOT, BIN, isolate, installFakeClaude, readFakeLog, testKey, testAccountToken, signInFakeAccount, startFakeApi, freePort, runCli, call };

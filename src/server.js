@@ -61,6 +61,18 @@ function createContext() {
     },
     // The desktop app and terminal sessions are recorded apart, so the desktop app's key
     // never shows as the line your sessions are on.
+    // The desktop app's requests went out on one of your subscription accounts.
+    noteAccountInUse(account, { desktop = true } = {}) {
+      const who = desktop ? 'desktop' : 'sessions';
+      const changed = keyInUse[who] !== `account:${account.id}`;
+      if (desktop && (changed || Date.now() - desktopNotedAt > 60000)) {
+        state.setDesktop(`${account.label} (subscription)`);
+        desktopNotedAt = Date.now();
+      }
+      if (!changed) return;
+      keyInUse[who] = `account:${account.id}`;
+      log(`gateway: the desktop app is using ${account.label} (subscription)`);
+    },
     noteKeyInUse(entry, { desktop = false } = {}) {
       const who = desktop ? 'desktop' : 'sessions';
       const changed = keyInUse[who] !== entry.id;

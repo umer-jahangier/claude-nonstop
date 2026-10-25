@@ -139,7 +139,7 @@ claude-nonstop: using Work (subscription)
 
 ## The Claude desktop app
 
-The desktop app can run on your API keys through claude-nonstop, with automatic key switching, while your Claude.ai subscription stays one click away on its sign-in screen.
+The desktop app can run on your subscription accounts and API keys through claude-nonstop, switching between them as lines run out, while a plain Claude.ai sign-in stays one click away on its sign-in screen.
 
 The installer sets it up for you using the settings locations Anthropic documents for the app ([configuration reference](https://claude.com/docs/third-party/claude-desktop/configuration-format)):
 
@@ -149,7 +149,7 @@ The installer sets it up for you using the settings locations Anthropic document
 
 Then **quit and reopen the desktop app.** Its sign-in screen offers the third-party option, which runs on your API keys through claude-nonstop, and **Claude.ai** for your subscription. Pick the third-party option when your subscription is out.
 
-**In third-party mode the desktop app runs only on API keys.** Your subscription accounts can't go through the gateway (subscription sign-ins are for Anthropic's own apps), so the cable, **Use This Account** and your account order apply to Claude Code in your terminal, not to the desktop app. The page's **Desktop app** line shows the key it's on. To use a subscription in the desktop app, sign in to Claude.ai there.
+**In third-party mode the desktop app walks your order too.** Each request goes out on the first subscription account with usage left, on that account's own Claude Code sign-in; when an account hits its limit, the same request goes out again on the next line, and when every account is out, on your API keys. The cable, **Use This Account** and your order apply to the desktop app just as to the terminal. The page's **Desktop app** line shows the account or key it's on.
 
 **Usage left.** Each account's line shows how much of its plan is used: the session (its 5-hour window) and the week, with when each resets, read from the same place Claude Code's `/usage` reads, with that account's own sign-in. It refreshes every 5 minutes while the gateway runs, with every account check, and when the page opens; `claude-nonstop status` shows it too. API keys have no such readout: Anthropic shows a key's credit only in the [Console](https://platform.claude.com/settings/billing), so a key's line shows its last test instead.
 

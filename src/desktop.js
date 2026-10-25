@@ -1,8 +1,8 @@
 'use strict';
 
-// The Claude desktop app runs on your API keys through claude-nonstop's gateway in its
-// third-party mode, and its sign-in screen keeps your Claude.ai subscription one click
-// away. Anthropic documents where the app reads that mode's settings
+// The Claude desktop app runs on your subscription accounts and API keys through
+// claude-nonstop's gateway in its third-party mode (gateway.js walks your order), and its
+// sign-in screen keeps a plain Claude.ai sign-in one click away. Anthropic documents where the app reads that mode's settings
 // (claude.com/docs/third-party/claude-desktop/configuration-format):
 //   Windows  registry policy, HKLM\SOFTWARE\Policies\Claude      (written in the admin prompt)
 //   Linux    /etc/claude-desktop/managed-settings.json, root-owned (written in the admin prompt)
