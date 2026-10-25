@@ -31,6 +31,10 @@ const { log } = require('./files');
 const CLI_USER_AGENT = 'claude-cli/2.1.310 (external, cli)';
 const OAUTH_BETA = 'oauth-2025-04-20';
 const CLAUDE_CODE_BETA = 'claude-code-20250219';
+// A subscription sign-in accepts only Claude Code's own requests: the system prompt has to
+// begin with this line, or Anthropic answers 429 "Error". Claude Code's requests carry it;
+// the desktop app's startup probe doesn't, so the gateway puts it first when it's missing.
+const CLAUDE_CODE_SYSTEM = "You are Claude Code, Anthropic's official CLI for Claude.";
 
 const MAX_BODY = 64 * 1024 * 1024;
 const MAX_ERROR_BODY = 4 * 1024 * 1024;
@@ -189,6 +193,31 @@ function accountHeaders(headers, token, length) {
   return out;
 }
 
+// The request body as Claude Code would send it on a sign-in: the system prompt opens with
+// Claude Code's identity line. Left alone when it already does, or isn't a JSON body.
+function asClaudeCodeBody(body) {
+  let json;
+  try {
+    json = JSON.parse(body.toString('utf8'));
+  } catch {
+    return body;
+  }
+  if (!json || typeof json !== 'object' || Array.isArray(json) || !json.messages) return body;
+  const block = { type: 'text', text: CLAUDE_CODE_SYSTEM };
+  const sys = json.system;
+  if (typeof sys === 'string') {
+    if (sys.startsWith(CLAUDE_CODE_SYSTEM)) return body;
+    json.system = sys ? [block, { type: 'text', text: sys }] : CLAUDE_CODE_SYSTEM;
+  } else if (Array.isArray(sys)) {
+    const first = sys[0];
+    if (first && typeof first.text === 'string' && first.text.startsWith(CLAUDE_CODE_SYSTEM)) return body;
+    json.system = [block, ...sys];
+  } else {
+    json.system = CLAUDE_CODE_SYSTEM;
+  }
+  return Buffer.from(JSON.stringify(json));
+}
+
 // An account the desktop app can use right now: on, signed in, and not seen at its limit
 // in the last while. Returns its token, or null with why not.
 function accountToken(account, cfg) {
@@ -320,7 +349,8 @@ async function handle(req, res, ctx) {
         log(`gateway: ${account.label}: ${why}; trying the next line`);
         continue;
       }
-      const { res: upRes, upstream, error } = await forward(cfg, req, body, accountHeaders(req.headers, token, body.length));
+      const accountBody = asClaudeCodeBody(body);
+      const { res: upRes, upstream, error } = await forward(cfg, req, accountBody, accountHeaders(req.headers, token, accountBody.length));
       if (error) {
         log(`gateway: upstream connection failed: ${error.message}`);
         if (!res.destroyed && !res.headersSent) {
@@ -336,8 +366,13 @@ async function handle(req, res, ctx) {
       if (upRes.statusCode === 429 || upRes.statusCode === 401 || upRes.statusCode === 403) {
         const errBody = await readBody(upRes, MAX_ERROR_BODY).catch(() => Buffer.alloc(0));
         const detail = keys.errorMessage(errBody.toString('utf8')) || `HTTP ${upRes.statusCode}`;
-        const reason = upRes.statusCode === 429 ? `usage limit reached: ${detail}` : `sign-in refused: ${detail}`;
-        state.recordAccount(account.id, { ok: false, reason });
+        // A usage limit says so (in the message, or in Anthropic's unified limit header);
+        // any other 429 is a passing refusal, so the account isn't set aside for it.
+        const limited = upRes.statusCode === 429 &&
+          (/limit/i.test(detail) || /rejected/i.test(String(upRes.headers['anthropic-ratelimit-unified-status'] || '')));
+        if (upRes.statusCode !== 429 || limited) {
+          state.recordAccount(account.id, { ok: false, reason: limited ? `usage limit reached: ${detail}` : `sign-in refused: ${detail}` });
+        }
         log(`gateway: ${account.label} unavailable (HTTP ${upRes.statusCode}: ${detail}); trying the next line`);
         events.emit('switch', { accountId: account.id, label: account.label, status: upRes.statusCode, detail });
         continue;

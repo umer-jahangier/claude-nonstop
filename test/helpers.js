@@ -96,6 +96,8 @@ function startFakeApi() {
       requests.push({ method: req.method, url: req.url, key, bearer, headers: req.headers, body });
       let kind = (key.match(/^sk-ant-api03-test-([a-z0-9]+)-/) || [])[1] || (bearer.match(/^sk-ant-oat-test-([a-z0-9]+)/) || [])[1] || 'invalid';
       if (kind === 'limited') kind = 'oauthlimit';
+      // A subscription sign-in takes only Claude Code's own requests: the system prompt must open with its line.
+      if (bearer && kind !== 'oauthlimit' && req.method === 'POST' && !/"system":\s*(\[\s*\{[^}]*)?"[^"]*You are Claude Code, Anthropic's official CLI for Claude\./.test(body)) kind = 'oauthshape';
       // A 'spent' key works until a fake session's keys run out (FAKE_API_SPENT_FILE says 'keys').
       if (kind === 'spent') {
         const file = process.env.FAKE_API_SPENT_FILE;
@@ -126,6 +128,7 @@ function startFakeApi() {
         billing: [402, apiError('billing_error', 'Billing problem')],
         ratelimit: [429, apiError('rate_limit_error', 'Too many requests')],
         oauthlimit: [429, apiError('rate_limit_error', "You've hit your limit · resets 3pm")],
+        oauthshape: [429, apiError('rate_limit_error', 'Error')],
         overloaded: [529, apiError('overloaded_error', 'Overloaded')],
       };
       const [status, value] = errors[kind] || [401, apiError('authentication_error', 'invalid x-api-key')];

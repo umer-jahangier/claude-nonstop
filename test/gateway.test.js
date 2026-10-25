@@ -217,6 +217,31 @@ test('the desktop app runs on your subscription accounts first, in your order, a
   }
 });
 
+test("a subscription sign-in gets Claude Code's system line first, since Anthropic takes only Claude Code's requests on it", async () => {
+  useKeys();
+  useAccounts('ok');
+  try {
+    api.requests.length = 0;
+    // The desktop app's startup probe: no system prompt at all.
+    let r = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token } });
+    assert.equal(r.status, 200);
+    assert.equal(JSON.parse(api.requests[0].body).system, "You are Claude Code, Anthropic's official CLI for Claude.");
+    // A chat with its own system prompt keeps it, after the line.
+    r = await call(`${base}/v1/messages`, { method: 'POST', body: message({ system: 'Be brief.' }), headers: { 'x-api-key': token } });
+    assert.equal(r.status, 200);
+    const sys = JSON.parse(api.requests[1].body).system;
+    assert.match(sys[0].text, /^You are Claude Code/);
+    assert.equal(sys[1].text, 'Be brief.');
+    // One that already opens with the line goes out as it is.
+    const own = message({ system: [{ type: 'text', text: "You are Claude Code, Anthropic's official CLI for Claude. More." }] });
+    await call(`${base}/v1/messages`, { method: 'POST', body: own, headers: { 'x-api-key': token } });
+    assert.equal(api.requests[2].body, JSON.stringify(own));
+    assert.equal(state.load().accounts['acct-ok-0']?.ok, undefined, 'a passing refusal never set the account aside');
+  } finally {
+    noAccounts();
+  }
+});
+
 test('when every account is out, the desktop app goes on to API keys, still as Claude Code', async () => {
   useKeys('ok');
   useAccounts('limited');
@@ -237,9 +262,10 @@ test('when every account is out, the desktop app goes on to API keys, still as C
 test('a request already signed in to a Claude.ai account passes through untouched', async () => {
   useKeys('ok');
   api.requests.length = 0;
+  // Claude Code's own request: it already opens with its system line.
   const r = await call(`${base}/v1/messages`, {
     method: 'POST',
-    body: message(),
+    body: message({ system: "You are Claude Code, Anthropic's official CLI for Claude." }),
     headers: { authorization: `Bearer ${testAccountToken('ok')}`, 'user-agent': 'claude-cli/2.1.310 (external, cli)', 'anthropic-beta': 'oauth-2025-04-20,claude-code-20250219' },
   });
   assert.equal(r.status, 200);
