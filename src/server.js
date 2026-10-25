@@ -41,6 +41,7 @@ function mtime(file) {
 function createContext() {
   const cache = { vaultAt: -1, cfgAt: -1, vault: null, cfg: null };
   const keyInUse = { desktop: null, sessions: null };
+  let desktopNotedAt = 0;
   return {
     ports: null,
     current() {
@@ -62,10 +63,16 @@ function createContext() {
     // never shows as the line your sessions are on.
     noteKeyInUse(entry, { desktop = false } = {}) {
       const who = desktop ? 'desktop' : 'sessions';
-      if (keyInUse[who] === entry.id) return;
+      const changed = keyInUse[who] !== entry.id;
+      // The desktop app's "last used" also says it's on API keys right now (see
+      // desktopadvice.js), so it's refreshed at most once a minute while requests come in.
+      if (desktop && (changed || Date.now() - desktopNotedAt > 60000)) {
+        state.setDesktop(entry.label);
+        desktopNotedAt = Date.now();
+      }
+      if (!changed) return;
       keyInUse[who] = entry.id;
-      if (desktop) state.setDesktop(entry.label);
-      else state.setCurrent(`API key: ${entry.label}`);
+      if (!desktop) state.setCurrent(`API key: ${entry.label}`);
       log(`gateway: ${desktop ? 'the desktop app is' : 'sessions are'} using key "${entry.label}"`);
     },
   };
@@ -199,7 +206,11 @@ async function serve({ port } = {}) {
 
   // Find out where every account and key stands. The gateway starts at login, so give the
   // network a few seconds to come up first.
-  if (process.env.CLAUDE_NONSTOP_NO_STARTUP_CHECK !== '1') setTimeout(() => checks.all(), 5000).unref();
+  if (process.env.CLAUDE_NONSTOP_NO_STARTUP_CHECK !== '1') {
+    setTimeout(() => checks.all(), 5000).unref();
+    // Says when to switch the desktop app between your Claude.ai account and API keys.
+    setTimeout(() => require('./desktopadvice').start(), 6000).unref();
+  }
 
   const stop = (code = 0) => {
     const info = readJson(paths.SERVER, null);

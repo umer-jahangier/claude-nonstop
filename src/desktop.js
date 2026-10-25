@@ -98,6 +98,22 @@ function appInstalled() {
   return candidates.some((p) => p && fs.existsSync(p));
 }
 
+// Whether the desktop app is open right now. When it can't tell, it says yes. On a Mac the
+// match is the app itself, not Claude Code's lowercase helper app with a similar path.
+function appRunning() {
+  try {
+    if (process.platform === 'win32') {
+      const r = spawnSync('tasklist', ['/FI', 'IMAGENAME eq claude.exe', '/NH'], { encoding: 'utf8', windowsHide: true });
+      return r.status !== 0 || /claude\.exe/i.test(r.stdout);
+    }
+    const r = spawnSync('ps', ['-axo', 'args'], { encoding: 'utf8' });
+    if (r.status !== 0) return true;
+    return process.platform === 'darwin' ? /\/Claude\.app\/Contents\/MacOS\/Claude(\s|$)/m.test(r.stdout) : /claude-desktop/i.test(r.stdout);
+  } catch {
+    return true;
+  }
+}
+
 // The settings the app reads today from the documented managed location, if any.
 function current() {
   try {
@@ -243,4 +259,4 @@ function reveal(file = paths.DESKTOP_CONFIG) {
   return { ok: true };
 }
 
-module.exports = { settings, connector, write, status, reveal, STEPS, appInstalled, applied, managedChange, managedRemoval, macProfile, PROFILE };
+module.exports = { settings, connector, write, status, reveal, STEPS, appInstalled, appRunning, applied, managedChange, managedRemoval, macProfile, PROFILE };
