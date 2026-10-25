@@ -31,7 +31,7 @@ Setup:
   claude-nonstop setup               everything at once (the installers run this)
   claude-nonstop service install | uninstall | status
   claude-nonstop shell install | uninstall
-  claude-nonstop update               install the newest version now (it also updates itself daily)
+  claude-nonstop update               install the newest version now (it also updates itself within the hour)
   claude-nonstop uninstall [--purge]
 `;
 

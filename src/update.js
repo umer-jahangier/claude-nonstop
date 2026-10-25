@@ -113,8 +113,10 @@ function schedule(restart) {
       log(`update check failed: ${err.message}`);
     }
   };
-  setTimeout(run, Number(process.env.CLAUDE_NONSTOP_UPDATE_DELAY_MS || 10 * 60 * 1000)).unref();
-  setInterval(run, 24 * 60 * 60 * 1000).unref();
+  // A new release reaches this computer within the hour: checked a minute after the gateway
+  // starts, then hourly (one small request to GitHub, well inside its unauthenticated limit).
+  setTimeout(run, Number(process.env.CLAUDE_NONSTOP_UPDATE_DELAY_MS || 60 * 1000)).unref();
+  setInterval(run, 60 * 60 * 1000).unref();
 }
 
 module.exports = { isNewer, latestRelease, installTarball, checkAndInstall, schedule, managedInstall };

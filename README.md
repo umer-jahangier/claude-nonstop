@@ -224,7 +224,7 @@ Nothing is hidden. Here's everything, and how each part is undone:
 
 ## Updating
 
-claude-nonstop checks GitHub for a new release once a day and installs it by itself, so you rarely need to do anything. To update right now:
+claude-nonstop checks GitHub for a new release every hour (and a minute after it starts) and installs it by itself, so you rarely need to do anything. To update right now:
 
 ```bash
 claude-nonstop update
