@@ -68,6 +68,26 @@ function keysFor(req, cfg, all) {
 const isFree = (req) =>
   req.method === 'GET' && /^\/v1\/models(\/|\?|$)/.test(req.url);
 
+// The model list the desktop app asks for before anything else. When no line can answer
+// it (every account out, no key), the gateway answers itself so the app still connects;
+// the real request then walks your order as usual.
+const BUILTIN_MODELS = [
+  ['claude-fable-5-1', 'Claude Fable 5.1'],
+  ['claude-opus-5-5', 'Claude Opus 5.5'],
+  ['claude-sonnet-5-5', 'Claude Sonnet 5.5'],
+  ['claude-haiku-5-5', 'Claude Haiku 5.5'],
+];
+function sendBuiltinModels(res) {
+  const body = JSON.stringify({
+    data: BUILTIN_MODELS.map(([id, display_name]) => ({ type: 'model', id, display_name, created_at: '2026-01-01T00:00:00Z' })),
+    has_more: false,
+    first_id: BUILTIN_MODELS[0][0],
+    last_id: BUILTIN_MODELS[BUILTIN_MODELS.length - 1][0],
+  });
+  res.writeHead(200, { 'content-type': 'application/json', 'content-length': Buffer.byteLength(body) });
+  res.end(body);
+}
+
 function sameToken(given, expected) {
   if (!given || !expected) return false;
   const a = Buffer.from(String(given));
@@ -291,7 +311,7 @@ async function handle(req, res, ctx) {
   const free = isFree(req);
 
   // The desktop app walks your relay order: a subscription account first, when one has usage.
-  if (desktop && !free) {
+  if (desktop) {
     for (const group of relay.groups(cfg, vault.keys)) {
       if (group.kind !== 'account') continue;
       const { account } = group;
@@ -308,6 +328,11 @@ async function handle(req, res, ctx) {
         }
         return;
       }
+      if (free && upRes.statusCode >= 400) {
+        // The model list isn't use: a refusal here says nothing about the account.
+        upstream.destroy();
+        continue;
+      }
       if (upRes.statusCode === 429 || upRes.statusCode === 401 || upRes.statusCode === 403) {
         const errBody = await readBody(upRes, MAX_ERROR_BODY).catch(() => Buffer.alloc(0));
         const detail = keys.errorMessage(errBody.toString('utf8')) || `HTTP ${upRes.statusCode}`;
@@ -317,7 +342,7 @@ async function handle(req, res, ctx) {
         events.emit('switch', { accountId: account.id, label: account.label, status: upRes.statusCode, detail });
         continue;
       }
-      if (upRes.statusCode < 400) {
+      if (upRes.statusCode < 400 && !free) {
         if (state.load().accounts[account.id]?.ok === false) state.recordAccount(account.id, { ok: true, reason: '' });
         ctx.noteAccountInUse(account, { desktop: true });
       }
@@ -415,6 +440,11 @@ async function handle(req, res, ctx) {
     return;
   }
 
+  if (free) {
+    log('gateway: no line could list models; answering with the built-in list');
+    if (!res.destroyed && !res.headersSent) sendBuiltinModels(res);
+    return;
+  }
   events.emit('exhausted', {});
   const reason = desktop
     ? 'no subscription account has usage left and no API key has credit right now. Add an account or top up a key in the web UI, or sign in to Claude.ai in the desktop app.'

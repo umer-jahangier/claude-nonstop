@@ -255,6 +255,24 @@ test('forwards model listing for the desktop app', async () => {
   assert.equal(r.status, 200);
 });
 
+test('the model list comes from an account when there is no key, and from a built-in list when nothing can answer', async () => {
+  useKeys();
+  useAccounts('ok');
+  try {
+    api.requests.length = 0;
+    let r = await call(`${base}/v1/models`, { headers: { 'x-api-key': token } });
+    assert.equal(r.status, 200);
+    assert.equal(api.requests[0].bearer, testAccountToken('ok'));
+    assert.equal(state.load().desktop.label.includes('ok account'), false, 'listing models is not use');
+    noAccounts();
+    r = await call(`${base}/v1/models`, { headers: { 'x-api-key': token } });
+    assert.equal(r.status, 200, 'the app can still connect');
+    assert.ok(JSON.parse(r.body).data.some((m) => /^claude-/.test(m.id)));
+  } finally {
+    noAccounts();
+  }
+});
+
 test('a session sent to one group of keys uses only those, in your order, and skips paused keys', async () => {
   useKeys('credit', 'ok', 'second');
   const [credit, ok, second] = vault.load().keys;
