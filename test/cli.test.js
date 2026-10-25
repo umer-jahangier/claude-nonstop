@@ -63,7 +63,7 @@ test('keys add reads a piped key, rejects bad ones, and keys remove forgets it',
 test('status and desktop run on a fresh install', async () => {
   const status = await runCli(['status']);
   assert.equal(status.code, 0, status.stderr);
-  assert.match(status.stdout, /Subscription accounts/);
+  assert.match(status.stdout, /accounts and API keys, tried in this order/);
   const desktop = await runCli(['desktop']);
   assert.equal(desktop.code, 0);
   assert.match(desktop.stdout, /Configure Third-Party Inference/);

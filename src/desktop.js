@@ -34,8 +34,15 @@ function settings(cfg, v) {
     // Import & export brings over your claude.ai chats and the Code and Cowork sessions
     // already on this computer, and a new chat offers it when it finds earlier sessions.
     claudeAiImport: JSON.stringify({ enabled: true, automatic3pImport: true, bannerBehavior: 'detect' }),
+    // In third-party mode the app limits Code sessions to an allowlist of sites (strict
+    // sandbox mode) unless this list contains "*". This is your own computer, so by default
+    // sessions reach any site, as in a normal install. Settings → Strict sandbox restores it.
+    ...(cfg.desktopStrictSandbox ? {} : { coworkEgressAllowedHosts: JSON.stringify(['*']) }),
   };
 }
+
+// Every key claude-nonstop may write, so one it no longer wants is removed, not left behind.
+const MANAGED_KEYS = ['inferenceProvider', 'inferenceGatewayBaseUrl', 'inferenceGatewayApiKey', 'inferenceGatewayAuthScheme', 'claudeAiImport', 'coworkEgressAllowedHosts'];
 
 // A copy of the settings as JSON, for typing into the app's window by hand if ever needed.
 function write(cfg, v) {
@@ -101,7 +108,7 @@ function currentCached() {
 function applied(want, { fresh = false } = {}) {
   if (fresh) cached.at = 0;
   const have = currentCached();
-  return Boolean(have && Object.entries(want).every(([k, value]) => String(have[k]) === String(value)));
+  return Boolean(have && MANAGED_KEYS.every((k) => String(have[k] ?? '') === String(want[k] ?? '')));
 }
 
 // What system.js should do in its admin prompt to put the settings in place (Windows and
@@ -111,7 +118,8 @@ function managedChange(want) {
   if (process.platform === 'win32') {
     const key = 'HKLM:\\SOFTWARE\\Policies\\Claude';
     const values = Object.entries(want).map(([k, value]) => `New-ItemProperty -Path ${psQuote(key)} -Name ${psQuote(k)} -Value ${psQuote(value)} -PropertyType String -Force | Out-Null`);
-    return { ps: [`New-Item -Path ${psQuote(key)} -Force | Out-Null`, ...values].join('; ') };
+    const stale = MANAGED_KEYS.filter((k) => !(k in want)).map((k) => `Remove-ItemProperty -Path ${psQuote(key)} -Name ${psQuote(k)} -ErrorAction SilentlyContinue`);
+    return { ps: [`New-Item -Path ${psQuote(key)} -Force | Out-Null`, ...values, ...stale].join('; ') };
   }
   return {
     file: { text: `${JSON.stringify(want, null, 2)}\n`, target: LINUX_FILE },
@@ -123,8 +131,7 @@ function managedRemoval() {
   if (process.platform === 'darwin' || !current()) return null;
   if (process.platform === 'win32') {
     const key = 'HKLM:\\SOFTWARE\\Policies\\Claude';
-    const names = ['inferenceProvider', 'inferenceGatewayBaseUrl', 'inferenceGatewayApiKey', 'inferenceGatewayAuthScheme', 'claudeAiImport'];
-    return { ps: names.map((n) => `Remove-ItemProperty -Path ${psQuote(key)} -Name ${psQuote(n)} -ErrorAction SilentlyContinue`).join('; ') };
+    return { ps: MANAGED_KEYS.map((n) => `Remove-ItemProperty -Path ${psQuote(key)} -Name ${psQuote(n)} -ErrorAction SilentlyContinue`).join('; ') };
   }
   return { sh: () => `rm -f ${LINUX_FILE}` };
 }

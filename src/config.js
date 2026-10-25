@@ -14,6 +14,7 @@ const DEFAULTS = {
   probeModel: 'claude-haiku-5-5', // cheapest model, used for the 1-token key checks
   upstream: 'https://api.anthropic.com',
   autoUpdate: true, // the gateway installs new releases by itself
+  desktopStrictSandbox: false, // keep the desktop app's Code sessions to an allowlist of sites
 };
 
 const DEFAULT_ACCOUNT = { id: 'default', label: 'Main account', kind: 'default', enabled: true };

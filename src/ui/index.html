@@ -806,6 +806,9 @@ main { position: relative; z-index: 1; }
       </form>
       <div class="group"><button class="row-btn" type="button" data-act="recheck-everything" data-fk="forget">Forget All Cooldowns</button></div>
       <p class="group-foot">Changes save as you make them. Forgetting cooldowns tries every key and account again on the next session.</p>
+      <div class="group-head"><h2>Claude desktop app</h2></div>
+      <ul class="group list flat" id="desktop-prefs"></ul>
+      <p class="group-foot">In third-party mode the desktop app keeps its Code sessions to a short list of sites unless told otherwise. claude-nonstop lets them reach any site, like a normal install. Turn Strict sandbox on to keep the restriction. Changing it updates the app's settings: on a Mac, approve the updated profile in System Settings, then reopen the app.</p>
       <div class="group-head"><h2>This computer</h2></div>
       <ul class="group list flat" id="setup-facts"></ul>
     </div>
@@ -1201,6 +1204,8 @@ function renderSettings() {
     ['Secrets', 'Encrypted', `The encryption key lives in ${esc(S.keystore || 'your system keychain')}.`],
     ['Version', esc(S.version), `Open this page any time at <code>${esc(location.host)}</code>.`],
   ];
+  const strict = S.settings.desktopStrictSandbox;
+  $('#desktop-prefs').innerHTML = `<li class="row"><span class="row-text"><span class="row-title">Strict sandbox</span><span class="row-why">${strict ? 'Code sessions in the desktop app can reach only the sites the app allows.' : 'Code sessions in the desktop app can reach any site.'}</span></span><button class="switch" type="button" role="switch" aria-checked="${strict}" data-act="toggle-strict-sandbox" data-fk="strict-sandbox" aria-label="Strict sandbox for the desktop app"></button></li>`;
   $('#setup-facts').innerHTML = facts.map(([title, value, sub]) => `<li class="row"><span class="row-text"><span class="row-title">${esc(title)}</span><span class="row-why">${sub}</span></span><span class="fact-val">${value}</span></li>`).join('');
 }
 
@@ -2761,6 +2766,14 @@ const actions = {
     await api('PATCH', `/api/accounts/${id}`, { enabled: !a.enabled });
     await refresh();
     toast(a.enabled ? `${a.label} is paused. It stays signed in but isn't used.` : `${a.label} is back in use.`);
+  },
+  'toggle-strict-sandbox': async (id, el) => {
+    const on = !S.settings.desktopStrictSandbox;
+    el.setAttribute('aria-checked', String(on));
+    await api('PATCH', '/api/settings', { desktopStrictSandbox: on });
+    await refresh();
+    toast(S.desktop.installed ? 'Updating the desktop app\'s settings. Approve the change if asked, then reopen the app.' : 'Saved. It applies when the desktop app is set up.');
+    if (S.desktop.installed) { await api('POST', '/api/desktop/auto'); await refresh(); }
   },
   'toggle-key': async (id, el) => {
     const k = S.keys.find((x) => x.id === id);

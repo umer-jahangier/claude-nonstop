@@ -273,7 +273,7 @@ When you install the desktop app profile, macOS shows *"The author of this profi
 
 The claude-nonstop profile isn't signed because it's made on your own Mac during setup: it holds your computer's private gateway key, so no one could sign it in advance. It's safe to install, and you can check exactly what it does before you click **Install**:
 
-- **What it contains:** five settings for the Claude desktop app. Its third-party provider is set to *gateway*, the gateway address is `http://127.0.0.1:43117` (this computer), the gateway key is your local claude-nonstop token, the auth scheme is *bearer*, and the import of your earlier chats is turned on. In System Settings, click the profile, then **Settings** to see them.
+- **What it contains:** six settings for the Claude desktop app. Its third-party provider is set to *gateway*, the gateway address is `http://127.0.0.1:43117` (this computer), the gateway key is your local claude-nonstop token, the auth scheme is *bearer*, the import of your earlier chats is turned on, and Code sessions may reach any site (`coworkEgressAllowedHosts` set to `["*"]`, so the app doesn't force strict sandbox mode). Turn **Strict sandbox** on in the web page's **Settings** to keep that restriction instead. In System Settings, click the profile, then **Settings** to see them.
 - **What it doesn't do:** it installs no certificates, changes no system settings, and touches no other app.
 - **Undoing it:** remove it any time in **System Settings → General → Device Management**. The file is also saved at `~/.claude-nonstop/claude-nonstop-desktop.mobileconfig` if you'd like to read it.
 

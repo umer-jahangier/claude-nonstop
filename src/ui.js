@@ -130,7 +130,7 @@ function snapshot(ctx) {
     // Your relay order, accounts and keys mixed, as "account:<id>" / "key:<id>".
     order: relay.lines(cfg, v.keys).map((l) => relay.lineId(l.type, l.item.id)),
     pinned: cfg.pinned || null,
-    settings: { cooldownMinutes: cfg.cooldownMinutes, accountRecheckMinutes: cfg.accountRecheckMinutes },
+    settings: { cooldownMinutes: cfg.cooldownMinutes, accountRecheckMinutes: cfg.accountRecheckMinutes, desktopStrictSandbox: Boolean(cfg.desktopStrictSandbox) },
     traffic: events.stats(),
     shell: shell.status(),
     service: service.status(),
@@ -358,6 +358,7 @@ function editSettings(body) {
       if (!Number.isInteger(n) || n < 1 || n > 1440) throw httpError(400, 'Use a whole number of minutes between 1 and 1440.');
       c[name] = n;
     }
+    if (typeof body.desktopStrictSandbox === 'boolean') c.desktopStrictSandbox = body.desktopStrictSandbox;
   });
 }
 
