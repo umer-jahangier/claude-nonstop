@@ -1,0 +1,11 @@
+{
+  "name": "eraser",
+  "version": "2026.10.25",
+  "description": "Eraser: Generate, manage, and update Eraser diagrams and files",
+  "author": {
+    "name": "Eraser"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "pdf-viewer",
+  "version": "2026.10.25",
+  "description": "PDF Viewer: Demo PDF viewer that renders PDFs from allowed URLs like arxiv.org",
+  "author": {
+    "name": "Model Context Protocol Community"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

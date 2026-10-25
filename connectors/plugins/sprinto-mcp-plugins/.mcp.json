@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "sprinto-mcp-plugins": {
+      "type": "http",
+      "url": "https://mcp.sprinto.com/tools",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

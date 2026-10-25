@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "yardi-virtuoso": {
+      "type": "http",
+      "url": "https://mcp.virtuoso.ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

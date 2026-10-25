@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "fellow-ai": {
+      "type": "http",
+      "url": "https://fellow.app/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

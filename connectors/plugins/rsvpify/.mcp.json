@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "rsvpify": {
+      "type": "http",
+      "url": "https://mcp.rsvpify.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

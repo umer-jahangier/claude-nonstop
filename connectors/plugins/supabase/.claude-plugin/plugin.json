@@ -1,0 +1,12 @@
+{
+  "name": "supabase",
+  "version": "2026.10.25",
+  "description": "Supabase: Manage databases, authentication, and storage",
+  "author": {
+    "name": "Supabase"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools"
+  ]
+}

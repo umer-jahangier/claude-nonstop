@@ -1,0 +1,11 @@
+{
+  "name": "flourish-studio",
+  "version": "2026.10.25",
+  "description": "Flourish: Turn data into interactive charts you can edit",
+  "author": {
+    "name": "Flourish"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

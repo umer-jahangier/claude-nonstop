@@ -1,0 +1,11 @@
+{
+  "name": "oak-national-academy",
+  "version": "2026.10.25",
+  "description": "Oak National Academy: Free, national curriculum-aligned Oak teaching resources",
+  "author": {
+    "name": "Oak National Academy"
+  },
+  "keywords": [
+    "education"
+  ]
+}

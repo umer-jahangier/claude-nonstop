@@ -1,0 +1,11 @@
+{
+  "name": "fathom",
+  "version": "2026.10.25",
+  "description": "Fathom – Your Meeting Intelligence Layer: Your meeting notes, transcripts, and context – now part of every Claude conversation",
+  "author": {
+    "name": "Fathom"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

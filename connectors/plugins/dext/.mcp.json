@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "dext": {
+      "type": "http",
+      "url": "https://app.dext.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

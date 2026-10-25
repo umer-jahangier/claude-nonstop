@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "play-sheet-music": {
+      "type": "http",
+      "url": "https://example-server.modelcontextprotocol.io/sheet-music/mcp"
+    }
+  }
+}

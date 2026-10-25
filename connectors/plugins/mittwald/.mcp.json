@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "mittwald": {
+      "type": "http",
+      "url": "https://mcp.mittwald.de/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

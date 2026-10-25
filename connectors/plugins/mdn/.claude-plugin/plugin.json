@@ -1,0 +1,11 @@
+{
+  "name": "mdn",
+  "version": "2026.10.25",
+  "description": "MDN: Search & retrieval of MDN docs & browser compat data",
+  "author": {
+    "name": "Mozilla"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

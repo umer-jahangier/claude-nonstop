@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "signeasy": {
+      "type": "sse",
+      "url": "https://mcp.signeasy.com/mcp/sse",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

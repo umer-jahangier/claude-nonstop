@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "coindesk": {
+      "type": "http",
+      "url": "https://mcp.coindesk.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

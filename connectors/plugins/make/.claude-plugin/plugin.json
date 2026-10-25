@@ -1,0 +1,11 @@
+{
+  "name": "make",
+  "version": "2026.10.25",
+  "description": "Make: Run Make scenarios and manage your Make account",
+  "author": {
+    "name": "Make"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

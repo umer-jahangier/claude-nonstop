@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "windmill-hr": {
+      "type": "http",
+      "url": "https://mcp.gowindmill.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

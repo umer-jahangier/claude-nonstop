@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "cb-insights": {
+      "type": "http",
+      "url": "https://mcp.cbinsights.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

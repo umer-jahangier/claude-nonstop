@@ -1,0 +1,11 @@
+{
+  "name": "mygeotab-mcp-prod",
+  "version": "2026.10.25",
+  "description": "MyGeotab MCP: Bring your fleet into Claude — analyze, manage, and act",
+  "author": {
+    "name": "Geotab"
+  },
+  "keywords": [
+    "other"
+  ]
+}

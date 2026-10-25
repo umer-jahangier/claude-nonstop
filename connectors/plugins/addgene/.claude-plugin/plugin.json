@@ -1,0 +1,11 @@
+{
+  "name": "addgene",
+  "version": "2026.10.25",
+  "description": "Addgene: Search Addgene's catalog of plasmids and viral preps",
+  "author": {
+    "name": "Addgene"
+  },
+  "keywords": [
+    "health-life-sciences"
+  ]
+}

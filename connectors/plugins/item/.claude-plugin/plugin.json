@@ -1,0 +1,12 @@
+{
+  "name": "item",
+  "version": "2026.10.25",
+  "description": "item: Search, analyze, and act on CRM data",
+  "author": {
+    "name": "item"
+  },
+  "keywords": [
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

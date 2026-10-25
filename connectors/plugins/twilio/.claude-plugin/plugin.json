@@ -1,0 +1,11 @@
+{
+  "name": "twilio",
+  "version": "2026.10.25",
+  "description": "Twilio: Build powerful communications and customer engagement",
+  "author": {
+    "name": "Twilio"
+  },
+  "keywords": [
+    "communication"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "stytch": {
+      "type": "http",
+      "url": "https://mcp.stytch.dev/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

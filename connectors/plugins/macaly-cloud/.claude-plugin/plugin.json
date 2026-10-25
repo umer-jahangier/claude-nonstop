@@ -1,0 +1,13 @@
+{
+  "name": "macaly-cloud",
+  "version": "2026.10.25",
+  "description": "Macaly Cloud: Claude writes the code, Macaly runs it - a git repo, cloud sandbox, database, live preview and production hosting for the apps you build in chat.",
+  "author": {
+    "name": "Macaly"
+  },
+  "keywords": [
+    "creative",
+    "developer-tools",
+    "productivity"
+  ]
+}

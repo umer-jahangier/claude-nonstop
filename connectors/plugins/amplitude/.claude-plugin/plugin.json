@@ -1,0 +1,11 @@
+{
+  "name": "amplitude",
+  "version": "2026.10.25",
+  "description": "Amplitude: Search, access, and get insights on your Amplitude data",
+  "author": {
+    "name": "Amplitude"
+  },
+  "keywords": [
+    "sales-and-marketing"
+  ]
+}

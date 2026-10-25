@@ -1,0 +1,11 @@
+{
+  "name": "airtable",
+  "version": "2026.10.25",
+  "description": "Airtable: Bring your structured data to Claude",
+  "author": {
+    "name": "Airtable"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

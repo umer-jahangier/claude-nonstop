@@ -1,0 +1,12 @@
+{
+  "name": "deepl",
+  "version": "2026.10.25",
+  "description": "DeepL: Translate text and documents across 100+ languages, with your preferred styles applied",
+  "author": {
+    "name": "DeepL"
+  },
+  "keywords": [
+    "communication",
+    "productivity"
+  ]
+}

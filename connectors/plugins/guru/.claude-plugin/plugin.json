@@ -1,0 +1,11 @@
+{
+  "name": "guru",
+  "version": "2026.10.25",
+  "description": "Guru: Search and interact with your company knowledge",
+  "author": {
+    "name": "Guru"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "voluum",
+  "version": "2026.10.25",
+  "description": "Voluum: Manage and analyze your Voluum ad-tracking campaigns directly from Claude.",
+  "author": {
+    "name": "Voluum"
+  },
+  "keywords": [
+    "data-analytics",
+    "sales-and-marketing"
+  ]
+}

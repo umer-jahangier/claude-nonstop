@@ -1,0 +1,13 @@
+{
+  "name": "contract-factory-siren",
+  "version": "2026.10.25",
+  "description": "Contract-Factory — Sociétés & SIREN: Infos officielles des entreprises françaises (RNE)",
+  "author": {
+    "name": "Contract-Factory"
+  },
+  "keywords": [
+    "data-analytics",
+    "financial-services",
+    "legal"
+  ]
+}

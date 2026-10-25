@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "pdf-viewer": {
+      "type": "http",
+      "url": "https://example-server.modelcontextprotocol.io/pdf/mcp"
+    }
+  }
+}

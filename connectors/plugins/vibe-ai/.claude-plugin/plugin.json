@@ -1,0 +1,11 @@
+{
+  "name": "vibe-ai",
+  "version": "2026.10.25",
+  "description": "Vibe AI: Transcripts, summaries, action items, and memos from your Vibe Bot and Vibe Dot meetings",
+  "author": {
+    "name": "Vibe Inc"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

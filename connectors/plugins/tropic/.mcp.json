@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "tropic": {
+      "type": "http",
+      "url": "https://app.tropicapp.io/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

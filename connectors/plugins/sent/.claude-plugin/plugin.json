@@ -1,0 +1,14 @@
+{
+  "name": "sent",
+  "version": "2026.10.25",
+  "description": "Sent: Send and manage customer messages across SMS, WhatsApp, and RCS. Build and manage production messaging agents and workflows.",
+  "author": {
+    "name": "Sent, Inc."
+  },
+  "keywords": [
+    "communication",
+    "data-analytics",
+    "developer-tools",
+    "productivity"
+  ]
+}

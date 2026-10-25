@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "bloomberg-law": {
+      "type": "http",
+      "url": "https://gw.mcp.bindg.ai/blaw/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

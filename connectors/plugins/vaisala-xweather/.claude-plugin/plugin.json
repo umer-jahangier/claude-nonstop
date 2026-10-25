@@ -1,0 +1,12 @@
+{
+  "name": "vaisala-xweather",
+  "version": "2026.10.25",
+  "description": "Vaisala Xweather: Access real-time, forecast, and historical weather.",
+  "author": {
+    "name": "Vaisala Xweather"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "snagajob": {
+      "type": "http",
+      "url": "https://platform.jobget.com/jobs-mcp/mcp"
+    }
+  }
+}

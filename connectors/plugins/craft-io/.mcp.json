@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "craft-io": {
+      "type": "http",
+      "url": "https://mcp.craft.io/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

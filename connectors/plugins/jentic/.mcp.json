@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "jentic": {
+      "type": "http",
+      "url": "https://api.jentic.com/mcp"
+    }
+  }
+}

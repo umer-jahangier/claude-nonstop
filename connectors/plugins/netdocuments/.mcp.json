@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "netdocuments": {
+      "type": "http",
+      "url": "https://web-api.us.netdocuments.app/connect/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

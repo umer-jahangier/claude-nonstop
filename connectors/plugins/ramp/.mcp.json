@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "ramp": {
+      "type": "http",
+      "url": "https://ramp-mcp-remote.ramp.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

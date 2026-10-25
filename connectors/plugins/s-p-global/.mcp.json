@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "s-p-global": {
+      "type": "http",
+      "url": "https://kfinance.kensho.com/integrations/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

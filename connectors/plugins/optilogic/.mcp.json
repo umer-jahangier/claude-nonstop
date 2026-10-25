@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "optilogic": {
+      "type": "http",
+      "url": "https://mcp.optilogic.app/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

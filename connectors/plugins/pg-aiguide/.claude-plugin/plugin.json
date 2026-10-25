@@ -1,0 +1,11 @@
+{
+  "name": "pg-aiguide",
+  "version": "2026.10.25",
+  "description": "pg-aiguide: Search pg and Tiger docs, learn database skills",
+  "author": {
+    "name": "Tiger Data"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

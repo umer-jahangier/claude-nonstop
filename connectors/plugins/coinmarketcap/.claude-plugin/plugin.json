@@ -1,0 +1,11 @@
+{
+  "name": "coinmarketcap",
+  "version": "2026.10.25",
+  "description": "CoinMarketCap: Real-time crypto market and on-chain data analysis",
+  "author": {
+    "name": "CoinMarketCap"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

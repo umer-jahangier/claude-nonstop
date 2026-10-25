@@ -1,0 +1,11 @@
+{
+  "name": "infobip-message",
+  "version": "2026.10.25",
+  "description": "Infobip Message: Send SMS, RCS, MMS, and Viber messages through Infobip in Claude",
+  "author": {
+    "name": "Infobip"
+  },
+  "keywords": [
+    "communication"
+  ]
+}

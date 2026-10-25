@@ -1,0 +1,11 @@
+{
+  "name": "sonos-mcp",
+  "version": "2026.10.25",
+  "description": "Sonos: Control your Sonos system",
+  "author": {
+    "name": "Sonos, Inc."
+  },
+  "keywords": [
+    "media-entertainment"
+  ]
+}

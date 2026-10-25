@@ -1,0 +1,13 @@
+{
+  "name": "tomorrow-io-weather-mcp-app",
+  "version": "2026.10.25",
+  "description": "Tomorrow.io Weather MCP App: Interactive weather, air quality, pollen, and wildfire-risk widgets powered by Tomorrow.io — live forecasts and conditions for any location, right inside Claude",
+  "author": {
+    "name": "Tomorrow.io"
+  },
+  "keywords": [
+    "health-life-sciences",
+    "other",
+    "travel"
+  ]
+}

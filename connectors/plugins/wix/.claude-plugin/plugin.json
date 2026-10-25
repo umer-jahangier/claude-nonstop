@@ -1,0 +1,11 @@
+{
+  "name": "wix",
+  "version": "2026.10.25",
+  "description": "Wix: Manage and build sites and apps on Wix",
+  "author": {
+    "name": "Wix"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

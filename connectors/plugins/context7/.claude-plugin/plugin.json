@@ -1,0 +1,11 @@
+{
+  "name": "context7",
+  "version": "2026.10.25",
+  "description": "Context7: Up-to-date docs for LLMs and AI code editors",
+  "author": {
+    "name": "Context7"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

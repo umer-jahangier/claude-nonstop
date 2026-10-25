@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "ibisworld": {
+      "type": "http",
+      "url": "https://mcp.ibisworld.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

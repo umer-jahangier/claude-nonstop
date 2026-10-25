@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "clarity-ai": {
+      "type": "http",
+      "url": "https://clarity-sfdr20-mcp.pro.clarity.ai/mcp"
+    }
+  }
+}

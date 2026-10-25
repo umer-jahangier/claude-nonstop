@@ -1,0 +1,11 @@
+{
+  "name": "mollie",
+  "version": "2026.10.25",
+  "description": "Mollie: Online and in-person payments, subscriptions, funding, reconciliation, and fraud prevention – so growth never means more providers.",
+  "author": {
+    "name": "Mollie B.V."
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

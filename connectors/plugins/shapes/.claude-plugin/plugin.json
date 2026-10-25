@@ -1,0 +1,11 @@
+{
+  "name": "shapes",
+  "version": "2026.10.25",
+  "description": "Shapes: Analyse your live people data, right in Claude",
+  "author": {
+    "name": "Shapes"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

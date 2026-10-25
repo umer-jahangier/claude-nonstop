@@ -1,0 +1,11 @@
+{
+  "name": "adobe-journey-optimizer",
+  "version": "2026.10.25",
+  "description": "Adobe Journey Optimizer: Understand and troubleshoot your Journeys and Campaigns",
+  "author": {
+    "name": "Adobe"
+  },
+  "keywords": [
+    "sales-and-marketing"
+  ]
+}

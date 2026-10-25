@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "stub": {
+      "type": "http",
+      "url": "https://api.stub.africa/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

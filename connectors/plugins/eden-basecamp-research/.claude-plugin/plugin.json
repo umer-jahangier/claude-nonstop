@@ -1,0 +1,11 @@
+{
+  "name": "eden-basecamp-research",
+  "version": "2026.10.25",
+  "description": "EDEN by Basecamp Research: Design antibiotics and prioritise vaccine targets against drug-resistant pathogens using EDEN, Basecamp Research's biological foundation model",
+  "author": {
+    "name": "Basecamp Research"
+  },
+  "keywords": [
+    "health-life-sciences"
+  ]
+}

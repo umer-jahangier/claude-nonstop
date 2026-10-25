@@ -1,0 +1,11 @@
+{
+  "name": "square",
+  "version": "2026.10.25",
+  "description": "Square: Search and manage transaction, merchant, and payment data",
+  "author": {
+    "name": "Square, Inc."
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "bronto",
+  "version": "2026.10.25",
+  "description": "Bronto: Query your Observability data in plain language, then turn what you find into monitors, saved searches, and Investigation Reports.",
+  "author": {
+    "name": "Bronto"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

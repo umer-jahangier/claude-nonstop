@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "viberate": {
+      "type": "sse",
+      "url": "https://mcp.viberate.com/v1/sse",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

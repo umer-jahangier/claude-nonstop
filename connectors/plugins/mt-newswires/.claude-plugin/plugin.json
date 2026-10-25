@@ -1,0 +1,11 @@
+{
+  "name": "mt-newswires",
+  "version": "2026.10.25",
+  "description": "MT Newswires: Trusted real-time global financial news provider",
+  "author": {
+    "name": "MT Newswires"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

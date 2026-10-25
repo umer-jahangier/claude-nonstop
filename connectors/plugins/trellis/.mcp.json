@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "trellis": {
+      "type": "http",
+      "url": "https://mcp.trellis.law/anthropic",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

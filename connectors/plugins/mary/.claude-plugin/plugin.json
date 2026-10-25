@@ -1,0 +1,12 @@
+{
+  "name": "mary",
+  "version": "2026.10.25",
+  "description": "Mary: Organise, extract, draft, and verify the facts of your matter",
+  "author": {
+    "name": "Mary"
+  },
+  "keywords": [
+    "legal",
+    "productivity"
+  ]
+}

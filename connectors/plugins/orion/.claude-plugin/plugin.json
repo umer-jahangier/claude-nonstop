@@ -1,0 +1,11 @@
+{
+  "name": "orion",
+  "version": "2026.10.25",
+  "description": "Orion by Gravity: Get insights from your autonomous AI analyst",
+  "author": {
+    "name": "Gravity"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

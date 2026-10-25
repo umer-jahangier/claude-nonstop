@@ -1,0 +1,11 @@
+{
+  "name": "lightbringer",
+  "version": "2026.10.25",
+  "description": "Lightbringer: Patent and invention management for your AI assistant — search your portfolio, draft, validate and submit inventions, and collaborate on patent reviews without leaving the chat.",
+  "author": {
+    "name": "Lightbringer"
+  },
+  "keywords": [
+    "legal"
+  ]
+}

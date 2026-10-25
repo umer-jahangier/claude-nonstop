@@ -1,0 +1,11 @@
+{
+  "name": "coingecko",
+  "version": "2026.10.25",
+  "description": "CoinGecko: Live crypto prices, charts, trends, and sector rankings, powered by CoinGecko.",
+  "author": {
+    "name": "Gecko Labs Pte Ltd"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

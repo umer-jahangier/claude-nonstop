@@ -1,0 +1,11 @@
+{
+  "name": "intuit-mailchimp",
+  "version": "2026.10.25",
+  "description": "Intuit Mailchimp: Create marketing campaigns",
+  "author": {
+    "name": "Intuit Mailchimp"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

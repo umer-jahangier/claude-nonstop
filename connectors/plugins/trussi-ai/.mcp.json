@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "trussi-ai": {
+      "type": "http",
+      "url": "https://my.trussi.ai/api/mcp/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

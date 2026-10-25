@@ -1,0 +1,11 @@
+{
+  "name": "play-sheet-music",
+  "version": "2026.10.25",
+  "description": "Play Sheet Music: Ask Claude to generate and play some sheet music for you with a visual component",
+  "author": {
+    "name": "Model Context Protocol Community"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

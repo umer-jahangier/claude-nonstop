@@ -1,0 +1,11 @@
+{
+  "name": "pinegap",
+  "version": "2026.10.25",
+  "description": "Pinegap: AI-powered Equity Research Platform",
+  "author": {
+    "name": "PineGap"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "giscloud",
+  "version": "2026.10.25",
+  "description": "GIS Cloud: Run your entire GIS workflow in plain language: maps, data, analysis, field apps, and reports",
+  "author": {
+    "name": "GIS Cloud"
+  },
+  "keywords": [
+    "data-analytics",
+    "productivity"
+  ]
+}

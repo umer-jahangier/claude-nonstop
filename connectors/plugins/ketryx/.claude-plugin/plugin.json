@@ -1,0 +1,11 @@
+{
+  "name": "ketryx",
+  "version": "2026.10.25",
+  "description": "Ketryx: Search and explore regulated software lifecycle data",
+  "author": {
+    "name": "Ketryx"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

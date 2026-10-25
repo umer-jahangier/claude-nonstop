@@ -1,0 +1,11 @@
+{
+  "name": "privacy",
+  "version": "2026.10.25",
+  "description": "Privacy.com: Manage virtual cards and track your spending patterns",
+  "author": {
+    "name": "Privacy.com"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

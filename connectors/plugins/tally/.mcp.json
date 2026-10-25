@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "tally": {
+      "type": "http",
+      "url": "https://api.tally.so/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

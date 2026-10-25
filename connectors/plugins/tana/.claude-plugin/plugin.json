@@ -1,0 +1,12 @@
+{
+  "name": "tana",
+  "version": "2026.10.25",
+  "description": "Tana: Your meetings, decisions, and docs as Claude context.",
+  "author": {
+    "name": "Tana Labs, Inc."
+  },
+  "keywords": [
+    "communication",
+    "productivity"
+  ]
+}

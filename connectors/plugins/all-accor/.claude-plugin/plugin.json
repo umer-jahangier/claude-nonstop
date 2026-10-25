@@ -1,0 +1,11 @@
+{
+  "name": "all-accor",
+  "version": "2026.10.25",
+  "description": "ALL Accor: Search and book Accor hotels",
+  "author": {
+    "name": "Accor"
+  },
+  "keywords": [
+    "travel"
+  ]
+}

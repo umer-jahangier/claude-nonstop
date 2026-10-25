@@ -1,0 +1,12 @@
+{
+  "name": "belvo",
+  "version": "2026.10.25",
+  "description": "Belvo MCP: Understand your finances on your own terms",
+  "author": {
+    "name": "Belvo"
+  },
+  "keywords": [
+    "data-analytics",
+    "financial-services"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "viator",
+  "version": "2026.10.25",
+  "description": "Viator: Book travel experiences around the world",
+  "author": {
+    "name": "Viator"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

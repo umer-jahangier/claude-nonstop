@@ -1,0 +1,13 @@
+{
+  "name": "datarails-financeos",
+  "version": "2026.10.25",
+  "description": "Datarails FinanceOS: Query and analyze your company's consolidated financial data from Datarails FinanceOS.",
+  "author": {
+    "name": "Datarails"
+  },
+  "keywords": [
+    "data-analytics",
+    "financial-services",
+    "productivity"
+  ]
+}

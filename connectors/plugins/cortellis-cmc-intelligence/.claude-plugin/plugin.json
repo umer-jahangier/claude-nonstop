@@ -1,0 +1,11 @@
+{
+  "name": "cortellis-cmc-intelligence",
+  "version": "2026.10.25",
+  "description": "Cortellis CMC Intelligence: Trusted regulatory CMC insights, powered by Clarivate’s Cortellis CMC Intelligence.",
+  "author": {
+    "name": "Clarivate"
+  },
+  "keywords": [
+    "health-life-sciences"
+  ]
+}

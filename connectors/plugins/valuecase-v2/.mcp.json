@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "valuecase-v2": {
+      "type": "http",
+      "url": "https://mcp.valuecase.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

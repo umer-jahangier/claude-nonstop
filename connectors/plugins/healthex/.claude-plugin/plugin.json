@@ -1,0 +1,11 @@
+{
+  "name": "healthex",
+  "version": "2026.10.25",
+  "description": "HealthEx: Connect your health records for personalized insights",
+  "author": {
+    "name": "HDX Labs, Inc. (dba HealthEx)"
+  },
+  "keywords": [
+    "consumer-health"
+  ]
+}

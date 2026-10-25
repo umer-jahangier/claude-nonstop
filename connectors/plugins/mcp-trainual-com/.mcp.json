@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "mcp-trainual-com": {
+      "type": "http",
+      "url": "https://mcp.trainual.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

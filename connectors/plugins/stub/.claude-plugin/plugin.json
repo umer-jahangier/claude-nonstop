@@ -1,0 +1,12 @@
+{
+  "name": "stub",
+  "version": "2026.10.25",
+  "description": "stub: Super simple AI native accounting",
+  "author": {
+    "name": "stub"
+  },
+  "keywords": [
+    "data-analytics",
+    "financial-services"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "close",
+  "version": "2026.10.25",
+  "description": "Close: Connect Claude to Close CRM to securely access and act on your sales data",
+  "author": {
+    "name": "Close"
+  },
+  "keywords": [
+    "sales-and-marketing"
+  ]
+}

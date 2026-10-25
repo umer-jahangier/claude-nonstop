@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "cube-software": {
+      "type": "http",
+      "url": "https://mcp.cubesoftware.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

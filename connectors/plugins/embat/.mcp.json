@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "embat": {
+      "type": "http",
+      "url": "https://tellme.embat.io/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

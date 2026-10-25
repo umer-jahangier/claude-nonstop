@@ -1,0 +1,12 @@
+{
+  "name": "adobe-creativity",
+  "version": "2026.10.25",
+  "description": "Adobe: Design, combine, and edit with Adobe pro tools",
+  "author": {
+    "name": "Adobe Inc."
+  },
+  "keywords": [
+    "creative",
+    "productivity"
+  ]
+}

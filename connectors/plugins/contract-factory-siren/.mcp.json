@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "contract-factory-siren": {
+      "type": "http",
+      "url": "https://www.contract-factory.com/mcp.php"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "civitatis",
+  "version": "2026.10.25",
+  "description": "Civitatis: Search, plan, and book tours and activities worldwide with Civitatis.",
+  "author": {
+    "name": "Civitatis"
+  },
+  "keywords": [
+    "travel"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "otto-travel": {
+      "type": "http",
+      "url": "https://api.ottotheagent.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

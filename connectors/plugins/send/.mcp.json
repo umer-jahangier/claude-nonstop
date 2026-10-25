@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "send": {
+      "type": "http",
+      "url": "https://www.send.co/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

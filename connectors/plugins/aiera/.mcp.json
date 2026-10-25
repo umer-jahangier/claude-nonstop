@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "aiera": {
+      "type": "http",
+      "url": "https://mcp-pub.aiera.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

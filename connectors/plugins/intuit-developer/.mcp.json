@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "intuit-developer": {
+      "type": "http",
+      "url": "https://ai-inc-developer.intuit.com/v1/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "revolut-x-67e1d4": {
+      "type": "http",
+      "url": "https://mcp.revolut.com/revolut-x"
+    }
+  }
+}

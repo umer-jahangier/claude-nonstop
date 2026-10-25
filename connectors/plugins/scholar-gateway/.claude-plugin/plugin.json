@@ -1,0 +1,11 @@
+{
+  "name": "scholar-gateway",
+  "version": "2026.10.25",
+  "description": "Wiley Scholar Gateway: Enhance responses with scholarly research and citations",
+  "author": {
+    "name": "John Wiley & Sons Inc."
+  },
+  "keywords": [
+    "health-life-sciences"
+  ]
+}

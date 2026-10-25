@@ -1,0 +1,11 @@
+{
+  "name": "ratehub-mortgage",
+  "version": "2026.10.25",
+  "description": "Ratehub Mortgage: Find and compare Canada’s best mortgage rates",
+  "author": {
+    "name": "Ratehub.ca"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

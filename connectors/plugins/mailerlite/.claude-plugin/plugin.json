@@ -1,0 +1,11 @@
+{
+  "name": "mailerlite",
+  "version": "2026.10.25",
+  "description": "MailerLite: Turn Claude into your email marketing assistant",
+  "author": {
+    "name": "MailerLite"
+  },
+  "keywords": [
+    "communication"
+  ]
+}

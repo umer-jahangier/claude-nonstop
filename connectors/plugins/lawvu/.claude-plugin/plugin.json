@@ -1,0 +1,12 @@
+{
+  "name": "lawvu",
+  "version": "2026.10.25",
+  "description": "LawVu: Operating system for in-house legal teams",
+  "author": {
+    "name": "LawVu Limited"
+  },
+  "keywords": [
+    "legal",
+    "productivity"
+  ]
+}

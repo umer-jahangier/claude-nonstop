@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "terminal49": {
+      "type": "http",
+      "url": "https://mcp.terminal49.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "lumin",
+  "version": "2026.10.25",
+  "description": "Lumin: Send documents for signature, track them to completion, and generate agreements from templates — without leaving the chat.",
+  "author": {
+    "name": "Lumin"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

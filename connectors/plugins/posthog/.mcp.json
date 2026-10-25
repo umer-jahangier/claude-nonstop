@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "posthog": {
+      "type": "http",
+      "url": "https://mcp.posthog.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

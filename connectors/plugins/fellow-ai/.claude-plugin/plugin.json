@@ -1,0 +1,11 @@
+{
+  "name": "fellow-ai",
+  "version": "2026.10.25",
+  "description": "Fellow.ai: Chat with your meetings to uncover actionable insights",
+  "author": {
+    "name": "Fellow.ai"
+  },
+  "keywords": [
+    "communication"
+  ]
+}

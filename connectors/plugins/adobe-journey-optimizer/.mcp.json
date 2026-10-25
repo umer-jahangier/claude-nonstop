@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "adobe-journey-optimizer": {
+      "type": "http",
+      "url": "https://ajo-mcp.adobe.io/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

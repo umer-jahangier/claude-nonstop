@@ -1,0 +1,13 @@
+{
+  "name": "agentmail",
+  "version": "2026.10.25",
+  "description": "AgentMail: Email inboxes for AI agents",
+  "author": {
+    "name": "AgentMail, Inc."
+  },
+  "keywords": [
+    "communication",
+    "developer-tools",
+    "productivity"
+  ]
+}

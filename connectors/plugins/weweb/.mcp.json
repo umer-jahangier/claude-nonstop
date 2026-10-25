@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "weweb": {
+      "type": "http",
+      "url": "https://ai-api.weweb.io/v1/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

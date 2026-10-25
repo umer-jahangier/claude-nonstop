@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "crossbeam": {
+      "type": "http",
+      "url": "https://mcp.crossbeam.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

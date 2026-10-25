@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "signnow": {
+      "type": "http",
+      "url": "https://mcp-server.signnow.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

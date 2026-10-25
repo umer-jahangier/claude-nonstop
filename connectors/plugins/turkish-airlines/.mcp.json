@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "turkish-airlines": {
+      "type": "http",
+      "url": "https://mcp-app.turkishtechlab.com/mcp"
+    }
+  }
+}

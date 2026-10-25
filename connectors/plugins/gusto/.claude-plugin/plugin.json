@@ -1,0 +1,11 @@
+{
+  "name": "gusto",
+  "version": "2026.10.25",
+  "description": "Gusto: Query and analyze your Gusto data",
+  "author": {
+    "name": "Gusto"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

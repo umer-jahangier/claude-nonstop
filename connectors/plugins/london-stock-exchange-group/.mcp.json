@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "london-stock-exchange-group": {
+      "type": "http",
+      "url": "https://api.analytics.lseg.com/lfa/mcp/server-cl",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

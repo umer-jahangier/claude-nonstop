@@ -1,0 +1,11 @@
+{
+  "name": "tango",
+  "version": "2026.10.25",
+  "description": "Tango: Search for US Government Contracting Data",
+  "author": {
+    "name": "MakeGov Inc"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

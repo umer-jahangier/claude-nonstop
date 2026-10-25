@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "candid": {
+      "type": "http",
+      "url": "https://mcp.candid.org/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

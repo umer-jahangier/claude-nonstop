@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "tabs": {
+      "type": "http",
+      "url": "https://integrators.prod.api.tabsplatform.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

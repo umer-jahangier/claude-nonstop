@@ -1,0 +1,13 @@
+{
+  "name": "juro",
+  "version": "2026.10.25",
+  "description": "Juro contracts: Query & work with contracts effortlessly throughout the lifecycle to agree contracts faster.",
+  "author": {
+    "name": "Juro"
+  },
+  "keywords": [
+    "data-analytics",
+    "legal",
+    "productivity"
+  ]
+}

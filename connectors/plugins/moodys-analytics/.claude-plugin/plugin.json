@@ -1,0 +1,11 @@
+{
+  "name": "moodys-analytics",
+  "version": "2026.10.25",
+  "description": "Moody's Credit MCP: Risk insights, analytics, and decision intelligence",
+  "author": {
+    "name": "Moody's Analytics"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

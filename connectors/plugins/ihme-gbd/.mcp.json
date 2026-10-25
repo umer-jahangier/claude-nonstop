@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "ihme-gbd": {
+      "type": "http",
+      "url": "https://gbdmcp.healthdata.org/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "payhawk",
+  "version": "2026.10.25",
+  "description": "Payhawk: Ask and act on company spend: cards, invoices, travel",
+  "author": {
+    "name": "Payhawk"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

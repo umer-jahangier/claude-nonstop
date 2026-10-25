@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "gemini-mcp": {
+      "type": "http",
+      "url": "https://api.gemini.com/mcp"
+    }
+  }
+}

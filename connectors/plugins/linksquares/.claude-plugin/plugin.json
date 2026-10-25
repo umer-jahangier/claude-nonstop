@@ -1,0 +1,11 @@
+{
+  "name": "linksquares",
+  "version": "2026.10.25",
+  "description": "LinkSquares: Automate legal intake and contract intelligence — create agreements, manage legal requests, and search your contract data directly from Claude.",
+  "author": {
+    "name": "LinkSquares, Inc."
+  },
+  "keywords": [
+    "legal"
+  ]
+}

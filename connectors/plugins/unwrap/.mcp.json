@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "unwrap": {
+      "type": "http",
+      "url": "https://nlp.api.production.unwrap.ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

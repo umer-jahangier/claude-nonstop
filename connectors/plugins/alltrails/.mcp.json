@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "alltrails": {
+      "type": "http",
+      "url": "https://www.alltrails.com/mcp"
+    }
+  }
+}

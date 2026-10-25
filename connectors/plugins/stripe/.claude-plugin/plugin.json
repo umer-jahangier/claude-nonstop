@@ -1,0 +1,11 @@
+{
+  "name": "stripe",
+  "version": "2026.10.25",
+  "description": "Stripe: Payment processing and financial infrastructure tools",
+  "author": {
+    "name": "Stripe"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

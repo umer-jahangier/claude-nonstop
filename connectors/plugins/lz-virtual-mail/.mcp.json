@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "lz-virtual-mail": {
+      "type": "http",
+      "url": "https://api.earthclassmail.com/v2/mcp/claude",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

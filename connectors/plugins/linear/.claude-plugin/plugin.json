@@ -1,0 +1,11 @@
+{
+  "name": "linear",
+  "version": "2026.10.25",
+  "description": "Linear: Manage issues, projects & team workflows in Linear",
+  "author": {
+    "name": "Linear (Linear Orbit, Inc.)"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "era-context",
+  "version": "2026.10.25",
+  "description": "Era Context: Manage your personal finances using Claude",
+  "author": {
+    "name": "Tinwell Labs Inc, DBA Era"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "mospi",
+  "version": "2026.10.25",
+  "description": "MoSPI: India's official statistics via natural language",
+  "author": {
+    "name": "Ministry of Statistics and Programme Implementation (MoSPI), Government of India"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

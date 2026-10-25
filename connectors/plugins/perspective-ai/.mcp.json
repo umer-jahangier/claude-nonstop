@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "perspective-ai": {
+      "type": "http",
+      "url": "https://getperspective.ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

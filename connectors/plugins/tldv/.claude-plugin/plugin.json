@@ -1,0 +1,13 @@
+{
+  "name": "tldv",
+  "version": "2026.10.25",
+  "description": "tl;dv - AI Note Taker & Meeting Recorder: Transcripts, Summaries & Meeting Minutes: Meeting transcripts, notes & action items in Claude",
+  "author": {
+    "name": "tldx solutions GmbH"
+  },
+  "keywords": [
+    "communication",
+    "data-analytics",
+    "productivity"
+  ]
+}

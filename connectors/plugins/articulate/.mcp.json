@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "articulate": {
+      "type": "http",
+      "url": "https://mcp.articulate.com/mcp"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "bronto": {
+      "type": "http",
+      "url": "https://mcp.eu.bronto.io/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

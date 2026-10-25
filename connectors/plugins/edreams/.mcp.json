@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "edreams": {
+      "type": "http",
+      "url": "https://www.edreams.com/ai-travel-assistant/claude/v1/mcp"
+    }
+  }
+}

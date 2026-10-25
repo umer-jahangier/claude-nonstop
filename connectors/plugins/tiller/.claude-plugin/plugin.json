@@ -1,0 +1,12 @@
+{
+  "name": "tiller",
+  "version": "2026.10.25",
+  "description": "Tiller: Connect to your transactions in your Tiller spreadsheet",
+  "author": {
+    "name": "Tiller"
+  },
+  "keywords": [
+    "financial-services",
+    "productivity"
+  ]
+}

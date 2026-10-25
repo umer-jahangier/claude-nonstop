@@ -1,0 +1,12 @@
+{
+  "name": "gemini-mcp",
+  "version": "2026.10.25",
+  "description": "Gemini: Connect AI assistants to live crypto markets, prediction markets, your trading accounts, all through our secure read-only plugin",
+  "author": {
+    "name": "Gemini Space Station, LLC"
+  },
+  "keywords": [
+    "data-analytics",
+    "financial-services"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "all-accor": {
+      "type": "http",
+      "url": "https://mcp.dams.aws.accor.com/green/v1/mcp/apps"
+    }
+  }
+}

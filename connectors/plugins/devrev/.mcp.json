@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "devrev": {
+      "type": "http",
+      "url": "https://api.devrev.ai/mcp/v1",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

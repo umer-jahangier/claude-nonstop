@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "controlplane": {
+      "type": "http",
+      "url": "https://mcp.cpln.io/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

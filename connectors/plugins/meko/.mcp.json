@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "meko": {
+      "type": "http",
+      "url": "https://mcp.mekodata.ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

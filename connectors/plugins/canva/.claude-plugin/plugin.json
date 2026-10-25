@@ -1,0 +1,12 @@
+{
+  "name": "canva",
+  "version": "2026.10.25",
+  "description": "Canva: Search, create, autofill, and export Canva designs",
+  "author": {
+    "name": "Canva"
+  },
+  "keywords": [
+    "creative",
+    "education"
+  ]
+}

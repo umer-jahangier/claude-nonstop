@@ -1,0 +1,11 @@
+{
+  "name": "stytch",
+  "version": "2026.10.25",
+  "description": "Stytch: Manage your Stytch Project",
+  "author": {
+    "name": "Stytch"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

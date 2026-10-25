@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "iubenda": {
+      "type": "http",
+      "url": "https://mcp-server.iubenda.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

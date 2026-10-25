@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "jedify": {
+      "type": "http",
+      "url": "https://be.jedify.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

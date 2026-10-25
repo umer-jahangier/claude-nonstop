@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "aleph": {
+      "type": "http",
+      "url": "https://mcp.getaleph.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

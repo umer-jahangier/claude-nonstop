@@ -1,0 +1,12 @@
+{
+  "name": "tldraw",
+  "version": "2026.10.25",
+  "description": "tldraw: Let Claude sketch, draw, and diagram with you",
+  "author": {
+    "name": "tldraw"
+  },
+  "keywords": [
+    "creative",
+    "productivity"
+  ]
+}

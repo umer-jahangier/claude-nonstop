@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "zacks-data": {
+      "type": "http",
+      "url": "https://mcp.zacksdata.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

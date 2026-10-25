@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "otter-ai": {
+      "type": "http",
+      "url": "https://mcp.otter.ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

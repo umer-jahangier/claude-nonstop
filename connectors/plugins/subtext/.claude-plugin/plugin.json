@@ -1,0 +1,12 @@
+{
+  "name": "subtext",
+  "version": "2026.10.25",
+  "description": "Subtext: Session replay, built for agents. Give Claude a session link and it investigates the real production session—DOM, screenshots, console, network—to find the root cause.",
+  "author": {
+    "name": "Fullstory"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools"
+  ]
+}

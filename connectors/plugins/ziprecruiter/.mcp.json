@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "ziprecruiter": {
+      "type": "http",
+      "url": "https://api.ziprecruiter.com/mcp"
+    }
+  }
+}

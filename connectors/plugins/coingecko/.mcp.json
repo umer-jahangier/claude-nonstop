@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "coingecko": {
+      "type": "http",
+      "url": "https://mcp.coingecko.com/mcp"
+    }
+  }
+}

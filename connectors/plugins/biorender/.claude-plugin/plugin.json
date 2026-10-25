@@ -1,0 +1,11 @@
+{
+  "name": "biorender",
+  "version": "2026.10.25",
+  "description": "BioRender: Search the BioRender library, find your files, and generate new scientific figures directly from Claude.",
+  "author": {
+    "name": "BioRender"
+  },
+  "keywords": [
+    "health-life-sciences"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "tldv": {
+      "type": "http",
+      "url": "https://mcp.tldv.io/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "navan",
+  "version": "2026.10.25",
+  "description": "Navan: Access and analyze your Navan financial and travel data",
+  "author": {
+    "name": "Navan"
+  },
+  "keywords": [
+    "financial-services",
+    "travel"
+  ]
+}

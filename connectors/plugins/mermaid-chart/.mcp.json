@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "mermaid-chart": {
+      "type": "http",
+      "url": "https://chatgpt.mermaid.ai/anthropic/mcp"
+    }
+  }
+}

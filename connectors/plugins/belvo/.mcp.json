@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "belvo": {
+      "type": "http",
+      "url": "https://panorama-mcp.belvo.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

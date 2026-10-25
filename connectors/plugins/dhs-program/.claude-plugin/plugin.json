@@ -1,0 +1,11 @@
+{
+  "name": "dhs-program",
+  "version": "2026.10.25",
+  "description": "Demographic and Health Surveys: Data from The Demographic and Health Surveys Program",
+  "author": {
+    "name": "ICF"
+  },
+  "keywords": [
+    "consumer-health"
+  ]
+}

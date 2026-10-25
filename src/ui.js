@@ -109,6 +109,7 @@ function snapshot(ctx) {
     gatewayUrl: `http://127.0.0.1:${cfg.port}`,
     current: s.current,
     currentAt: s.currentAt,
+    desktopKey: s.desktop,
     claudeFound: Boolean(claude.findClaude()),
     checking: checks.checking(),
     accounts: cfg.accounts.map((a) => ({

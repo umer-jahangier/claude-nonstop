@@ -1,0 +1,11 @@
+{
+  "name": "amass",
+  "version": "2026.10.25",
+  "description": "Amass Connector: Life sciences intelligence, unified — publications, trials, drugs, genes, regulatory approvals, and patents in one cross-linked connector",
+  "author": {
+    "name": "Amass technologies Aps"
+  },
+  "keywords": [
+    "health-life-sciences"
+  ]
+}

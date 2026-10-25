@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "coursera": {
+      "type": "http",
+      "url": "https://api.coursera.com/mcp"
+    }
+  }
+}

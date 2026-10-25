@@ -1,0 +1,11 @@
+{
+  "name": "planetscale",
+  "version": "2026.10.25",
+  "description": "PlanetScale: Authenticated access to your Postgres and MySQL DB's",
+  "author": {
+    "name": "PlanetScale"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

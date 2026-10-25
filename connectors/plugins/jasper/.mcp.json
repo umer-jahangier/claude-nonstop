@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "jasper": {
+      "type": "http",
+      "url": "https://mcp.jasper.ai/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

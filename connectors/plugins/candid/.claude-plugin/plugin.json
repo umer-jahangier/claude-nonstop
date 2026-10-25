@@ -1,0 +1,11 @@
+{
+  "name": "candid",
+  "version": "2026.10.25",
+  "description": "Candid: Research nonprofits and funders using Candid's data",
+  "author": {
+    "name": "Candid"
+  },
+  "keywords": [
+    "nonprofit"
+  ]
+}

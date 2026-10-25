@@ -1,0 +1,13 @@
+{
+  "name": "rockhopper",
+  "version": "2026.10.25",
+  "description": "Rockhopper: Spreadsheet audit and observability for finance teams working with AI agents.",
+  "author": {
+    "name": "Rockhopper Inc."
+  },
+  "keywords": [
+    "data-analytics",
+    "financial-services",
+    "productivity"
+  ]
+}

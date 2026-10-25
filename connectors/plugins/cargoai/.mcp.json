@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "cargoai": {
+      "type": "http",
+      "url": "https://api.cargoai.co/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

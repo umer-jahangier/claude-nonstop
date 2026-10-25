@@ -1,0 +1,11 @@
+{
+  "name": "calendly",
+  "version": "2026.10.25",
+  "description": "Calendly: Manage event types, availability, and bookings.",
+  "author": {
+    "name": "Calendly"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

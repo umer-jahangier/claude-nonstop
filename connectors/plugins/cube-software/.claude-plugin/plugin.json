@@ -1,0 +1,13 @@
+{
+  "name": "cube-software",
+  "version": "2026.10.25",
+  "description": "Cube Software: Bring trusted Cube financial context into Claude. Analyze performance, model scenarios, and move decisions into action, with your Cube permissions enforced on every request.",
+  "author": {
+    "name": "Cube"
+  },
+  "keywords": [
+    "data-analytics",
+    "financial-services",
+    "productivity"
+  ]
+}

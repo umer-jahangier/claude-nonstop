@@ -1,0 +1,11 @@
+{
+  "name": "quicknode",
+  "version": "2026.10.25",
+  "description": "QuickNode: Manage blockchain infrastructure right in Claude",
+  "author": {
+    "name": "QuickNode"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

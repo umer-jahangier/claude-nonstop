@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "kpler": {
+      "type": "http",
+      "url": "https://claude.mcp.kpler.com/v1/mcp/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

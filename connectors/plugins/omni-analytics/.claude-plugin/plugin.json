@@ -1,0 +1,11 @@
+{
+  "name": "omni-analytics",
+  "version": "2026.10.25",
+  "description": "Omni Analytics: Query your data using natural language through Omni's semantic model",
+  "author": {
+    "name": "Omni Analytics"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

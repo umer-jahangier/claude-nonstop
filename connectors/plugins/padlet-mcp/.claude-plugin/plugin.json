@@ -1,0 +1,12 @@
+{
+  "name": "padlet-mcp",
+  "version": "2026.10.25",
+  "description": "Padlet: Create and manage padlets",
+  "author": {
+    "name": "Wallwisher, Inc."
+  },
+  "keywords": [
+    "education",
+    "productivity"
+  ]
+}

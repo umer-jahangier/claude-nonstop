@@ -1,0 +1,12 @@
+{
+  "name": "cloudinary",
+  "version": "2026.10.25",
+  "description": "Cloudinary: Manage, transform and deliver your images & videos",
+  "author": {
+    "name": "Cloudinary"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools"
+  ]
+}

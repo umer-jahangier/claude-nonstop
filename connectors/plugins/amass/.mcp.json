@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "amass": {
+      "type": "http",
+      "url": "https://mcp.amass.tech/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

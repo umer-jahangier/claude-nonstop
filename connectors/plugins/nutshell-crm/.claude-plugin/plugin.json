@@ -1,0 +1,14 @@
+{
+  "name": "nutshell-crm",
+  "version": "2026.10.25",
+  "description": "Nutshell CRM: Connect Claude to Nutshell CRM to search leads, contacts, and companies, pull sales reports, and review deal timelines - all without leaving chat.",
+  "author": {
+    "name": "Nutshell"
+  },
+  "keywords": [
+    "communication",
+    "data-analytics",
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

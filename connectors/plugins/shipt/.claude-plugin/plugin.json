@@ -1,0 +1,11 @@
+{
+  "name": "shipt",
+  "version": "2026.10.25",
+  "description": "Shipt: Groceries and more, delivered same-day from your favorite local stores.",
+  "author": {
+    "name": "Shipt"
+  },
+  "keywords": [
+    "commerce-shopping"
+  ]
+}

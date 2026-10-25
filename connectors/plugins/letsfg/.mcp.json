@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "letsfg": {
+      "type": "http",
+      "url": "https://letsfg.co/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

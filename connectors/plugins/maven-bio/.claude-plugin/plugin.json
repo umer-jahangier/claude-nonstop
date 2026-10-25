@@ -1,0 +1,13 @@
+{
+  "name": "maven-bio",
+  "version": "2026.10.25",
+  "description": "Maven Bio: Biopharma catalysts, pipelines, trials, deals, and the citable primary sources behind them",
+  "author": {
+    "name": "Maven Bio"
+  },
+  "keywords": [
+    "data-analytics",
+    "health-life-sciences",
+    "productivity"
+  ]
+}

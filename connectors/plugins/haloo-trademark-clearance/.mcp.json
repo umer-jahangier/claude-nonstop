@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "haloo-trademark-clearance": {
+      "type": "http",
+      "url": "https://connect.haloo.ai/trademark-search/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

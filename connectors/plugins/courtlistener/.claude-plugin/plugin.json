@@ -1,0 +1,12 @@
+{
+  "name": "courtlistener",
+  "version": "2026.10.25",
+  "description": "CourtListener: Legal research across millions of court records",
+  "author": {
+    "name": "Free Law Project"
+  },
+  "keywords": [
+    "legal",
+    "productivity"
+  ]
+}

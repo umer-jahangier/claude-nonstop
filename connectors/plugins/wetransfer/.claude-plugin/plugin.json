@@ -1,0 +1,13 @@
+{
+  "name": "wetransfer",
+  "version": "2026.10.25",
+  "description": "WeTransfer: Send files from your chat via WeTransfer — get a shareable link or email them to recipients, using your own WeTransfer account.",
+  "author": {
+    "name": "WeTransfer"
+  },
+  "keywords": [
+    "communication",
+    "creative",
+    "productivity"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "bonsai": {
+      "type": "http",
+      "url": "https://mcp.hellobonsai.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "turkish-airlines",
+  "version": "2026.10.25",
+  "description": "Turkish Airlines: Search flights, plan trips, and manage bookings",
+  "author": {
+    "name": "Turkish Airlines"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "countersignatory": {
+      "type": "http",
+      "url": "https://countersignatory.com/mcp"
+    }
+  }
+}

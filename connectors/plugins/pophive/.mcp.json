@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "pophive": {
+      "type": "http",
+      "url": "https://mcp.pophive.org/mcp"
+    }
+  }
+}

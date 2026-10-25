@@ -1,0 +1,11 @@
+{
+  "name": "brightflag",
+  "version": "2026.10.25",
+  "description": "Brightflag: Connect to Brightflag to interact with matter, vendor and spend data within Claude.",
+  "author": {
+    "name": "Brightflag"
+  },
+  "keywords": [
+    "legal"
+  ]
+}

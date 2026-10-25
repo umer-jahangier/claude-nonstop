@@ -1,0 +1,11 @@
+{
+  "name": "notion",
+  "version": "2026.10.25",
+  "description": "Notion: Connect your Notion workspace to search, update, and power workflows across tools",
+  "author": {
+    "name": "Notion"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

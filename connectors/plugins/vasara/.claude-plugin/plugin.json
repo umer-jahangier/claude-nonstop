@@ -1,0 +1,12 @@
+{
+  "name": "vasara",
+  "version": "2026.10.25",
+  "description": "Vasara: Search case law and legislation across Lithuania and the EU, with verifiable citations.",
+  "author": {
+    "name": "Vasara"
+  },
+  "keywords": [
+    "legal",
+    "productivity"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "plaid": {
+      "type": "sse",
+      "url": "https://api.dashboard.plaid.com/mcp/sse",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

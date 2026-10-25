@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "lseg-ai": {
+      "type": "http",
+      "url": "https://mcp.lseg.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

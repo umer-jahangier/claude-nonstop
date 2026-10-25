@@ -1,0 +1,13 @@
+{
+  "name": "meridian-connector-for-quickbooks",
+  "version": "2026.10.25",
+  "description": "Meridian Connector for QuickBooks: Make changes to QuickBooks Online from within Claude.",
+  "author": {
+    "name": "Pilot.com, Inc."
+  },
+  "keywords": [
+    "data-analytics",
+    "financial-services",
+    "productivity"
+  ]
+}

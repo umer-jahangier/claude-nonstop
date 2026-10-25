@@ -1,0 +1,11 @@
+{
+  "name": "origin",
+  "version": "2026.10.25",
+  "description": "Origin: See what AI agents are doing across your endpoint fleet",
+  "author": {
+    "name": "Origin"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

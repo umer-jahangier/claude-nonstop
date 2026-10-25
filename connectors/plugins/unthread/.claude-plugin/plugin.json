@@ -1,0 +1,11 @@
+{
+  "name": "unthread",
+  "version": "2026.10.25",
+  "description": "Unthread: Manage and automate your support tickets",
+  "author": {
+    "name": "Unthread"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

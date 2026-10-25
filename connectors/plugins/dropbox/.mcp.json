@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "dropbox": {
+      "type": "http",
+      "url": "https://mcp.dropbox.com/claude_app_mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "checkout-com",
+  "version": "2026.10.25",
+  "description": "Checkout.com: Investigate, troubleshoot, and understand payment operations.",
+  "author": {
+    "name": "Checkout.com"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

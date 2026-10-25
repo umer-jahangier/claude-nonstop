@@ -1,0 +1,12 @@
+{
+  "name": "gem",
+  "version": "2026.10.25",
+  "description": "Gem: Access, analyze, and manage your Gem data in Claude",
+  "author": {
+    "name": "Gem"
+  },
+  "keywords": [
+    "data-analytics",
+    "productivity"
+  ]
+}

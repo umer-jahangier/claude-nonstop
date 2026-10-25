@@ -1,0 +1,12 @@
+{
+  "name": "open-targets",
+  "version": "2026.10.25",
+  "description": "Open Targets: Drug target discovery and prioritisation platform",
+  "author": {
+    "name": "OpenTargets"
+  },
+  "keywords": [
+    "data-analytics",
+    "health-life-sciences"
+  ]
+}

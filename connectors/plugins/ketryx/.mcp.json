@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "ketryx": {
+      "type": "http",
+      "url": "https://app.ketryx.com/api/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

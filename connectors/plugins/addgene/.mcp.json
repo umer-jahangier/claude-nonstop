@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "addgene": {
+      "type": "http",
+      "url": "https://mcp-server.addgene.org/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

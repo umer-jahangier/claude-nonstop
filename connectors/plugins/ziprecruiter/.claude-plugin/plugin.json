@@ -1,0 +1,11 @@
+{
+  "name": "ziprecruiter",
+  "version": "2026.10.25",
+  "description": "ZipRecruiter: Job search made easy",
+  "author": {
+    "name": "ZipRecruiter Inc."
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

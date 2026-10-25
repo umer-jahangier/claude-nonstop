@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "infinitewatch-mcp": {
+      "type": "http",
+      "url": "https://mcp.infinitewatch.ai/mcp"
+    }
+  }
+}

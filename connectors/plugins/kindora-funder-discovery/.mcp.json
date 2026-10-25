@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "kindora-funder-discovery": {
+      "type": "http",
+      "url": "https://mcp.kindora.co/mcp"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "pinegap": {
+      "type": "http",
+      "url": "https://mcp.pinegap.ai/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

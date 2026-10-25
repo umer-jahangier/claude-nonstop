@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "ifttt": {
+      "type": "http",
+      "url": "https://ifttt.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

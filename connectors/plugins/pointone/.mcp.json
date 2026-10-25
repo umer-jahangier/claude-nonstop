@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "pointone": {
+      "type": "http",
+      "url": "https://mcp.pointone.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

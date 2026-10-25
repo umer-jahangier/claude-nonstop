@@ -1,0 +1,12 @@
+{
+  "name": "smarter-drafter",
+  "version": "2026.10.25",
+  "description": "Smarter Drafter: Draft client-ready legal documents from your firm's approved templates, inside Claude.",
+  "author": {
+    "name": "Tensis"
+  },
+  "keywords": [
+    "legal",
+    "productivity"
+  ]
+}

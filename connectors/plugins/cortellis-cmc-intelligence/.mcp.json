@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "cortellis-cmc-intelligence": {
+      "type": "http",
+      "url": "https://api.clarivate.com/lifesciences/mcp-cmc/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

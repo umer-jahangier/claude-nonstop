@@ -1,0 +1,12 @@
+{
+  "name": "sprites",
+  "version": "2026.10.25",
+  "description": "Sprites: Let Claude manage your Sprites",
+  "author": {
+    "name": "Fly.io"
+  },
+  "keywords": [
+    "developer-tools",
+    "productivity"
+  ]
+}

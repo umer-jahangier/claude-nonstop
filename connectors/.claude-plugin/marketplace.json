@@ -1,0 +1,6659 @@
+{
+  "name": "nonstop-connectors",
+  "owner": {
+    "name": "claude-nonstop"
+  },
+  "metadata": {
+    "description": "The connectors in Anthropic's directory (https://claude.com/connectors) that work in the Claude desktop app's third-party mode, checked 2026-10-25.",
+    "version": "2026.10.25"
+  },
+  "plugins": [
+    {
+      "name": "canva",
+      "source": "./plugins/canva",
+      "description": "Canva: Search, create, autofill, and export Canva designs",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Canva"
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "education"
+      ]
+    },
+    {
+      "name": "notion",
+      "source": "./plugins/notion",
+      "description": "Notion: Connect your Notion workspace to search, update, and power workflows across tools",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Notion"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "figma",
+      "source": "./plugins/figma",
+      "description": "Figma: Generate diagrams and better code from Figma context",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Figma"
+      },
+      "category": "creative",
+      "keywords": [
+        "creative"
+      ]
+    },
+    {
+      "name": "atlassian",
+      "source": "./plugins/atlassian",
+      "description": "Atlassian MCP: Search, read and update Jira, Confluence, Bitbucket, Loom and other Atlassian apps with your existing Atlassian permissions.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Atlassian"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "linear",
+      "source": "./plugins/linear",
+      "description": "Linear: Manage issues, projects & team workflows in Linear",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Linear (Linear Orbit, Inc.)"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "monday",
+      "source": "./plugins/monday",
+      "description": "monday.com: monday.com project management & CRM for projects, tasks, portfolios, boards, workflows, milestones, dependencies, forms, dashboards, cross-project portfolio status, and critical paths.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "monday.com"
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "developer-tools",
+        "other",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "intercom",
+      "source": "./plugins/intercom",
+      "description": "Intercom: Access to Intercom data for better customer insights",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Intercom"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication"
+      ]
+    },
+    {
+      "name": "adobe-creativity",
+      "source": "./plugins/adobe-creativity",
+      "description": "Adobe: Design, combine, and edit with Adobe pro tools",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Adobe Inc."
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "productivity"
+      ]
+    },
+    {
+      "name": "miro",
+      "source": "./plugins/miro",
+      "description": "Miro: Access and create new content on Miro boards",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Miro"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "creative",
+        "developer-tools",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "supabase",
+      "source": "./plugins/supabase",
+      "description": "Supabase: Manage databases, authentication, and storage",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Supabase"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "shopify",
+      "source": "./plugins/shopify",
+      "description": "Shopify: Build, manage, and analyze your Shopify store",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Shopify"
+      },
+      "category": "commerce-shopping",
+      "keywords": [
+        "commerce-shopping",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "vercel",
+      "source": "./plugins/vercel",
+      "description": "Vercel: Analyze, debug, and manage projects and deployments",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Vercel"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "gamma",
+      "source": "./plugins/gamma",
+      "description": "Gamma: Create presentations, docs, socials, and sites with AI",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Gamma"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "granola",
+      "source": "./plugins/granola",
+      "description": "Granola: The AI notepad for meetings",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Granola"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "microsoft-learn",
+      "source": "./plugins/microsoft-learn",
+      "description": "Microsoft Learn: Search trusted Microsoft docs to power your development",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Microsoft"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "zapier",
+      "source": "./plugins/zapier",
+      "description": "Zapier: Automate workflows across thousands of apps via conversation",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Zapier"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "data-analytics",
+        "developer-tools",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "airtable",
+      "source": "./plugins/airtable",
+      "description": "Airtable: Bring your structured data to Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Airtable"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "lucid",
+      "source": "./plugins/lucid",
+      "description": "Lucid: Ideate, diagram, and align teams",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Lucid Software"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "clickup",
+      "source": "./plugins/clickup",
+      "description": "ClickUp: Project management & collaboration for teams & agents",
+      "version": "2026.10.25",
+      "author": {
+        "name": "ClickUp"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "productivity"
+      ]
+    },
+    {
+      "name": "apollo",
+      "source": "./plugins/apollo",
+      "description": "Apollo.io: Find leads by hiring and funding signals, enrich contacts, and manage outreach sequences",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Apollo.io"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "datadog",
+      "source": "./plugins/datadog",
+      "description": "Datadog: Debug and resolve issues using Datadog telemetry",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Datadog"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "windsor-ai",
+      "source": "./plugins/windsor-ai",
+      "description": "Windsor.ai: Connect Meta Ads, Google Ads, TikTok Ads, LinkedIn Ads + 320 more",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Windsor.ai"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "sentry",
+      "source": "./plugins/sentry",
+      "description": "Sentry: Search, query, and debug errors intelligently",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Sentry.io"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "stripe",
+      "source": "./plugins/stripe",
+      "description": "Stripe: Payment processing and financial infrastructure tools",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Stripe"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "lovable",
+      "source": "./plugins/lovable",
+      "description": "Lovable: Build, iterate, inspect, and deploy Lovable apps",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Lovable"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "vidiq",
+      "source": "./plugins/vidiq",
+      "description": "vidIQ: Research and create for YouTube, Instagram & TikTok",
+      "version": "2026.10.25",
+      "author": {
+        "name": "vidIQ"
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "data-analytics",
+        "media-entertainment"
+      ]
+    },
+    {
+      "name": "consensus",
+      "source": "./plugins/consensus",
+      "description": "Consensus: Explore scientific research",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Consensus"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "health-life-sciences"
+      ]
+    },
+    {
+      "name": "dropbox",
+      "source": "./plugins/dropbox",
+      "description": "Dropbox: Search, organize, and take action on your Dropbox content",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Dropbox"
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "legal",
+        "media-entertainment",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "supermetrics",
+      "source": "./plugins/supermetrics",
+      "description": "Supermetrics Marketing Analytics: Google Ads, Facebook Ads, Google Analytics, TikTok, LinkedIn, Instagram, YouTube & 200+ sources",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Supermetrics"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "todoist",
+      "source": "./plugins/todoist",
+      "description": "Todoist: Search, complete, and manage your tasks in Todoist",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Doist"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "wordpress-com",
+      "source": "./plugins/wordpress-com",
+      "description": "WordPress.com: Secure AI access to manage your WordPress.com sites",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Automattic (WordPress.com)"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "semrush",
+      "source": "./plugins/semrush",
+      "description": "Semrush: SEO, keyword research, competitor analysis, traffic and market analytics, backlink analysis, domain analysis, and PPC",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Semrush Holdings, Inc."
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "zoominfo",
+      "source": "./plugins/zoominfo",
+      "description": "ZoomInfo: Find prospects. Research accounts. Enrich buyers with verified B2B data. Act on intent signals.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "ZoomInfo Technologies Inc."
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "data-analytics",
+        "developer-tools",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "postman",
+      "source": "./plugins/postman",
+      "description": "Postman: Give API context to your coding agents",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Postman, Inc."
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "context7",
+      "source": "./plugins/context7",
+      "description": "Context7: Up-to-date docs for LLMs and AI code editors",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Context7"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "netlify",
+      "source": "./plugins/netlify",
+      "description": "Netlify: Create, deploy, manage, and secure websites on Netlify.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Netlify"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "metricool-social-media-management",
+      "source": "./plugins/metricool-social-media-management",
+      "description": "Metricool Social Media Management: Schedule posts, analyze, and manage social media with AI",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Metricool"
+      },
+      "category": "commerce-shopping",
+      "keywords": [
+        "commerce-shopping",
+        "communication",
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "ahrefs",
+      "source": "./plugins/ahrefs",
+      "description": "Ahrefs: SEO & AI search analytics",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Ahrefs Pte. Ltd."
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "data-analytics",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "clay",
+      "source": "./plugins/clay",
+      "description": "Clay: Find prospects. Research accounts. Personalize outreach",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Clay"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "webflow",
+      "source": "./plugins/webflow",
+      "description": "Webflow: Design pages, manage CMS content, add motion, analyze traffic, and launch the whole site, all from a prompt and all inside the permissions your workspace already has.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Webflow"
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "developer-tools",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "pitchbook",
+      "source": "./plugins/pitchbook",
+      "description": "PitchBook Premium: PitchBook data, embedded in the way you work.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "PitchBook"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "fireflies",
+      "source": "./plugins/fireflies",
+      "description": "Fireflies: Analyze and generate insights from meeting transcripts",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Fireflies AI Corp"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication"
+      ]
+    },
+    {
+      "name": "s-p-global",
+      "source": "./plugins/s-p-global",
+      "description": "S&P - Deterministic Retrieval: Deterministic access to S&P Global data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "S&P Global"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "make",
+      "source": "./plugins/make",
+      "description": "Make: Run Make scenarios and manage your Make account",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Make"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "adobe-marketing-agent",
+      "source": "./plugins/adobe-marketing-agent",
+      "description": "Adobe CX Enterprise Coworker: Drive CX Workflows",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Adobe Inc."
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "amplitude",
+      "source": "./plugins/amplitude",
+      "description": "Amplitude: Search, access, and get insights on your Amplitude data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Amplitude"
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "fathom",
+      "source": "./plugins/fathom",
+      "description": "Fathom – Your Meeting Intelligence Layer: Your meeting notes, transcripts, and context – now part of every Claude conversation",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Fathom"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "kiwi-com",
+      "source": "./plugins/kiwi-com",
+      "description": "Kiwi.com: Search flights in Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Kiwi.com"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "posthog",
+      "source": "./plugins/posthog",
+      "description": "PostHog: Query, analyze, and manage your PostHog insights",
+      "version": "2026.10.25",
+      "author": {
+        "name": "PostHog"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "calendly",
+      "source": "./plugins/calendly",
+      "description": "Calendly: Manage event types, availability, and bookings.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Calendly"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "wix",
+      "source": "./plugins/wix",
+      "description": "Wix: Manage and build sites and apps on Wix",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Wix"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "jotform",
+      "source": "./plugins/jotform",
+      "description": "Jotform: Create forms, surveys, quizzes & analyze submissions",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Jotform"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "education",
+        "nonprofit",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "mobbin",
+      "source": "./plugins/mobbin",
+      "description": "Mobbin: Find UI & UX design references",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Mobbin"
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "developer-tools",
+        "education",
+        "other",
+        "productivity"
+      ]
+    },
+    {
+      "name": "descript",
+      "source": "./plugins/descript",
+      "description": "Descript: Import, edit, or create video with prompts",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Descript"
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "productivity"
+      ]
+    },
+    {
+      "name": "mermaid-chart",
+      "source": "./plugins/mermaid-chart",
+      "description": "Mermaid Chart: Validates Mermaid syntax, renders diagrams as high-quality SVG, and displays them instantly in an interactive UI where users can preview, zoom, and iterate in real time.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Mermaid Chart Inc"
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "productivity"
+      ]
+    },
+    {
+      "name": "ramp",
+      "source": "./plugins/ramp",
+      "description": "Ramp: Search, access, and analyze your Ramp financial data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Ramp"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "klaviyo",
+      "source": "./plugins/klaviyo",
+      "description": "Klaviyo: Report, strategize & create with real-time Klaviyo data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Klaviyo"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "data-analytics",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "scholar-gateway",
+      "source": "./plugins/scholar-gateway",
+      "description": "Wiley Scholar Gateway: Enhance responses with scholarly research and citations",
+      "version": "2026.10.25",
+      "author": {
+        "name": "John Wiley & Sons Inc."
+      },
+      "category": "health-life-sciences",
+      "keywords": [
+        "health-life-sciences"
+      ]
+    },
+    {
+      "name": "factset",
+      "source": "./plugins/factset",
+      "description": "FactSet AI-Ready Data: Access institutional-quality financial data and analytics",
+      "version": "2026.10.25",
+      "author": {
+        "name": "FactSet Research Systems"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "lastminute-com",
+      "source": "./plugins/lastminute-com",
+      "description": "lastminute.com: Search, compare and book flights, dynamic packages (flight + hotel) and hotels across global airlines and hotel suppliers.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "lastminute.com"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "mixpanel",
+      "source": "./plugins/mixpanel",
+      "description": "Mixpanel: Analyze, query, and manage your Mixpanel data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Mixpanel"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "intuit-mailchimp",
+      "source": "./plugins/intuit-mailchimp",
+      "description": "Intuit Mailchimp: Create marketing campaigns",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Intuit Mailchimp"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "lusha",
+      "source": "./plugins/lusha",
+      "description": "Lusha: Find and enrich B2B contacts and companies",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Lusha"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "ziprecruiter",
+      "source": "./plugins/ziprecruiter",
+      "description": "ZipRecruiter: Job search made easy",
+      "version": "2026.10.25",
+      "author": {
+        "name": "ZipRecruiter Inc."
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "biorender",
+      "source": "./plugins/biorender",
+      "description": "BioRender: Search the BioRender library, find your files, and generate new scientific figures directly from Claude.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "BioRender"
+      },
+      "category": "health-life-sciences",
+      "keywords": [
+        "health-life-sciences"
+      ]
+    },
+    {
+      "name": "similarweb",
+      "source": "./plugins/similarweb",
+      "description": "Similarweb: Real time web, mobile app, and market data.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Similarweb"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "replit",
+      "source": "./plugins/replit",
+      "description": "Replit: Turn ideas into apps and websites instantly",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Replit"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "alpha-vantage",
+      "source": "./plugins/alpha-vantage",
+      "description": "Alpha Vantage MCP Server: Stock market data: stocks, options, fundamentals, earnings, SEC filings, indices, news, exchange rates, commodities, and other trading signals to power your quantitative finance workflow",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Alpha Vantage Inc"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services"
+      ]
+    },
+    {
+      "name": "paypal",
+      "source": "./plugins/paypal",
+      "description": "PayPal: Access PayPal payments platform",
+      "version": "2026.10.25",
+      "author": {
+        "name": "PayPal"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "zoho-crm",
+      "source": "./plugins/zoho-crm",
+      "description": "Zoho CRM: MCP Server for Zoho CRM Workflows",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Zoho"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "morningstar",
+      "source": "./plugins/morningstar",
+      "description": "Morningstar: Up-to-date investment and market insights",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Morningstar"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "read-ai",
+      "source": "./plugins/read-ai",
+      "description": "Read AI: Bring your meetings into Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Read AI"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "productivity"
+      ]
+    },
+    {
+      "name": "pdf-viewer",
+      "source": "./plugins/pdf-viewer",
+      "description": "PDF Viewer: Demo PDF viewer that renders PDFs from allowed URLs like arxiv.org",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Model Context Protocol Community"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "attio",
+      "source": "./plugins/attio",
+      "description": "Attio: Search, manage, and update your Attio CRM from Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Attio"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "datasite",
+      "source": "./plugins/datasite",
+      "description": "Datasite: Manage your M&A data room from Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Datasite"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services",
+        "legal"
+      ]
+    },
+    {
+      "name": "carta",
+      "source": "./plugins/carta",
+      "description": "Carta: The connected ERP for private capital",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Carta"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "courtlistener",
+      "source": "./plugins/courtlistener",
+      "description": "CourtListener: Legal research across millions of court records",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Free Law Project"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "pipedrive-mcp",
+      "source": "./plugins/pipedrive-mcp",
+      "description": "Pipedrive: Find deals, update records, manage activities and work with your live CRM data using natural language.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Pipedrive"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "surveymonkey",
+      "source": "./plugins/surveymonkey",
+      "description": "SurveyMonkey: Design surveys, collect responses, and analyze results",
+      "version": "2026.10.25",
+      "author": {
+        "name": "SurveyMonkey"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "incident-io",
+      "source": "./plugins/incident-io",
+      "description": "incident.io: See and manage everything in incident.io",
+      "version": "2026.10.25",
+      "author": {
+        "name": "incident.io"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "otter-ai",
+      "source": "./plugins/otter-ai",
+      "description": "Otter.ai: Unlock your meeting intelligence",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Otter.ai"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "resend",
+      "source": "./plugins/resend",
+      "description": "Resend: Email for developers. The best way to reach humans instead of spam folders. Deliver transactional and marketing emails at scale.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Resend"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "data-analytics",
+        "developer-tools",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "coursera",
+      "source": "./plugins/coursera",
+      "description": "Coursera: Transform your prompts into active skill-building",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Coursera"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "trivago",
+      "source": "./plugins/trivago",
+      "description": "Trivago: Use trivago's powerful metasearch to find your ideal hotel and compare prices from multiple providers.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "trivago"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity",
+        "travel"
+      ]
+    },
+    {
+      "name": "motion",
+      "source": "./plugins/motion",
+      "description": "Motion Creative Analytics: Analyze your Meta ad creative & competitor ad libraries",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Motion Creative Analytics"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "adisinsight",
+      "source": "./plugins/adisinsight",
+      "description": "AdisInsight: Pharmaceutical drug & clinical trial intelligence",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Springer Nature"
+      },
+      "category": "health-life-sciences",
+      "keywords": [
+        "health-life-sciences"
+      ]
+    },
+    {
+      "name": "open-targets",
+      "source": "./plugins/open-targets",
+      "description": "Open Targets: Drug target discovery and prioritisation platform",
+      "version": "2026.10.25",
+      "author": {
+        "name": "OpenTargets"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "health-life-sciences"
+      ]
+    },
+    {
+      "name": "outreach",
+      "source": "./plugins/outreach",
+      "description": "Outreach: Unleash your team's best performance with Outreach AI",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Outreach"
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "tally",
+      "source": "./plugins/tally",
+      "description": "Tally: Create beautiful forms",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Tally Forms"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "cortellis-regulatory",
+      "source": "./plugins/cortellis-regulatory",
+      "description": "Cortellis Regulatory Intelligence: Trusted Regulatory Answers, by Clarivate Cortellis",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Clarivate"
+      },
+      "category": "health-life-sciences",
+      "keywords": [
+        "health-life-sciences"
+      ]
+    },
+    {
+      "name": "dice",
+      "source": "./plugins/dice",
+      "description": "Dice: Find active tech jobs on Dice",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Dice.com"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "railway",
+      "source": "./plugins/railway",
+      "description": "Railway: Deploy, manage, and debug your apps and infrastructure on Railway",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Railway"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "brevo",
+      "source": "./plugins/brevo",
+      "description": "Brevo: Analyze campaigns, know your audience and create drafts",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Brevo"
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "london-stock-exchange-group",
+      "source": "./plugins/london-stock-exchange-group",
+      "description": "LSEG: Access best in class data & analytics across a broad spectrum of asset classes.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "LSEG"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "aws-mcp",
+      "source": "./plugins/aws-mcp",
+      "description": "AWS MCP: Give agents secure access to AWS via MCP",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Amazon Web Services"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "data-analytics",
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "adobe-journey-optimizer",
+      "source": "./plugins/adobe-journey-optimizer",
+      "description": "Adobe Journey Optimizer: Understand and troubleshoot your Journeys and Campaigns",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Adobe"
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "crypto-com",
+      "source": "./plugins/crypto-com",
+      "description": "Crypto.com: Real time prices, orders, charts, and more for crypto",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Crypto.com"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "tldraw",
+      "source": "./plugins/tldraw",
+      "description": "tldraw: Let Claude sketch, draw, and diagram with you",
+      "version": "2026.10.25",
+      "author": {
+        "name": "tldraw"
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "productivity"
+      ]
+    },
+    {
+      "name": "alltrails",
+      "source": "./plugins/alltrails",
+      "description": "AllTrails: Find your next hike",
+      "version": "2026.10.25",
+      "author": {
+        "name": "AllTrails"
+      },
+      "category": "consumer-health",
+      "keywords": [
+        "consumer-health"
+      ]
+    },
+    {
+      "name": "synapse-org",
+      "source": "./plugins/synapse-org",
+      "description": "Synapse.org: Search and metadata tools for Synapse scientific data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Sage Bionetworks"
+      },
+      "category": "health-life-sciences",
+      "keywords": [
+        "health-life-sciences"
+      ]
+    },
+    {
+      "name": "gemini-mcp",
+      "source": "./plugins/gemini-mcp",
+      "description": "Gemini: Connect AI assistants to live crypto markets, prediction markets, your trading accounts, all through our secure read-only plugin",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Gemini Space Station, LLC"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services"
+      ]
+    },
+    {
+      "name": "twilio",
+      "source": "./plugins/twilio",
+      "description": "Twilio: Build powerful communications and customer engagement",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Twilio"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication"
+      ]
+    },
+    {
+      "name": "sanity",
+      "source": "./plugins/sanity",
+      "description": "Sanity: Create, query, and manage structured content in Sanity",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Sanity"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "cb-insights",
+      "source": "./plugins/cb-insights",
+      "description": "CB Insights: Predictive intelligence on private companies",
+      "version": "2026.10.25",
+      "author": {
+        "name": "CB Insights"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "brex",
+      "source": "./plugins/brex",
+      "description": "Brex: Intelligent finance automation",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Brex"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "legal-data-hunter",
+      "source": "./plugins/legal-data-hunter",
+      "description": "Legal Data Hunter: Search 23M+ legal docs in 160+ jurisdictions.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "GoodLegal"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "aws-marketplace",
+      "source": "./plugins/aws-marketplace",
+      "description": "AWS Marketplace: Discover, evaluate, and buy solutions for the cloud",
+      "version": "2026.10.25",
+      "author": {
+        "name": "AWS Marketplace"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "era-context",
+      "source": "./plugins/era-context",
+      "description": "Era Context: Manage your personal finances using Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Tinwell Labs Inc, DBA Era"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "autodesk-product-help",
+      "source": "./plugins/autodesk-product-help",
+      "description": "Autodesk Product Help: Securely access Autodesk's help documentation",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Autodesk, Inc."
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "productivity"
+      ]
+    },
+    {
+      "name": "omni-analytics",
+      "source": "./plugins/omni-analytics",
+      "description": "Omni Analytics: Query your data using natural language through Omni's semantic model",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Omni Analytics"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "profound",
+      "source": "./plugins/profound",
+      "description": "Profound: Pull Profound Visibility, Citation, & AI Bot Visit Data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Profound"
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "pandadoc",
+      "source": "./plugins/pandadoc",
+      "description": "PandaDoc: Create, send, sign and track documents",
+      "version": "2026.10.25",
+      "author": {
+        "name": "PandaDoc"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "meltwater",
+      "source": "./plugins/meltwater",
+      "description": "Meltwater: Search and analyze billions of news articles and social posts",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Meltwater"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "data-analytics",
+        "other",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "fellow-ai",
+      "source": "./plugins/fellow-ai",
+      "description": "Fellow.ai: Chat with your meetings to uncover actionable insights",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Fellow.ai"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication"
+      ]
+    },
+    {
+      "name": "guru",
+      "source": "./plugins/guru",
+      "description": "Guru: Search and interact with your company knowledge",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Guru"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "nimble",
+      "source": "./plugins/nimble",
+      "description": "Nimble: Real-time web search & extraction for AI agents",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Nimble"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "crossbeam",
+      "source": "./plugins/crossbeam",
+      "description": "Crossbeam: Explore partner data and ecosystem insights in Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Crossbeam"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "productivity"
+      ]
+    },
+    {
+      "name": "alphaxiv",
+      "source": "./plugins/alphaxiv",
+      "description": "alphaXiv: Fast search and full-text access over arXiv pre-prints",
+      "version": "2026.10.25",
+      "author": {
+        "name": "alphaXiv"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "square",
+      "source": "./plugins/square",
+      "description": "Square: Search and manage transaction, merchant, and payment data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Square, Inc."
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "bitly",
+      "source": "./plugins/bitly",
+      "description": "Bitly: Shorten links, generate QR Codes, and track performance",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Bitly"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "mailerlite",
+      "source": "./plugins/mailerlite",
+      "description": "MailerLite: Turn Claude into your email marketing assistant",
+      "version": "2026.10.25",
+      "author": {
+        "name": "MailerLite"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication"
+      ]
+    },
+    {
+      "name": "upwork",
+      "source": "./plugins/upwork",
+      "description": "Upwork: Hire talent or find work",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Upwork"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "navan",
+      "source": "./plugins/navan",
+      "description": "Navan: Access and analyze your Navan financial and travel data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Navan"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services",
+        "travel"
+      ]
+    },
+    {
+      "name": "medidata",
+      "source": "./plugins/medidata",
+      "description": "Medidata: Clinical trial software and site ranking tools",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Medidata Solutions"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "health-life-sciences",
+        "productivity"
+      ]
+    },
+    {
+      "name": "adspirer-ads-performance-marketing-agent",
+      "source": "./plugins/adspirer-ads-performance-marketing-agent",
+      "description": "Adspirer Ads & Performance Marketing Agent: Your performance marketing and paid media agent — an Agent that plans, launches, and autonomously runs your ad campaigns across Google, Meta, LinkedIn, TikTok, and more.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Adspirer"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "craft",
+      "source": "./plugins/craft",
+      "description": "Craft: Notes & second brain",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Craft Docs Ltd"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "salesloft",
+      "source": "./plugins/salesloft",
+      "description": "Salesloft: Query live data about deals, engagement, and pipeline",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Salesloft"
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "brighthire",
+      "source": "./plugins/brighthire",
+      "description": "BrightHire: Search, summarize and analyze hiring data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "BrightHire"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "metaview",
+      "source": "./plugins/metaview",
+      "description": "Metaview: The AI platform for recruiting.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Metaview"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "tldv",
+      "source": "./plugins/tldv",
+      "description": "tl;dv - AI Note Taker & Meeting Recorder: Transcripts, Summaries & Meeting Minutes: Meeting transcripts, notes & action items in Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "tldx solutions GmbH"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "data-analytics",
+        "productivity"
+      ]
+    },
+    {
+      "name": "gusto",
+      "source": "./plugins/gusto",
+      "description": "Gusto: Query and analyze your Gusto data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Gusto"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "fullstory",
+      "source": "./plugins/fullstory",
+      "description": "Fullstory: Product analytics with receipts. Build segments, compute metrics, and analyze conversions from your Fullstory behavioral data. Then pull the real sessions to back it up.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Fullstory"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "slicktrip",
+      "source": "./plugins/slicktrip",
+      "description": "SlickTrip: Search flights, hotels and seats, then get alerted the moment a price drops.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "SlickTrip"
+      },
+      "category": "commerce-shopping",
+      "keywords": [
+        "commerce-shopping",
+        "travel"
+      ]
+    },
+    {
+      "name": "euler",
+      "source": "./plugins/euler",
+      "description": "EULER: Manage your partner program and access your Partner Data Lake with Claude.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Euler Software Inc"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "peec-ai",
+      "source": "./plugins/peec-ai",
+      "description": "Peec AI: Analyze your brand's visibility across LLMs",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Peec AI"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "msci",
+      "source": "./plugins/msci",
+      "description": "MSCI Connector: Data you can build on",
+      "version": "2026.10.25",
+      "author": {
+        "name": "MSCI Inc"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "tinyfish",
+      "source": "./plugins/tinyfish",
+      "description": "TinyFish: Browser automation, web scraping, web search and fetch via a cloud browser agent: automate websites, log in to portals, submit forms, scrape social media, listings, prices, reviews, monitor changes.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "TinyFish Inc."
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "developer-tools",
+        "other",
+        "productivity"
+      ]
+    },
+    {
+      "name": "freee",
+      "source": "./plugins/freee",
+      "description": "freee: freeeの各種プロダクトへのデータ下書作成、自動登録、登録済みデータの分析 / Draft, register, and analyze data across freee products",
+      "version": "2026.10.25",
+      "author": {
+        "name": "freee K.K."
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "tactiq",
+      "source": "./plugins/tactiq",
+      "description": "Tactiq: Search, summarise & find answers in meetings",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Tactiq"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "adobe-cja",
+      "source": "./plugins/adobe-cja",
+      "description": "Adobe Customer Journey Analytics: Run reports using your metrics, dimensions, and segments",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Adobe"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "braze",
+      "source": "./plugins/braze",
+      "description": "Braze: Braze Marketers can use this connector to answer questions, analyze trends, and provide insights.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Braze Inc"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "neon",
+      "source": "./plugins/neon",
+      "description": "Neon: Postgres, Object Storage, Managed Better Auth, and more",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Neon (A Databricks, Inc. company)"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "developer-tools",
+        "other",
+        "productivity"
+      ]
+    },
+    {
+      "name": "cloudinary",
+      "source": "./plugins/cloudinary",
+      "description": "Cloudinary: Manage, transform and deliver your images & videos",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Cloudinary"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "riverside",
+      "source": "./plugins/riverside",
+      "description": "Riverside: Prep, edit, clip, and publish your videos and podcasts",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Riverside"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "creative",
+        "media-entertainment",
+        "other",
+        "productivity"
+      ]
+    },
+    {
+      "name": "zoho-projects",
+      "source": "./plugins/zoho-projects",
+      "description": "Zoho Projects: Zoho Projects MCP for Task & Project Automation",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Zoho"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "third-bridge",
+      "source": "./plugins/third-bridge",
+      "description": "Third Bridge: Expert-led enhanced insights",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Third Bridge Group"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "quartr",
+      "source": "./plugins/quartr",
+      "description": "Quartr: Financial data and AI infrastructure for company research.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Quartr"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "turkish-airlines",
+      "source": "./plugins/turkish-airlines",
+      "description": "Turkish Airlines: Search flights, plan trips, and manage bookings",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Turkish Airlines"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "otto-travel",
+      "source": "./plugins/otto-travel",
+      "description": "Otto Travel: Plan, book, and manage business travel",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Otto Trip, Inc."
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "adwhispr-ads",
+      "source": "./plugins/adwhispr-ads",
+      "description": "AdWhispr Ads: Research any brand's live Facebook and TikTok ads, find your real competitors, and launch campaigns on Google, TikTok, and Meta from chat.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "AdWhispr"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "frontify",
+      "source": "./plugins/frontify",
+      "description": "Frontify: Access your brand guidelines, assets and creative templates",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Frontify"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "creative",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "mercury",
+      "source": "./plugins/mercury",
+      "description": "Mercury: Search, analyze and understand your finances on Mercury",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Mercury"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "workable",
+      "source": "./plugins/workable",
+      "description": "Workable: Your AI assistant for Hiring and HR — inside Workable",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Workable"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "deepl",
+      "source": "./plugins/deepl",
+      "description": "DeepL: Translate text and documents across 100+ languages, with your preferred styles applied",
+      "version": "2026.10.25",
+      "author": {
+        "name": "DeepL"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "productivity"
+      ]
+    },
+    {
+      "name": "typefully",
+      "source": "./plugins/typefully",
+      "description": "Typefully - Social Media Scheduler: Social media scheduler for great writing on X (Twitter), LinkedIn, Substack, Threads, Bluesky, and Mastodon.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Typefully"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "play-sheet-music",
+      "source": "./plugins/play-sheet-music",
+      "description": "Play Sheet Music: Ask Claude to generate and play some sheet music for you with a visual component",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Model Context Protocol Community"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "eden-basecamp-research",
+      "source": "./plugins/eden-basecamp-research",
+      "description": "EDEN by Basecamp Research: Design antibiotics and prioritise vaccine targets against drug-resistant pathogens using EDEN, Basecamp Research's biological foundation model",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Basecamp Research"
+      },
+      "category": "health-life-sciences",
+      "keywords": [
+        "health-life-sciences"
+      ]
+    },
+    {
+      "name": "oreilly",
+      "source": "./plugins/oreilly",
+      "description": "O’Reilly: Discover O'Reilly's expert learning content",
+      "version": "2026.10.25",
+      "author": {
+        "name": "O’Reilly Media"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "helium-10",
+      "source": "./plugins/helium-10",
+      "description": "Helium 10: Access your Helium 10 data directly in Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Helium 10"
+      },
+      "category": "commerce-shopping",
+      "keywords": [
+        "commerce-shopping",
+        "data-analytics",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "cdata-connect-ai",
+      "source": "./plugins/cdata-connect-ai",
+      "description": "CData Connect AI: Managed MCP platform for 350 sources",
+      "version": "2026.10.25",
+      "author": {
+        "name": "CData"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "coindesk",
+      "source": "./plugins/coindesk",
+      "description": "CoinDesk: Access Live & Historical Crypto Data, Indices",
+      "version": "2026.10.25",
+      "author": {
+        "name": "CoinDesk"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "krisp",
+      "source": "./plugins/krisp",
+      "description": "Krisp: Add your meetings context via transcripts and notes",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Krisp"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "ifttt",
+      "source": "./plugins/ifttt",
+      "description": "IFTTT: Connect, control, and automate 1,000+ apps with IFTTT",
+      "version": "2026.10.25",
+      "author": {
+        "name": "IFTTT, Inc."
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "twelvedata",
+      "source": "./plugins/twelvedata",
+      "description": "Twelve Data: Real-time prices, 100+ technical indicators, and fundamentals for stocks, forex, crypto, and ETFs — ask in plain English, no API knowledge needed.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Twelve Data"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services"
+      ]
+    },
+    {
+      "name": "greenhouse",
+      "source": "./plugins/greenhouse",
+      "description": "Greenhouse: Connect Claude to Greenhouse. Search, analyze and update candidates, applications, jobs, interviews, scorecards, offers and more in plain language.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Greenhouse Software, Inc."
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "data-analytics",
+        "developer-tools",
+        "other",
+        "productivity"
+      ]
+    },
+    {
+      "name": "v0",
+      "source": "./plugins/v0",
+      "description": "v0: Build Full-Stack Web Apps with AI",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Vercel"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "contentful-mcp",
+      "source": "./plugins/contentful-mcp",
+      "description": "Contentful MCP: Manage your content from Claude.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Contentful Inc."
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "developer-tools",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "teamtailor",
+      "source": "./plugins/teamtailor",
+      "description": "Teamtailor: Chat with your recruitment data: jobs, candidates, pipelines, and todos from Teamtailor.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Teamtailor"
+      },
+      "category": "other",
+      "keywords": [
+        "other",
+        "productivity"
+      ]
+    },
+    {
+      "name": "contentsquare",
+      "source": "./plugins/contentsquare",
+      "description": "Contentsquare: Experience analytics platform for digital businesses",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Contentsquare"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "lunarcrush",
+      "source": "./plugins/lunarcrush",
+      "description": "LunarCrush: Add real-time social media data to your searches",
+      "version": "2026.10.25",
+      "author": {
+        "name": "LunarCrush"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services"
+      ]
+    },
+    {
+      "name": "inkbox",
+      "source": "./plugins/inkbox",
+      "description": "Inkbox: Email, SMS, and iMessage for AI agents",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Inkbox"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "quo",
+      "source": "./plugins/quo",
+      "description": "Quo: Surface call insights and missed opportunities",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Quo"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication"
+      ]
+    },
+    {
+      "name": "articulate",
+      "source": "./plugins/articulate",
+      "description": "Articulate: Build interactive training right from Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Articulate"
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "education",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "amass",
+      "source": "./plugins/amass",
+      "description": "Amass Connector: Life sciences intelligence, unified — publications, trials, drugs, genes, regulatory approvals, and patents in one cross-linked connector",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Amass technologies Aps"
+      },
+      "category": "health-life-sciences",
+      "keywords": [
+        "health-life-sciences"
+      ]
+    },
+    {
+      "name": "swagger",
+      "source": "./plugins/swagger",
+      "description": "Swagger: Build, govern, and document APIs",
+      "version": "2026.10.25",
+      "author": {
+        "name": "SmartBear"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "close",
+      "source": "./plugins/close",
+      "description": "Close: Connect Claude to Close CRM to securely access and act on your sales data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Close"
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "ubersuggest-by-neil-patel",
+      "source": "./plugins/ubersuggest-by-neil-patel",
+      "description": "Ubersuggest: Keyword research, competitor analysis, backlinks, site audits and AI search visibility — powered by Ubersuggest.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Ubersuggest"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "airops",
+      "source": "./plugins/airops",
+      "description": "AirOps: Craft content that wins AI search",
+      "version": "2026.10.25",
+      "author": {
+        "name": "AirOps"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity"
+      ]
+    },
+    {
+      "name": "gainsight-staircase-ai",
+      "source": "./plugins/gainsight-staircase-ai",
+      "description": "Gainsight (Staircase AI): Power AI Workflows with Customer Context",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Gainsight"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "runway-team",
+      "source": "./plugins/runway-team",
+      "description": "Runway (runway.team): Automate, coordinate, and monitor your team's mobile app releases.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Runway (runway.team)"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "common-room",
+      "source": "./plugins/common-room",
+      "description": "Common Room: Your GTM Copilot",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Common Room"
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "coupler-io",
+      "source": "./plugins/coupler-io",
+      "description": "Coupler.io: Access business data from hundreds of sources",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Coupler.io"
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "lawve-ai",
+      "source": "./plugins/lawve-ai",
+      "description": "Lawve AI: Discover expert-written skills for legal work",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Lawve AI"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "malwarebytes",
+      "source": "./plugins/malwarebytes",
+      "description": "Malwarebytes: Check links, phones, and emails for scams",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Malwarebytes"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "harmonic",
+      "source": "./plugins/harmonic",
+      "description": "Harmonic: Discover, research, and enrich companies and people",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Harmonic"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "mem",
+      "source": "./plugins/mem",
+      "description": "Mem: The AI notebook for everything on your mind",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Mem Labs, Inc."
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "legalzoom",
+      "source": "./plugins/legalzoom",
+      "description": "LegalZoom: Attorney guidance & tools for business & personal needs",
+      "version": "2026.10.25",
+      "author": {
+        "name": "LegalZoom"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "yardi-virtuoso",
+      "source": "./plugins/yardi-virtuoso",
+      "description": "Yardi Virtuoso: Real-time Yardi data & insights",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Yardi"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "oxford-economics",
+      "source": "./plugins/oxford-economics",
+      "description": "Oxford Economics: Access Oxford Economics’ trusted economic analysis and data directly in Claude.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Oxford Economics"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services"
+      ]
+    },
+    {
+      "name": "grain",
+      "source": "./plugins/grain",
+      "description": "Grain: Put your meetings to work",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Grain"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "bird",
+      "source": "./plugins/bird",
+      "description": "Bird: Send email, SMS, and WhatsApp, place calls, verify users, and run your agent's inbox",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Bird"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "developer-tools",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "send",
+      "source": "./plugins/send",
+      "description": "Send: Create HTML in Claude. Share it with Send.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Send"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "creative",
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "expo",
+      "source": "./plugins/expo",
+      "description": "Expo: Build, ship, and monitor apps with Expo",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Expo"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "tella",
+      "source": "./plugins/tella",
+      "description": "Tella: Edit, polish, and publish your Tella videos by chatting with Claude.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Tella"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "creative",
+        "media-entertainment",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "qonto",
+      "source": "./plugins/qonto",
+      "description": "Qonto: Manage your Qonto business finances from Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Qonto"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "honeycomb",
+      "source": "./plugins/honeycomb",
+      "description": "Honeycomb: Query and explore observability data and SLOs",
+      "version": "2026.10.25",
+      "author": {
+        "name": "honeycomb.io"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "monte-carlo",
+      "source": "./plugins/monte-carlo",
+      "description": "Monte Carlo: Data & AI observability",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Monte Carlo"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "gem",
+      "source": "./plugins/gem",
+      "description": "Gem: Access, analyze, and manage your Gem data in Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Gem"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity"
+      ]
+    },
+    {
+      "name": "agentmail",
+      "source": "./plugins/agentmail",
+      "description": "AgentMail: Email inboxes for AI agents",
+      "version": "2026.10.25",
+      "author": {
+        "name": "AgentMail, Inc."
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "viator",
+      "source": "./plugins/viator",
+      "description": "Viator: Book travel experiences around the world",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Viator"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "grafana-cloud",
+      "source": "./plugins/grafana-cloud",
+      "description": "Grafana Cloud: Query metrics, logs, and traces and manage dashboards and alerts",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Grafana Labs"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "edreams",
+      "source": "./plugins/edreams",
+      "description": "eDreams: Find flights and hotels",
+      "version": "2026.10.25",
+      "author": {
+        "name": "eDreams ODIGEO"
+      },
+      "category": "travel",
+      "keywords": [
+        "travel"
+      ]
+    },
+    {
+      "name": "sonos-mcp",
+      "source": "./plugins/sonos-mcp",
+      "description": "Sonos: Control your Sonos system",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Sonos, Inc."
+      },
+      "category": "media-entertainment",
+      "keywords": [
+        "media-entertainment"
+      ]
+    },
+    {
+      "name": "brightdeck-ai",
+      "source": "./plugins/brightdeck-ai",
+      "description": "Brightdeck: Create presentations and slides, compatible with PowerPoint",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Brightdeck"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "creative",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "eraser",
+      "source": "./plugins/eraser",
+      "description": "Eraser: Generate, manage, and update Eraser diagrams and files",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Eraser"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "speko",
+      "source": "./plugins/speko",
+      "description": "Speko: Make phone calls, transcribe audio, and narrate text.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Speko"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "developer-tools",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "fiscal-ai",
+      "source": "./plugins/fiscal-ai",
+      "description": "Fiscal.ai: Clean Public Equity Fundamental Data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Fiscal.ai"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "circleback",
+      "source": "./plugins/circleback",
+      "description": "Circleback: Search and access context from meetings",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Circleback"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "productivity"
+      ]
+    },
+    {
+      "name": "motherduck",
+      "source": "./plugins/motherduck",
+      "description": "MotherDuck: Get answers from your data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "MotherDuck Corporation"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "tropic",
+      "source": "./plugins/tropic",
+      "description": "Tropic: Save money on Software + AI contracts",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Tropic"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "moodys-analytics",
+      "source": "./plugins/moodys-analytics",
+      "description": "Moody's Credit MCP: Risk insights, analytics, and decision intelligence",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Moody's Analytics"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "chronograph",
+      "source": "./plugins/chronograph",
+      "description": "Chronograph: Interact with your Chronograph data directly in Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Chronograph"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "meridian-connector-for-quickbooks",
+      "source": "./plugins/meridian-connector-for-quickbooks",
+      "description": "Meridian Connector for QuickBooks: Make changes to QuickBooks Online from within Claude.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Pilot.com, Inc."
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services",
+        "productivity"
+      ]
+    },
+    {
+      "name": "cortellis-cmc-intelligence",
+      "source": "./plugins/cortellis-cmc-intelligence",
+      "description": "Cortellis CMC Intelligence: Trusted regulatory CMC insights, powered by Clarivate’s Cortellis CMC Intelligence.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Clarivate"
+      },
+      "category": "health-life-sciences",
+      "keywords": [
+        "health-life-sciences"
+      ]
+    },
+    {
+      "name": "splice",
+      "source": "./plugins/splice",
+      "description": "Splice: Search Splice's sounds catalog, build stacks & more!",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Splice"
+      },
+      "category": "creative",
+      "keywords": [
+        "creative"
+      ]
+    },
+    {
+      "name": "aiera",
+      "source": "./plugins/aiera",
+      "description": "Aiera: Live events, filings, company publications, and more",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Aiera"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "brisk-teaching",
+      "source": "./plugins/brisk-teaching",
+      "description": "Brisk Teaching: Turn your ideas into interactive student activities, standards-aligned materials, and teaching resources",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Brisk Teaching"
+      },
+      "category": "education",
+      "keywords": [
+        "education"
+      ]
+    },
+    {
+      "name": "netdocuments",
+      "source": "./plugins/netdocuments",
+      "description": "NetDocuments: Securely access your documents in NetDocuments",
+      "version": "2026.10.25",
+      "author": {
+        "name": "NetDocuments"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "financial-datasets",
+      "source": "./plugins/financial-datasets",
+      "description": "Financial Datasets: Access stock market data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Financial Datasets, Inc."
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services"
+      ]
+    },
+    {
+      "name": "enterpret-wisdom",
+      "source": "./plugins/enterpret-wisdom",
+      "description": "Enterpret: Get answers from unified feedback of your customers.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Enterpret Inc"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "glg",
+      "source": "./plugins/glg",
+      "description": "GLG: Expert intelligence, instantly in your workflow",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Gerson Lehrman Group"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services",
+        "productivity"
+      ]
+    },
+    {
+      "name": "beehiiv",
+      "source": "./plugins/beehiiv",
+      "description": "beehiiv: Connect your beehiiv workspace to draft, design, analyze, and more.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "beehiiv"
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "pdf-net",
+      "source": "./plugins/pdf-net",
+      "description": "PDF.net: Generate and edit pdfs",
+      "version": "2026.10.25",
+      "author": {
+        "name": "PDF.net"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "devrev",
+      "source": "./plugins/devrev",
+      "description": "DevRev: Search and update your company's knowledge graph",
+      "version": "2026.10.25",
+      "author": {
+        "name": "DevRev"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity"
+      ]
+    },
+    {
+      "name": "fyxer",
+      "source": "./plugins/fyxer",
+      "description": "Fyxer: Search your inbox, and draft replies in your voice",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Fyxer"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "ibisworld",
+      "source": "./plugins/ibisworld",
+      "description": "IBISWorld: Financials, risk data and analysis on 50,000 industries",
+      "version": "2026.10.25",
+      "author": {
+        "name": "IBISWorld"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "rocketreach",
+      "source": "./plugins/rocketreach",
+      "description": "RocketReach: Verified work emails and phones from 700M+ contacts",
+      "version": "2026.10.25",
+      "author": {
+        "name": "RocketReach"
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "shutterstock",
+      "source": "./plugins/shutterstock",
+      "description": "Shutterstock: Spark ideas with Shutterstock",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Shutterstock"
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "attention",
+      "source": "./plugins/attention",
+      "description": "Attention: Search, analyze, and act on client conversations",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Attention"
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "clerk",
+      "source": "./plugins/clerk",
+      "description": "Clerk: Add authentication, organizations, and billing",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Clerk"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "orshot",
+      "source": "./plugins/orshot",
+      "description": "Orshot: Automate Videos, PDFs and Images from templates for marketing, post to social platforms, and track and grow engagement",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Orshot"
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "openrush",
+      "source": "./plugins/openrush",
+      "description": "OpenRush: SEO and competitor analysis with live search data: keyword research, rank tracking, gap analysis, and site audits",
+      "version": "2026.10.25",
+      "author": {
+        "name": "OpenRush"
+      },
+      "category": "commerce-shopping",
+      "keywords": [
+        "commerce-shopping",
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "workos",
+      "source": "./plugins/workos",
+      "description": "WorkOS: Manage your WorkOS workspace from Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "WorkOS"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "candid",
+      "source": "./plugins/candid",
+      "description": "Candid: Research nonprofits and funders using Candid's data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Candid"
+      },
+      "category": "nonprofit",
+      "keywords": [
+        "nonprofit"
+      ]
+    },
+    {
+      "name": "kit-mcp",
+      "source": "./plugins/kit-mcp",
+      "description": "Kit: Search, analyze, draft, and manage your email marketing",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Kit, Inc."
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "data-analytics",
+        "productivity"
+      ]
+    },
+    {
+      "name": "brandfetch",
+      "source": "./plugins/brandfetch",
+      "description": "Brandfetch: Make everything Claude creates on-brand",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Brandfetch"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "creative",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "dhs-program",
+      "source": "./plugins/dhs-program",
+      "description": "Demographic and Health Surveys: Data from The Demographic and Health Surveys Program",
+      "version": "2026.10.25",
+      "author": {
+        "name": "ICF"
+      },
+      "category": "consumer-health",
+      "keywords": [
+        "consumer-health"
+      ]
+    },
+    {
+      "name": "unwrap",
+      "source": "./plugins/unwrap",
+      "description": "Unwrap: Search and analyze customer feedback",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Unwrap AI"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "alma",
+      "source": "./plugins/alma",
+      "description": "Alma: Your nutrition data, inside every Claude conversation.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Alma"
+      },
+      "category": "consumer-health",
+      "keywords": [
+        "consumer-health"
+      ]
+    },
+    {
+      "name": "ticket-tailor",
+      "source": "./plugins/ticket-tailor",
+      "description": "Ticket Tailor: Event platform for managing tickets, orders & more",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Ticket Tailor"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "plaid",
+      "source": "./plugins/plaid",
+      "description": "Plaid Developer Tools: Monitor, debug, and optimize your Plaid integration",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Plaid"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "flourish-studio",
+      "source": "./plugins/flourish-studio",
+      "description": "Flourish: Turn data into interactive charts you can edit",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Flourish"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "mt-newswires",
+      "source": "./plugins/mt-newswires",
+      "description": "MT Newswires: Trusted real-time global financial news provider",
+      "version": "2026.10.25",
+      "author": {
+        "name": "MT Newswires"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "aleph",
+      "source": "./plugins/aleph",
+      "description": "Aleph: Ask, analyze, act on FP&A data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Aleph"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "maven-bio",
+      "source": "./plugins/maven-bio",
+      "description": "Maven Bio: Biopharma catalysts, pipelines, trials, deals, and the citable primary sources behind them",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Maven Bio"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "health-life-sciences",
+        "productivity"
+      ]
+    },
+    {
+      "name": "jotform-apps",
+      "source": "./plugins/jotform-apps",
+      "description": "Jotform App Builder: Build and manage no-code apps with AI. Create CRM apps, event apps, school apps, and internal tools. Customize layouts, automate workflows, and publish and share apps.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Jotform Inc."
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools",
+        "education",
+        "nonprofit",
+        "productivity"
+      ]
+    },
+    {
+      "name": "blockscout",
+      "source": "./plugins/blockscout",
+      "description": "Blockscout: Access and analyze blockchain data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Blockscout"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "signnow",
+      "source": "./plugins/signnow",
+      "description": "SignNow: Automate eSignature workflows directly from Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "airSlate Inc"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "helena-by-enrich-labs",
+      "source": "./plugins/helena-by-enrich-labs",
+      "description": "Helena by Enrich Labs: Your AI marketer for paid ads, SEO, email, social, and analytics",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Enrich Labs"
+      },
+      "category": "commerce-shopping",
+      "keywords": [
+        "commerce-shopping",
+        "creative",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "reclaim-ai",
+      "source": "./plugins/reclaim-ai",
+      "description": "Reclaim.ai: Advanced scheduling for personal and work calendars",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Reclaim.ai"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "pocketsmith-complete-access",
+      "source": "./plugins/pocketsmith-complete-access",
+      "description": "PocketSmith Complete Access: Search and categorise transactions, track your budgets and analyse spending trends, forecast your net worth and monitor your cashflow! Work with your live PocketSmith data in plain language.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "PocketSmith Ltd"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services",
+        "other",
+        "productivity"
+      ]
+    },
+    {
+      "name": "zillow",
+      "source": "./plugins/zillow",
+      "description": "Zillow: Search homes, rentals, neighborhoods, and affordability",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Zillow Inc."
+      },
+      "category": "commerce-shopping",
+      "keywords": [
+        "commerce-shopping",
+        "media-entertainment",
+        "other"
+      ]
+    },
+    {
+      "name": "macaly-cloud",
+      "source": "./plugins/macaly-cloud",
+      "description": "Macaly Cloud: Claude writes the code, Macaly runs it - a git repo, cloud sandbox, database, live preview and production hosting for the apps you build in chat.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Macaly"
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "thoughtspot-spotter",
+      "source": "./plugins/thoughtspot-spotter",
+      "description": "ThoughtSpot Spotter: Your AI data analyst, from question to trusted insights",
+      "version": "2026.10.25",
+      "author": {
+        "name": "ThoughtSpot"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "rippit",
+      "source": "./plugins/rippit",
+      "description": "Rippit: Run dynamic AI analysis on 100% of conversations",
+      "version": "2026.10.25",
+      "author": {
+        "name": "rippit"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "jasper",
+      "source": "./plugins/jasper",
+      "description": "Jasper: Keep every Claude session on-brand",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Jasper"
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "seamless",
+      "source": "./plugins/seamless",
+      "description": "Seamless: Find leads and automate outreach",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Seamless"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "data-analytics",
+        "developer-tools",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "snagajob",
+      "source": "./plugins/snagajob",
+      "description": "Snagajob: Find your next job.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "JobGet"
+      },
+      "category": "other",
+      "keywords": [
+        "other",
+        "productivity"
+      ]
+    },
+    {
+      "name": "trellis",
+      "source": "./plugins/trellis",
+      "description": "Trellis: Claude for Trial Court Litigators",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Trellis"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "courtroom5",
+      "source": "./plugins/courtroom5",
+      "description": "Courtroom5: Civil legal guidance for self-represented litigants",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Courtroom5"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "coinmarketcap",
+      "source": "./plugins/coinmarketcap",
+      "description": "CoinMarketCap: Real-time crypto market and on-chain data analysis",
+      "version": "2026.10.25",
+      "author": {
+        "name": "CoinMarketCap"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "etherscan",
+      "source": "./plugins/etherscan",
+      "description": "Etherscan: Explore wallets, tokens, transactions, contracts, logs, blocks, and gas across 60+ EVM chains with Etherscan",
+      "version": "2026.10.25",
+      "author": {
+        "name": "etherscan"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "developer-tools",
+        "financial-services"
+      ]
+    },
+    {
+      "name": "general-legal",
+      "source": "./plugins/general-legal",
+      "description": "General Legal: Submit contracts for attorney review, answer their questions, and get redlined documents back — without leaving Claude.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "General Legal"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal"
+      ]
+    },
+    {
+      "name": "mychatbot",
+      "source": "./plugins/mychatbot",
+      "description": "MyChatBot: Build and run an AI sales agent for your business",
+      "version": "2026.10.25",
+      "author": {
+        "name": "MyChatBot Corp"
+      },
+      "category": "commerce-shopping",
+      "keywords": [
+        "commerce-shopping",
+        "communication",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "vaisala-xweather",
+      "source": "./plugins/vaisala-xweather",
+      "description": "Vaisala Xweather: Access real-time, forecast, and historical weather.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Vaisala Xweather"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "phoenix",
+      "source": "./plugins/phoenix",
+      "description": "Phoenix by HG Insights: AI-powered B2B data intelligence & analytics",
+      "version": "2026.10.25",
+      "author": {
+        "name": "HG Insights"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "brightflag",
+      "source": "./plugins/brightflag",
+      "description": "Brightflag: Connect to Brightflag to interact with matter, vendor and spend data within Claude.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Brightflag"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal"
+      ]
+    },
+    {
+      "name": "granted",
+      "source": "./plugins/granted",
+      "description": "Granted: Discover every grant opportunity in existence.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Granted AI"
+      },
+      "category": "nonprofit",
+      "keywords": [
+        "nonprofit"
+      ]
+    },
+    {
+      "name": "planetscale",
+      "source": "./plugins/planetscale",
+      "description": "PlanetScale: Authenticated access to your Postgres and MySQL DB's",
+      "version": "2026.10.25",
+      "author": {
+        "name": "PlanetScale"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "polar-analytics",
+      "source": "./plugins/polar-analytics",
+      "description": "Polar Analytics: Bring all your data in one place & connect it to Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Polar Analytics"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "govtribe",
+      "source": "./plugins/govtribe",
+      "description": "GovTribe: Search government procurement & spending data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Government Executive Media Group LLC"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "paxton-legal-research",
+      "source": "./plugins/paxton-legal-research",
+      "description": "Paxton Legal Research: Research U.S. law in Claude—with citations you can open and verify.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Paxton"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal"
+      ]
+    },
+    {
+      "name": "rootly",
+      "source": "./plugins/rootly",
+      "description": "Rootly: Connect AI agents to Rootly for incident management, on-call, and reliability data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Rootly"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "sybill",
+      "source": "./plugins/sybill",
+      "description": "Sybill: Ask AI about your sales calls, deals & pipeline",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Sybill Inc."
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "appfolio-realm-x",
+      "source": "./plugins/appfolio-realm-x",
+      "description": "AppFolio Realm-X: Operate your portfolio directly from Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "AppFolio, Inc."
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "perspective-ai",
+      "source": "./plugins/perspective-ai",
+      "description": "Perspective AI: An AI Concierge that turns forms into conversations",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Perspective AI"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "creative",
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "ai-producer-by-opusclip",
+      "source": "./plugins/ai-producer-by-opusclip",
+      "description": "AI Producer by OpusClip: Edit videos with AI",
+      "version": "2026.10.25",
+      "author": {
+        "name": "OpusClip Inc."
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "descrybe",
+      "source": "./plugins/descrybe",
+      "description": "Descrybe Legal Engine: Ground your work in clean, structured U.S. primary law",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Descrybe"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "coingecko",
+      "source": "./plugins/coingecko",
+      "description": "CoinGecko: Live crypto prices, charts, trends, and sector rankings, powered by CoinGecko.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Gecko Labs Pte Ltd"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "coinversa-pulse",
+      "source": "./plugins/coinversa-pulse",
+      "description": "Coinversa Pulse: Live crypto, stock, gold & oil trading data from Hyperliquid: see what the best traders and whales are doing on Bitcoin, ETH, the S&P 500 and more",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Coinversaa Incorporated"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "developer-tools",
+        "financial-services"
+      ]
+    },
+    {
+      "name": "airwallex",
+      "source": "./plugins/airwallex",
+      "description": "Airwallex Developer: Integrate with the Airwallex Platform using Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Airwallex"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "omnisend-mcp",
+      "source": "./plugins/omnisend-mcp",
+      "description": "Omnisend MCP: Analyze your Omnisend marketing performance",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Omnisend"
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "sprinto-mcp-plugins",
+      "source": "./plugins/sprinto-mcp-plugins",
+      "description": "Sprinto MCP: Manage trust workflows",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Sprinto"
+      },
+      "category": "other",
+      "keywords": [
+        "other"
+      ]
+    },
+    {
+      "name": "healthex",
+      "source": "./plugins/healthex",
+      "description": "HealthEx: Connect your health records for personalized insights",
+      "version": "2026.10.25",
+      "author": {
+        "name": "HDX Labs, Inc. (dba HealthEx)"
+      },
+      "category": "consumer-health",
+      "keywords": [
+        "consumer-health"
+      ]
+    },
+    {
+      "name": "tineo",
+      "source": "./plugins/tineo",
+      "description": "Tineo: Connect Tineo to Claude to review trips, flights, hotels and activities, and add or update itinerary details. Organize and share plans with friends in Tineo.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Tineo LLC"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "productivity",
+        "travel"
+      ]
+    },
+    {
+      "name": "pinegap",
+      "source": "./plugins/pinegap",
+      "description": "Pinegap: AI-powered Equity Research Platform",
+      "version": "2026.10.25",
+      "author": {
+        "name": "PineGap"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "datarails-financeos",
+      "source": "./plugins/datarails-financeos",
+      "description": "Datarails FinanceOS: Query and analyze your company's consolidated financial data from Datarails FinanceOS.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Datarails"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services",
+        "productivity"
+      ]
+    },
+    {
+      "name": "rally-mcp",
+      "source": "./plugins/rally-mcp",
+      "description": "Rally MCP: Find participant, pull study data and create studies",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Rally HQ, Inc."
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "day-ai",
+      "source": "./plugins/day-ai",
+      "description": "Day AI: Know everything about your prospects & customers with CRMx",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Day AI"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "juro",
+      "source": "./plugins/juro",
+      "description": "Juro contracts: Query & work with contracts effortlessly throughout the lifecycle to agree contracts faster.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Juro"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "cash-app",
+      "source": "./plugins/cash-app",
+      "description": "Order by Cash App: Discover local food spots and order with a conversation",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Block, Inc."
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "bloomberg-law",
+      "source": "./plugins/bloomberg-law",
+      "description": "Bloomberg Law: Legal intelligence powered by Bloomberg AI",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Bloomberg Industry Group"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "topcounsel",
+      "source": "./plugins/topcounsel",
+      "description": "TopCounsel by The L Suite: Outside Counsel recommendations from Inhouse Counsel",
+      "version": "2026.10.25",
+      "author": {
+        "name": "The L Suite"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "adspirer-search-ads",
+      "source": "./plugins/adspirer-search-ads",
+      "description": "Adspirer Search Ads: PPC and paid search agent for Google Ads and Microsoft Advertising (Bing Ads) — does competitor ads research, plans, launches, and autonomously runs your search advertising campaigns.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Adspirer"
+      },
+      "category": "commerce-shopping",
+      "keywords": [
+        "commerce-shopping",
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "spinach-ai",
+      "source": "./plugins/spinach-ai",
+      "description": "Spinach AI: The system of action for conversation data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Spinach AI"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "productive-io",
+      "source": "./plugins/productive-io",
+      "description": "Productive: Run projects, tasks, time tracking, budgets, and invoicing in your Productive workspace, straight from chat.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Productive"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "padlet-mcp",
+      "source": "./plugins/padlet-mcp",
+      "description": "Padlet: Create and manage padlets",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Wallwisher, Inc."
+      },
+      "category": "education",
+      "keywords": [
+        "education",
+        "productivity"
+      ]
+    },
+    {
+      "name": "klue",
+      "source": "./plugins/klue",
+      "description": "Klue: Access competitive intelligence, win-loss, & deal support",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Klue Labs"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "payhawk",
+      "source": "./plugins/payhawk",
+      "description": "Payhawk: Ask and act on company spend: cards, invoices, travel",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Payhawk"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "unstructured-transform",
+      "source": "./plugins/unstructured-transform",
+      "description": "Unstructured Transform: Turn any document into AI-ready structured data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Unstructured"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "bigin-zohomcp-com",
+      "source": "./plugins/bigin-zohomcp-com",
+      "description": "Bigin by Zoho CRM: Simplify sales and customer management for small businesses",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Zoho Corporation"
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "sprouts",
+      "source": "./plugins/sprouts",
+      "description": "Sprouts Data Intelligence: From query to qualified lead in seconds.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Sprouts.ai"
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "taskrabbit",
+      "source": "./plugins/taskrabbit",
+      "description": "Taskrabbit Booking Assistance: Find & book local Taskrabbit services near you",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Taskrabbit"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "kajabi",
+      "source": "./plugins/kajabi",
+      "description": "Kajabi: Build and grow your Kajabi business with Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Kajabi"
+      },
+      "category": "commerce-shopping",
+      "keywords": [
+        "commerce-shopping",
+        "creative",
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "tango",
+      "source": "./plugins/tango",
+      "description": "Tango: Search for US Government Contracting Data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "MakeGov Inc"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "planning-center",
+      "source": "./plugins/planning-center",
+      "description": "Planning Center: Interact with your church data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Planning Center"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "shippo",
+      "source": "./plugins/shippo",
+      "description": "Shippo: Multi-carrier shipping, from a single package to high volume: compare live rates across USPS, UPS, FedEx, DHL, and 40+ carriers, then buy labels, validate addresses, and track packages.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Shippo"
+      },
+      "category": "commerce-shopping",
+      "keywords": [
+        "commerce-shopping",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "coteach",
+      "source": "./plugins/coteach",
+      "description": "Coteach: Create classroom-ready K-12 math diagrams in Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Coteach"
+      },
+      "category": "education",
+      "keywords": [
+        "education"
+      ]
+    },
+    {
+      "name": "brek-hotel-wholesale-booking",
+      "source": "./plugins/brek-hotel-wholesale-booking",
+      "description": "Brek - Hotel Wholesale Booking: Search and compare hotels with public and private wholesale rates.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Brek"
+      },
+      "category": "commerce-shopping",
+      "keywords": [
+        "commerce-shopping",
+        "travel"
+      ]
+    },
+    {
+      "name": "tabs",
+      "source": "./plugins/tabs",
+      "description": "Tabs: Make complex revenue simple at scale.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Tabs Platform, Inc."
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "lumin",
+      "source": "./plugins/lumin",
+      "description": "Lumin: Send documents for signature, track them to completion, and generate agreements from templates — without leaving the chat.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Lumin"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "blaze-sql",
+      "source": "./plugins/blaze-sql",
+      "description": "Blaze SQL: Let claude query any SQL Database or warehouse with accuracy, context, governance, and observability. BlazeSQL is a full BI Layer with visualizations, dashboards, scheduled reports, and more.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "BlazeSQL"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "cargurus",
+      "source": "./plugins/cargurus",
+      "description": "CarGurus: Find, buy, and research cars",
+      "version": "2026.10.25",
+      "author": {
+        "name": "CarGurus, Inc."
+      },
+      "category": "commerce-shopping",
+      "keywords": [
+        "commerce-shopping"
+      ]
+    },
+    {
+      "name": "intuit-developer",
+      "source": "./plugins/intuit-developer",
+      "description": "Intuit Developer: Build and test integrations with Intuit APIs.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Intuit"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools",
+        "financial-services",
+        "productivity"
+      ]
+    },
+    {
+      "name": "lawstronaut",
+      "source": "./plugins/lawstronaut",
+      "description": "Lawstronaut: 52+ million verified legal records, sourced directly from official authorities.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Lawstronaut"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal"
+      ]
+    },
+    {
+      "name": "celigo",
+      "source": "./plugins/celigo",
+      "description": "Celigo: Build and manage automations across hundreds of apps",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Celigo"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "orion",
+      "source": "./plugins/orion",
+      "description": "Orion by Gravity: Get insights from your autonomous AI analyst",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Gravity"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "lawvu",
+      "source": "./plugins/lawvu",
+      "description": "LawVu: Operating system for in-house legal teams",
+      "version": "2026.10.25",
+      "author": {
+        "name": "LawVu Limited"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "quicknode",
+      "source": "./plugins/quicknode",
+      "description": "QuickNode: Manage blockchain infrastructure right in Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "QuickNode"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "zocks",
+      "source": "./plugins/zocks",
+      "description": "Zocks: Analyze client conversations, patterns, and insights.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Zocks"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "angellist",
+      "source": "./plugins/angellist",
+      "description": "AngelList: Turn your fund into something you can talk to.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "AngelList"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services"
+      ]
+    },
+    {
+      "name": "pophive",
+      "source": "./plugins/pophive",
+      "description": "PopHIVE: Yale's harmonized US public health surveillance data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Yale School of Public Health"
+      },
+      "category": "consumer-health",
+      "keywords": [
+        "consumer-health"
+      ]
+    },
+    {
+      "name": "livestorm",
+      "source": "./plugins/livestorm",
+      "description": "Livestorm: Manage and analyze your webinars from Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Livestorm"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "shapes",
+      "source": "./plugins/shapes",
+      "description": "Shapes: Analyse your live people data, right in Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Shapes"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "kuliko-ai",
+      "source": "./plugins/kuliko-ai",
+      "description": "Kuliko AI: Your Learning Companion",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Kuliko Inc."
+      },
+      "category": "education",
+      "keywords": [
+        "education",
+        "productivity"
+      ]
+    },
+    {
+      "name": "process-street",
+      "source": "./plugins/process-street",
+      "description": "Process Street: Explore and update your Process Street data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Process Street"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "viberate",
+      "source": "./plugins/viberate",
+      "description": "Viberate music data: Music industry data inside Claude — artists, tracks, festivals, charts.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Viberate"
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "data-analytics",
+        "media-entertainment"
+      ]
+    },
+    {
+      "name": "mospi",
+      "source": "./plugins/mospi",
+      "description": "MoSPI: India's official statistics via natural language",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Ministry of Statistics and Programme Implementation (MoSPI), Government of India"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "weweb",
+      "source": "./plugins/weweb",
+      "description": "WeWeb: Build your WeWeb projects using Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "WeWeb"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "wingify",
+      "source": "./plugins/wingify",
+      "description": "Wingify: Optimize digital experiences directly from Claude and supercharge your CRO workflow.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Wingify Software Pvt. Ltd"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "botify-mcp",
+      "source": "./plugins/botify-mcp",
+      "description": "Botify MCP: AI search visibility, from insight to action",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Botify"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "fever-event-discovery",
+      "source": "./plugins/fever-event-discovery",
+      "description": "Fever Event Discovery: Discover live entertainment events worldwide",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Fever"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "subtext",
+      "source": "./plugins/subtext",
+      "description": "Subtext: Session replay, built for agents. Give Claude a session link and it investigates the real production session—DOM, screenshots, console, network—to find the root cause.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Fullstory"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "mcp-browserstack-com",
+      "source": "./plugins/mcp-browserstack-com",
+      "description": "mcp.browserstack.com: Plan, run, debug, and fix tests across web and mobile",
+      "version": "2026.10.25",
+      "author": {
+        "name": "BrowserStack"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "roam-research",
+      "source": "./plugins/roam-research",
+      "description": "Roam Research: Let Claude read, search, and write in your Roam graphs",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Roam Research Inc."
+      },
+      "category": "education",
+      "keywords": [
+        "education",
+        "productivity"
+      ]
+    },
+    {
+      "name": "lz-virtual-mail",
+      "source": "./plugins/lz-virtual-mail",
+      "description": "LZ Virtual Mail: Manage your physical mail from anywhere",
+      "version": "2026.10.25",
+      "author": {
+        "name": "LegalZoom"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "abency",
+      "source": "./plugins/abency",
+      "description": "Abency: Gestiona todas las marcas de tu agencia desde Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Additiu Marketing Digital SL"
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "travexp",
+      "source": "./plugins/travexp",
+      "description": "TravExp: Create rich, interactive travel itineraries",
+      "version": "2026.10.25",
+      "author": {
+        "name": "TravExp Inc"
+      },
+      "category": "travel",
+      "keywords": [
+        "travel"
+      ]
+    },
+    {
+      "name": "lightfield",
+      "source": "./plugins/lightfield",
+      "description": "Lightfield: CRM that remembers everything and works for you.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Lightfield"
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "nsdap-archiv-der-spiegel",
+      "source": "./plugins/nsdap-archiv-der-spiegel",
+      "description": "NSDAP Archiv - DER SPIEGEL: Search for NSDAP party members",
+      "version": "2026.10.25",
+      "author": {
+        "name": "DER SPIEGEL"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "education",
+        "media-entertainment",
+        "other"
+      ]
+    },
+    {
+      "name": "stytch",
+      "source": "./plugins/stytch",
+      "description": "Stytch: Manage your Stytch Project",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Stytch"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "harness",
+      "source": "./plugins/harness",
+      "description": "Harness: Build, Ship and Secure your apps on Harness Platform",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Harness.io"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "civitatis",
+      "source": "./plugins/civitatis",
+      "description": "Civitatis: Search, plan, and book tours and activities worldwide with Civitatis.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Civitatis"
+      },
+      "category": "travel",
+      "keywords": [
+        "travel"
+      ]
+    },
+    {
+      "name": "mdn",
+      "source": "./plugins/mdn",
+      "description": "MDN: Search & retrieval of MDN docs & browser compat data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Mozilla"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "salesflare",
+      "source": "./plugins/salesflare",
+      "description": "Salesflare: Manage and explore your CRM in Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Salesflare"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "freshbooks",
+      "source": "./plugins/freshbooks",
+      "description": "FreshBooks: Ask Claude how your business is really doing — straight from your FreshBooks financials",
+      "version": "2026.10.25",
+      "author": {
+        "name": "FreshBooks"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services",
+        "productivity"
+      ]
+    },
+    {
+      "name": "letsfg",
+      "source": "./plugins/letsfg",
+      "description": "LetsFG | Book the best flights or hotels: Don't book before checking here: same hotels often 20% cheaper, every airline in the world, real trip costs. Then we book it for you.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "LetsFG"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity",
+        "travel"
+      ]
+    },
+    {
+      "name": "cube-software",
+      "source": "./plugins/cube-software",
+      "description": "Cube Software: Bring trusted Cube financial context into Claude. Analyze performance, model scenarios, and move decisions into action, with your Cube permissions enforced on every request.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Cube"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services",
+        "productivity"
+      ]
+    },
+    {
+      "name": "zacks-data",
+      "source": "./plugins/zacks-data",
+      "description": "Zacks Data: Trusted Financial Data from Zacks Investment Research",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Zacks Investment Research"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services"
+      ]
+    },
+    {
+      "name": "cargoai",
+      "source": "./plugins/cargoai",
+      "description": "CargoAi: Instant air cargo rates, quotes & tracking",
+      "version": "2026.10.25",
+      "author": {
+        "name": "CargoAi"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "mygeotab-mcp-prod",
+      "source": "./plugins/mygeotab-mcp-prod",
+      "description": "MyGeotab MCP: Bring your fleet into Claude — analyze, manage, and act",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Geotab"
+      },
+      "category": "other",
+      "keywords": [
+        "other"
+      ]
+    },
+    {
+      "name": "iubenda",
+      "source": "./plugins/iubenda",
+      "description": "iubenda: Privacy policy & cookie banner: GDPR and CCPA compliance: cookie consent, cookie scanner, and terms and conditions",
+      "version": "2026.10.25",
+      "author": {
+        "name": "iubenda"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools",
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "giscloud",
+      "source": "./plugins/giscloud",
+      "description": "GIS Cloud: Run your entire GIS workflow in plain language: maps, data, analysis, field apps, and reports",
+      "version": "2026.10.25",
+      "author": {
+        "name": "GIS Cloud"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity"
+      ]
+    },
+    {
+      "name": "patlytics",
+      "source": "./plugins/patlytics",
+      "description": "Patlytics: Prior art, claims, and portfolio search",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Patlytics"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "kpler",
+      "source": "./plugins/kpler",
+      "description": "Kpler: Explore Kpler's maritime and commodities intelligence",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Kpler"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "pg-aiguide",
+      "source": "./plugins/pg-aiguide",
+      "description": "pg-aiguide: Search pg and Tiger docs, learn database skills",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Tiger Data"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "usafacts-connector",
+      "source": "./plugins/usafacts-connector",
+      "description": "USAFacts Government Data Connector: Give Claude a better source for government data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "USAFacts"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity"
+      ]
+    },
+    {
+      "name": "sent",
+      "source": "./plugins/sent",
+      "description": "Sent: Send and manage customer messages across SMS, WhatsApp, and RCS. Build and manage production messaging agents and workflows.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Sent, Inc."
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "data-analytics",
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "bling-mcp",
+      "source": "./plugins/bling-mcp",
+      "description": "Bling MCP: Access and manage your Bling directly in Claude.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Bling"
+      },
+      "category": "commerce-shopping",
+      "keywords": [
+        "commerce-shopping",
+        "developer-tools",
+        "financial-services",
+        "other",
+        "productivity"
+      ]
+    },
+    {
+      "name": "ihme-gbd",
+      "source": "./plugins/ihme-gbd",
+      "description": "IHME GBD: Explore IHME Global Burden of Disease data: causes of death, disease burden, and risk factors worldwide.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Institute for Health Metrics and Evaluation"
+      },
+      "category": "health-life-sciences",
+      "keywords": [
+        "health-life-sciences"
+      ]
+    },
+    {
+      "name": "actively",
+      "source": "./plugins/actively",
+      "description": "Actively: 1:1 account agents for GTM teams",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Taurus Labs, Inc."
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "instrumentl",
+      "source": "./plugins/instrumentl",
+      "description": "Instrumentl: Find, evaluate, and manage your grants",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Instrumentl"
+      },
+      "category": "nonprofit",
+      "keywords": [
+        "nonprofit"
+      ]
+    },
+    {
+      "name": "origin",
+      "source": "./plugins/origin",
+      "description": "Origin: See what AI agents are doing across your endpoint fleet",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Origin"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "clarity-ai",
+      "source": "./plugins/clarity-ai",
+      "description": "Clarity AI: Simulate fund classifications under proposed SFDR 2.0",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Clarity AI"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "manufact",
+      "source": "./plugins/manufact",
+      "description": "Manufact: Deploy and monitor MCP servers",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Manufact"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "all-accor",
+      "source": "./plugins/all-accor",
+      "description": "ALL Accor: Search and book Accor hotels",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Accor"
+      },
+      "category": "travel",
+      "keywords": [
+        "travel"
+      ]
+    },
+    {
+      "name": "unthread",
+      "source": "./plugins/unthread",
+      "description": "Unthread: Manage and automate your support tickets",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Unthread"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "xtiles",
+      "source": "./plugins/xtiles",
+      "description": "xTiles: Projects that keep Claude in context",
+      "version": "2026.10.25",
+      "author": {
+        "name": "XTILES INC."
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "privacy",
+      "source": "./plugins/privacy",
+      "description": "Privacy.com: Manage virtual cards and track your spending patterns",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Privacy.com"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "paperoffice",
+      "source": "./plugins/paperoffice",
+      "description": "PaperOffice: Built for companies. Ready for AI agents. The headless DMS for Claude: search, read, extract, approve, send for signing and archive documents in your own account, with your permissions.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "PaperOffice"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services",
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "vani",
+      "source": "./plugins/vani",
+      "description": "Vani by Zoho: Create diagrams, visualize workflows, and manage Spaces in Vani.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Zoho"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "controlplane",
+      "source": "./plugins/controlplane",
+      "description": "Control Plane: Deploy, scale, and debug cloud apps from one platform",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Control Plane Corporation"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "vuetify-mcp",
+      "source": "./plugins/vuetify-mcp",
+      "description": "Vuetify MCP: Official Vuetify docs, APIs, and bins for AI agents",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Vuetify"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "tiller",
+      "source": "./plugins/tiller",
+      "description": "Tiller: Connect to your transactions in your Tiller spreadsheet",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Tiller"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services",
+        "productivity"
+      ]
+    },
+    {
+      "name": "windmill-hr",
+      "source": "./plugins/windmill-hr",
+      "description": "Windmill HR: Draft performance reviews, manage 1:1s, send pulses, and collect feedback in Windmill, without ever leaving Claude.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Windmill"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity"
+      ]
+    },
+    {
+      "name": "athenahq",
+      "source": "./plugins/athenahq",
+      "description": "AthenaHQ: Analyze and improve your brand's AI visibility with metrics, sources, competitor benchmarks, and content workflows in Claude.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "AthenaHQ"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "docsend-com",
+      "source": "./plugins/docsend-com",
+      "description": "docsend.com: Manage data rooms, track engagement, and move deals forward with DocSend in Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Dropbox DocSend"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services",
+        "legal",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "revolut-x-67e1d4",
+      "source": "./plugins/revolut-x-67e1d4",
+      "description": "Revolut X: Manage your crypto portfolio",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Revolut"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "jentic",
+      "source": "./plugins/jentic",
+      "description": "Jentic: Search 10,000+ APIs and get the one you need",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Jentic"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "phished",
+      "source": "./plugins/phished",
+      "description": "Phished: Phished's entire ZIR app at your fingertips directly in Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Phished BV"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools",
+        "other",
+        "productivity"
+      ]
+    },
+    {
+      "name": "catalyst-by-zoho",
+      "source": "./plugins/catalyst-by-zoho",
+      "description": "Catalyst by Zoho: Build, deploy and host apps.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Catalyst by Zoho"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "ketryx",
+      "source": "./plugins/ketryx",
+      "description": "Ketryx: Search and explore regulated software lifecycle data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Ketryx"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "wetransfer",
+      "source": "./plugins/wetransfer",
+      "description": "WeTransfer: Send files from your chat via WeTransfer — get a shareable link or email them to recipients, using your own WeTransfer account.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "WeTransfer"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "creative",
+        "productivity"
+      ]
+    },
+    {
+      "name": "embat",
+      "source": "./plugins/embat",
+      "description": "Embat: Ask Embat about cash, debt, payments, and accounting",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Embat"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "infobip-message",
+      "source": "./plugins/infobip-message",
+      "description": "Infobip Message: Send SMS, RCS, MMS, and Viber messages through Infobip in Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Infobip"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication"
+      ]
+    },
+    {
+      "name": "kindora-funder-discovery",
+      "source": "./plugins/kindora-funder-discovery",
+      "description": "Kindora Funder Discovery: Find funders who support causes like yours",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Kindora"
+      },
+      "category": "nonprofit",
+      "keywords": [
+        "nonprofit"
+      ]
+    },
+    {
+      "name": "lorikeet",
+      "source": "./plugins/lorikeet",
+      "description": "Lorikeet: A universal concierge for complex businesses",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Lorikeet"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "webmcp-evaluator",
+      "source": "./plugins/webmcp-evaluator",
+      "description": "WebMCP Evaluator: Check whether a public page is ready for agents: tools observed, tools to add, what must never be exposed.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "John Williams at Sun Business Group"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "developer-tools",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "etoro-connector",
+      "source": "./plugins/etoro-connector",
+      "description": "etoro: etoro. Where Our Collective Intelligence Meets Your Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "etoro"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "superbooks",
+      "source": "./plugins/superbooks",
+      "description": "SuperBooks: Financial OS for small businesses",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Devino Solutions"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services",
+        "productivity"
+      ]
+    },
+    {
+      "name": "ninout",
+      "source": "./plugins/ninout",
+      "description": "Ninout: Design, publish, and analyze forms entirely in chat",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Ninout, Inc."
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "twinmind-app",
+      "source": "./plugins/twinmind-app",
+      "description": "TwinMind: AI notes & Memory",
+      "version": "2026.10.25",
+      "author": {
+        "name": "TwinMind"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "nutshell-crm",
+      "source": "./plugins/nutshell-crm",
+      "description": "Nutshell CRM: Connect Claude to Nutshell CRM to search leads, contacts, and companies, pull sales reports, and review deal timelines - all without leaving chat.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Nutshell"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "cloze",
+      "source": "./plugins/cloze",
+      "description": "Cloze MCP: Cloze Relationship Management",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Cloze, Inc."
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "craft-io",
+      "source": "./plugins/craft-io",
+      "description": "Craft.io: Manage your end-to-end product lifecycle - backlog, PRDs, customer feedback, roadmaps, and strategic OKRs - with Claude connected directly to your Craft.io data.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Craft.io"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "productised",
+      "source": "./plugins/productised",
+      "description": "Productised: AI-Powered Inbound for Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Productised"
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "data-analytics",
+        "developer-tools",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "contract-factory-siren",
+      "source": "./plugins/contract-factory-siren",
+      "description": "Contract-Factory — Sociétés & SIREN: Infos officielles des entreprises françaises (RNE)",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Contract-Factory"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services",
+        "legal"
+      ]
+    },
+    {
+      "name": "shipt",
+      "source": "./plugins/shipt",
+      "description": "Shipt: Groceries and more, delivered same-day from your favorite local stores.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Shipt"
+      },
+      "category": "commerce-shopping",
+      "keywords": [
+        "commerce-shopping"
+      ]
+    },
+    {
+      "name": "jump-mcp",
+      "source": "./plugins/jump-mcp",
+      "description": "Jump: Trusted AI for advisors & financial professionals",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Jump"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services",
+        "productivity"
+      ]
+    },
+    {
+      "name": "terminal49",
+      "source": "./plugins/terminal49",
+      "description": "Terminal49: Track ocean shipments and containers",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Terminal49, Inc."
+      },
+      "category": "commerce-shopping",
+      "keywords": [
+        "commerce-shopping",
+        "data-analytics",
+        "other"
+      ]
+    },
+    {
+      "name": "richpanel-ai",
+      "source": "./plugins/richpanel-ai",
+      "description": "Richpanel AI: Run your Richpanel helpdesk and AI support agent from Claude.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Richpanel Inc"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "data-analytics",
+        "productivity"
+      ]
+    },
+    {
+      "name": "pi-security",
+      "source": "./plugins/pi-security",
+      "description": "Pi Security: Agentic product security platform",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Pi Security"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "jedify",
+      "source": "./plugins/jedify",
+      "description": "Jedify: Governed, live business context for you and your agents - so they reason and act on your organization’s trusted data, definitions, and knowledge.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Jedify"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "dext",
+      "source": "./plugins/dext",
+      "description": "Dext: For accounting and bookkeeping firms: ask Dext about client data health, VAT and CT positions, aged debt, workflow and team capacity - across one client or your whole portfolio. Read-only.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Dext"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services",
+        "productivity"
+      ]
+    },
+    {
+      "name": "voluum",
+      "source": "./plugins/voluum",
+      "description": "Voluum: Manage and analyze your Voluum ad-tracking campaigns directly from Claude.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Voluum"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "bonsai",
+      "source": "./plugins/bonsai",
+      "description": "Bonsai: Manage your CRM, client projects and invoices from Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Bonsai by Zoom"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "sprites",
+      "source": "./plugins/sprites",
+      "description": "Sprites: Let Claude manage your Sprites",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Fly.io"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "eedi",
+      "source": "./plugins/eedi",
+      "description": "Eedi: Access Eedi's high quality math questions",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Eedi Ltd"
+      },
+      "category": "education",
+      "keywords": [
+        "education"
+      ]
+    },
+    {
+      "name": "badger-maps-standard",
+      "source": "./plugins/badger-maps-standard",
+      "description": "Badger Maps (Standard): Badger Maps is the #1 field sales platform",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Badger Maps, Inc"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "restream",
+      "source": "./plugins/restream",
+      "description": "Restream: Create and manage live streams on 30+ destinations",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Restream"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "creative",
+        "media-entertainment",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "bolna",
+      "source": "./plugins/bolna",
+      "description": "bolna: Manage Bolna voice AI agents and review call history and transcripts from Claude.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Bolna"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "pga-play-golf",
+      "source": "./plugins/pga-play-golf",
+      "description": "PGA – Play Golf: Find a golf coach",
+      "version": "2026.10.25",
+      "author": {
+        "name": "PGA of America"
+      },
+      "category": "other",
+      "keywords": [
+        "other"
+      ]
+    },
+    {
+      "name": "valuecase-v2",
+      "source": "./plugins/valuecase-v2",
+      "description": "Valuecase App: Search, create and update Valuecase spaces",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Valuecase"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "sequencehq",
+      "source": "./plugins/sequencehq",
+      "description": "Sequence: Billing, invoicing, and revenue data tools for Sequence",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Sequence"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "vasara",
+      "source": "./plugins/vasara",
+      "description": "Vasara: Search case law and legislation across Lithuania and the EU, with verifiable citations.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Vasara"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "energy-aspects",
+      "source": "./plugins/energy-aspects",
+      "description": "Energy Aspects: Access Energy Aspects' energy market research and data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Energy Aspects"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "other"
+      ]
+    },
+    {
+      "name": "rockhopper",
+      "source": "./plugins/rockhopper",
+      "description": "Rockhopper: Spreadsheet audit and observability for finance teams working with AI agents.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Rockhopper Inc."
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services",
+        "productivity"
+      ]
+    },
+    {
+      "name": "mollie",
+      "source": "./plugins/mollie",
+      "description": "Mollie: Online and in-person payments, subscriptions, funding, reconciliation, and fraud prevention – so growth never means more providers.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Mollie B.V."
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "picpay",
+      "source": "./plugins/picpay",
+      "description": "PicPay: PicPay. Seu próximo banco.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "PicPay"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "vibe-ai",
+      "source": "./plugins/vibe-ai",
+      "description": "Vibe AI: Transcripts, summaries, action items, and memos from your Vibe Bot and Vibe Dot meetings",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Vibe Inc"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "mittwald",
+      "source": "./plugins/mittwald",
+      "description": "mittwald: Connect your agent to the mittwald managed container hosting platform",
+      "version": "2026.10.25",
+      "author": {
+        "name": "mittwald"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "chatbase",
+      "source": "./plugins/chatbase",
+      "description": "Chatbase: Manage Chatbase agents, sources, conversations, tickets.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Chatbase"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity"
+      ]
+    },
+    {
+      "name": "haloo-trademark-clearance",
+      "source": "./plugins/haloo-trademark-clearance",
+      "description": "Haloo Trademark Clearance: Full trademark clearance search, direct in Claude.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Haloo Inc"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "astravue",
+      "source": "./plugins/astravue",
+      "description": "Astravue App: Manage projects, tasks, and team workload in one place",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Astravue"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "productivity"
+      ]
+    },
+    {
+      "name": "dominos-india",
+      "source": "./plugins/dominos-india",
+      "description": "Domino's India: Discover, customise, and order your favourite Domino's meals—all without leaving the conversation.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Jubilant Foodworks Limited"
+      },
+      "category": "commerce-shopping",
+      "keywords": [
+        "commerce-shopping"
+      ]
+    },
+    {
+      "name": "oak-national-academy",
+      "source": "./plugins/oak-national-academy",
+      "description": "Oak National Academy: Free, national curriculum-aligned Oak teaching resources",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Oak National Academy"
+      },
+      "category": "education",
+      "keywords": [
+        "education"
+      ]
+    },
+    {
+      "name": "hanover-park",
+      "source": "./plugins/hanover-park",
+      "description": "Hanover Park: Run your investment firm in real-time with access to portfolio, accounting, performance and LP data.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Hanover Park"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services",
+        "productivity"
+      ]
+    },
+    {
+      "name": "checkout-com",
+      "source": "./plugins/checkout-com",
+      "description": "Checkout.com: Investigate, troubleshoot, and understand payment operations.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Checkout.com"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "pine-labs-payments-assistant",
+      "source": "./plugins/pine-labs-payments-assistant",
+      "description": "Pine Labs Payments Assistant: Query your Pine Labs payments data in plain language — orders, transactions, settlements, subscriptions and success rates, plus integration help for developers.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Pine Labs"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "mcp-trainual-com",
+      "source": "./plugins/mcp-trainual-com",
+      "description": "Trainual: Search your training, operations, and performance data.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Trainual"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "tomorrow-io-weather-mcp-app",
+      "source": "./plugins/tomorrow-io-weather-mcp-app",
+      "description": "Tomorrow.io Weather MCP App: Interactive weather, air quality, pollen, and wildfire-risk widgets powered by Tomorrow.io — live forecasts and conditions for any location, right inside Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Tomorrow.io"
+      },
+      "category": "health-life-sciences",
+      "keywords": [
+        "health-life-sciences",
+        "other",
+        "travel"
+      ]
+    },
+    {
+      "name": "meko",
+      "source": "./plugins/meko",
+      "description": "Meko: Shared context for agents that work and learn together.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "YugabyteDB"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "lukka-predmar",
+      "source": "./plugins/lukka-predmar",
+      "description": "Lukka Prediction Markets Data MCP: Prediction market intelligence across several venues, including Kalshi and Polymarket: market discovery, classification, pricing, open interest and volume.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Lukka Inc"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services"
+      ]
+    },
+    {
+      "name": "item",
+      "source": "./plugins/item",
+      "description": "item: Search, analyze, and act on CRM data",
+      "version": "2026.10.25",
+      "author": {
+        "name": "item"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "numbersgame-mcp",
+      "source": "./plugins/numbersgame-mcp",
+      "description": "NumbersGame MCP: Query and update QuickBooks Online and Xero from Claude — invoices, bills, reports, and reconciliations.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Numbers Game B.V."
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services",
+        "productivity"
+      ]
+    },
+    {
+      "name": "meridian-connector-for-xero",
+      "source": "./plugins/meridian-connector-for-xero",
+      "description": "Meridian Connector for Xero: Make changes to Xero from within Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Pilot.com, Inc."
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services",
+        "productivity"
+      ]
+    },
+    {
+      "name": "d-b-hoovers",
+      "source": "./plugins/d-b-hoovers",
+      "description": "D&B Hoovers: Access trusted D&B intelligence, contacts, and signals to uncover opportunities and take the next best action.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Dun & Bradstreet"
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "belvo",
+      "source": "./plugins/belvo",
+      "description": "Belvo MCP: Understand your finances on your own terms",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Belvo"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services"
+      ]
+    },
+    {
+      "name": "tana",
+      "source": "./plugins/tana",
+      "description": "Tana: Your meetings, decisions, and docs as Claude context.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Tana Labs, Inc."
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "productivity"
+      ]
+    },
+    {
+      "name": "trussi-ai",
+      "source": "./plugins/trussi-ai",
+      "description": "Trussi AI: Bring your Trussi roofing CRM into Claude - find projects and customers, track pipeline and schedules, pull dashboards and reports, and log updates without leaving the chat.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Trussi AI"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "spara",
+      "source": "./plugins/spara",
+      "description": "Spara: Build the agents that run your GTM.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Spara, Inc."
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "infinitewatch-mcp",
+      "source": "./plugins/infinitewatch-mcp",
+      "description": "InfiniteWatch MCP: Analyze customer interactions, identify trends, and uncover operational risks with InfiniteWatch in Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "InfiniteWatch"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "clerq-mcp",
+      "source": "./plugins/clerq-mcp",
+      "description": "Clerq MCP: AI-powered patent retrieval and analysis capabilities",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Clerq"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal"
+      ]
+    },
+    {
+      "name": "pocket-capture",
+      "source": "./plugins/pocket-capture",
+      "description": "Mojo — Pocket Capture: Talk to your leads, funnel, and capture setup",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Mojo Systems LLC"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "infobip-documentation",
+      "source": "./plugins/infobip-documentation",
+      "description": "Infobip Documentation: Search and browse Infobip docs from Claude",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Infobip"
+      },
+      "category": "communication",
+      "keywords": [
+        "communication"
+      ]
+    },
+    {
+      "name": "lseg-ai",
+      "source": "./plugins/lseg-ai",
+      "description": "LSEG AI: Data Analytics and Trading",
+      "version": "2026.10.25",
+      "author": {
+        "name": "LSEG"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "bronto",
+      "source": "./plugins/bronto",
+      "description": "Bronto: Query your Observability data in plain language, then turn what you find into monitors, saved searches, and Investigation Reports.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Bronto"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools"
+      ]
+    },
+    {
+      "name": "signeasy",
+      "source": "./plugins/signeasy",
+      "description": "Signeasy: Track contract status, activity, and signers",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Signeasy"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "rsvpify",
+      "source": "./plugins/rsvpify",
+      "description": "RSVPify: Run your event operations in RSVPify, end-to-end",
+      "version": "2026.10.25",
+      "author": {
+        "name": "RSVPify Inc."
+      },
+      "category": "communication",
+      "keywords": [
+        "communication",
+        "nonprofit",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "addgene",
+      "source": "./plugins/addgene",
+      "description": "Addgene: Search Addgene's catalog of plasmids and viral preps",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Addgene"
+      },
+      "category": "health-life-sciences",
+      "keywords": [
+        "health-life-sciences"
+      ]
+    },
+    {
+      "name": "optilogic",
+      "source": "./plugins/optilogic",
+      "description": "Optilogic: AI-driven supply chain design and decision intelligence",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Optilogic"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "other",
+        "productivity"
+      ]
+    },
+    {
+      "name": "sparxx-io",
+      "source": "./plugins/sparxx-io",
+      "description": "spArxx.io | Zero-Knowledge Blockchain Timestamping: Prove you made it first. Timestamp your creative work on the blockchain via Claude or any MCP-enabled AI agent.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "spArxx.io"
+      },
+      "category": "creative",
+      "keywords": [
+        "creative",
+        "developer-tools",
+        "legal",
+        "media-entertainment",
+        "productivity"
+      ]
+    },
+    {
+      "name": "linksquares",
+      "source": "./plugins/linksquares",
+      "description": "LinkSquares: Automate legal intake and contract intelligence — create agreements, manage legal requests, and search your contract data directly from Claude.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "LinkSquares, Inc."
+      },
+      "category": "legal",
+      "keywords": [
+        "legal"
+      ]
+    },
+    {
+      "name": "fourthwall",
+      "source": "./plugins/fourthwall",
+      "description": "Fourthwall: Make custom merch & streetwear",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Fourthwall"
+      },
+      "category": "commerce-shopping",
+      "keywords": [
+        "commerce-shopping",
+        "creative",
+        "media-entertainment",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "bitmovin",
+      "source": "./plugins/bitmovin",
+      "description": "Bitmovin: Connect Bitmovin to access player, observability, encoding, ads and more in one place",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Bitmovin"
+      },
+      "category": "media-entertainment",
+      "keywords": [
+        "media-entertainment"
+      ]
+    },
+    {
+      "name": "onchaindiligence",
+      "source": "./plugins/onchaindiligence",
+      "description": "OnChainDiligence: Inspect autonomous payments before execution and independently verify evidence afterward.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "OnChainDiligence"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools",
+        "financial-services"
+      ]
+    },
+    {
+      "name": "lightbringer",
+      "source": "./plugins/lightbringer",
+      "description": "Lightbringer: Patent and invention management for your AI assistant — search your portfolio, draft, validate and submit inventions, and collaborate on patent reviews without leaving the chat.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Lightbringer"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal"
+      ]
+    },
+    {
+      "name": "plotly-cloud",
+      "source": "./plugins/plotly-cloud",
+      "description": "Plotly Cloud: Build and deploy Plotly Dash apps to Plotly Cloud from a conversation with Claude.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Plotly"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "ratehub-mortgage",
+      "source": "./plugins/ratehub-mortgage",
+      "description": "Ratehub Mortgage: Find and compare Canada’s best mortgage rates",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Ratehub.ca"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "neimo",
+      "source": "./plugins/neimo",
+      "description": "neimo.: Answer any kids' privacy or age-assurance question for 200+ markets, with the law cited.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "k-ID"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "stub",
+      "source": "./plugins/stub",
+      "description": "stub: Super simple AI native accounting",
+      "version": "2026.10.25",
+      "author": {
+        "name": "stub"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services"
+      ]
+    },
+    {
+      "name": "clutch",
+      "source": "./plugins/clutch",
+      "description": "Clutch.co: Find the perfect B2B company with verified client reviews",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Clutch Co LLC"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "breezing",
+      "source": "./plugins/breezing",
+      "description": "Breezing: Crypto accounting for Xero, QuickBooks and Bexio Alternative: Categorize, reconcile and book crypto in your ledger",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Breezing SA"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools",
+        "financial-services",
+        "productivity"
+      ]
+    },
+    {
+      "name": "pointone",
+      "source": "./plugins/pointone",
+      "description": "PointOne: Timekeeping and firm intelligence",
+      "version": "2026.10.25",
+      "author": {
+        "name": "PointOne Technologies Inc."
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "d-b-digital-audiences",
+      "source": "./plugins/d-b-digital-audiences",
+      "description": "D&B Digital Audiences: Discover the Right Audiences Faster",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Dun & Bradstreet"
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "smarter-drafter",
+      "source": "./plugins/smarter-drafter",
+      "description": "Smarter Drafter: Draft client-ready legal documents from your firm's approved templates, inside Claude.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Tensis"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "maia",
+      "source": "./plugins/maia",
+      "description": "MAIA: The geospatial research engine: get answers from the physical world, built as map and table datasets.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "MAIA Analytics"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics"
+      ]
+    },
+    {
+      "name": "aditus-evo",
+      "source": "./plugins/aditus-evo",
+      "description": "ADITUS Evo: ADITUS Evo translates the complexity of modern events into clear insights and makes data-driven decisions easier than ever.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "ADITUS GmbH"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "muumuu-domain",
+      "source": "./plugins/muumuu-domain",
+      "description": "MuuMuu Domain byGMO Pepabo: ムームードメインと接続し、ドメインの空き検索・価格確認から購入手続きまでを会話で進められます。決済はムームードメインのサイト上でご自身が完了させる方式です。保有ドメインの一覧・詳細確認、ネームサーバーの確認・変更、DNSレコードの一覧・作成・更新・削除、更新日や自動更新設定の確認・変更にも対応します。",
+      "version": "2026.10.25",
+      "author": {
+        "name": "GMO Pepabo, Inc."
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools",
+        "productivity"
+      ]
+    },
+    {
+      "name": "chaser",
+      "source": "./plugins/chaser",
+      "description": "Chaser: Task management and project tracking inside Slack",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Chaser"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "notra",
+      "source": "./plugins/notra",
+      "description": "Notra: Track AI search visibility",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Notra, Inc."
+      },
+      "category": "sales-and-marketing",
+      "keywords": [
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "caisey",
+      "source": "./plugins/caisey",
+      "description": "CAISey: CAISey gives CAIS platform users access to alternative investment products data made available on the platform.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "CAIS"
+      },
+      "category": "financial-services",
+      "keywords": [
+        "financial-services"
+      ]
+    },
+    {
+      "name": "promptless",
+      "source": "./plugins/promptless",
+      "description": "Promptless: Search, read, and edit your documentation",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Promptless"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "mary",
+      "source": "./plugins/mary",
+      "description": "Mary: Organise, extract, draft, and verify the facts of your matter",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Mary"
+      },
+      "category": "legal",
+      "keywords": [
+        "legal",
+        "productivity"
+      ]
+    },
+    {
+      "name": "agri-mcp-tcit-cl",
+      "source": "./plugins/agri-mcp-tcit-cl",
+      "description": "agri-mcp.tcit.cl: Manage farm operations in AGRI: labor tasks, harvest, irrigation, inventory, purchasing and cost reports.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "AGRI SpA"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "financial-services",
+        "productivity"
+      ]
+    },
+    {
+      "name": "merchkit",
+      "source": "./plugins/merchkit",
+      "description": "Merchkit: AI-Native Product Catalog (PIM / PXM / Product Feed / Agentic Commerce Optimization)",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Merchkit"
+      },
+      "category": "commerce-shopping",
+      "keywords": [
+        "commerce-shopping",
+        "data-analytics",
+        "productivity",
+        "sales-and-marketing"
+      ]
+    },
+    {
+      "name": "vylo",
+      "source": "./plugins/vylo",
+      "description": "Vylo: Your meeting memory",
+      "version": "2026.10.25",
+      "author": {
+        "name": "WheelsEye Technology India Private Limited"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "find-your-great",
+      "source": "./plugins/find-your-great",
+      "description": "Find Your Great: Understand your work impact — ask about what you actually did, decided, and changed.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Find Your Great"
+      },
+      "category": "data-analytics",
+      "keywords": [
+        "data-analytics",
+        "productivity"
+      ]
+    },
+    {
+      "name": "mantic",
+      "source": "./plugins/mantic",
+      "description": "Mantic: Explore judgemental forecasts",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Mantic Technologies Ltd"
+      },
+      "category": "productivity",
+      "keywords": [
+        "productivity"
+      ]
+    },
+    {
+      "name": "countersignatory",
+      "source": "./plugins/countersignatory",
+      "description": "Countersignatory: Let an agent buy a verified human's approval, verification or judgment at a published spot price, paid by x402 (USDC on Base) or card, answered by hand or refunded.",
+      "version": "2026.10.25",
+      "author": {
+        "name": "Countersignatory Ltd"
+      },
+      "category": "developer-tools",
+      "keywords": [
+        "developer-tools",
+        "productivity"
+      ]
+    }
+  ]
+}

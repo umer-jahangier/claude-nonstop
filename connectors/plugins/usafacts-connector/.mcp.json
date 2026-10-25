@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "usafacts-connector": {
+      "type": "http",
+      "url": "https://data.mcp.usafacts.org/mcp"
+    }
+  }
+}

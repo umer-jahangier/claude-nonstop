@@ -1,0 +1,13 @@
+{
+  "name": "shippo",
+  "version": "2026.10.25",
+  "description": "Shippo: Multi-carrier shipping, from a single package to high volume: compare live rates across USPS, UPS, FedEx, DHL, and 40+ carriers, then buy labels, validate addresses, and track packages.",
+  "author": {
+    "name": "Shippo"
+  },
+  "keywords": [
+    "commerce-shopping",
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

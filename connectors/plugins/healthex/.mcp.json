@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "healthex": {
+      "type": "http",
+      "url": "https://api.healthex.io/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

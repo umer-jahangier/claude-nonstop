@@ -1,0 +1,11 @@
+{
+  "name": "factset",
+  "version": "2026.10.25",
+  "description": "FactSet AI-Ready Data: Access institutional-quality financial data and analytics",
+  "author": {
+    "name": "FactSet Research Systems"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

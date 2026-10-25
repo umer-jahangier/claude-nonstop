@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "linksquares": {
+      "type": "http",
+      "url": "https://ai-chat-service.linksquares.com/v1/mcp/external",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

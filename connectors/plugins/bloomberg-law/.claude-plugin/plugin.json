@@ -1,0 +1,13 @@
+{
+  "name": "bloomberg-law",
+  "version": "2026.10.25",
+  "description": "Bloomberg Law: Legal intelligence powered by Bloomberg AI",
+  "author": {
+    "name": "Bloomberg Industry Group"
+  },
+  "keywords": [
+    "data-analytics",
+    "legal",
+    "productivity"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "freshbooks",
+  "version": "2026.10.25",
+  "description": "FreshBooks: Ask Claude how your business is really doing — straight from your FreshBooks financials",
+  "author": {
+    "name": "FreshBooks"
+  },
+  "keywords": [
+    "financial-services",
+    "productivity"
+  ]
+}

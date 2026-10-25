@@ -1,0 +1,11 @@
+{
+  "name": "sprinto-mcp-plugins",
+  "version": "2026.10.25",
+  "description": "Sprinto MCP: Manage trust workflows",
+  "author": {
+    "name": "Sprinto"
+  },
+  "keywords": [
+    "other"
+  ]
+}

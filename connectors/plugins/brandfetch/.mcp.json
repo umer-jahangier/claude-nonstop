@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "brandfetch": {
+      "type": "http",
+      "url": "https://mcp.brandfetch.io/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

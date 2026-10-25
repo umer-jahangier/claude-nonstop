@@ -1,0 +1,11 @@
+{
+  "name": "mittwald",
+  "version": "2026.10.25",
+  "description": "mittwald: Connect your agent to the mittwald managed container hosting platform",
+  "author": {
+    "name": "mittwald"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

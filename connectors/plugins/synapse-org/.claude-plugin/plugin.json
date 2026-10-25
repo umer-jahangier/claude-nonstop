@@ -1,0 +1,11 @@
+{
+  "name": "synapse-org",
+  "version": "2026.10.25",
+  "description": "Synapse.org: Search and metadata tools for Synapse scientific data",
+  "author": {
+    "name": "Sage Bionetworks"
+  },
+  "keywords": [
+    "health-life-sciences"
+  ]
+}

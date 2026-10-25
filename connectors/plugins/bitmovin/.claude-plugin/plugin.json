@@ -1,0 +1,11 @@
+{
+  "name": "bitmovin",
+  "version": "2026.10.25",
+  "description": "Bitmovin: Connect Bitmovin to access player, observability, encoding, ads and more in one place",
+  "author": {
+    "name": "Bitmovin"
+  },
+  "keywords": [
+    "media-entertainment"
+  ]
+}

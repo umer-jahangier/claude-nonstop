@@ -1,0 +1,14 @@
+{
+  "name": "pipedrive-mcp",
+  "version": "2026.10.25",
+  "description": "Pipedrive: Find deals, update records, manage activities and work with your live CRM data using natural language.",
+  "author": {
+    "name": "Pipedrive"
+  },
+  "keywords": [
+    "communication",
+    "data-analytics",
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

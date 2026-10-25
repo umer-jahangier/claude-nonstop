@@ -1,0 +1,12 @@
+{
+  "name": "rootly",
+  "version": "2026.10.25",
+  "description": "Rootly: Connect AI agents to Rootly for incident management, on-call, and reliability data",
+  "author": {
+    "name": "Rootly"
+  },
+  "keywords": [
+    "developer-tools",
+    "productivity"
+  ]
+}

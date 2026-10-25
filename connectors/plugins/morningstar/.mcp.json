@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "morningstar": {
+      "type": "http",
+      "url": "https://mcp.morningstar.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

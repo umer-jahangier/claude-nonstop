@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "eden-basecamp-research": {
+      "type": "http",
+      "url": "https://mcp-public.basecamp-research.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

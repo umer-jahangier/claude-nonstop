@@ -1,0 +1,11 @@
+{
+  "name": "s-p-global",
+  "version": "2026.10.25",
+  "description": "S&P - Deterministic Retrieval: Deterministic access to S&P Global data",
+  "author": {
+    "name": "S&P Global"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

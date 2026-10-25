@@ -1,0 +1,11 @@
+{
+  "name": "lastminute-com",
+  "version": "2026.10.25",
+  "description": "lastminute.com: Search, compare and book flights, dynamic packages (flight + hotel) and hotels across global airlines and hotel suppliers.",
+  "author": {
+    "name": "lastminute.com"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

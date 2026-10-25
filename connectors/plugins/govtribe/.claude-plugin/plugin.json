@@ -1,0 +1,11 @@
+{
+  "name": "govtribe",
+  "version": "2026.10.25",
+  "description": "GovTribe: Search government procurement & spending data",
+  "author": {
+    "name": "Government Executive Media Group LLC"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

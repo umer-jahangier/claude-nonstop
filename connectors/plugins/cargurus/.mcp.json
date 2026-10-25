@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "cargurus": {
+      "type": "http",
+      "url": "https://mcp-apps.api.cargurus.com/chat-mcp/v1/stream"
+    }
+  }
+}

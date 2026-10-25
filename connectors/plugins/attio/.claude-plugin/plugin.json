@@ -1,0 +1,11 @@
+{
+  "name": "attio",
+  "version": "2026.10.25",
+  "description": "Attio: Search, manage, and update your Attio CRM from Claude",
+  "author": {
+    "name": "Attio"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

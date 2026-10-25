@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "adobe-marketing-agent": {
+      "type": "http",
+      "url": "https://mcp.coworker.experience.adobe.io/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

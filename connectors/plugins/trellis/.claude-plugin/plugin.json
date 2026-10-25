@@ -1,0 +1,13 @@
+{
+  "name": "trellis",
+  "version": "2026.10.25",
+  "description": "Trellis: Claude for Trial Court Litigators",
+  "author": {
+    "name": "Trellis"
+  },
+  "keywords": [
+    "data-analytics",
+    "legal",
+    "productivity"
+  ]
+}

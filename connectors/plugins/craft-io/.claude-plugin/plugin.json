@@ -1,0 +1,13 @@
+{
+  "name": "craft-io",
+  "version": "2026.10.25",
+  "description": "Craft.io: Manage your end-to-end product lifecycle - backlog, PRDs, customer feedback, roadmaps, and strategic OKRs - with Claude connected directly to your Craft.io data.",
+  "author": {
+    "name": "Craft.io"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools",
+    "productivity"
+  ]
+}

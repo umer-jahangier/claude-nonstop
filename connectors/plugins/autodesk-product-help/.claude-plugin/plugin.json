@@ -1,0 +1,12 @@
+{
+  "name": "autodesk-product-help",
+  "version": "2026.10.25",
+  "description": "Autodesk Product Help: Securely access Autodesk's help documentation",
+  "author": {
+    "name": "Autodesk, Inc."
+  },
+  "keywords": [
+    "creative",
+    "productivity"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "paxton-legal-research",
+  "version": "2026.10.25",
+  "description": "Paxton Legal Research: Research U.S. law in Claude—with citations you can open and verify.",
+  "author": {
+    "name": "Paxton"
+  },
+  "keywords": [
+    "legal"
+  ]
+}

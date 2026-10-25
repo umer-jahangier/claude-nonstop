@@ -737,6 +737,7 @@ main { position: relative; z-index: 1; }
           <div class="kv-list">
             <div class="kv"><span class="k">If it runs out</span><span class="v"><span id="next">–</span></span></div>
             <div class="kv"><span class="k">Choice</span><span class="v" id="mode">Automatic</span></div>
+            <div class="kv" id="desktop-kv" hidden><span class="k">Desktop app</span><span class="v" id="desktop-line">–</span></div>
           </div>
           <div class="now-art" id="now-art" role="img" aria-label="A globe with a light that travels from this computer to Anthropic for every gateway request" title="Each light is a request travelling to Anthropic. Drag to spin.">
             <canvas id="globe"></canvas>
@@ -1000,7 +1001,7 @@ function accountState(a) {
 function keyState(k) {
   const c = k.lastCheck;
   if (!k.enabled) return { s: 'off', word: 'Paused', ready: false };
-  if (c && c.verdict === 'used-up' && k.coolingDown) return { s: 'dead', word: 'Used up', ready: false };
+  if (c && c.verdict === 'used-up' && k.coolingDown) return { s: 'dead', word: c.scope === 'claude-code' ? 'No Claude Code credit' : 'Used up', ready: false };
   if (c && c.verdict === 'keep') return { s: 'warn', word: 'Kept', ready: true };
   if (c && c.verdict === 'ok') return { s: 'ready', word: 'Works', ready: true };
   return { s: '', word: 'Not tested', ready: true };
@@ -1032,17 +1033,14 @@ function relayOrder() {
   return i < 0 ? list : [list[i], ...list.slice(0, i), ...list.slice(i + 1)];
 }
 
+// The key the desktop app's requests go out on: the first usable key in your order.
+const desktopKey = () => relayOrder().find((l) => l.type === 'key' && l.st.ready) || null;
+
+// The line Claude Code sessions run on: the first usable line in your priority order (the
+// pinned one first), which is where every new session starts, in Automatic mode too.
 function liveAndNext() {
   const order = relayOrder();
-  let live = -1;
-  if (S.pinned) {
-    live = order.findIndex((l) => l.st.ready);
-  } else {
-    const cur = S.current || '';
-    let i = order.findIndex((l) => (l.type === 'account' ? l.item.label === cur : `API key: ${l.item.label}` === cur));
-    if (i < 0 && cur === 'API keys (gateway)') i = order.findIndex((l) => l.type === 'key');
-    if (i >= 0) for (let j = i; j < order.length; j++) if (order[j].st.ready) { live = j; break; }
-  }
+  const live = order.findIndex((l) => l.st.ready);
   const liveLine = live >= 0 ? order[live] : null;
   const next = order.slice(live + 1).find((l) => l.st.ready && (!liveLine || lineKey(l) !== lineKey(liveLine))) || null;
   const first = order.find((l) => l.st.ready) || null;
@@ -1058,7 +1056,8 @@ function renderNow(rel) {
     avatar.dataset.kind = rel.live.type;
     avatar.innerHTML = icon(rel.live.type === 'account' ? 'person' : 'key');
     $('#live-title').innerHTML = `<span class="dim">Running on</span> ${esc(rel.live.item.label)}`;
-    const since = S.currentAt && !rel.manual ? `, since ${ago(S.currentAt)}` : '';
+    const recorded = rel.live.type === 'account' ? rel.live.item.label : `API key: ${rel.live.item.label}`;
+    const since = S.currentAt && S.current === recorded ? `, since ${ago(S.currentAt)}` : '';
     $('#live-sub').textContent = `${rel.live.type === 'account' ? 'Subscription account' : 'API key'}${since}`;
   } else {
     avatar.dataset.kind = 'idle';
@@ -1070,6 +1069,13 @@ function renderNow(rel) {
   $('#mode').innerHTML = S.pinned
     ? '<span>Your pick</span><button class="btn" type="button" data-act="unpin" data-fk="unpin">Use Automatic</button>'
     : '<span>Automatic</span>';
+  // The desktop app runs only on API keys, through the gateway, whatever line sessions are on.
+  const dk = $('#desktop-kv');
+  dk.hidden = !(S.desktop && S.desktop.automatic);
+  if (!dk.hidden) {
+    const key = desktopKey();
+    $('#desktop-line').textContent = key ? `${key.item.label} (API key)` : 'No API key with credit';
+  }
 
   const keysOn = S.keys.filter((k) => k.enabled);
   const keysOk = keysOn.filter((k) => keyState(k).ready).length;
@@ -1089,8 +1095,12 @@ function renderAlerts() {
     if (!k.enabled || keyState(k).s !== 'dead') continue;
     const left = Math.max(1, S.settings.cooldownMinutes - Math.round((Date.now() - k.lastCheck.at) / 60000));
     const why = trimEnd(k.lastCheck.detail);
-    alerts.push({ tone: 'dead', text: `${k.label} is used up${why ? `: ${why}` : ''}. Top it up; it's tried again in ${left} min.`, acts: `<a class="btn" href="${BILLING_URL}" target="_blank" rel="noopener noreferrer">Top Up${icon('out')}</a><button class="btn" type="button" data-act="test-key" data-id="${esc(k.id)}" data-fk="alert-test:${esc(k.id)}">Test Now</button>` });
+    const text = k.lastCheck.scope === 'claude-code'
+      ? `${k.label} has no credit that covers Claude Code. Promotional API credit often doesn't (check "Applies to" on your billing page). It's tried again in ${left} min.`
+      : `${k.label} is used up${why ? `: ${why}` : ''}. Top it up; it's tried again in ${left} min.`;
+    alerts.push({ tone: 'dead', text, acts: `<a class="btn" href="${BILLING_URL}" target="_blank" rel="noopener noreferrer">Top Up${icon('out')}</a><button class="btn" type="button" data-act="test-key" data-id="${esc(k.id)}" data-fk="alert-test:${esc(k.id)}">Test Now</button>` });
   }
+  if (S.desktop && S.desktop.automatic && S.keys.length && !desktopKey()) alerts.push({ tone: 'dead', text: 'The desktop app runs only on API keys, and none can take its requests right now. Top a key up, or sign in to Claude.ai in the desktop app to use your subscription there.' });
   if (!S.keys.length) alerts.push({ tone: 'warn', text: 'No API keys yet. When every account hits its limit, sessions have nothing to fall back on.', acts: `<a class="btn" href="${KEYS_URL}" target="_blank" rel="noopener noreferrer">Get a Key${icon('out')}</a><button class="btn primary" type="button" data-act="add-key" data-fk="alert-add-key">Add a Key…</button>` });
   const list = $('#alerts');
   list.hidden = !alerts.length;
@@ -2774,7 +2784,11 @@ const actions = {
     const item = itemFor(type, lineId) || {};
     const name = item.label || 'that line';
     const st = type === 'account' ? accountState(item) : keyState(item);
-    toast(!st.ready ? `${name} isn't usable right now, so the relay carries on with the next line.` : type === 'key' ? `Plugged into ${name}. Every gateway request uses it now.` : `Plugged into ${name}. New sessions start on it.`);
+    toast(!st.ready
+      ? `${name} isn't usable right now, so the relay carries on with the next line.`
+      : type === 'key'
+        ? `Plugged into ${name}. Every gateway request uses it now.`
+        : `Plugged into ${name}. New Claude Code sessions in your terminal start on it. The desktop app runs only on API keys; to use ${name} there, sign in to Claude.ai in the app.`);
   },
   unpin: async () => {
     await api('DELETE', '/api/pin');

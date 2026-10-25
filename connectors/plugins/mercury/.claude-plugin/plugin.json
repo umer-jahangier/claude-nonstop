@@ -1,0 +1,11 @@
+{
+  "name": "mercury",
+  "version": "2026.10.25",
+  "description": "Mercury: Search, analyze and understand your finances on Mercury",
+  "author": {
+    "name": "Mercury"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "datasite",
+  "version": "2026.10.25",
+  "description": "Datasite: Manage your M&A data room from Claude",
+  "author": {
+    "name": "Datasite"
+  },
+  "keywords": [
+    "financial-services",
+    "legal"
+  ]
+}

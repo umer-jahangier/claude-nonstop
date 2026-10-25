@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "livestorm": {
+      "type": "http",
+      "url": "https://mcp.livestorm.co/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

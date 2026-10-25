@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "orion": {
+      "type": "http",
+      "url": "https://g.runorion.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

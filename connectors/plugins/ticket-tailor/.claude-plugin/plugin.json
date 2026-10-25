@@ -1,0 +1,11 @@
+{
+  "name": "ticket-tailor",
+  "version": "2026.10.25",
+  "description": "Ticket Tailor: Event platform for managing tickets, orders & more",
+  "author": {
+    "name": "Ticket Tailor"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

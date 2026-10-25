@@ -1,0 +1,11 @@
+{
+  "name": "mixpanel",
+  "version": "2026.10.25",
+  "description": "Mixpanel: Analyze, query, and manage your Mixpanel data",
+  "author": {
+    "name": "Mixpanel"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

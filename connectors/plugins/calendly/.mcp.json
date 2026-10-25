@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "calendly": {
+      "type": "http",
+      "url": "https://mcp.calendly.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

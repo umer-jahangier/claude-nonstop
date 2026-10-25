@@ -9,6 +9,7 @@ const state = require('./state');
 const { log } = require('./files');
 
 const API_VERSION = '2026-10-21';
+const CLAUDE_CODE_BETA = 'claude-code-20250219';
 
 const fingerprint = (key) => crypto.createHash('sha256').update(key).digest('hex').slice(0, 16);
 const mask = (key) => (key.length > 24 ? `${key.slice(0, 14)}…${key.slice(-4)}` : '••••••••');
@@ -22,7 +23,10 @@ function errorMessage(body) {
   }
 }
 
-// The smallest possible real request: one output token from the cheapest model.
+// The smallest possible real request: one output token from the cheapest model. Everything
+// the keys carry comes from Claude Code, which Anthropic bills as Claude Code, and some credit
+// doesn't cover that (promotional API credit, say). So the check asks the way Claude Code
+// does; a plain API request would pass on credit Claude Code can't use.
 async function probe(key, cfg) {
   const body = JSON.stringify({ model: cfg.probeModel, max_tokens: 1, messages: [{ role: 'user', content: '.' }] });
   return request(`${cfg.upstream}/v1/messages`, {
@@ -30,6 +34,7 @@ async function probe(key, cfg) {
     headers: {
       'x-api-key': key,
       'anthropic-version': API_VERSION,
+      'anthropic-beta': CLAUDE_CODE_BETA,
       'content-type': 'application/json',
       'content-length': Buffer.byteLength(body),
     },
@@ -40,11 +45,11 @@ async function probe(key, cfg) {
 
 async function check(entry, cfg) {
   const { status, body } = await probe(entry.key, cfg);
-  const result = {
-    verdict: classifyResponse(status, body),
-    status,
-    detail: errorMessage(body) || (status === 0 ? body : ''),
-  };
+  const verdict = classifyResponse(status, body);
+  const detail = errorMessage(body) || (status === 0 ? body : '');
+  // Out of credit for Claude Code: it may still have credit for other API use.
+  const scope = verdict === 'used-up' && /credit balance/i.test(detail) ? { scope: 'claude-code' } : {};
+  const result = { verdict, status, detail, ...scope };
   state.recordKey(entry.id, result);
   return result;
 }

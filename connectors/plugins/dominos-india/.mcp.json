@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "dominos-india": {
+      "type": "http",
+      "url": "https://genai-prod-ext.dominos.co.in/order-mcp/mcp"
+    }
+  }
+}

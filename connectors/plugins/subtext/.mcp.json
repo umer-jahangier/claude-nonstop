@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "subtext": {
+      "type": "http",
+      "url": "https://api.fullstory.com/mcp/subtext",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

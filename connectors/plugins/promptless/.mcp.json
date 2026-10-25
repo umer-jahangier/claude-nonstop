@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "promptless": {
+      "type": "http",
+      "url": "https://api.gopromptless.ai/mcp/with-direct-edits",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

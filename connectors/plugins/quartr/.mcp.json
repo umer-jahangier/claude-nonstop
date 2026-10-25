@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "quartr": {
+      "type": "http",
+      "url": "https://mcp.quartr.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

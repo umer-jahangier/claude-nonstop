@@ -1,0 +1,11 @@
+{
+  "name": "omnisend-mcp",
+  "version": "2026.10.25",
+  "description": "Omnisend MCP: Analyze your Omnisend marketing performance",
+  "author": {
+    "name": "Omnisend"
+  },
+  "keywords": [
+    "sales-and-marketing"
+  ]
+}

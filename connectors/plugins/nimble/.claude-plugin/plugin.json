@@ -1,0 +1,11 @@
+{
+  "name": "nimble",
+  "version": "2026.10.25",
+  "description": "Nimble: Real-time web search & extraction for AI agents",
+  "author": {
+    "name": "Nimble"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

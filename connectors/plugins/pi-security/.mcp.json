@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "pi-security": {
+      "type": "http",
+      "url": "https://mcp.pi.security/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

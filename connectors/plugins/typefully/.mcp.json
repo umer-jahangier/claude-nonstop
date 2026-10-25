@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "typefully": {
+      "type": "http",
+      "url": "https://mcp.typefully.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

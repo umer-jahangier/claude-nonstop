@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "clerq-mcp": {
+      "type": "http",
+      "url": "https://mcp.us.clerq-ip.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

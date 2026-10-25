@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "numbersgame-mcp": {
+      "type": "http",
+      "url": "https://mcp.numbersgame.xyz/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

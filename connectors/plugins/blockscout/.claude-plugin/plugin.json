@@ -1,0 +1,11 @@
+{
+  "name": "blockscout",
+  "version": "2026.10.25",
+  "description": "Blockscout: Access and analyze blockchain data",
+  "author": {
+    "name": "Blockscout"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

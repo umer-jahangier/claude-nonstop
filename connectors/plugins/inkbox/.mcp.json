@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "inkbox": {
+      "type": "http",
+      "url": "https://inkbox.ai/mcp/anthropic",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

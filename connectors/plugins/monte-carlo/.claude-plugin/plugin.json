@@ -1,0 +1,11 @@
+{
+  "name": "monte-carlo",
+  "version": "2026.10.25",
+  "description": "Monte Carlo: Data & AI observability",
+  "author": {
+    "name": "Monte Carlo"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

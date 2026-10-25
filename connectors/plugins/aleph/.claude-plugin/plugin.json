@@ -1,0 +1,11 @@
+{
+  "name": "aleph",
+  "version": "2026.10.25",
+  "description": "Aleph: Ask, analyze, act on FP&A data",
+  "author": {
+    "name": "Aleph"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

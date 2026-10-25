@@ -1,0 +1,11 @@
+{
+  "name": "oreilly",
+  "version": "2026.10.25",
+  "description": "O’Reilly: Discover O'Reilly's expert learning content",
+  "author": {
+    "name": "O’Reilly Media"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

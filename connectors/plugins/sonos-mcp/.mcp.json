@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "sonos-mcp": {
+      "type": "http",
+      "url": "https://mcp.ws.sonos.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

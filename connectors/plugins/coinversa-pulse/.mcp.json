@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "coinversa-pulse": {
+      "type": "http",
+      "url": "https://mcp.coinversa.ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

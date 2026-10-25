@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "paypal": {
+      "type": "http",
+      "url": "https://mcp.paypal.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

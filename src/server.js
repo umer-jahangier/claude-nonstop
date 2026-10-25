@@ -40,7 +40,7 @@ function mtime(file) {
 // CLI or another process are picked up without a restart.
 function createContext() {
   const cache = { vaultAt: -1, cfgAt: -1, vault: null, cfg: null };
-  let keyInUse = null;
+  const keyInUse = { desktop: null, sessions: null };
   return {
     ports: null,
     current() {
@@ -58,11 +58,15 @@ function createContext() {
       cache.vault = null;
       cache.cfg = null;
     },
-    noteKeyInUse(entry) {
-      if (keyInUse === entry.id) return;
-      keyInUse = entry.id;
-      state.setCurrent(`API key: ${entry.label}`);
-      log(`gateway: using key "${entry.label}"`);
+    // The desktop app and terminal sessions are recorded apart, so the desktop app's key
+    // never shows as the line your sessions are on.
+    noteKeyInUse(entry, { desktop = false } = {}) {
+      const who = desktop ? 'desktop' : 'sessions';
+      if (keyInUse[who] === entry.id) return;
+      keyInUse[who] = entry.id;
+      if (desktop) state.setDesktop(entry.label);
+      else state.setCurrent(`API key: ${entry.label}`);
+      log(`gateway: ${desktop ? 'the desktop app is' : 'sessions are'} using key "${entry.label}"`);
     },
   };
 }

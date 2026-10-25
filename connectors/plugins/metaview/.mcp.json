@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "metaview": {
+      "type": "http",
+      "url": "https://mcp.metaview.ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

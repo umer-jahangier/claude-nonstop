@@ -1,0 +1,12 @@
+{
+  "name": "clickup",
+  "version": "2026.10.25",
+  "description": "ClickUp: Project management & collaboration for teams & agents",
+  "author": {
+    "name": "ClickUp"
+  },
+  "keywords": [
+    "communication",
+    "productivity"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "neon": {
+      "type": "http",
+      "url": "https://mcp.neon.tech/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

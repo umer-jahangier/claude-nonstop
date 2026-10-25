@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "sequencehq": {
+      "type": "http",
+      "url": "https://eu.sequencehq.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

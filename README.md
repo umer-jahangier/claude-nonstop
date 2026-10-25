@@ -149,9 +149,13 @@ The installer sets it up for you using the settings locations Anthropic document
 
 Then **quit and reopen the desktop app.** Its sign-in screen offers the third-party option, which runs on your API keys through claude-nonstop, and **Claude.ai** for your subscription. Pick the third-party option when your subscription is out.
 
+**In third-party mode the desktop app runs only on API keys.** Your subscription accounts can't go through the gateway (subscription sign-ins are for Anthropic's own apps), so the cable, **Use This Account** and your account order apply to Claude Code in your terminal, not to the desktop app. The page's **Desktop app** line shows the key it's on. To use a subscription in the desktop app, sign in to Claude.ai there.
+
+**API keys need credit that covers Claude Code.** Anthropic bills Claude Code's requests, the desktop app's included, as Claude Code, and some credit doesn't cover them: promotional API credit often lists only *Agent SDK, API, Batch API, Playground, Managed Agents* under **Applies to**. claude-nonstop tests each key the way Claude Code is billed, so such a key shows **No Claude Code credit** instead of **Works**, and the gateway still uses it for anything else.
+
 **Your chats come along.** Third-party mode keeps its own history, separate from claude.ai. claude-nonstop turns on Anthropic's [import](https://claude.com/docs/third-party/claude-desktop/import): in the desktop app, open **Settings → Import & export → Import…** to bring over your claude.ai chats and projects and the Code and Cowork sessions already on this computer. A new chat also offers the import when it finds earlier sessions. It's a copy: your claude.ai history stays where it is, and running it again adds only what's new.
 
-**Browser, extensions, plugins and connectors work as before.** Third-party mode turns some of these off unless they're switched on, so claude-nonstop switches them on: the built-in browser in Code sessions (with its address bar, not just the localhost preview), desktop extensions, and Anthropic's plugin marketplace in Claude Code. The app also hides its connector directory and its Add button in third-party mode, and takes connectors only from its managed settings. Add yours on the page's **Desktop App** tab, or with `claude-nonstop connectors add <name> <https-url>`, and the app lists them under Connectors and asks you to sign in to each one. On a Mac, each change to the list means approving the updated profile in System Settings. Connectors made by Anthropic itself (such as Gmail or Google Drive) only work on the Claude.ai sign-in.
+**Browser, extensions, plugins and connectors work as before.** Third-party mode turns some of these off unless they're switched on, so claude-nonstop switches them on: the built-in browser in Code sessions (with its address bar, not just the localhost preview), desktop extensions, and Anthropic's plugin marketplace in Claude Code. The app also hides its connector directory and its Add button in third-party mode, so claude-nonstop brings the directory back as a plugin marketplace: open **Directory → Organization → nonstop-connectors** in the desktop app to browse the 480 connectors from [Anthropic's connector directory](https://claude.com/connectors) that work in third-party mode (Canva, Notion, Figma, Linear, Atlassian, Miro and more), install the ones you want, and sign in to each when you first use it. The list lives in this repository's [`connectors`](connectors) folder and the app fetches updates by itself. For a server that isn't in the directory, add it on the page's **Desktop App** tab or with `claude-nonstop connectors add <name> <https-url>`; on a Mac, each change to that list means approving the updated profile in System Settings. Connectors made by Anthropic itself (such as Gmail, Google Drive or Microsoft 365) only work on the Claude.ai sign-in.
 
 Installed the desktop app later? Run `claude-nonstop desktop`, or click **Set Up Automatically** on the page's **Desktop App** tab.
 
@@ -342,6 +346,8 @@ npm test
 ```
 
 No dependencies. Tests run against a fake Claude API and a fake `claude` binary, and CI runs them on macOS, Windows and Linux with Node 18, 20 and 22, plus the installers end to end. The web page is a single file, [`src/ui/index.html`](src/ui/index.html); its design system is in [`DESIGN.md`](DESIGN.md).
+
+The connector marketplace is generated. To refresh it from claude.com/connectors (each server is checked for how it signs in), run `node scripts/build-directory.js && node scripts/build-marketplace.js`, then `claude plugin validate connectors`.
 
 ---
 

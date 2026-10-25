@@ -1,0 +1,13 @@
+{
+  "name": "tineo",
+  "version": "2026.10.25",
+  "description": "Tineo: Connect Tineo to Claude to review trips, flights, hotels and activities, and add or update itinerary details. Organize and share plans with friends in Tineo.",
+  "author": {
+    "name": "Tineo LLC"
+  },
+  "keywords": [
+    "communication",
+    "productivity",
+    "travel"
+  ]
+}

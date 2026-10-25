@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "replit": {
+      "type": "http",
+      "url": "https://replit-mcp.com/anthropic/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

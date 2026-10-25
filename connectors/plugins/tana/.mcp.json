@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "tana": {
+      "type": "http",
+      "url": "https://home.tana.inc/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

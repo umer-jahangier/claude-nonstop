@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "zoho-crm": {
+      "type": "http",
+      "url": "https://claude-zohocrm.zohomcp.com/mcp/message",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

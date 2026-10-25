@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "slicktrip": {
+      "type": "http",
+      "url": "https://mcp.slicktrip.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

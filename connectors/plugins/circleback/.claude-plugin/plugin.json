@@ -1,0 +1,12 @@
+{
+  "name": "circleback",
+  "version": "2026.10.25",
+  "description": "Circleback: Search and access context from meetings",
+  "author": {
+    "name": "Circleback"
+  },
+  "keywords": [
+    "communication",
+    "productivity"
+  ]
+}

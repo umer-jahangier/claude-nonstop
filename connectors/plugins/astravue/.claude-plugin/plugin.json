@@ -1,0 +1,12 @@
+{
+  "name": "astravue",
+  "version": "2026.10.25",
+  "description": "Astravue App: Manage projects, tasks, and team workload in one place",
+  "author": {
+    "name": "Astravue"
+  },
+  "keywords": [
+    "communication",
+    "productivity"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "bling-mcp",
+  "version": "2026.10.25",
+  "description": "Bling MCP: Access and manage your Bling directly in Claude.",
+  "author": {
+    "name": "Bling"
+  },
+  "keywords": [
+    "commerce-shopping",
+    "developer-tools",
+    "financial-services",
+    "other",
+    "productivity"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "quartr",
+  "version": "2026.10.25",
+  "description": "Quartr: Financial data and AI infrastructure for company research.",
+  "author": {
+    "name": "Quartr"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

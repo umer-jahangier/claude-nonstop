@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "blaze-sql": {
+      "type": "http",
+      "url": "https://claude.blazesql.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

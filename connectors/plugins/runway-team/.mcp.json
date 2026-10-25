@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "runway-team": {
+      "type": "http",
+      "url": "https://mcp.runway.team/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

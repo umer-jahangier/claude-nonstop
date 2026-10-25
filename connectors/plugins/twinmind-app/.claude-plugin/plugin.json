@@ -1,0 +1,11 @@
+{
+  "name": "twinmind-app",
+  "version": "2026.10.25",
+  "description": "TwinMind: AI notes & Memory",
+  "author": {
+    "name": "TwinMind"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

@@ -106,9 +106,46 @@ test('passes through errors that are not the key\'s fault, without switching', a
 
 test('says clearly when every key is used up', async () => {
   useKeys('credit', 'invalid');
-  const r = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token } });
+  let r = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token } });
   assert.equal(r.status, 402);
+  assert.match(JSON.parse(r.body).error.message, /no API key has credit.*sign in to Claude\.ai in the desktop app/, 'the desktop app hears how to use its subscription');
+  const ids = vault.load().keys.map((k) => k.id).join(',');
+  r = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token, 'x-claude-nonstop-keys': ids } });
   assert.match(JSON.parse(r.body).error.message, /every API key is used up/);
+});
+
+test('lists models even while every key is set aside, so the desktop app can connect', async () => {
+  useKeys('ok');
+  const [entry] = vault.load().keys;
+  state.recordKey(entry.id, { verdict: 'used-up', status: 400, detail: 'Your credit balance is too low' });
+  state.setDesktop('earlier');
+  const models = await call(`${base}/v1/models`, { headers: { 'x-api-key': token } });
+  assert.equal(models.status, 200);
+  assert.equal(state.load().desktop.label, 'earlier', 'listing models is not use');
+  const r = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token } });
+  assert.equal(r.status, 402, 'real requests still skip it');
+});
+
+test("a key whose credit doesn't cover Claude Code is set aside only for Claude Code", async () => {
+  useKeys('ok');
+  const [entry] = vault.load().keys;
+  state.recordKey(entry.id, { verdict: 'used-up', status: 400, detail: 'Your credit balance is too low', scope: 'claude-code' });
+  let r = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token } });
+  assert.equal(r.status, 200, 'other API use goes through');
+  r = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token, 'user-agent': 'claude-cli/2.1.310 (external, cli)' } });
+  assert.equal(r.status, 402);
+  r = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token, 'anthropic-beta': 'claude-code-20250219' } });
+  assert.equal(r.status, 402);
+});
+
+test("the desktop app's key is recorded apart from the line terminal sessions are on", async () => {
+  useKeys('second');
+  state.setCurrent('Main account');
+  const r = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token } });
+  assert.equal(r.status, 200);
+  const s = state.load();
+  assert.equal(s.current, 'Main account', 'still where terminal sessions are');
+  assert.equal(s.desktop.label, 'second');
 });
 
 test('drops OAuth beta flags, since requests go out with an API key', async () => {

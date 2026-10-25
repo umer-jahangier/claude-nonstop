@@ -1,0 +1,11 @@
+{
+  "name": "blaze-sql",
+  "version": "2026.10.25",
+  "description": "Blaze SQL: Let claude query any SQL Database or warehouse with accuracy, context, governance, and observability. BlazeSQL is a full BI Layer with visualizations, dashboards, scheduled reports, and more.",
+  "author": {
+    "name": "BlazeSQL"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

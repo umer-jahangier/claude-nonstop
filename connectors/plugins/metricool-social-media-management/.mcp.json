@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "metricool-social-media-management": {
+      "type": "http",
+      "url": "https://ai.metricool.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

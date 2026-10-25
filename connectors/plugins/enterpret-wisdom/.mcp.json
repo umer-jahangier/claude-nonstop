@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "enterpret-wisdom": {
+      "type": "http",
+      "url": "https://wisdom-api.enterpret.com/server/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

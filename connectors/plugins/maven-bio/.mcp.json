@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "maven-bio": {
+      "type": "http",
+      "url": "https://mcp.mavenbio.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

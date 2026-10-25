@@ -1,0 +1,11 @@
+{
+  "name": "clarity-ai",
+  "version": "2026.10.25",
+  "description": "Clarity AI: Simulate fund classifications under proposed SFDR 2.0",
+  "author": {
+    "name": "Clarity AI"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

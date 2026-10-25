@@ -1,0 +1,12 @@
+{
+  "name": "trivago",
+  "version": "2026.10.25",
+  "description": "Trivago: Use trivago's powerful metasearch to find your ideal hotel and compare prices from multiple providers.",
+  "author": {
+    "name": "trivago"
+  },
+  "keywords": [
+    "productivity",
+    "travel"
+  ]
+}

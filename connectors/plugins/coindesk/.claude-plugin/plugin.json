@@ -1,0 +1,11 @@
+{
+  "name": "coindesk",
+  "version": "2026.10.25",
+  "description": "CoinDesk: Access Live & Historical Crypto Data, Indices",
+  "author": {
+    "name": "CoinDesk"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

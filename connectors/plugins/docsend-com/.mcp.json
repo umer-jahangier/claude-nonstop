@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "docsend-com": {
+      "type": "http",
+      "url": "https://docsend.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

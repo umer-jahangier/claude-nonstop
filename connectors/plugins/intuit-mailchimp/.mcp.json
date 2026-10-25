@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "intuit-mailchimp": {
+      "type": "http",
+      "url": "https://ai-inc.mailchimp.com/claude/mcp/v2",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

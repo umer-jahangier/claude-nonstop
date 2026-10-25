@@ -1,0 +1,13 @@
+{
+  "name": "shopify",
+  "version": "2026.10.25",
+  "description": "Shopify: Build, manage, and analyze your Shopify store",
+  "author": {
+    "name": "Shopify"
+  },
+  "keywords": [
+    "commerce-shopping",
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

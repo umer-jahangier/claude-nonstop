@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "kuliko-ai": {
+      "type": "http",
+      "url": "https://mcp.kuliko.ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

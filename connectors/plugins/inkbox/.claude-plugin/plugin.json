@@ -1,0 +1,13 @@
+{
+  "name": "inkbox",
+  "version": "2026.10.25",
+  "description": "Inkbox: Email, SMS, and iMessage for AI agents",
+  "author": {
+    "name": "Inkbox"
+  },
+  "keywords": [
+    "communication",
+    "developer-tools",
+    "productivity"
+  ]
+}

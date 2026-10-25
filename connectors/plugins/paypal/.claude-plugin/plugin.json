@@ -1,0 +1,11 @@
+{
+  "name": "paypal",
+  "version": "2026.10.25",
+  "description": "PayPal: Access PayPal payments platform",
+  "author": {
+    "name": "PayPal"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

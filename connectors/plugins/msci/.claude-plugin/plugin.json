@@ -1,0 +1,11 @@
+{
+  "name": "msci",
+  "version": "2026.10.25",
+  "description": "MSCI Connector: Data you can build on",
+  "author": {
+    "name": "MSCI Inc"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

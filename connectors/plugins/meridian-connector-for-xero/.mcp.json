@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "meridian-connector-for-xero": {
+      "type": "http",
+      "url": "https://xero-connector.meridian.pilot.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

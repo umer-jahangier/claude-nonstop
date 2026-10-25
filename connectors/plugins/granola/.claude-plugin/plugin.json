@@ -1,0 +1,11 @@
+{
+  "name": "granola",
+  "version": "2026.10.25",
+  "description": "Granola: The AI notepad for meetings",
+  "author": {
+    "name": "Granola"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

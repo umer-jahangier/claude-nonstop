@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "motherduck": {
+      "type": "http",
+      "url": "https://api.motherduck.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

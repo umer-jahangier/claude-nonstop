@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "zillow": {
+      "type": "http",
+      "url": "https://mcp.zillow.com/api/v2"
+    }
+  }
+}

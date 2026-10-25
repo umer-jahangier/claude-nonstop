@@ -1,0 +1,11 @@
+{
+  "name": "bitly",
+  "version": "2026.10.25",
+  "description": "Bitly: Shorten links, generate QR Codes, and track performance",
+  "author": {
+    "name": "Bitly"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

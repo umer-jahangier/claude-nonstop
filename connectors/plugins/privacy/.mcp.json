@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "privacy": {
+      "type": "http",
+      "url": "https://mcp.privacy.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

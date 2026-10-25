@@ -1,0 +1,14 @@
+{
+  "name": "salesflare",
+  "version": "2026.10.25",
+  "description": "Salesflare: Manage and explore your CRM in Claude",
+  "author": {
+    "name": "Salesflare"
+  },
+  "keywords": [
+    "communication",
+    "data-analytics",
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

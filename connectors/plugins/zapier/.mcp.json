@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "zapier": {
+      "type": "http",
+      "url": "https://mcp.zapier.com/api/v1/connect",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

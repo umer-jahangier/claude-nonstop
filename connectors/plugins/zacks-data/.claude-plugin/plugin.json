@@ -1,0 +1,12 @@
+{
+  "name": "zacks-data",
+  "version": "2026.10.25",
+  "description": "Zacks Data: Trusted Financial Data from Zacks Investment Research",
+  "author": {
+    "name": "Zacks Investment Research"
+  },
+  "keywords": [
+    "data-analytics",
+    "financial-services"
+  ]
+}

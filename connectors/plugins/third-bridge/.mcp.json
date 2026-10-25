@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "third-bridge": {
+      "type": "sse",
+      "url": "https://ai.thirdbridge.com/mcp/sse",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

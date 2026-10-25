@@ -1,0 +1,11 @@
+{
+  "name": "fireflies",
+  "version": "2026.10.25",
+  "description": "Fireflies: Analyze and generate insights from meeting transcripts",
+  "author": {
+    "name": "Fireflies AI Corp"
+  },
+  "keywords": [
+    "communication"
+  ]
+}

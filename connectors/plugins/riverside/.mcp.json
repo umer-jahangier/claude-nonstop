@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "riverside": {
+      "type": "http",
+      "url": "https://mcp.riverside.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

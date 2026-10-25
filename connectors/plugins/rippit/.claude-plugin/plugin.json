@@ -1,0 +1,11 @@
+{
+  "name": "rippit",
+  "version": "2026.10.25",
+  "description": "Rippit: Run dynamic AI analysis on 100% of conversations",
+  "author": {
+    "name": "rippit"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

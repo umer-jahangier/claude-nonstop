@@ -1,0 +1,11 @@
+{
+  "name": "harness",
+  "version": "2026.10.25",
+  "description": "Harness: Build, Ship and Secure your apps on Harness Platform",
+  "author": {
+    "name": "Harness.io"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

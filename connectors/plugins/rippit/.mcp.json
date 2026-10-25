@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "rippit": {
+      "type": "http",
+      "url": "https://mcp.rippit.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

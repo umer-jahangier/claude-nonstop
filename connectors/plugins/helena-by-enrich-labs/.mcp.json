@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "helena-by-enrich-labs": {
+      "type": "http",
+      "url": "https://agent.enrichlabs.ai/api/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

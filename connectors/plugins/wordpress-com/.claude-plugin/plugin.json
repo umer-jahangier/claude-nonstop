@@ -1,0 +1,11 @@
+{
+  "name": "wordpress-com",
+  "version": "2026.10.25",
+  "description": "WordPress.com: Secure AI access to manage your WordPress.com sites",
+  "author": {
+    "name": "Automattic (WordPress.com)"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

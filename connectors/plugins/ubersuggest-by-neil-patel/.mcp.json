@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "ubersuggest-by-neil-patel": {
+      "type": "http",
+      "url": "https://ubersuggest-mcp.neilpatelapi.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

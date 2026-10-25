@@ -1,0 +1,11 @@
+{
+  "name": "otto-travel",
+  "version": "2026.10.25",
+  "description": "Otto Travel: Plan, book, and manage business travel",
+  "author": {
+    "name": "Otto Trip, Inc."
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

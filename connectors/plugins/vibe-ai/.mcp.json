@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "vibe-ai": {
+      "type": "http",
+      "url": "https://mcp.vibe.us/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

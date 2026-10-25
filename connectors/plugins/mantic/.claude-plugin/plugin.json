@@ -1,0 +1,11 @@
+{
+  "name": "mantic",
+  "version": "2026.10.25",
+  "description": "Mantic: Explore judgemental forecasts",
+  "author": {
+    "name": "Mantic Technologies Ltd"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

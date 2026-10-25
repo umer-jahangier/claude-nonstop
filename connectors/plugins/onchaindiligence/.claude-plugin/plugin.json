@@ -1,0 +1,12 @@
+{
+  "name": "onchaindiligence",
+  "version": "2026.10.25",
+  "description": "OnChainDiligence: Inspect autonomous payments before execution and independently verify evidence afterward.",
+  "author": {
+    "name": "OnChainDiligence"
+  },
+  "keywords": [
+    "developer-tools",
+    "financial-services"
+  ]
+}

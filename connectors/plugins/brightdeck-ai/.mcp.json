@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "brightdeck-ai": {
+      "type": "http",
+      "url": "https://api.brightdeck.ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

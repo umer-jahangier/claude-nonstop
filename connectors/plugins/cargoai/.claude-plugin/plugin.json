@@ -1,0 +1,11 @@
+{
+  "name": "cargoai",
+  "version": "2026.10.25",
+  "description": "CargoAi: Instant air cargo rates, quotes & tracking",
+  "author": {
+    "name": "CargoAi"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

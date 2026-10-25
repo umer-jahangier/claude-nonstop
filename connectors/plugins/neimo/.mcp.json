@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "neimo": {
+      "type": "http",
+      "url": "https://mcp.neimo.ai/api/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "energy-aspects": {
+      "type": "http",
+      "url": "https://mcp.energyaspects.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

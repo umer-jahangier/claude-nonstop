@@ -1,0 +1,11 @@
+{
+  "name": "catalyst-by-zoho",
+  "version": "2026.10.25",
+  "description": "Catalyst by Zoho: Build, deploy and host apps.",
+  "author": {
+    "name": "Catalyst by Zoho"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

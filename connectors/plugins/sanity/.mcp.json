@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "sanity": {
+      "type": "http",
+      "url": "https://mcp.sanity.io/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

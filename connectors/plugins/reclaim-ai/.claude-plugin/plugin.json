@@ -1,0 +1,11 @@
+{
+  "name": "reclaim-ai",
+  "version": "2026.10.25",
+  "description": "Reclaim.ai: Advanced scheduling for personal and work calendars",
+  "author": {
+    "name": "Reclaim.ai"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "merchkit": {
+      "type": "http",
+      "url": "https://www.merchkit.com/api/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

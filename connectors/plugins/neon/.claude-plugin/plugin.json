@@ -1,0 +1,14 @@
+{
+  "name": "neon",
+  "version": "2026.10.25",
+  "description": "Neon: Postgres, Object Storage, Managed Better Auth, and more",
+  "author": {
+    "name": "Neon (A Databricks, Inc. company)"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools",
+    "other",
+    "productivity"
+  ]
+}

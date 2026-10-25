@@ -1,0 +1,14 @@
+{
+  "name": "bird",
+  "version": "2026.10.25",
+  "description": "Bird: Send email, SMS, and WhatsApp, place calls, verify users, and run your agent's inbox",
+  "author": {
+    "name": "Bird"
+  },
+  "keywords": [
+    "communication",
+    "developer-tools",
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

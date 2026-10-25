@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "windsor-ai": {
+      "type": "http",
+      "url": "https://mcp.windsor.ai/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

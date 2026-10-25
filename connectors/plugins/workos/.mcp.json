@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "workos": {
+      "type": "http",
+      "url": "https://mcp.workos.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

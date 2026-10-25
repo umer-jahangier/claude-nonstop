@@ -1,0 +1,11 @@
+{
+  "name": "honeycomb",
+  "version": "2026.10.25",
+  "description": "Honeycomb: Query and explore observability data and SLOs",
+  "author": {
+    "name": "honeycomb.io"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

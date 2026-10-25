@@ -1,0 +1,14 @@
+{
+  "name": "paperoffice",
+  "version": "2026.10.25",
+  "description": "PaperOffice: Built for companies. Ready for AI agents. The headless DMS for Claude: search, read, extract, approve, send for signing and archive documents in your own account, with your permissions.",
+  "author": {
+    "name": "PaperOffice"
+  },
+  "keywords": [
+    "data-analytics",
+    "financial-services",
+    "legal",
+    "productivity"
+  ]
+}

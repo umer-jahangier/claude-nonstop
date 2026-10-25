@@ -1,0 +1,11 @@
+{
+  "name": "railway",
+  "version": "2026.10.25",
+  "description": "Railway: Deploy, manage, and debug your apps and infrastructure on Railway",
+  "author": {
+    "name": "Railway"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

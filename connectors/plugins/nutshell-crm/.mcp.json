@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "nutshell-crm": {
+      "type": "http",
+      "url": "https://app.nutshell.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

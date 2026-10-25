@@ -1,0 +1,11 @@
+{
+  "name": "kindora-funder-discovery",
+  "version": "2026.10.25",
+  "description": "Kindora Funder Discovery: Find funders who support causes like yours",
+  "author": {
+    "name": "Kindora"
+  },
+  "keywords": [
+    "nonprofit"
+  ]
+}

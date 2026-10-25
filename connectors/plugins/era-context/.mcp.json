@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "era-context": {
+      "type": "http",
+      "url": "https://context.era.app/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

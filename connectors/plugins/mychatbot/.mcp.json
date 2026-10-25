@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "mychatbot": {
+      "type": "http",
+      "url": "https://connector.mychatbot.app/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

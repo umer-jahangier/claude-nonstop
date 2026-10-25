@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "rootly": {
+      "type": "http",
+      "url": "https://mcp.rootly.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

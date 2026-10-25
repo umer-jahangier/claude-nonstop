@@ -1,0 +1,14 @@
+{
+  "name": "jotform-apps",
+  "version": "2026.10.25",
+  "description": "Jotform App Builder: Build and manage no-code apps with AI. Create CRM apps, event apps, school apps, and internal tools. Customize layouts, automate workflows, and publish and share apps.",
+  "author": {
+    "name": "Jotform Inc."
+  },
+  "keywords": [
+    "developer-tools",
+    "education",
+    "nonprofit",
+    "productivity"
+  ]
+}

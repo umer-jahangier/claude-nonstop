@@ -1,0 +1,12 @@
+{
+  "name": "chatbase",
+  "version": "2026.10.25",
+  "description": "Chatbase: Manage Chatbase agents, sources, conversations, tickets.",
+  "author": {
+    "name": "Chatbase"
+  },
+  "keywords": [
+    "data-analytics",
+    "productivity"
+  ]
+}

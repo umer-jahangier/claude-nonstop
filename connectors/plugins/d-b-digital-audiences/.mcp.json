@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "d-b-digital-audiences": {
+      "type": "http",
+      "url": "https://mcp.atportal.dnb.com/v1/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

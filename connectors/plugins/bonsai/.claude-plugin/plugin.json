@@ -1,0 +1,11 @@
+{
+  "name": "bonsai",
+  "version": "2026.10.25",
+  "description": "Bonsai: Manage your CRM, client projects and invoices from Claude",
+  "author": {
+    "name": "Bonsai by Zoom"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

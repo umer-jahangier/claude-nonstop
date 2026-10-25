@@ -1,0 +1,12 @@
+{
+  "name": "sequencehq",
+  "version": "2026.10.25",
+  "description": "Sequence: Billing, invoicing, and revenue data tools for Sequence",
+  "author": {
+    "name": "Sequence"
+  },
+  "keywords": [
+    "financial-services",
+    "sales-and-marketing"
+  ]
+}

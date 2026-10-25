@@ -1,0 +1,11 @@
+{
+  "name": "carta",
+  "version": "2026.10.25",
+  "description": "Carta: The connected ERP for private capital",
+  "author": {
+    "name": "Carta"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

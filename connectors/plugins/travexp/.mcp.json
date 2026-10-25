@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "travexp": {
+      "type": "http",
+      "url": "https://travexpserver-1-5480123242.us-central1.run.app/mcp-standard"
+    }
+  }
+}

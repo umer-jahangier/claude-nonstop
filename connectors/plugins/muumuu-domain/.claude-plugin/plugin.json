@@ -1,0 +1,12 @@
+{
+  "name": "muumuu-domain",
+  "version": "2026.10.25",
+  "description": "MuuMuu Domain byGMO Pepabo: ムームードメインと接続し、ドメインの空き検索・価格確認から購入手続きまでを会話で進められます。決済はムームードメインのサイト上でご自身が完了させる方式です。保有ドメインの一覧・詳細確認、ネームサーバーの確認・変更、DNSレコードの一覧・作成・更新・削除、更新日や自動更新設定の確認・変更にも対応します。",
+  "author": {
+    "name": "GMO Pepabo, Inc."
+  },
+  "keywords": [
+    "developer-tools",
+    "productivity"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "tinyfish",
+  "version": "2026.10.25",
+  "description": "TinyFish: Browser automation, web scraping, web search and fetch via a cloud browser agent: automate websites, log in to portals, submit forms, scrape social media, listings, prices, reviews, monitor changes.",
+  "author": {
+    "name": "TinyFish Inc."
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools",
+    "other",
+    "productivity"
+  ]
+}

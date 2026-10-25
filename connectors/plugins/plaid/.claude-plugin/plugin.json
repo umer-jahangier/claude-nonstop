@@ -1,0 +1,11 @@
+{
+  "name": "plaid",
+  "version": "2026.10.25",
+  "description": "Plaid Developer Tools: Monitor, debug, and optimize your Plaid integration",
+  "author": {
+    "name": "Plaid"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

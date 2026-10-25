@@ -1,6 +1,6 @@
 {
   "name": "claude-nonstop",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "Keep your coding agent working through plan limits: when a Claude subscription hits its session or weekly limit, claude-nonstop moves to your next account, then to your API keys, one by one.",
   "bin": {
     "claude-nonstop": "bin/claude-nonstop.js"

@@ -1,0 +1,11 @@
+{
+  "name": "intercom",
+  "version": "2026.10.25",
+  "description": "Intercom: Access to Intercom data for better customer insights",
+  "author": {
+    "name": "Intercom"
+  },
+  "keywords": [
+    "communication"
+  ]
+}

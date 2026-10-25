@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "phoenix": {
+      "type": "http",
+      "url": "https://phoenix.hginsights.com/api/ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

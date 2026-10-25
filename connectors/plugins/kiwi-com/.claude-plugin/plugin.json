@@ -1,0 +1,11 @@
+{
+  "name": "kiwi-com",
+  "version": "2026.10.25",
+  "description": "Kiwi.com: Search flights in Claude",
+  "author": {
+    "name": "Kiwi.com"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

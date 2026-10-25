@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "pga-play-golf": {
+      "type": "http",
+      "url": "https://mcp.pga.com/mcp"
+    }
+  }
+}

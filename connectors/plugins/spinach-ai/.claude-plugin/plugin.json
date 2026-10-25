@@ -1,0 +1,11 @@
+{
+  "name": "spinach-ai",
+  "version": "2026.10.25",
+  "description": "Spinach AI: The system of action for conversation data",
+  "author": {
+    "name": "Spinach AI"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "courtlistener": {
+      "type": "http",
+      "url": "https://mcp.courtlistener.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

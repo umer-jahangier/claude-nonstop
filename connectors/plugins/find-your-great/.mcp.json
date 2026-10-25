@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "find-your-great": {
+      "type": "http",
+      "url": "https://findyourgreat.com/mcp/v1",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

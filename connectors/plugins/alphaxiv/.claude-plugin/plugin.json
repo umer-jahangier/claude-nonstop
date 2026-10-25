@@ -1,0 +1,11 @@
+{
+  "name": "alphaxiv",
+  "version": "2026.10.25",
+  "description": "alphaXiv: Fast search and full-text access over arXiv pre-prints",
+  "author": {
+    "name": "alphaXiv"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

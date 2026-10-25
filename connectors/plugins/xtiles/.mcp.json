@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "xtiles": {
+      "type": "http",
+      "url": "https://mcp.xtiles.app/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

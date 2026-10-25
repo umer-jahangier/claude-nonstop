@@ -1,0 +1,13 @@
+{
+  "name": "plotly-cloud",
+  "version": "2026.10.25",
+  "description": "Plotly Cloud: Build and deploy Plotly Dash apps to Plotly Cloud from a conversation with Claude.",
+  "author": {
+    "name": "Plotly"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools",
+    "productivity"
+  ]
+}

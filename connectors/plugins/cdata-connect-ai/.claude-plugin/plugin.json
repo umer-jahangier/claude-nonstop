@@ -1,0 +1,11 @@
+{
+  "name": "cdata-connect-ai",
+  "version": "2026.10.25",
+  "description": "CData Connect AI: Managed MCP platform for 350 sources",
+  "author": {
+    "name": "CData"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

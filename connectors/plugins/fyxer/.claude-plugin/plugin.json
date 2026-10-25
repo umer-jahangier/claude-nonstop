@@ -1,0 +1,11 @@
+{
+  "name": "fyxer",
+  "version": "2026.10.25",
+  "description": "Fyxer: Search your inbox, and draft replies in your voice",
+  "author": {
+    "name": "Fyxer"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

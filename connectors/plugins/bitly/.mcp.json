@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "bitly": {
+      "type": "http",
+      "url": "https://api-ssl.bitly.com/v4/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

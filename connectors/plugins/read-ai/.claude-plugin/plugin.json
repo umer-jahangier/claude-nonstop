@@ -1,0 +1,12 @@
+{
+  "name": "read-ai",
+  "version": "2026.10.25",
+  "description": "Read AI: Bring your meetings into Claude",
+  "author": {
+    "name": "Read AI"
+  },
+  "keywords": [
+    "communication",
+    "productivity"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "devrev",
+  "version": "2026.10.25",
+  "description": "DevRev: Search and update your company's knowledge graph",
+  "author": {
+    "name": "DevRev"
+  },
+  "keywords": [
+    "data-analytics",
+    "productivity"
+  ]
+}

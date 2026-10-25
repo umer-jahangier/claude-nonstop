@@ -1,0 +1,11 @@
+{
+  "name": "general-legal",
+  "version": "2026.10.25",
+  "description": "General Legal: Submit contracts for attorney review, answer their questions, and get redlined documents back — without leaving Claude.",
+  "author": {
+    "name": "General Legal"
+  },
+  "keywords": [
+    "legal"
+  ]
+}

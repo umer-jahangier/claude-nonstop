@@ -1,0 +1,11 @@
+{
+  "name": "rally-mcp",
+  "version": "2026.10.25",
+  "description": "Rally MCP: Find participant, pull study data and create studies",
+  "author": {
+    "name": "Rally HQ, Inc."
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

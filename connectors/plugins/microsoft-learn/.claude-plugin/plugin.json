@@ -1,0 +1,11 @@
+{
+  "name": "microsoft-learn",
+  "version": "2026.10.25",
+  "description": "Microsoft Learn: Search trusted Microsoft docs to power your development",
+  "author": {
+    "name": "Microsoft"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

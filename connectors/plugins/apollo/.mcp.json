@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "apollo": {
+      "type": "http",
+      "url": "https://mcp.apollo.io/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

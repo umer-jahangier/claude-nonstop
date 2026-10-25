@@ -1,0 +1,13 @@
+{
+  "name": "meko",
+  "version": "2026.10.25",
+  "description": "Meko: Shared context for agents that work and learn together.",
+  "author": {
+    "name": "YugabyteDB"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools",
+    "productivity"
+  ]
+}

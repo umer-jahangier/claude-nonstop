@@ -1,0 +1,11 @@
+{
+  "name": "figma",
+  "version": "2026.10.25",
+  "description": "Figma: Generate diagrams and better code from Figma context",
+  "author": {
+    "name": "Figma"
+  },
+  "keywords": [
+    "creative"
+  ]
+}

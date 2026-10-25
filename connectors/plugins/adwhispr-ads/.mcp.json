@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "adwhispr-ads": {
+      "type": "http",
+      "url": "https://adwhispr.com/api/claude/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

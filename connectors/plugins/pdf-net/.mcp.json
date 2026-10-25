@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "pdf-net": {
+      "type": "http",
+      "url": "https://mcp.pdf.net/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "appfolio-realm-x",
+  "version": "2026.10.25",
+  "description": "AppFolio Realm-X: Operate your portfolio directly from Claude",
+  "author": {
+    "name": "AppFolio, Inc."
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

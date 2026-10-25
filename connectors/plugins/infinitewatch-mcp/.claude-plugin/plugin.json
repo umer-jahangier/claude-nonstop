@@ -1,0 +1,11 @@
+{
+  "name": "infinitewatch-mcp",
+  "version": "2026.10.25",
+  "description": "InfiniteWatch MCP: Analyze customer interactions, identify trends, and uncover operational risks with InfiniteWatch in Claude",
+  "author": {
+    "name": "InfiniteWatch"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

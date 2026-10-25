@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "lumin": {
+      "type": "http",
+      "url": "https://mcp.luminpdf.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "notra": {
+      "type": "http",
+      "url": "https://mcp.usenotra.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

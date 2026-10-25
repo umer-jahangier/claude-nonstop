@@ -1,0 +1,13 @@
+{
+  "name": "meridian-connector-for-xero",
+  "version": "2026.10.25",
+  "description": "Meridian Connector for Xero: Make changes to Xero from within Claude",
+  "author": {
+    "name": "Pilot.com, Inc."
+  },
+  "keywords": [
+    "data-analytics",
+    "financial-services",
+    "productivity"
+  ]
+}

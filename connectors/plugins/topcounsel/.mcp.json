@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "topcounsel": {
+      "type": "http",
+      "url": "https://api.techgc.co/api/mcp/topcounsel",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

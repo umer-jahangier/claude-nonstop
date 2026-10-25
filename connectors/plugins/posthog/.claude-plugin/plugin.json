@@ -1,0 +1,11 @@
+{
+  "name": "posthog",
+  "version": "2026.10.25",
+  "description": "PostHog: Query, analyze, and manage your PostHog insights",
+  "author": {
+    "name": "PostHog"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

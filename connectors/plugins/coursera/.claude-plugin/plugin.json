@@ -1,0 +1,11 @@
+{
+  "name": "coursera",
+  "version": "2026.10.25",
+  "description": "Coursera: Transform your prompts into active skill-building",
+  "author": {
+    "name": "Coursera"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

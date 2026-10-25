@@ -1,0 +1,14 @@
+{
+  "name": "contentful-mcp",
+  "version": "2026.10.25",
+  "description": "Contentful MCP: Manage your content from Claude.",
+  "author": {
+    "name": "Contentful Inc."
+  },
+  "keywords": [
+    "creative",
+    "developer-tools",
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

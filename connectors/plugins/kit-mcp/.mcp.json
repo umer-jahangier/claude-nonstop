@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "kit-mcp": {
+      "type": "http",
+      "url": "https://app.kit.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

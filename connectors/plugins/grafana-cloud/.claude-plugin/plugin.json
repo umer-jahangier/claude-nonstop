@@ -1,0 +1,12 @@
+{
+  "name": "grafana-cloud",
+  "version": "2026.10.25",
+  "description": "Grafana Cloud: Query metrics, logs, and traces and manage dashboards and alerts",
+  "author": {
+    "name": "Grafana Labs"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "vuetify-mcp",
+  "version": "2026.10.25",
+  "description": "Vuetify MCP: Official Vuetify docs, APIs, and bins for AI agents",
+  "author": {
+    "name": "Vuetify"
+  },
+  "keywords": [
+    "developer-tools",
+    "productivity"
+  ]
+}

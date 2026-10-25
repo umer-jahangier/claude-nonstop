@@ -1,0 +1,11 @@
+{
+  "name": "postman",
+  "version": "2026.10.25",
+  "description": "Postman: Give API context to your coding agents",
+  "author": {
+    "name": "Postman, Inc."
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

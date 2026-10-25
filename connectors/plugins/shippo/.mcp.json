@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "shippo": {
+      "type": "http",
+      "url": "https://mcp.shippo.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

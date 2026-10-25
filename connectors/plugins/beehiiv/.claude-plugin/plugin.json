@@ -1,0 +1,12 @@
+{
+  "name": "beehiiv",
+  "version": "2026.10.25",
+  "description": "beehiiv: Connect your beehiiv workspace to draft, design, analyze, and more.",
+  "author": {
+    "name": "beehiiv"
+  },
+  "keywords": [
+    "creative",
+    "data-analytics"
+  ]
+}

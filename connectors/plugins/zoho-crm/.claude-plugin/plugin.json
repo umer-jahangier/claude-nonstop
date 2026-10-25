@@ -1,0 +1,11 @@
+{
+  "name": "zoho-crm",
+  "version": "2026.10.25",
+  "description": "Zoho CRM: MCP Server for Zoho CRM Workflows",
+  "author": {
+    "name": "Zoho"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

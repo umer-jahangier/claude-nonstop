@@ -1,0 +1,13 @@
+{
+  "name": "intuit-developer",
+  "version": "2026.10.25",
+  "description": "Intuit Developer: Build and test integrations with Intuit APIs.",
+  "author": {
+    "name": "Intuit"
+  },
+  "keywords": [
+    "developer-tools",
+    "financial-services",
+    "productivity"
+  ]
+}

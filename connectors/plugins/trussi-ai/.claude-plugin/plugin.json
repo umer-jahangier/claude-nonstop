@@ -1,0 +1,13 @@
+{
+  "name": "trussi-ai",
+  "version": "2026.10.25",
+  "description": "Trussi AI: Bring your Trussi roofing CRM into Claude - find projects and customers, track pipeline and schedules, pull dashboards and reports, and log updates without leaving the chat.",
+  "author": {
+    "name": "Trussi AI"
+  },
+  "keywords": [
+    "data-analytics",
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "morningstar",
+  "version": "2026.10.25",
+  "description": "Morningstar: Up-to-date investment and market insights",
+  "author": {
+    "name": "Morningstar"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

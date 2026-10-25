@@ -1,0 +1,11 @@
+{
+  "name": "maia",
+  "version": "2026.10.25",
+  "description": "MAIA: The geospatial research engine: get answers from the physical world, built as map and table datasets.",
+  "author": {
+    "name": "MAIA Analytics"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "jotform-apps": {
+      "type": "http",
+      "url": "https://mcp.jotform.com/mcp-jotform-apps-v1",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

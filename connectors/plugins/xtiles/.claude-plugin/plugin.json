@@ -1,0 +1,11 @@
+{
+  "name": "xtiles",
+  "version": "2026.10.25",
+  "description": "xTiles: Projects that keep Claude in context",
+  "author": {
+    "name": "XTILES INC."
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

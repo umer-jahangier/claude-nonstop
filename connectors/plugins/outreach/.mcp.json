@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "outreach": {
+      "type": "http",
+      "url": "https://api.outreach.io/mcp/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

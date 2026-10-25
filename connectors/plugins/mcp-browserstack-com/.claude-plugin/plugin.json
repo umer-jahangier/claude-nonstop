@@ -1,0 +1,12 @@
+{
+  "name": "mcp-browserstack-com",
+  "version": "2026.10.25",
+  "description": "mcp.browserstack.com: Plan, run, debug, and fix tests across web and mobile",
+  "author": {
+    "name": "BrowserStack"
+  },
+  "keywords": [
+    "developer-tools",
+    "productivity"
+  ]
+}

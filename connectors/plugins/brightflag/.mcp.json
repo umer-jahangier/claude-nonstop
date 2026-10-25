@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "brightflag": {
+      "type": "http",
+      "url": "https://mcp-us.brightflag.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

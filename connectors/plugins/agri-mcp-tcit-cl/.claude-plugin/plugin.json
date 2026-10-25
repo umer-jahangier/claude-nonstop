@@ -1,0 +1,13 @@
+{
+  "name": "agri-mcp-tcit-cl",
+  "version": "2026.10.25",
+  "description": "agri-mcp.tcit.cl: Manage farm operations in AGRI: labor tasks, harvest, irrigation, inventory, purchasing and cost reports.",
+  "author": {
+    "name": "AGRI SpA"
+  },
+  "keywords": [
+    "data-analytics",
+    "financial-services",
+    "productivity"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "dext",
+  "version": "2026.10.25",
+  "description": "Dext: For accounting and bookkeeping firms: ask Dext about client data health, VAT and CT positions, aged debt, workflow and team capacity - across one client or your whole portfolio. Read-only.",
+  "author": {
+    "name": "Dext"
+  },
+  "keywords": [
+    "financial-services",
+    "productivity"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "usafacts-connector",
+  "version": "2026.10.25",
+  "description": "USAFacts Government Data Connector: Give Claude a better source for government data",
+  "author": {
+    "name": "USAFacts"
+  },
+  "keywords": [
+    "data-analytics",
+    "productivity"
+  ]
+}

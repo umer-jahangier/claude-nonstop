@@ -1,0 +1,11 @@
+{
+  "name": "ibisworld",
+  "version": "2026.10.25",
+  "description": "IBISWorld: Financials, risk data and analysis on 50,000 industries",
+  "author": {
+    "name": "IBISWorld"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

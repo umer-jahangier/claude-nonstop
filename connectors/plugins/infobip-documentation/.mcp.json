@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "infobip-documentation": {
+      "type": "http",
+      "url": "https://mcp.infobip.com/search"
+    }
+  }
+}

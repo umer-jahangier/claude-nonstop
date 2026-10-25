@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "scholar-gateway": {
+      "type": "http",
+      "url": "https://connector.scholargateway.ai/v2/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

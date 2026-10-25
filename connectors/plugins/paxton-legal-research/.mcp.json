@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "paxton-legal-research": {
+      "type": "http",
+      "url": "https://paxton-mcp-connector-xmfvvq3waa-uc.a.run.app/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

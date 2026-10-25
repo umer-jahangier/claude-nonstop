@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "kiwi-com": {
+      "type": "http",
+      "url": "https://mcp.kiwi.com/"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "pophive",
+  "version": "2026.10.25",
+  "description": "PopHIVE: Yale's harmonized US public health surveillance data",
+  "author": {
+    "name": "Yale School of Public Health"
+  },
+  "keywords": [
+    "consumer-health"
+  ]
+}

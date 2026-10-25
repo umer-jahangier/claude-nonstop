@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "plotly-cloud": {
+      "type": "http",
+      "url": "https://cloud.plotly.com/_mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

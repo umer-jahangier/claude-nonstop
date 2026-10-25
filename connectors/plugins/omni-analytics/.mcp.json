@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "omni-analytics": {
+      "type": "http",
+      "url": "https://callbacks.omniapp.co/callback/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

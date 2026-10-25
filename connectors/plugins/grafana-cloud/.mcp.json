@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "grafana-cloud": {
+      "type": "http",
+      "url": "https://mcp.grafana.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

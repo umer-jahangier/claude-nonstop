@@ -1,0 +1,13 @@
+{
+  "name": "adobe-marketing-agent",
+  "version": "2026.10.25",
+  "description": "Adobe CX Enterprise Coworker: Drive CX Workflows",
+  "author": {
+    "name": "Adobe Inc."
+  },
+  "keywords": [
+    "data-analytics",
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

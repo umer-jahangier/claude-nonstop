@@ -1,0 +1,12 @@
+{
+  "name": "sanity",
+  "version": "2026.10.25",
+  "description": "Sanity: Create, query, and manage structured content in Sanity",
+  "author": {
+    "name": "Sanity"
+  },
+  "keywords": [
+    "developer-tools",
+    "productivity"
+  ]
+}

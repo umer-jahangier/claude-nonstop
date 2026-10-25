@@ -1,0 +1,11 @@
+{
+  "name": "embat",
+  "version": "2026.10.25",
+  "description": "Embat: Ask Embat about cash, debt, payments, and accounting",
+  "author": {
+    "name": "Embat"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

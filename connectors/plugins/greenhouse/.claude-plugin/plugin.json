@@ -1,0 +1,15 @@
+{
+  "name": "greenhouse",
+  "version": "2026.10.25",
+  "description": "Greenhouse: Connect Claude to Greenhouse. Search, analyze and update candidates, applications, jobs, interviews, scorecards, offers and more in plain language.",
+  "author": {
+    "name": "Greenhouse Software, Inc."
+  },
+  "keywords": [
+    "communication",
+    "data-analytics",
+    "developer-tools",
+    "other",
+    "productivity"
+  ]
+}

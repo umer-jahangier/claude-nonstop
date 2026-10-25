@@ -1,0 +1,11 @@
+{
+  "name": "salesloft",
+  "version": "2026.10.25",
+  "description": "Salesloft: Query live data about deals, engagement, and pipeline",
+  "author": {
+    "name": "Salesloft"
+  },
+  "keywords": [
+    "sales-and-marketing"
+  ]
+}

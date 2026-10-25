@@ -1,0 +1,13 @@
+{
+  "name": "zillow",
+  "version": "2026.10.25",
+  "description": "Zillow: Search homes, rentals, neighborhoods, and affordability",
+  "author": {
+    "name": "Zillow Inc."
+  },
+  "keywords": [
+    "commerce-shopping",
+    "media-entertainment",
+    "other"
+  ]
+}

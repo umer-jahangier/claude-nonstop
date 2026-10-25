@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "peec-ai": {
+      "type": "http",
+      "url": "https://api.peec.ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

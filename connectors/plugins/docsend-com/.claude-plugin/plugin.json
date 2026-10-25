@@ -1,0 +1,15 @@
+{
+  "name": "docsend-com",
+  "version": "2026.10.25",
+  "description": "docsend.com: Manage data rooms, track engagement, and move deals forward with DocSend in Claude",
+  "author": {
+    "name": "Dropbox DocSend"
+  },
+  "keywords": [
+    "data-analytics",
+    "financial-services",
+    "legal",
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

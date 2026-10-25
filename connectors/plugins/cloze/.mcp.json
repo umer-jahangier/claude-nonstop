@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "cloze": {
+      "type": "http",
+      "url": "https://api.cloze.com/v1/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

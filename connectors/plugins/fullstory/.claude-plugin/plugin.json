@@ -1,0 +1,13 @@
+{
+  "name": "fullstory",
+  "version": "2026.10.25",
+  "description": "Fullstory: Product analytics with receipts. Build segments, compute metrics, and analyze conversions from your Fullstory behavioral data. Then pull the real sessions to back it up.",
+  "author": {
+    "name": "Fullstory"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools",
+    "productivity"
+  ]
+}

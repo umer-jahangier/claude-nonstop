@@ -1,0 +1,11 @@
+{
+  "name": "airwallex",
+  "version": "2026.10.25",
+  "description": "Airwallex Developer: Integrate with the Airwallex Platform using Claude",
+  "author": {
+    "name": "Airwallex"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

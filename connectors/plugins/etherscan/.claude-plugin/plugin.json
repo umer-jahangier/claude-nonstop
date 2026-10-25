@@ -1,0 +1,13 @@
+{
+  "name": "etherscan",
+  "version": "2026.10.25",
+  "description": "Etherscan: Explore wallets, tokens, transactions, contracts, logs, blocks, and gas across 60+ EVM chains with Etherscan",
+  "author": {
+    "name": "etherscan"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools",
+    "financial-services"
+  ]
+}

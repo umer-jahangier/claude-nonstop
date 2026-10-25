@@ -45,6 +45,13 @@ function keysFor(req, cfg, all) {
   const ids = new Set(String(named).split(',').map((s) => s.trim()).filter(Boolean));
   return order.filter((k) => ids.has(k.id));
 }
+// Claude Code names itself in its user agent and beta header, and Anthropic bills those
+// requests as Claude Code, which some credit doesn't cover (promotional API credit, say).
+const isClaudeCode = (req) => /^claude-cli\//.test(String(req.headers['user-agent'] || '')) || /claude-code-/.test(String(req.headers['anthropic-beta'] || ''));
+// Listing models costs nothing, so it's sent even on keys that are out of credit: the desktop
+// app's connection test needs the list.
+const isFree = (req) => req.method === 'GET' && /^\/v1\/models(\/|\?|$)/.test(req.url);
+const isCreditMessage = (text) => /credit balance/i.test(text);
 const DROP_RESPONSE = new Set(['connection', 'keep-alive', 'transfer-encoding', 'content-length']);
 const agents = { 'http:': new http.Agent({ keepAlive: true }), 'https:': new https.Agent({ keepAlive: true }) };
 
@@ -143,8 +150,11 @@ async function handle(req, res, ctx) {
     sendError(res, 413, 'request_too_large', 'claude-nonstop gateway: request body is too large');
     return;
   }
+  const claudeCode = isClaudeCode(req);
+  const free = isFree(req);
+  const desktop = !req.headers[KEYS_HEADER];
   for (const entry of keysFor(req, cfg, vault.keys)) {
-    if (state.isCoolingDown(entry.id, cfg.cooldownMinutes)) continue;
+    if (!free && state.isCoolingDown(entry.id, cfg.cooldownMinutes, { claudeCode })) continue;
     const { res: upRes, upstream, error } = await forward(cfg, req, body, entry.key);
     if (error) {
       sendError(res, 502, 'api_error', `claude-nonstop gateway could not reach ${cfg.upstream}: ${error.message}`);
@@ -154,7 +164,8 @@ async function handle(req, res, ctx) {
       const errBody = await readBody(upRes, 4 * 1024 * 1024).catch(() => Buffer.alloc(0));
       const text = errBody.toString('utf8');
       if (classifyResponse(upRes.statusCode, text) === 'used-up') {
-        state.recordKey(entry.id, { verdict: 'used-up', status: upRes.statusCode, detail: keys.errorMessage(text) });
+        const scope = claudeCode && isCreditMessage(text) ? { scope: 'claude-code' } : {};
+        state.recordKey(entry.id, { verdict: 'used-up', status: upRes.statusCode, detail: keys.errorMessage(text), ...scope });
         log(`gateway: key "${entry.label}" is used up (HTTP ${upRes.statusCode}), sending the request again on the next key`);
         events.emit('switch', { keyId: entry.id, label: entry.label, status: upRes.statusCode, detail: keys.errorMessage(text) });
         continue;
@@ -164,7 +175,7 @@ async function handle(req, res, ctx) {
       res.end(errBody);
       return;
     }
-    ctx.noteKeyInUse(entry);
+    if (!free) ctx.noteKeyInUse(entry, { desktop });
     events.emit('request', { keyId: entry.id, label: entry.label, status: upRes.statusCode, path: req.url });
     res.writeHead(upRes.statusCode, responseHeaders(upRes.headers));
     upRes.pipe(res);
@@ -179,7 +190,9 @@ async function handle(req, res, ctx) {
     res,
     402,
     'billing_error',
-    'claude-nonstop: every API key is used up or cooling down. Top one up or add another in the claude-nonstop web UI (`claude-nonstop ui`).',
+    desktop
+      ? 'claude-nonstop: no API key has credit for this right now. API keys need credit that covers Claude Code (promotional API credit often does not). Top up a key in the claude-nonstop web UI, or sign in to Claude.ai in the desktop app to use your subscription.'
+      : 'claude-nonstop: every API key is used up or cooling down. Top one up or add another in the claude-nonstop web UI (`claude-nonstop ui`).',
   );
 }
 

@@ -1,0 +1,12 @@
+{
+  "name": "roam-research",
+  "version": "2026.10.25",
+  "description": "Roam Research: Let Claude read, search, and write in your Roam graphs",
+  "author": {
+    "name": "Roam Research Inc."
+  },
+  "keywords": [
+    "education",
+    "productivity"
+  ]
+}

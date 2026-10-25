@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "checkout-com": {
+      "type": "http",
+      "url": "https://mcp.checkout.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

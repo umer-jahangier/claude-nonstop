@@ -1,0 +1,13 @@
+{
+  "name": "braze",
+  "version": "2026.10.25",
+  "description": "Braze: Braze Marketers can use this connector to answer questions, analyze trends, and provide insights.",
+  "author": {
+    "name": "Braze Inc"
+  },
+  "keywords": [
+    "communication",
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "incident-io",
+  "version": "2026.10.25",
+  "description": "incident.io: See and manage everything in incident.io",
+  "author": {
+    "name": "incident.io"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

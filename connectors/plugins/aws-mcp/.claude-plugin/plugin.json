@@ -1,0 +1,14 @@
+{
+  "name": "aws-mcp",
+  "version": "2026.10.25",
+  "description": "AWS MCP: Give agents secure access to AWS via MCP",
+  "author": {
+    "name": "Amazon Web Services"
+  },
+  "keywords": [
+    "communication",
+    "data-analytics",
+    "developer-tools",
+    "productivity"
+  ]
+}

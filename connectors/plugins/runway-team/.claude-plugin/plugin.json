@@ -1,0 +1,11 @@
+{
+  "name": "runway-team",
+  "version": "2026.10.25",
+  "description": "Runway (runway.team): Automate, coordinate, and monitor your team's mobile app releases.",
+  "author": {
+    "name": "Runway (runway.team)"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

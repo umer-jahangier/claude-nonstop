@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "instrumentl": {
+      "type": "http",
+      "url": "https://mcp.instrumentl.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

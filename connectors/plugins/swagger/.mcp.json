@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "swagger": {
+      "type": "http",
+      "url": "https://swagger.mcp.smartbear.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

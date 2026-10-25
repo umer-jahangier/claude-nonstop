@@ -1,0 +1,11 @@
+{
+  "name": "lz-virtual-mail",
+  "version": "2026.10.25",
+  "description": "LZ Virtual Mail: Manage your physical mail from anywhere",
+  "author": {
+    "name": "LegalZoom"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

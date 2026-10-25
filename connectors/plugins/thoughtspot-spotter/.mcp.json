@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "thoughtspot-spotter": {
+      "type": "http",
+      "url": "https://agent.thoughtspot.app/mcp?api-version=latest",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

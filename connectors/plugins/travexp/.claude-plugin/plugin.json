@@ -1,0 +1,11 @@
+{
+  "name": "travexp",
+  "version": "2026.10.25",
+  "description": "TravExp: Create rich, interactive travel itineraries",
+  "author": {
+    "name": "TravExp Inc"
+  },
+  "keywords": [
+    "travel"
+  ]
+}

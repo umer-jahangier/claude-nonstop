@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "taskrabbit": {
+      "type": "http",
+      "url": "https://mcp.taskrabbit.com/mcp"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "crossbeam",
+  "version": "2026.10.25",
+  "description": "Crossbeam: Explore partner data and ecosystem insights in Claude",
+  "author": {
+    "name": "Crossbeam"
+  },
+  "keywords": [
+    "communication",
+    "productivity"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "bolna",
+  "version": "2026.10.25",
+  "description": "bolna: Manage Bolna voice AI agents and review call history and transcripts from Claude.",
+  "author": {
+    "name": "Bolna"
+  },
+  "keywords": [
+    "communication",
+    "developer-tools",
+    "productivity"
+  ]
+}

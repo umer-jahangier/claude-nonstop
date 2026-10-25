@@ -1,0 +1,11 @@
+{
+  "name": "eedi",
+  "version": "2026.10.25",
+  "description": "Eedi: Access Eedi's high quality math questions",
+  "author": {
+    "name": "Eedi Ltd"
+  },
+  "keywords": [
+    "education"
+  ]
+}

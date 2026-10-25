@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "lunarcrush": {
+      "type": "http",
+      "url": "https://lunarcrush.ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

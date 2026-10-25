@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "payhawk": {
+      "type": "http",
+      "url": "https://mcp.payhawk.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "nsdap-archiv-der-spiegel": {
+      "type": "http",
+      "url": "https://nsdap-mcp.prod.ki.spiegel.de/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

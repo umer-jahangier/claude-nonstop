@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "fiscal-ai": {
+      "type": "sse",
+      "url": "https://api.fiscal.ai/mcp/sse",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

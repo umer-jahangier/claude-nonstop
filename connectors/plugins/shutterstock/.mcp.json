@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "shutterstock": {
+      "type": "http",
+      "url": "https://www.shutterstock.com/cciq/mcp"
+    }
+  }
+}

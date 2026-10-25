@@ -1,0 +1,12 @@
+{
+  "name": "financial-datasets",
+  "version": "2026.10.25",
+  "description": "Financial Datasets: Access stock market data",
+  "author": {
+    "name": "Financial Datasets, Inc."
+  },
+  "keywords": [
+    "data-analytics",
+    "financial-services"
+  ]
+}

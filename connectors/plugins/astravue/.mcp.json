@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "astravue": {
+      "type": "http",
+      "url": "https://api.astravue.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

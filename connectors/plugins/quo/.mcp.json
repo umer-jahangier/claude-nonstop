@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "quo": {
+      "type": "http",
+      "url": "https://mcp.quo.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

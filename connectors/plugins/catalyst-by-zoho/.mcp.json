@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "catalyst-by-zoho": {
+      "type": "http",
+      "url": "https://catalystbyzoho.zohomcp.com/mcp/message",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "weweb",
+  "version": "2026.10.25",
+  "description": "WeWeb: Build your WeWeb projects using Claude",
+  "author": {
+    "name": "WeWeb"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

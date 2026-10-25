@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "vasara": {
+      "type": "http",
+      "url": "https://mcp.vasara.ai/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "vani": {
+      "type": "http",
+      "url": "https://app.vanihq.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

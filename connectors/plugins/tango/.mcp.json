@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "tango": {
+      "type": "http",
+      "url": "https://govcon.dev/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

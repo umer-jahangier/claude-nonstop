@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "juro": {
+      "type": "http",
+      "url": "https://integrations.app.juro.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

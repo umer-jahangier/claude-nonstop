@@ -1,0 +1,11 @@
+{
+  "name": "mcp-trainual-com",
+  "version": "2026.10.25",
+  "description": "Trainual: Search your training, operations, and performance data.",
+  "author": {
+    "name": "Trainual"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

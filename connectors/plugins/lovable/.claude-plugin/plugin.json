@@ -1,0 +1,12 @@
+{
+  "name": "lovable",
+  "version": "2026.10.25",
+  "description": "Lovable: Build, iterate, inspect, and deploy Lovable apps",
+  "author": {
+    "name": "Lovable"
+  },
+  "keywords": [
+    "developer-tools",
+    "productivity"
+  ]
+}

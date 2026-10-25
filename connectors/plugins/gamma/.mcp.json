@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "gamma": {
+      "type": "http",
+      "url": "https://mcp.gamma.app/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

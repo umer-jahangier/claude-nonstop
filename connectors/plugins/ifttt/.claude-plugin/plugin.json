@@ -1,0 +1,11 @@
+{
+  "name": "ifttt",
+  "version": "2026.10.25",
+  "description": "IFTTT: Connect, control, and automate 1,000+ apps with IFTTT",
+  "author": {
+    "name": "IFTTT, Inc."
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

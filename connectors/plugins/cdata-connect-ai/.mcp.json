@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "cdata-connect-ai": {
+      "type": "http",
+      "url": "https://mcp.cloud.cdata.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

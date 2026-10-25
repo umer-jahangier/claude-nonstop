@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "tomorrow-io-weather-mcp-app": {
+      "type": "http",
+      "url": "https://api.tomorrow.io/v4/weather-intelligence/mcp"
+    }
+  }
+}

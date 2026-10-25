@@ -1,0 +1,11 @@
+{
+  "name": "thoughtspot-spotter",
+  "version": "2026.10.25",
+  "description": "ThoughtSpot Spotter: Your AI data analyst, from question to trusted insights",
+  "author": {
+    "name": "ThoughtSpot"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

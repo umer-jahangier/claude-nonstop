@@ -1,0 +1,12 @@
+{
+  "name": "oxford-economics",
+  "version": "2026.10.25",
+  "description": "Oxford Economics: Access Oxford Economics’ trusted economic analysis and data directly in Claude.",
+  "author": {
+    "name": "Oxford Economics"
+  },
+  "keywords": [
+    "data-analytics",
+    "financial-services"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "expo",
+  "version": "2026.10.25",
+  "description": "Expo: Build, ship, and monitor apps with Expo",
+  "author": {
+    "name": "Expo"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

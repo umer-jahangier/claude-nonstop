@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "chaser": {
+      "type": "http",
+      "url": "https://api.trychaser.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

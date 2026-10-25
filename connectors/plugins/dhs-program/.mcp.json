@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "dhs-program": {
+      "type": "http",
+      "url": "https://api.dhsprogram.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

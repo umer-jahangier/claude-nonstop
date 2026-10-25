@@ -1,0 +1,11 @@
+{
+  "name": "yardi-virtuoso",
+  "version": "2026.10.25",
+  "description": "Yardi Virtuoso: Real-time Yardi data & insights",
+  "author": {
+    "name": "Yardi"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

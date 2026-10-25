@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "salesloft": {
+      "type": "sse",
+      "url": "https://mcp.salesloft.com/sse",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

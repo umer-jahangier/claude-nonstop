@@ -1,0 +1,11 @@
+{
+  "name": "taskrabbit",
+  "version": "2026.10.25",
+  "description": "Taskrabbit Booking Assistance: Find & book local Taskrabbit services near you",
+  "author": {
+    "name": "Taskrabbit"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "peec-ai",
+  "version": "2026.10.25",
+  "description": "Peec AI: Analyze your brand's visibility across LLMs",
+  "author": {
+    "name": "Peec AI"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

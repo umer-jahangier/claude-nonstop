@@ -1,0 +1,11 @@
+{
+  "name": "dice",
+  "version": "2026.10.25",
+  "description": "Dice: Find active tech jobs on Dice",
+  "author": {
+    "name": "Dice.com"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

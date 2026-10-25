@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "chronograph": {
+      "type": "http",
+      "url": "https://ai.chronograph.pe/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "govtribe": {
+      "type": "http",
+      "url": "https://govtribe.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

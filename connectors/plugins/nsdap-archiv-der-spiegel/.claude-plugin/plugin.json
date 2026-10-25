@@ -1,0 +1,14 @@
+{
+  "name": "nsdap-archiv-der-spiegel",
+  "version": "2026.10.25",
+  "description": "NSDAP Archiv - DER SPIEGEL: Search for NSDAP party members",
+  "author": {
+    "name": "DER SPIEGEL"
+  },
+  "keywords": [
+    "data-analytics",
+    "education",
+    "media-entertainment",
+    "other"
+  ]
+}

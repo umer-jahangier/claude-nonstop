@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "lukka-predmar": {
+      "type": "http",
+      "url": "https://predmar.mcp.lukka.tech/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

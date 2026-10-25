@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "ratehub-mortgage": {
+      "type": "http",
+      "url": "https://api.ratehub.ca/claude-app/mortgages/mcp"
+    }
+  }
+}

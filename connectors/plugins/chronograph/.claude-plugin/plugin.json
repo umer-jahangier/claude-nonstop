@@ -1,0 +1,11 @@
+{
+  "name": "chronograph",
+  "version": "2026.10.25",
+  "description": "Chronograph: Interact with your Chronograph data directly in Claude",
+  "author": {
+    "name": "Chronograph"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

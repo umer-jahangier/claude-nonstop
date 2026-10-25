@@ -1,0 +1,11 @@
+{
+  "name": "zoho-projects",
+  "version": "2026.10.25",
+  "description": "Zoho Projects: Zoho Projects MCP for Task & Project Automation",
+  "author": {
+    "name": "Zoho"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

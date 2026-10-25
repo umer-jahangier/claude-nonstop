@@ -1,0 +1,12 @@
+{
+  "name": "windmill-hr",
+  "version": "2026.10.25",
+  "description": "Windmill HR: Draft performance reviews, manage 1:1s, send pulses, and collect feedback in Windmill, without ever leaving Claude.",
+  "author": {
+    "name": "Windmill"
+  },
+  "keywords": [
+    "data-analytics",
+    "productivity"
+  ]
+}

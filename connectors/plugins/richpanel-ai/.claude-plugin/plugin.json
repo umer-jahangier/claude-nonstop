@@ -1,0 +1,13 @@
+{
+  "name": "richpanel-ai",
+  "version": "2026.10.25",
+  "description": "Richpanel AI: Run your Richpanel helpdesk and AI support agent from Claude.",
+  "author": {
+    "name": "Richpanel Inc"
+  },
+  "keywords": [
+    "communication",
+    "data-analytics",
+    "productivity"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "zocks",
+  "version": "2026.10.25",
+  "description": "Zocks: Analyze client conversations, patterns, and insights.",
+  "author": {
+    "name": "Zocks"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

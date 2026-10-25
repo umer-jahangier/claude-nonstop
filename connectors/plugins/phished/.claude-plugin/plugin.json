@@ -1,0 +1,13 @@
+{
+  "name": "phished",
+  "version": "2026.10.25",
+  "description": "Phished: Phished's entire ZIR app at your fingertips directly in Claude",
+  "author": {
+    "name": "Phished BV"
+  },
+  "keywords": [
+    "developer-tools",
+    "other",
+    "productivity"
+  ]
+}

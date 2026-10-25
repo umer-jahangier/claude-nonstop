@@ -1,0 +1,12 @@
+{
+  "name": "pi-security",
+  "version": "2026.10.25",
+  "description": "Pi Security: Agentic product security platform",
+  "author": {
+    "name": "Pi Security"
+  },
+  "keywords": [
+    "developer-tools",
+    "productivity"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "pdf-net",
+  "version": "2026.10.25",
+  "description": "PDF.net: Generate and edit pdfs",
+  "author": {
+    "name": "PDF.net"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

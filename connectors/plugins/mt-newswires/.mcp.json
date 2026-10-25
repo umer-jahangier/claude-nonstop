@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "mt-newswires": {
+      "type": "http",
+      "url": "https://mcp.mtnewswires.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

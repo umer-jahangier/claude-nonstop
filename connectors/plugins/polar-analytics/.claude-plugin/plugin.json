@@ -1,0 +1,11 @@
+{
+  "name": "polar-analytics",
+  "version": "2026.10.25",
+  "description": "Polar Analytics: Bring all your data in one place & connect it to Claude",
+  "author": {
+    "name": "Polar Analytics"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

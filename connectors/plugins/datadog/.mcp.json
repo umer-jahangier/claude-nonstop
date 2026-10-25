@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "datadog": {
+      "type": "http",
+      "url": "https://mcp.datadoghq.com/v1/mcp?toolsets=all,visualizations",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

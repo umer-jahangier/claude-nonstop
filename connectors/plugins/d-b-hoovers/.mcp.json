@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "d-b-hoovers": {
+      "type": "http",
+      "url": "https://mcp.hoovers.dnb.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

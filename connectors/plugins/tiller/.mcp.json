@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "tiller": {
+      "type": "http",
+      "url": "https://ai-tools.tillermoney.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

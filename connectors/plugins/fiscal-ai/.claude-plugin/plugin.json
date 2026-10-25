@@ -1,0 +1,11 @@
+{
+  "name": "fiscal-ai",
+  "version": "2026.10.25",
+  "description": "Fiscal.ai: Clean Public Equity Fundamental Data",
+  "author": {
+    "name": "Fiscal.ai"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

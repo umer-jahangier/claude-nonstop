@@ -1,0 +1,12 @@
+{
+  "name": "slicktrip",
+  "version": "2026.10.25",
+  "description": "SlickTrip: Search flights, hotels and seats, then get alerted the moment a price drops.",
+  "author": {
+    "name": "SlickTrip"
+  },
+  "keywords": [
+    "commerce-shopping",
+    "travel"
+  ]
+}

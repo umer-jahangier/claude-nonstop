@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "bigin-zohomcp-com": {
+      "type": "http",
+      "url": "https://bigin.zohomcp.com/mcp/message",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

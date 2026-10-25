@@ -1,0 +1,11 @@
+{
+  "name": "etoro-connector",
+  "version": "2026.10.25",
+  "description": "etoro: etoro. Where Our Collective Intelligence Meets Your Claude",
+  "author": {
+    "name": "etoro"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "upwork",
+  "version": "2026.10.25",
+  "description": "Upwork: Hire talent or find work",
+  "author": {
+    "name": "Upwork"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "twelvedata",
+  "version": "2026.10.25",
+  "description": "Twelve Data: Real-time prices, 100+ technical indicators, and fundamentals for stocks, forex, crypto, and ETFs — ask in plain English, no API knowledge needed.",
+  "author": {
+    "name": "Twelve Data"
+  },
+  "keywords": [
+    "data-analytics",
+    "financial-services"
+  ]
+}

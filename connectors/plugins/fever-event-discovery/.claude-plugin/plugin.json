@@ -1,0 +1,11 @@
+{
+  "name": "fever-event-discovery",
+  "version": "2026.10.25",
+  "description": "Fever Event Discovery: Discover live entertainment events worldwide",
+  "author": {
+    "name": "Fever"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

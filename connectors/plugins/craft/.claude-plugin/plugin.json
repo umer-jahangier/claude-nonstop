@@ -1,0 +1,11 @@
+{
+  "name": "craft",
+  "version": "2026.10.25",
+  "description": "Craft: Notes & second brain",
+  "author": {
+    "name": "Craft Docs Ltd"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

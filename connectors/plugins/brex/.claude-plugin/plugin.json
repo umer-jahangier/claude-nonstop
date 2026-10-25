@@ -1,0 +1,11 @@
+{
+  "name": "brex",
+  "version": "2026.10.25",
+  "description": "Brex: Intelligent finance automation",
+  "author": {
+    "name": "Brex"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

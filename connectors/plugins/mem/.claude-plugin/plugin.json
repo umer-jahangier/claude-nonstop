@@ -1,0 +1,11 @@
+{
+  "name": "mem",
+  "version": "2026.10.25",
+  "description": "Mem: The AI notebook for everything on your mind",
+  "author": {
+    "name": "Mem Labs, Inc."
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

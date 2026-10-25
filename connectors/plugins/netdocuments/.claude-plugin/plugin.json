@@ -1,0 +1,12 @@
+{
+  "name": "netdocuments",
+  "version": "2026.10.25",
+  "description": "NetDocuments: Securely access your documents in NetDocuments",
+  "author": {
+    "name": "NetDocuments"
+  },
+  "keywords": [
+    "legal",
+    "productivity"
+  ]
+}

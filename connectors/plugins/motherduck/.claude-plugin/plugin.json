@@ -1,0 +1,11 @@
+{
+  "name": "motherduck",
+  "version": "2026.10.25",
+  "description": "MotherDuck: Get answers from your data",
+  "author": {
+    "name": "MotherDuck Corporation"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

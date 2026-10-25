@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "cash-app": {
+      "type": "http",
+      "url": "https://connect.squareup.com/v2/mcp/cash-app"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "lseg-ai",
+  "version": "2026.10.25",
+  "description": "LSEG AI: Data Analytics and Trading",
+  "author": {
+    "name": "LSEG"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

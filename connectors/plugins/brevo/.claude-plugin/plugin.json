@@ -1,0 +1,11 @@
+{
+  "name": "brevo",
+  "version": "2026.10.25",
+  "description": "Brevo: Analyze campaigns, know your audience and create drafts",
+  "author": {
+    "name": "Brevo"
+  },
+  "keywords": [
+    "sales-and-marketing"
+  ]
+}

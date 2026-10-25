@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "hanover-park": {
+      "type": "http",
+      "url": "https://app.hanoverpark.com/api/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

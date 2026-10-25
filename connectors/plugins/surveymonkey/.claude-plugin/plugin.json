@@ -1,0 +1,11 @@
+{
+  "name": "surveymonkey",
+  "version": "2026.10.25",
+  "description": "SurveyMonkey: Design surveys, collect responses, and analyze results",
+  "author": {
+    "name": "SurveyMonkey"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

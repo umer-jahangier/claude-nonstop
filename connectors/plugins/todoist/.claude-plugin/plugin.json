@@ -1,0 +1,11 @@
+{
+  "name": "todoist",
+  "version": "2026.10.25",
+  "description": "Todoist: Search, complete, and manage your tasks in Todoist",
+  "author": {
+    "name": "Doist"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

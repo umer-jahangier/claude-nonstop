@@ -1,0 +1,14 @@
+{
+  "name": "webmcp-evaluator",
+  "version": "2026.10.25",
+  "description": "WebMCP Evaluator: Check whether a public page is ready for agents: tools observed, tools to add, what must never be exposed.",
+  "author": {
+    "name": "John Williams at Sun Business Group"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools",
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

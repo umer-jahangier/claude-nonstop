@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "granted": {
+      "type": "http",
+      "url": "https://grantedai.com/api/mcp/mcp"
+    }
+  }
+}

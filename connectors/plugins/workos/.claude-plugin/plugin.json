@@ -1,0 +1,13 @@
+{
+  "name": "workos",
+  "version": "2026.10.25",
+  "description": "WorkOS: Manage your WorkOS workspace from Claude",
+  "author": {
+    "name": "WorkOS"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools",
+    "productivity"
+  ]
+}

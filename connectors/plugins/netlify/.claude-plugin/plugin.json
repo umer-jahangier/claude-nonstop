@@ -1,0 +1,11 @@
+{
+  "name": "netlify",
+  "version": "2026.10.25",
+  "description": "Netlify: Create, deploy, manage, and secure websites on Netlify.",
+  "author": {
+    "name": "Netlify"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

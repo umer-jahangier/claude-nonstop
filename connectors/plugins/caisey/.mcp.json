@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "caisey": {
+      "type": "http",
+      "url": "https://mcp.caisgroup.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

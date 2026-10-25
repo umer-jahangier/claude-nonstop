@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "legalzoom": {
+      "type": "http",
+      "url": "https://www.legalzoom.com/mcp/claude/v1",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

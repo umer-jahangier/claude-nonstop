@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "adspirer-ads-performance-marketing-agent": {
+      "type": "http",
+      "url": "https://mcp.adspirer.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

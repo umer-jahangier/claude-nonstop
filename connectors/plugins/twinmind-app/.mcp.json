@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "twinmind-app": {
+      "type": "http",
+      "url": "https://api.twinmind.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

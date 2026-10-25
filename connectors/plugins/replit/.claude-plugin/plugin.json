@@ -1,0 +1,11 @@
+{
+  "name": "replit",
+  "version": "2026.10.25",
+  "description": "Replit: Turn ideas into apps and websites instantly",
+  "author": {
+    "name": "Replit"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

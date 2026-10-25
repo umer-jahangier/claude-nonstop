@@ -42,11 +42,17 @@ function settings(cfg, v) {
     // are switched on, so Code sessions get the same browser pane and extensions as before.
     builtinBrowserEnabled: 'true',
     isDesktopExtensionEnabled: 'true',
-    // It also hides the claude.ai connector directory and the button for adding your own;
-    // connectors come only from this list. `claude-nonstop connectors add` fills it.
+    // It also hides the claude.ai connector directory and the button for adding your own.
+    // Plugins can still bring connectors, so the official directory comes back as a plugin
+    // marketplace in Directory → Organization: one plugin per connector, built from
+    // claude.com/connectors (scripts/build-marketplace.js). The app re-fetches it by itself.
+    allowedPluginMarketplaces: JSON.stringify([CONNECTOR_MARKETPLACE]),
+    // Connectors added with `claude-nonstop connectors add` show for everyone, always.
     ...(connectors(cfg).length ? { managedMcpServers: JSON.stringify(connectors(cfg)) } : {}),
   };
 }
+
+const CONNECTOR_MARKETPLACE = { source: 'github', repo: 'umer-jahangier/claude-nonstop', path: 'connectors', expectedName: 'nonstop-connectors' };
 
 const connectors = (cfg) => (Array.isArray(cfg.desktopConnectors) ? cfg.desktopConnectors : []);
 
@@ -65,7 +71,7 @@ function connector(name, url, { oauth = true } = {}) {
 }
 
 // Every key claude-nonstop may write, so one it no longer wants is removed, not left behind.
-const MANAGED_KEYS = ['inferenceProvider', 'inferenceGatewayBaseUrl', 'inferenceGatewayApiKey', 'inferenceGatewayAuthScheme', 'claudeAiImport', 'coworkEgressAllowedHosts', 'builtinBrowserEnabled', 'isDesktopExtensionEnabled', 'managedMcpServers'];
+const MANAGED_KEYS = ['inferenceProvider', 'inferenceGatewayBaseUrl', 'inferenceGatewayApiKey', 'inferenceGatewayAuthScheme', 'claudeAiImport', 'coworkEgressAllowedHosts', 'builtinBrowserEnabled', 'isDesktopExtensionEnabled', 'allowedPluginMarketplaces', 'managedMcpServers'];
 
 // A copy of the settings as JSON, for typing into the app's window by hand if ever needed.
 function write(cfg, v) {

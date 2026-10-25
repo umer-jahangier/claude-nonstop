@@ -1,0 +1,11 @@
+{
+  "name": "adobe-cja",
+  "version": "2026.10.25",
+  "description": "Adobe Customer Journey Analytics: Run reports using your metrics, dimensions, and segments",
+  "author": {
+    "name": "Adobe"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

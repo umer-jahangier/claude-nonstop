@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "euler": {
+      "type": "http",
+      "url": "https://mcp.eulerapp.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

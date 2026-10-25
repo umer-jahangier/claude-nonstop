@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "patlytics": {
+      "type": "http",
+      "url": "https://mcp.patlytics.ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

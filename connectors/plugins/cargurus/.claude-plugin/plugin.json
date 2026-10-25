@@ -1,0 +1,11 @@
+{
+  "name": "cargurus",
+  "version": "2026.10.25",
+  "description": "CarGurus: Find, buy, and research cars",
+  "author": {
+    "name": "CarGurus, Inc."
+  },
+  "keywords": [
+    "commerce-shopping"
+  ]
+}

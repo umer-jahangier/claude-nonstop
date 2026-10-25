@@ -1,0 +1,11 @@
+{
+  "name": "aws-marketplace",
+  "version": "2026.10.25",
+  "description": "AWS Marketplace: Discover, evaluate, and buy solutions for the cloud",
+  "author": {
+    "name": "AWS Marketplace"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

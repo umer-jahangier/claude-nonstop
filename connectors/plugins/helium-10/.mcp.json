@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "helium-10": {
+      "type": "http",
+      "url": "https://mcp.helium10.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

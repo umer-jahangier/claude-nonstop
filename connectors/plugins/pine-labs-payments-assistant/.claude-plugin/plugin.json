@@ -1,0 +1,11 @@
+{
+  "name": "pine-labs-payments-assistant",
+  "version": "2026.10.25",
+  "description": "Pine Labs Payments Assistant: Query your Pine Labs payments data in plain language — orders, transactions, settlements, subscriptions and success rates, plus integration help for developers.",
+  "author": {
+    "name": "Pine Labs"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "edreams",
+  "version": "2026.10.25",
+  "description": "eDreams: Find flights and hotels",
+  "author": {
+    "name": "eDreams ODIGEO"
+  },
+  "keywords": [
+    "travel"
+  ]
+}

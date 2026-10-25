@@ -1,0 +1,11 @@
+{
+  "name": "freee",
+  "version": "2026.10.25",
+  "description": "freee: freeeの各種プロダクトへのデータ下書作成、自動登録、登録済みデータの分析 / Draft, register, and analyze data across freee products",
+  "author": {
+    "name": "freee K.K."
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

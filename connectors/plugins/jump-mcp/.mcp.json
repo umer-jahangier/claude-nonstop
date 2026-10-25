@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "jump-mcp": {
+      "type": "http",
+      "url": "https://my.jumpapp.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

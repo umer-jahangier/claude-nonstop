@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "todoist": {
+      "type": "http",
+      "url": "https://ai.todoist.net/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

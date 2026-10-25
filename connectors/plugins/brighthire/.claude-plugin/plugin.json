@@ -1,0 +1,11 @@
+{
+  "name": "brighthire",
+  "version": "2026.10.25",
+  "description": "BrightHire: Search, summarize and analyze hiring data",
+  "author": {
+    "name": "BrightHire"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

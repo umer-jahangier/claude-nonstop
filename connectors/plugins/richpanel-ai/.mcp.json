@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "richpanel-ai": {
+      "type": "http",
+      "url": "https://mcp.richpanel.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

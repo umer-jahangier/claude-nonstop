@@ -1,0 +1,11 @@
+{
+  "name": "vani",
+  "version": "2026.10.25",
+  "description": "Vani by Zoho: Create diagrams, visualize workflows, and manage Spaces in Vani.",
+  "author": {
+    "name": "Zoho"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

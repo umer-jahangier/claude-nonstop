@@ -1,0 +1,11 @@
+{
+  "name": "picpay",
+  "version": "2026.10.25",
+  "description": "PicPay: PicPay. Seu próximo banco.",
+  "author": {
+    "name": "PicPay"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

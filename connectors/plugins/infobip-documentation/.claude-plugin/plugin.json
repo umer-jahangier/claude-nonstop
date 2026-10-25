@@ -1,0 +1,11 @@
+{
+  "name": "infobip-documentation",
+  "version": "2026.10.25",
+  "description": "Infobip Documentation: Search and browse Infobip docs from Claude",
+  "author": {
+    "name": "Infobip"
+  },
+  "keywords": [
+    "communication"
+  ]
+}
