@@ -15,6 +15,7 @@ function load() {
     currentAt: s.currentAt || null,
     desktop: s.desktop || null,
     desktopAdvice: s.desktopAdvice || null,
+    desktopLimitedAt: s.desktopLimitedAt || null,
   };
 }
 
@@ -54,6 +55,8 @@ function setDesktop(label) {
 }
 
 const setDesktopAdvice = (advice) => update((s) => (s.desktopAdvice = advice));
+// When the desktop app's account was last seen at its limit; null once it's been used again.
+const setDesktopLimited = (at) => update((s) => (s.desktopLimitedAt = at));
 
 function clearCooldowns() {
   update((s) => {
@@ -62,4 +65,4 @@ function clearCooldowns() {
   });
 }
 
-module.exports = { load, recordKey, recordAccount, forgetKey, forgetAccount, isCoolingDown, setCurrent, setDesktop, setDesktopAdvice, clearCooldowns };
+module.exports = { load, recordKey, recordAccount, forgetKey, forgetAccount, isCoolingDown, setCurrent, setDesktop, setDesktopAdvice, setDesktopLimited, clearCooldowns };

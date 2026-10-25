@@ -156,7 +156,21 @@ test('drops OAuth beta flags, since requests go out with an API key', async () =
     body: message(),
     headers: { 'x-api-key': token, 'anthropic-beta': 'oauth-2025-04-20, fine-grained-tool-streaming-2025-05-14' },
   });
-  assert.equal(api.requests[0].headers['anthropic-beta'], 'fine-grained-tool-streaming-2025-05-14');
+  assert.equal(api.requests[0].headers['anthropic-beta'], 'fine-grained-tool-streaming-2025-05-14,claude-code-20250219');
+});
+
+test('every request goes out as Claude Code, the desktop app\'s included', async () => {
+  useKeys('ok');
+  api.requests.length = 0;
+  // The desktop app: no Claude Code headers of its own, and a browser-ish user agent.
+  await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token, 'user-agent': 'Claude/1.0 Electron' } });
+  // A terminal session, which already names itself.
+  await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token, 'user-agent': 'claude-cli/2.1.310 (external, cli)', 'anthropic-beta': 'claude-code-20250219' } });
+  for (const r of api.requests) {
+    assert.match(r.headers['user-agent'], /^claude-cli\//, 'the CLI user agent, whoever asked');
+    assert.equal(r.headers['x-app'], 'cli');
+    assert.equal(r.headers['anthropic-beta'], 'claude-code-20250219', 'the beta the key probe uses, exactly once');
+  }
 });
 
 test('forwards model listing for the desktop app', async () => {

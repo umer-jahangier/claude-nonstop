@@ -20,6 +20,8 @@ const MAX_ERROR_BODY = 4 * 1024 * 1024;
 // Matches the successful terminal request supplied for comparison.
 const CLI_USER_AGENT = 'claude-cli/2.1.310 (external, sdk-cli)';
 const CLI_APP = 'cli';
+// The beta the key probe sends (keys.js): every request goes out exactly the way keys are tested.
+const CLAUDE_CODE_BETA = 'claude-code-20250219';
 
 // Never forwarded upstream:
 // hop-by-hop headers, client credentials, internal gateway headers,
@@ -198,19 +200,15 @@ function upstreamHeaders(headers, key, length) {
     }
   }
 
-  // Requests forwarded with an API key should not retain OAuth-only flags.
-  if (out['anthropic-beta']) {
-    const betas = String(out['anthropic-beta'])
-      .split(',')
-      .map((b) => b.trim())
-      .filter((b) => b && !b.startsWith('oauth-'));
-
-    if (betas.length) {
-      out['anthropic-beta'] = betas.join(',');
-    } else {
-      delete out['anthropic-beta'];
-    }
-  }
+  // Requests go out on an API key, so OAuth-only flags are dropped; and every one of them,
+  // the desktop app's included, carries the Claude Code beta, so a key is used exactly the
+  // way it was tested and billed the same way whoever asked.
+  const betas = String(out['anthropic-beta'] || '')
+    .split(',')
+    .map((b) => b.trim())
+    .filter((b) => b && !b.startsWith('oauth-'));
+  if (!betas.includes(CLAUDE_CODE_BETA)) betas.push(CLAUDE_CODE_BETA);
+  out['anthropic-beta'] = betas.join(',');
 
   // Always use CLI headers, including for Desktop-originated requests.
   out['user-agent'] = CLI_USER_AGENT;

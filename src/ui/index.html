@@ -1035,6 +1035,8 @@ function relayOrder() {
 
 // The key the desktop app's requests go out on: the first usable key in your order.
 const desktopKey = () => relayOrder().find((l) => l.type === 'key' && l.st.ready) || null;
+// Whether the desktop app has been running on API keys lately (the gateway served it).
+const desktopOnKeys = () => Boolean(S.desktopKey && Date.now() - S.desktopKey.at < 30 * 60000);
 
 // The line Claude Code sessions run on: the first usable line in your priority order (the
 // pinned one first), which is where every new session starts, in Automatic mode too.
@@ -1071,11 +1073,8 @@ function renderNow(rel) {
     : '<span>Automatic</span>';
   // The desktop app runs only on API keys, through the gateway, whatever line sessions are on.
   const dk = $('#desktop-kv');
-  dk.hidden = !(S.desktop && S.desktop.automatic);
-  if (!dk.hidden) {
-    const key = desktopKey();
-    $('#desktop-line').textContent = key ? `${key.item.label} (API key)` : 'No API key with credit';
-  }
+  dk.hidden = !(S.desktop && S.desktop.installed);
+  if (!dk.hidden) $('#desktop-line').textContent = desktopOnKeys() ? `${S.desktopKey.label} (API key)` : 'Not on API keys';
 
   const keysOn = S.keys.filter((k) => k.enabled);
   const keysOk = keysOn.filter((k) => keyState(k).ready).length;
@@ -1100,7 +1099,9 @@ function renderAlerts() {
       : `${k.label} is used up${why ? `: ${why}` : ''}. Top it up; it's tried again in ${left} min.`;
     alerts.push({ tone: 'dead', text, acts: `<a class="btn" href="${BILLING_URL}" target="_blank" rel="noopener noreferrer">Top Up${icon('out')}</a><button class="btn" type="button" data-act="test-key" data-id="${esc(k.id)}" data-fk="alert-test:${esc(k.id)}">Test Now</button>` });
   }
-  if (S.desktop && S.desktop.automatic && S.keys.length && !desktopKey()) alerts.push({ tone: 'dead', text: 'The desktop app runs only on API keys, and none can take its requests right now. Top a key up, or sign in to Claude.ai in the desktop app to use your subscription there.' });
+  // When to switch the desktop app between its Claude.ai account and API keys.
+  if (S.desktopAdvice) alerts.unshift({ tone: S.desktopAdvice.kind === 'wait' ? 'dead' : 'warn', text: S.desktopAdvice.text });
+  else if (desktopOnKeys() && S.keys.length && !desktopKey()) alerts.push({ tone: 'dead', text: 'The desktop app is on API keys, and none can take its requests right now. Sign in to Claude.ai in the desktop app to use your account there.' });
   if (!S.keys.length) alerts.push({ tone: 'warn', text: 'No API keys yet. When every account hits its limit, sessions have nothing to fall back on.', acts: `<a class="btn" href="${KEYS_URL}" target="_blank" rel="noopener noreferrer">Get a Key${icon('out')}</a><button class="btn primary" type="button" data-act="add-key" data-fk="alert-add-key">Add a Key…</button>` });
   const list = $('#alerts');
   list.hidden = !alerts.length;
@@ -1197,7 +1198,7 @@ function renderDesktopCard() {
       <div class="desk-acts"><a class="btn" href="${DOWNLOAD_URL}" target="_blank" rel="noopener noreferrer">Download Claude${icon('out')}</a></div>`;
   } else if (d.automatic) {
     state = 'done';
-    body = `<h2>Set up</h2><p>Quit and reopen the Claude desktop app. On its sign-in screen, pick the third-party option to run on your API keys, or Claude.ai for your subscription.</p>`;
+    body = `<h2>Set up</h2><p>Sign in to Claude.ai in the desktop app to use your account. When it hits its limit, pick the third-party option on its sign-in screen to carry on with your API keys; with Switch alerts on, claude-nonstop tells you when to switch and when to switch back.</p>`;
   } else if (busy.has('desktop')) {
     body = `<h2>Waiting for your approval…</h2><p>${esc(how)}</p><div class="desk-acts"><button class="btn primary" type="button" disabled>${SPINNER}Setting Up…</button></div>`;
   } else {
@@ -1228,7 +1229,11 @@ function renderSettings() {
     ['Version', esc(S.version), `Open this page any time at <code>${esc(location.host)}</code>.`],
   ];
   const strict = S.settings.desktopStrictSandbox;
-  $('#desktop-prefs').innerHTML = `<li class="row"><span class="row-text"><span class="row-title">Strict sandbox</span><span class="row-why">${strict ? 'Code sessions in the desktop app can reach only the sites the app allows.' : 'Code sessions in the desktop app can reach any site.'}</span></span><button class="switch" type="button" role="switch" aria-checked="${strict}" data-act="toggle-strict-sandbox" data-fk="strict-sandbox" aria-label="Strict sandbox for the desktop app"></button></li>`;
+  const alertsOn = S.settings.desktopAlerts;
+  const desktopAccount = S.accounts.find((a) => a.id === S.settings.desktopAccount);
+  $('#desktop-prefs').innerHTML = `<li class="row"><span class="row-text"><span class="row-title">Claude.ai account</span><span class="row-why">The account the desktop app signs in to. claude-nonstop watches it to say when to switch.</span></span><button class="btn" type="button" data-act="desktop-account-menu" data-fk="desktop-account" aria-haspopup="menu" aria-expanded="false" aria-label="The desktop app's Claude.ai account: ${esc(desktopAccount ? desktopAccount.label : 'none')}">${esc(desktopAccount ? desktopAccount.label : 'Choose…')}</button></li>`
+    + `<li class="row"><span class="row-text"><span class="row-title">Switch alerts</span><span class="row-why">${alertsOn ? 'Tells you here and with a notification when that account hits its limit, and when it has usage again.' : 'Off: no advice on when to switch the desktop app.'}</span></span><button class="switch" type="button" role="switch" aria-checked="${alertsOn}" data-act="toggle-desktop-alerts" data-fk="desktop-alerts" aria-label="Switch alerts for the desktop app"></button></li>`
+    + `<li class="row"><span class="row-text"><span class="row-title">Strict sandbox</span><span class="row-why">${strict ? 'Code sessions in the desktop app can reach only the sites the app allows.' : 'Code sessions in the desktop app can reach any site.'}</span></span><button class="switch" type="button" role="switch" aria-checked="${strict}" data-act="toggle-strict-sandbox" data-fk="strict-sandbox" aria-label="Strict sandbox for the desktop app"></button></li>`;
   $('#setup-facts').innerHTML = facts.map(([title, value, sub]) => `<li class="row"><span class="row-text"><span class="row-title">${esc(title)}</span><span class="row-why">${sub}</span></span><span class="fact-val">${value}</span></li>`).join('');
 }
 
@@ -2353,6 +2358,7 @@ function connectEvents() {
       if (e.checking) { checking.add(e.id); render(); } else scheduleRefresh();
       return;
     }
+    if (e.type === 'desktop-advice') { scheduleRefresh(); return; }
     addFeed(e);
     if (e.backlog) return;
     if (e.type === 'request') {
@@ -2527,6 +2533,11 @@ function openMenu(btn, viaKeyboard) {
 }
 
 const THEMES = [['system', 'Automatic', 'auto-theme'], ['light', 'Light', 'sun'], ['dark', 'Dark', 'moon']];
+function openDesktopAccountMenu(btn, viaKeyboard) {
+  const html = S.accounts.map((a) => `<button class="menu-item" type="button" role="menuitemradio" tabindex="-1" aria-checked="${a.id === S.settings.desktopAccount}" data-act="desktop-account-set" data-value="${esc(a.id)}">${icon('person')}<span style="flex:1">${esc(a.label)}</span><svg class="i check" aria-hidden="true"><use href="#i-check"/></svg></button>`).join('');
+  showMenu(btn, "The desktop app's Claude.ai account", html, viaKeyboard);
+}
+
 function openThemeMenu(btn, viaKeyboard) {
   const pref = theme.get();
   const html = THEMES.map(([value, label, glyph]) => `<button class="menu-item" type="button" role="menuitemradio" tabindex="-1" aria-checked="${pref === value}" data-act="theme-set" data-value="${value}">${icon(glyph)}<span style="flex:1">${label}</span><svg class="i check" aria-hidden="true"><use href="#i-check"/></svg></button>`).join('');
@@ -2752,6 +2763,19 @@ const actions = {
   menu: (id, el, ev) => openMenu(el, Boolean(ev && ev.detail === 0)),
   'theme-menu': (id, el, ev) => openThemeMenu(el, Boolean(ev && ev.detail === 0)),
   'theme-set': (id, el) => theme.set(el.dataset.value),
+  'desktop-account-menu': (id, el, ev) => openDesktopAccountMenu(el, Boolean(ev && ev.detail === 0)),
+  'desktop-account-set': async (id, el) => {
+    await api('PATCH', '/api/settings', { desktopAccount: el.dataset.value });
+    await refresh();
+    const a = S.accounts.find((x) => x.id === el.dataset.value);
+    toast(`Watching ${a ? a.label : 'that account'} for the desktop app.`);
+  },
+  'toggle-desktop-alerts': async (id, el) => {
+    const on = !S.settings.desktopAlerts;
+    el.setAttribute('aria-checked', String(on));
+    await api('PATCH', '/api/settings', { desktopAlerts: on });
+    await refresh();
+  },
   'desktop-auto': () => withBusy('desktop', async () => {
     const r = await api('POST', '/api/desktop/auto');
     await refresh();

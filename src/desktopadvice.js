@@ -32,12 +32,16 @@ function advice(cfg = config.load(), s = state.load(), now = Date.now()) {
   const account = accountFor(cfg);
   const check = account && s.accounts[account.id];
   if (!check) return null;
+  const onKeys = Boolean(s.desktop && now - s.desktop.at < ON_KEYS_MS);
   if (!check.ok && accounts.isLimitReason(check.reason)) {
+    // Already on API keys: there's nothing to switch. If those run out too, the page says so.
+    if (onKeys) return null;
     const keyFree = relay.keyOrder(cfg, vault.load().keys).some((k) => !state.isCoolingDown(k.id, cfg.cooldownMinutes));
     return { kind: keyFree ? 'to-keys' : 'wait', account: account.label, reason: check.reason };
   }
-  const onKeys = Boolean(s.desktop && now - s.desktop.at < ON_KEYS_MS);
-  return check.ok && onKeys ? { kind: 'to-account', account: account.label } : null;
+  // "Switch back" only after the account was seen at its limit: an app you simply run on
+  // API keys isn't nagged about an account it never left.
+  return check.ok && onKeys && s.desktopLimitedAt ? { kind: 'to-account', account: account.label } : null;
 }
 
 function message(a) {
@@ -72,13 +76,19 @@ async function tick({ notifier = notify } = {}) {
   const last = account && state.load().accounts[account.id];
   if (account && (!last || Date.now() - last.at > checkEvery()) && desktop.appRunning()) await checks.account(account);
   const now = advice(cfg);
+  if (now && now.kind !== 'to-account' && !state.load().desktopLimitedAt) state.setDesktopLimited(Date.now());
   if ((now && now.kind) !== (before && before.kind)) {
-    state.setDesktopAdvice(now && { ...now, at: Date.now() });
+    // Once the app has left the keys again after a "switch back", the episode is over.
+    if (!now && before && before.kind === 'to-account') state.setDesktopLimited(null);
+    state.setDesktopAdvice(now && { ...now, at: Date.now(), said: false });
     events.notify('desktop-advice', { kind: now ? now.kind : null });
-    if (now) {
-      log(`desktop app: ${now.kind} (${now.account})`);
-      notifier(message(now));
-    }
+    if (now) log(`desktop app: ${now.kind} (${now.account})`);
+  }
+  // Each piece of advice is said once, and only while the app is open to act on it.
+  const current = state.load().desktopAdvice;
+  if (current && !current.said && desktop.appRunning()) {
+    state.setDesktopAdvice({ ...current, said: true });
+    notifier(message(current));
   }
   return now;
 }
