@@ -47,9 +47,10 @@ function describeKeyCheck(c) {
   return `kept, the problem isn't this key (${c.status ? `HTTP ${c.status}` : 'no answer'}${detail})`;
 }
 
-function describeAccountCheck(c) {
-  if (!c) return 'not checked yet';
-  return `${c.ok ? 'had usage left' : c.reason} (${ago(c.at)})`;
+function describeAccountCheck(c, u) {
+  const used = u && u.session ? `; ${require('./usage').describe(u)}` : '';
+  if (!c) return `not checked yet${used}`;
+  return `${c.ok ? 'had usage left' : c.reason} (${ago(c.at)})${used}`;
 }
 
 function requireClaude() {
@@ -175,7 +176,7 @@ async function status() {
 function describeLine(cfg, s, l, i) {
   const paused = relay.isPaused(cfg, l.type, l.item) ? ' (paused)' : '';
   const what = l.type === 'account'
-    ? `${l.item.label} (account)${paused}: ${describeAccountCheck(s.accounts[l.item.id])}`
+    ? `${l.item.label} (account)${paused}: ${describeAccountCheck(s.accounts[l.item.id], s.usage[l.item.id])}`
     : `${l.item.label} (API key ${keys.mask(l.item.key)})${paused}: ${describeKeyCheck(s.keys[l.item.id])}`;
   return `${i + 1}. ${what}`;
 }
@@ -287,7 +288,7 @@ async function listAccounts() {
   for (const [i, a] of cfg.accounts.entries()) {
     const login = bin ? await accounts.status(a, bin) : { loggedIn: null, error: 'Claude Code was not found' };
     const who = login.loggedIn ? `signed in${login.email ? ` as ${login.email}` : ''}` : login.loggedIn === false ? 'not signed in' : `sign-in not checked (${login.error})`;
-    out(`  ${i + 1}. ${a.label}${a.enabled === false ? ' (off)' : ''}: ${who}; ${describeAccountCheck(s.accounts[a.id])}`);
+    out(`  ${i + 1}. ${a.label}${a.enabled === false ? ' (off)' : ''}: ${who}; ${describeAccountCheck(s.accounts[a.id], s.usage[a.id])}`);
   }
   out('');
   out('Add one with `claude-nonstop accounts add "Work"` or in `claude-nonstop ui`.');

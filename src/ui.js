@@ -14,6 +14,7 @@ const config = require('./config');
 const vault = require('./vault');
 const keys = require('./keys');
 const accounts = require('./accounts');
+const usage = require('./usage');
 const state = require('./state');
 const claude = require('./claude');
 const keystore = require('./keystore');
@@ -119,6 +120,7 @@ function snapshot(ctx) {
       kind: a.kind,
       enabled: a.enabled !== false,
       lastCheck: s.accounts[a.id] || null,
+      usage: s.usage[a.id] ? { ...s.usage[a.id], text: usage.describe(s.usage[a.id]) } : null,
     })),
     keys: v.keys.map((k) => ({
       id: k.id,
@@ -297,6 +299,7 @@ function checkAccount(id) {
 // few minutes is left alone. Returns at once: the page hears when each check ends.
 function startChecks() {
   checks.all({ freshMs: 5 * 60000 });
+  usage.refreshAll({ freshMs: 60000 }).catch(() => null);
   return { checking: checks.checking() };
 }
 

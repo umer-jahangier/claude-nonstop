@@ -210,6 +210,8 @@ async function serve({ port } = {}) {
     setTimeout(() => checks.all(), 5000).unref();
     // Says when to switch the desktop app between your Claude.ai account and API keys.
     setTimeout(() => require('./desktopadvice').start(), 6000).unref();
+    // How much of each account's plan is used, refreshed every few minutes.
+    setTimeout(() => require('./usage').start(), 7000).unref();
   }
 
   const stop = (code = 0) => {

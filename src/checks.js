@@ -13,6 +13,7 @@ const state = require('./state');
 const claude = require('./claude');
 const events = require('./events');
 const relay = require('./relay');
+const usage = require('./usage');
 
 const running = new Map();
 
@@ -30,7 +31,15 @@ function once(id, work) {
   return done;
 }
 
-const account = (a, bin = claude.findClaude()) => (bin ? once(a.id, () => accounts.probe(a, bin)) : Promise.resolve(null));
+// The probe also renews the account's sign-in token, so its usage is read right after.
+const account = (a, bin = claude.findClaude()) =>
+  bin
+    ? once(a.id, async () => {
+        const r = await accounts.probe(a, bin);
+        await usage.refresh(a).catch(() => null);
+        return r;
+      })
+    : Promise.resolve(null);
 const key = (entry, cfg = config.load()) => once(entry.id, () => keys.check(entry, cfg));
 
 // A result counts as known when it gave a clear answer: usage left or a limit for an

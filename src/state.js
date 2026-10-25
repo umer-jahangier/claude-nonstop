@@ -16,6 +16,7 @@ function load() {
     desktop: s.desktop || null,
     desktopAdvice: s.desktopAdvice || null,
     desktopLimitedAt: s.desktopLimitedAt || null,
+    usage: s.usage || {},
   };
 }
 
@@ -29,7 +30,13 @@ function update(change) {
 const recordKey = (id, check) => update((s) => (s.keys[id] = { ...check, at: Date.now() }));
 const recordAccount = (id, check) => update((s) => (s.accounts[id] = { ...check, at: Date.now() }));
 const forgetKey = (id) => update((s) => delete s.keys[id]);
-const forgetAccount = (id) => update((s) => delete s.accounts[id]);
+const forgetAccount = (id) =>
+  update((s) => {
+    delete s.accounts[id];
+    delete s.usage[id];
+  });
+// How much of an account's plan is used (see usage.js).
+const recordUsage = (id, usage) => update((s) => (s.usage[id] = usage));
 
 // A key whose credit doesn't cover Claude Code (scope 'claude-code') is set aside only for
 // Claude Code's requests; anything else may still use it.
@@ -65,4 +72,4 @@ function clearCooldowns() {
   });
 }
 
-module.exports = { load, recordKey, recordAccount, forgetKey, forgetAccount, isCoolingDown, setCurrent, setDesktop, setDesktopAdvice, setDesktopLimited, clearCooldowns };
+module.exports = { load, recordKey, recordAccount, recordUsage, forgetKey, forgetAccount, isCoolingDown, setCurrent, setDesktop, setDesktopAdvice, setDesktopLimited, clearCooldowns };

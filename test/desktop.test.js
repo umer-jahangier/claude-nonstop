@@ -23,8 +23,9 @@ test('the built-in browser and desktop extensions stay on in third-party mode', 
   assert.equal(s.isDesktopExtensionEnabled, 'true');
 });
 
-test("the official connector directory is listed as a plugin marketplace, and it's valid", () => {
-  const [market] = JSON.parse(desktop.settings({ port: 43117 }, v).allowedPluginMarketplaces);
+test("Anthropic's plugin marketplace stays, and the official connector directory is listed as a plugin marketplace, and it's valid", () => {
+  const [official, market] = JSON.parse(desktop.settings({ port: 43117 }, v).allowedPluginMarketplaces);
+  assert.deepEqual(official, { source: 'github', repo: 'anthropics/claude-plugins-official', expectedName: 'claude-plugins-official' }, 'the allowlist keeps the marketplace a normal install has');
   assert.deepEqual(market, { source: 'github', repo: 'umer-jahangier/claude-nonstop', path: 'connectors', expectedName: 'nonstop-connectors' });
   const root = path.join(__dirname, '..', market.path);
   const manifest = JSON.parse(fs.readFileSync(path.join(root, '.claude-plugin', 'marketplace.json'), 'utf8'));

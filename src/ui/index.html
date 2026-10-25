@@ -1113,7 +1113,10 @@ function readoutFor(type, item) {
     const login = logins[item.id];
     const who = !login ? 'Checking sign-in…' : login.loggedIn ? login.email || 'Signed in' : login.loggedIn === false ? 'Signed out' : "Couldn't check sign-in";
     const c = item.lastCheck;
-    return { ident: esc(who), when: c ? `checked ${ago(c.at)}` : '', why: c && !c.ok ? c.reason : '' };
+    const u = item.usage;
+    const when = [u && u.text, c ? `checked ${ago(c.at)}` : ''].filter(Boolean).join(' · ');
+    const why = c && !c.ok ? c.reason : u && u.error ? `Usage: ${u.error}` : '';
+    return { ident: esc(who), when, why };
   }
   const c = item.lastCheck;
   const why = c && c.verdict !== 'ok' ? trimEnd(c.detail) || (c.status ? `HTTP ${c.status}` : 'No answer') : '';
@@ -2358,7 +2361,7 @@ function connectEvents() {
       if (e.checking) { checking.add(e.id); render(); } else scheduleRefresh();
       return;
     }
-    if (e.type === 'desktop-advice') { scheduleRefresh(); return; }
+    if (e.type === 'desktop-advice' || e.type === 'usage') { scheduleRefresh(); return; }
     addFeed(e);
     if (e.backlog) return;
     if (e.type === 'request') {

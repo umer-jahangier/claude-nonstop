@@ -42,16 +42,19 @@ function settings(cfg, v) {
     // are switched on, so Code sessions get the same browser pane and extensions as before.
     builtinBrowserEnabled: 'true',
     isDesktopExtensionEnabled: 'true',
-    // It also hides the claude.ai connector directory and the button for adding your own.
-    // Plugins can still bring connectors, so the official directory comes back as a plugin
-    // marketplace in Directory → Organization: one plugin per connector, built from
-    // claude.com/connectors (scripts/build-marketplace.js). The app re-fetches it by itself.
-    allowedPluginMarketplaces: JSON.stringify([CONNECTOR_MARKETPLACE]),
+    // This list is an allowlist: a marketplace not on it is gone from the app. Third-party
+    // mode also hides the claude.ai connector directory and the button for adding your own.
+    // So the list names Anthropic's own plugin marketplace, as in a normal install, and the
+    // official connector directory as a plugin marketplace in Directory → Organization: one
+    // plugin per connector, built from claude.com/connectors (scripts/build-marketplace.js).
+    // The app re-fetches both by itself.
+    allowedPluginMarketplaces: JSON.stringify([OFFICIAL_MARKETPLACE, CONNECTOR_MARKETPLACE]),
     // Connectors added with `claude-nonstop connectors add` show for everyone, always.
     ...(connectors(cfg).length ? { managedMcpServers: JSON.stringify(connectors(cfg)) } : {}),
   };
 }
 
+const OFFICIAL_MARKETPLACE = { source: 'github', repo: 'anthropics/claude-plugins-official', expectedName: 'claude-plugins-official' };
 const CONNECTOR_MARKETPLACE = { source: 'github', repo: 'umer-jahangier/claude-nonstop', path: 'connectors', expectedName: 'nonstop-connectors' };
 
 const connectors = (cfg) => (Array.isArray(cfg.desktopConnectors) ? cfg.desktopConnectors : []);
