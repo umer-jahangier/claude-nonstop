@@ -105,6 +105,21 @@ if (hits.includes(onKeys ? 'keys' : account)) {
       process.exit(0);
     }, Number(process.env.FAKE_CLAUDE_WAIT_MS || 4000));
   }, 200);
+} else if ((process.env.FAKE_CLAUDE_TURNS_ON || '') === (onKeys ? 'keys' : account)) {
+  // FAKE_CLAUDE_TURNS ordinary turns, FAKE_CLAUDE_TURN_MS apart: you type, Claude answers.
+  process.on('SIGTERM', () => {
+    record({ kind: 'stopped', account, session: sessionId });
+    process.exit(143);
+  });
+  let left = Number(process.env.FAKE_CLAUDE_TURNS || 3);
+  const turn = () => {
+    fire('UserPromptSubmit', { prompt: 'next step' });
+    fire('Stop');
+    record({ kind: 'turn', account, session: sessionId });
+    if (--left > 0) setTimeout(turn, Number(process.env.FAKE_CLAUDE_TURN_MS || 500));
+    else process.exit(0);
+  };
+  setTimeout(turn, Number(process.env.FAKE_CLAUDE_TURN_MS || 500));
 } else {
   if (args.includes('Continue where you left off.')) fire('UserPromptSubmit', { prompt: 'continue' });
   process.exit(Number(process.env.FAKE_CLAUDE_EXIT || 0));

@@ -128,6 +128,38 @@ test('when nothing is free yet, it keeps looking and moves the conversation as s
   assert.deepEqual(events[1].args.slice(-3), ['--resume', events[0].session, CONTINUE]);
 });
 
+const onKeys = (e) => Boolean(e.env.ANTHROPIC_AUTH_TOKEN || e.helperOutput);
+const where = (e) => (onKeys(e) ? 'keys' : e.account === 'default' ? 'main' : 'work');
+const turns = { FAKE_CLAUDE_TURNS_ON: 'keys', FAKE_CLAUDE_TURNS: '8', FAKE_CLAUDE_TURN_MS: '600', CLAUDE_NONSTOP_UPGRADE_MS: '300' };
+
+test('in Automatic mode, a session on API keys goes back to an account above them as soon as a turn ends', async () => {
+  setup({ withWork: true, withKeys: true });
+  config.update((c) => { c.accountRecheckMinutes = 0; c.pinned = null; });
+  fs.writeFileSync(limitedFile, `default\n${path.basename(work.configDir)}\n`);
+  // Work gets its usage back while the session is on the key.
+  setTimeout(() => fs.writeFileSync(limitedFile, 'default\n'), 800);
+  const r = await run(turns);
+  config.update((c) => { c.accountRecheckMinutes = 10; });
+  assert.equal(r.code, 0, r.stderr);
+  const sessions = log().filter((e) => e.kind === 'session');
+  assert.deepEqual(sessions.map(where), ['keys', 'work']);
+  assert.deepEqual(sessions[1].args.slice(-2), ['--resume', sessions[0].session], 'the same conversation, with nothing typed for you');
+  assert.ok(log().some((e) => e.kind === 'turn'), 'it waited for a turn to end');
+  assert.match(r.stderr, /Work has usage again, so this conversation moves back to it/);
+});
+
+test('with the cable plugged in, a session stays on the line you picked', async () => {
+  setup({ withWork: true, withKeys: true });
+  const [key] = vault.load().keys;
+  config.update((c) => { c.accountRecheckMinutes = 0; c.pinned = { type: 'key', id: key.id }; });
+  fs.writeFileSync(limitedFile, 'default\n');
+  const r = await run({ ...turns, FAKE_CLAUDE_TURNS: '4' });
+  config.update((c) => { c.accountRecheckMinutes = 10; c.pinned = null; });
+  assert.equal(r.code, 0, r.stderr);
+  assert.deepEqual(log().filter((e) => e.kind === 'session').map(where), ['keys'], 'Work had usage the whole time, but the key is your pick');
+  assert.doesNotMatch(r.stderr, /moves back/);
+});
+
 test('`claude -p` runs are left alone', () => {
   assert.equal(supervise.supervisable(['-p', 'hi']), false);
   assert.equal(supervise.supervisable(['--print', 'hi']), false);

@@ -14,12 +14,16 @@
 //     (autoContinueAtUsageLimit, on by default). On API keys, which Claude Code doesn't
 //     wait for, claude-nonstop waits instead and reopens the conversation as soon as an
 //     account or a key has usage again.
+//   - In Automatic mode, a session that ended up on API keys goes back to an account higher
+//     in your order once it has usage again: at the end of a turn, so nothing is cut off,
+//     the same conversation reopens there. A line you plugged the cable into stays put.
 //
 // The hooks run in the background and only append one line to a file this process reads.
 
 const fs = require('fs');
 const path = require('path');
 const paths = require('./paths');
+const config = require('./config');
 const vault = require('./vault');
 const keys = require('./keys');
 const relay = require('./relay');
@@ -105,10 +109,11 @@ function parseArgs(args) {
   return { flags, words };
 }
 
-// The arguments that reopen this session's conversation and ask Claude to carry on.
-function resumeArgs(args, session) {
+// The arguments that reopen this session's conversation, and ask Claude to carry on unless
+// `prompt` is null (the turn had finished, so there's nothing to carry on with).
+function resumeArgs(args, session, prompt = CONTINUE_PROMPT) {
   const kept = parseArgs(args).flags.filter((f) => !CONVERSATION_FLAGS.has(f.name)).flatMap((f) => f.group);
-  return [...kept, '--resume', session, CONTINUE_PROMPT];
+  return [...kept, '--resume', session, ...(prompt ? [prompt] : [])];
 }
 
 // Adds our settings (the hooks, and the key helper when used) to any --settings the user
@@ -183,6 +188,21 @@ async function findNext(line, { cfg, bin, mode, liveKeyCheck = false }) {
   return null;
 }
 
+// For a session on API keys: the first account above them in your order that has usage
+// again. Automatic mode only; with the cable plugged in, your pick stays put. Read fresh
+// each time, so plugging the cable in or out mid-session counts.
+async function higherAccount(line, { bin, mode }) {
+  const cfg = config.load();
+  if (line.kind !== 'keys' || cfg.pinned || mode === 'api') return null;
+  const groups = relay.groups(cfg, vault.load().keys);
+  const here = groups.findIndex((g) => sameLine(g, line));
+  for (const g of groups.slice(0, Math.max(here, 0))) {
+    if (g.kind !== 'account' || recentlyLimited(g.account, cfg)) continue;
+    if ((await accounts.probe(g.account, bin)).ok) return g;
+  }
+  return null;
+}
+
 // Whether the stopped turn really ran out of usage (and not, say, a passing rate limit).
 async function confirmLimit(line, event, { cfg, bin }) {
   if (line.kind === 'account') {
@@ -236,6 +256,21 @@ function runOnce(bin, args, env, ctx) {
     let timer = null;
     // Look again every 2 minutes at first, then every 5 (tests shorten it).
     const recheckDelay = () => Number(process.env.CLAUDE_NONSTOP_RECHECK_MS) || (Date.now() - pending.at < 10 * 60000 ? 2 : 5) * 60000;
+    // On API keys, an account higher in your order that has usage again, found in the
+    // background every 5 minutes (tests shorten it) and moved to when a turn ends.
+    let upgrade = null;
+    let lookTimer = null;
+    const lookDelay = () => Number(process.env.CLAUDE_NONSTOP_UPGRADE_MS) || 5 * 60000;
+    async function lookUp() {
+      try {
+        const found = await higherAccount(ctx.line, ctx);
+        if (!moving && !gone) upgrade = found;
+      } catch (err) {
+        log(`session: looking for an account with usage failed: ${err.message}`);
+      }
+      if (!moving && !gone) lookTimer = setTimeout(lookUp, lookDelay());
+    }
+    if (ctx.line.kind === 'keys') lookTimer = setTimeout(lookUp, lookDelay());
 
     async function recover() {
       if (busy || !pending || moving) return;
@@ -263,14 +298,15 @@ function runOnce(bin, args, env, ctx) {
       }
     }
 
-    async function move(next) {
+    async function move(next, { up = false } = {}) {
       // If you quit Claude Code while the next line was being found, leave it closed.
       if (!session || gone) return;
       moving = true;
       clearInterval(poll);
       clearTimeout(timer);
+      clearTimeout(lookTimer);
       await claude.stopInteractive(started);
-      resolve({ next, session, why: pending.why });
+      resolve({ next, session, why: up ? null : pending.why, up });
     }
 
     const poll = setInterval(() => {
@@ -281,6 +317,8 @@ function runOnce(bin, args, env, ctx) {
           // session is moving again, so there's nothing to recover.
           pending = null;
           clearTimeout(timer);
+          // A turn just ended, so nothing is cut off: go back up if an account has usage again.
+          if (e.event === 'Stop' && upgrade && !moving && !config.load().pinned) move(upgrade, { up: true });
         } else if (e.event === 'StopFailure') {
           pending = { at: e.at, error: e.error, message: e.message, why: null };
           clearTimeout(timer);
@@ -291,6 +329,7 @@ function runOnce(bin, args, env, ctx) {
 
     started.exited.then((code) => {
       gone = true;
+      clearTimeout(lookTimer);
       if (moving) return;
       clearInterval(poll);
       clearTimeout(timer);
@@ -324,10 +363,11 @@ async function run({ bin, args, cfg, mode, line, prepare }) {
         say('stopped moving the conversation: every line keeps running out. Check `claude-nonstop status`.');
         return 1;
       }
-      say(`${describe(line)} reached its limit, so this conversation continues on ${describe(result.next)}.`);
-      log(`session: moving ${result.session} from ${describe(line)} to ${describe(result.next)}`);
+      if (result.up) say(`${describe(result.next)} has usage again, so this conversation moves back to it.`);
+      else say(`${describe(line)} reached its limit, so this conversation continues on ${describe(result.next)}.`);
+      log(`session: moving ${result.session} from ${describe(line)} to ${describe(result.next)}${result.up ? ' (back up)' : ''}`);
       line = result.next;
-      runArgs = resumeArgs(args, result.session);
+      runArgs = resumeArgs(args, result.session, result.up ? null : CONTINUE_PROMPT);
     }
   } finally {
     fs.rmSync(events, { force: true });
