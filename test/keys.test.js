@@ -66,13 +66,14 @@ test('the probe is the smallest possible request', async () => {
   assert.equal(sent.max_tokens, 1);
   assert.equal(sent.model, 'claude-haiku-5-5');
   assert.equal(api.requests[0].headers['anthropic-version'], keys.API_VERSION);
-  assert.equal(api.requests[0].headers['anthropic-beta'], 'claude-code-20250219', 'asked the way Claude Code is billed');
+  assert.equal(api.requests[0].headers['anthropic-beta'], undefined, 'a plain API request, the way the gateway sends keys');
+  assert.equal(api.requests[0].headers['x-app'], undefined);
 });
 
-test("a key whose credit doesn't cover Claude Code is marked as such", async () => {
+test('a key out of credit is used up', async () => {
   const result = await keys.check(entries('credit')[0], config.load());
   assert.equal(result.verdict, 'used-up');
-  assert.equal(result.scope, 'claude-code');
+  assert.equal(result.scope, undefined);
 });
 
 test('recognizes what is and is not an API key', () => {

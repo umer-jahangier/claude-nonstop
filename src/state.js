@@ -38,12 +38,9 @@ const forgetAccount = (id) =>
 // How much of an account's plan is used (see usage.js).
 const recordUsage = (id, usage) => update((s) => (s.usage[id] = usage));
 
-// A key whose credit doesn't cover Claude Code (scope 'claude-code') is set aside only for
-// Claude Code's requests; anything else may still use it.
-function isCoolingDown(id, minutes, { claudeCode = true } = {}) {
+function isCoolingDown(id, minutes) {
   const k = load().keys[id];
-  if (!k || k.verdict !== 'used-up' || Date.now() - k.at >= minutes * 60000) return false;
-  return claudeCode || k.scope !== 'claude-code';
+  return Boolean(k && k.verdict === 'used-up' && Date.now() - k.at < minutes * 60000);
 }
 
 // Records which account or key terminal sessions are on, writing only when it changes.

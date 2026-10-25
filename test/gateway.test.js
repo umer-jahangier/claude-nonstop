@@ -147,16 +147,6 @@ test('lists models even while every key is set aside, so the desktop app can con
   assert.equal(r.status, 402, 'real requests still skip it');
 });
 
-test("a key whose credit doesn't cover Claude Code is set aside for every request, since each goes out as Claude Code", async () => {
-  useKeys('ok');
-  const [entry] = vault.load().keys;
-  state.recordKey(entry.id, { verdict: 'used-up', status: 400, detail: 'Your credit balance is too low', scope: 'claude-code' });
-  let r = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token } });
-  assert.equal(r.status, 402, 'the desktop app is billed as Claude Code too');
-  r = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token, 'x-claude-nonstop-keys': entry.id } });
-  assert.equal(r.status, 402);
-});
-
 test("the desktop app's key is recorded apart from the line terminal sessions are on", async () => {
   useKeys('second');
   state.setCurrent('Main account');
@@ -167,7 +157,7 @@ test("the desktop app's key is recorded apart from the line terminal sessions ar
   assert.equal(s.desktop.label, 'second');
 });
 
-test("every request goes out as Claude Code, the desktop app's included: CLI user agent, x-app and the claude-code beta, never the app's own identity", async () => {
+test("a request on an API key goes out as plain API: no client identity, no Claude Code or OAuth betas, whoever sent it", async () => {
   useKeys('ok');
   const [entry] = vault.load().keys;
   api.requests.length = 0;
@@ -177,20 +167,21 @@ test("every request goes out as Claude Code, the desktop app's included: CLI use
     body: message(),
     headers: { 'x-api-key': token, 'user-agent': 'Claude/1.0 Electron', 'x-app': 'desktop', 'anthropic-beta': 'oauth-2025-04-20, fine-grained-tool-streaming-2025-05-14' },
   });
-  // A terminal session, which already names itself.
+  // A terminal session, which names itself as Claude Code.
   await call(`${base}/v1/messages`, {
     method: 'POST',
     body: message(),
     headers: { 'x-api-key': token, 'x-claude-nonstop-keys': entry.id, 'user-agent': 'claude-cli/2.1.310 (external, cli)', 'x-app': 'cli', 'anthropic-beta': 'oauth-2025-04-20,claude-code-20250219' },
   });
   const [desktop, session] = api.requests;
-  assert.equal(desktop.headers['user-agent'], 'claude-cli/2.1.310 (external, cli)');
-  assert.equal(desktop.headers['x-app'], 'cli');
-  assert.equal(desktop.headers['anthropic-beta'], 'claude-code-20250219,fine-grained-tool-streaming-2025-05-14', 'the OAuth flag goes, the feature beta stays');
+  assert.equal(desktop.headers['anthropic-beta'], 'fine-grained-tool-streaming-2025-05-14', 'the feature beta stays, the flags go');
+  assert.equal(desktop.headers['x-app'], undefined);
+  assert.ok(!/Claude\/1\.0/.test(String(desktop.headers['user-agent'] || '')));
   assert.equal(desktop.key, entry.key);
-  assert.equal(session.headers['user-agent'], 'claude-cli/2.1.310 (external, cli)');
-  assert.equal(session.headers['x-app'], 'cli');
-  assert.equal(session.headers['anthropic-beta'], 'claude-code-20250219');
+  assert.equal(session.headers['anthropic-beta'], undefined);
+  assert.equal(session.headers['x-app'], undefined);
+  assert.ok(!/claude-cli/.test(String(session.headers['user-agent'] || '')), 'any Claude Code signal would bill the key as Claude Code');
+  assert.equal(session.key, entry.key);
 });
 
 test('the desktop app runs on your subscription accounts first, in your order, and moves to the next line when one is at its limit', async () => {
@@ -242,7 +233,7 @@ test("a subscription sign-in gets Claude Code's system line first, since Anthrop
   }
 });
 
-test('when every account is out, the desktop app goes on to API keys, still as Claude Code', async () => {
+test('when every account is out, the desktop app goes on to API keys, as plain API', async () => {
   useKeys('ok');
   useAccounts('limited');
   try {
@@ -252,8 +243,8 @@ test('when every account is out, the desktop app goes on to API keys, still as C
     assert.equal(JSON.parse(r.body).id, 'msg_ok');
     const last = api.requests[api.requests.length - 1];
     assert.equal(last.key, testKey('ok'));
-    assert.equal(last.headers['anthropic-beta'], 'claude-code-20250219');
-    assert.match(last.headers['user-agent'], /^claude-cli\//);
+    assert.equal(last.headers['anthropic-beta'], undefined);
+    assert.equal(last.headers['x-app'], undefined);
   } finally {
     noAccounts();
   }

@@ -4,12 +4,14 @@
 //
 //   The desktop app, in third-party mode (no session header). It walks your relay order:
 //   on a subscription account, the request goes out on that account's own Claude Code
-//   sign-in; when every account is out, on the first API key with credit. Either way it
-//   goes out as Claude Code (the CLI user agent, x-app and the claude-code beta), never as
-//   the desktop app: the app's own identity stays on this computer.
+//   sign-in, as Claude Code (what a subscription sign-in requires); when every account is
+//   out, on the first API key with credit, as an ordinary API request. Any Claude Code
+//   signal on a key (the CLI user agent with x-app, or the claude-code beta) makes Anthropic
+//   bill the request as Claude Code, which much API credit doesn't cover, so on a key every
+//   identity is dropped and the request is plain API. The app's own identity never goes out.
 //
 //   A terminal Claude Code session on API keys (x-claude-nonstop-keys names its keys). The
-//   request goes out as Claude Code too, on one of the session's keys.
+//   request goes out as plain API too, on one of the session's keys.
 //
 //   A request signed in to a Claude.ai account (a subscription token as its bearer). The
 //   gateway spends no key on it: it goes to Anthropic exactly as sent, so Claude Code on an
@@ -30,7 +32,6 @@ const { log } = require('./files');
 // What a subscription sign-in needs to be accepted: Claude Code's identity and betas.
 const CLI_USER_AGENT = 'claude-cli/2.1.310 (external, cli)';
 const OAUTH_BETA = 'oauth-2025-04-20';
-const CLAUDE_CODE_BETA = 'claude-code-20250219';
 // A subscription sign-in accepts only Claude Code's own requests: the system prompt has to
 // begin with this line, or Anthropic answers 429 "Error". Claude Code's requests carry it;
 // the desktop app's startup probe doesn't, so the gateway puts it first when it's missing.
@@ -158,27 +159,35 @@ function splitBetas(value) {
   return [...new Set(String(value || '').split(',').map((b) => b.trim()).filter(Boolean))];
 }
 
-// Claude Code's identity on an outgoing request, whoever sent it: the CLI user agent and
-// x-app. On an API key it carries the claude-code beta (the way keys are tested, keys.js);
-// on a subscription sign-in it carries the OAuth beta instead, which is what Claude Code
-// itself sends on an account: the claude-code beta is refused there.
-function asClaudeCode(headers, { oauth = false } = {}) {
+// The client's headers without its identity, credentials or Claude Code's betas.
+function stripped(headers) {
   const out = {};
   for (const [name, value] of Object.entries(headers)) {
     const lower = name.toLowerCase();
     if (!DROP_REQUEST.has(lower) && !IDENTITY.has(lower)) out[lower] = value;
   }
   const betas = splitBetas(out['anthropic-beta']).filter((b) => !/^oauth-/i.test(b) && !/^claude-code(?:-|$)/i.test(b));
-  out['anthropic-beta'] = [oauth ? OAUTH_BETA : CLAUDE_CODE_BETA, ...betas].join(',');
-  out['user-agent'] = CLI_USER_AGENT;
-  out['x-app'] = 'cli';
+  if (betas.length) out['anthropic-beta'] = betas.join(',');
+  else delete out['anthropic-beta'];
   out['accept-encoding'] = 'identity';
   return out;
 }
 
-// Headers for a request going out on an API key, as Claude Code.
+// Claude Code's identity on a request going out on a subscription sign-in: the CLI user
+// agent, x-app and the OAuth beta, which is what Claude Code itself sends on an account
+// (the claude-code beta is refused there).
+function asClaudeCode(headers) {
+  const out = stripped(headers);
+  out['anthropic-beta'] = [OAUTH_BETA, ...splitBetas(out['anthropic-beta'])].join(',');
+  out['user-agent'] = CLI_USER_AGENT;
+  out['x-app'] = 'cli';
+  return out;
+}
+
+// Headers for a request going out on an API key: an ordinary API request, with no client
+// identity at all, so it's billed as plain API use.
 function upstreamHeaders(headers, key, length) {
-  const out = asClaudeCode(headers);
+  const out = stripped(headers);
   out['x-api-key'] = key;
   if (length !== undefined && length !== null) out['content-length'] = String(length);
   return out;
@@ -187,7 +196,7 @@ function upstreamHeaders(headers, key, length) {
 // Headers for the desktop app's request going out on one of your subscription accounts: the
 // account's sign-in, and Claude Code's identity and betas, which that sign-in requires.
 function accountHeaders(headers, token, length) {
-  const out = asClaudeCode(headers, { oauth: true });
+  const out = asClaudeCode(headers);
   out.authorization = `Bearer ${token}`;
   if (length !== undefined && length !== null) out['content-length'] = String(length);
   return out;
@@ -335,7 +344,7 @@ async function handle(req, res, ctx) {
     return;
   }
 
-  // Every request goes out as Claude Code; the desktop app's walk your accounts first.
+  // The desktop app's requests walk your accounts first, then keys as plain API.
   const desktop = !isSession(req);
   const free = isFree(req);
 
@@ -402,7 +411,6 @@ async function handle(req, res, ctx) {
   let lastError = '';
 
   for (const entry of eligible) {
-    // Every request is Claude Code's, so a key whose credit doesn't cover it is set aside.
     if (!free && state.isCoolingDown(entry.id, cfg.cooldownMinutes)) {
       cooled++;
       continue;
@@ -426,13 +434,10 @@ async function handle(req, res, ctx) {
       if (classifyResponse(upRes.statusCode, text) === 'used-up') {
         const detail = keys.errorMessage(text);
         lastError = detail;
-        // Out of credit for Claude Code: the credit may not cover it (see keys.js).
-        const scope = /credit balance/i.test(detail) ? { scope: 'claude-code' } : {};
         state.recordKey(entry.id, {
           verdict: 'used-up',
           status: upRes.statusCode,
           detail,
-          ...scope,
         });
         log(`gateway: API key "${entry.label}" unavailable (HTTP ${upRes.statusCode}); trying next key`);
         events.emit('switch', {
@@ -462,7 +467,7 @@ async function handle(req, res, ctx) {
       status: upRes.statusCode,
       path: req.url,
     });
-    log(`gateway: Claude Code request succeeded using key "${entry.label}" (HTTP ${upRes.statusCode})`);
+    log(`gateway: API request succeeded using key "${entry.label}" (HTTP ${upRes.statusCode})`);
     if (res.destroyed || res.headersSent) {
       upstream.destroy();
       return;
@@ -488,7 +493,7 @@ async function handle(req, res, ctx) {
       : !attempted
         ? `every API key is used up (${cooled} cooling down).`
         : 'every API key is used up for this request.';
-  log(`gateway: Claude Code request exhausted every line; attempted=${attempted}, coolingDown=${cooled}`);
+  log(`gateway: request exhausted every line; attempted=${attempted}, coolingDown=${cooled}`);
   if (!res.destroyed && !res.headersSent) {
     sendError(res, 402, 'billing_error',
       `claude-nonstop: ${reason}` + (lastError ? ` Last upstream error: ${lastError}` : ''));
