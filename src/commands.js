@@ -163,7 +163,12 @@ async function status() {
   out(`  claude shortcut    ${shell.status().installed ? 'on' : 'off'}`);
   const d = desktop.status(desktop.settings(cfg, v));
   out(`  Desktop app        ${!d.installed ? 'not installed' : d.automatic ? 'set up to use the gateway' : 'not set up yet (run `claude-nonstop desktop`)'}`);
-  out(`  In use             ${s.current || 'nothing yet'}`);
+  // Where a new terminal session starts: the cable's line, else the first line in your order
+  // with usage left. The gateway serves the desktop app from the API keys in that order.
+  const usable = (l) => (l.type === 'account' ? !(s.accounts[l.item.id] && !s.accounts[l.item.id].ok) : !state.isCoolingDown(l.item.id, cfg.cooldownMinutes));
+  const next = relay.active(cfg, v.keys).find(usable);
+  out(`  Sessions start on  ${next ? `${next.item.label}${next.type === 'key' ? ' (API key)' : ''}${cfg.pinned ? ' (the cable)' : ''}` : 'nothing with usage left'}`);
+  out(`  Last session       ${s.current ? `${s.current} (${ago(s.currentAt)})` : 'none yet'}`);
   out('');
   out('Your accounts and API keys, tried in this order:');
   relay.lines(cfg, v.keys).forEach((l, i) => out(`  ${describeLine(cfg, s, l, i)}`));

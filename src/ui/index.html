@@ -286,6 +286,9 @@ main { max-width: 1080px; margin: 0 auto; padding: 12px 20px 72px 44px; }
 .row-title { font-size: 0.9375rem; line-height: 1.33; font-weight: 500; letter-spacing: -0.015em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row-sub { font-size: 0.8125rem; line-height: 1.33; color: var(--label-2); letter-spacing: -0.003em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row-why { font-size: 0.8125rem; line-height: 1.38; color: var(--label-2); letter-spacing: -0.003em; overflow-wrap: anywhere; }
+/* How much of the account's plan is used: its own line, so the week is never cut off. */
+.row-usage { font-size: 0.8125rem; line-height: 1.38; color: var(--label-2); letter-spacing: -0.003em; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.row-usage[data-hot] { color: var(--orange); }
 .row[data-off] .row-title, .row[data-off] .symbol, .row[data-off] .row-sub { opacity: 0.45; }
 .grip { cursor: grab; touch-action: none; margin-right: -4px; }
 .grip:active { cursor: grabbing; }
@@ -1001,7 +1004,7 @@ function accountState(a) {
 function keyState(k) {
   const c = k.lastCheck;
   if (!k.enabled) return { s: 'off', word: 'Paused', ready: false };
-  if (c && c.verdict === 'used-up' && k.coolingDown) return { s: 'dead', word: c.scope === 'claude-code' ? 'No Claude Code credit' : 'Used up', ready: false };
+  if (c && c.verdict === 'used-up' && k.coolingDown) return { s: 'dead', word: c.scope === 'claude-code' ? 'No Claude Code credit' : 'Out of credit', ready: false };
   if (c && c.verdict === 'keep') return { s: 'warn', word: 'Kept', ready: true };
   if (c && c.verdict === 'ok') return { s: 'ready', word: 'Works', ready: true };
   return { s: '', word: 'Not tested', ready: true };
@@ -1095,7 +1098,7 @@ function renderAlerts() {
     const left = Math.max(1, S.settings.cooldownMinutes - Math.round((Date.now() - k.lastCheck.at) / 60000));
     const why = trimEnd(k.lastCheck.detail);
     const text = k.lastCheck.scope === 'claude-code'
-      ? `${k.label} has no credit that covers Claude Code. Promotional API credit often doesn't (check "Applies to" on your billing page). It's tried again in ${left} min.`
+      ? `${k.label}'s credit doesn't cover Claude Code: Anthropic answers "credit balance too low" to Claude Code's requests on it, the desktop app's included, though plain API requests go through. Buy credit that lists Claude Code under "Applies to" on your billing page. It's tried again in ${left} min.`
       : `${k.label} is used up${why ? `: ${why}` : ''}. Top it up; it's tried again in ${left} min.`;
     alerts.push({ tone: 'dead', text, acts: `<a class="btn" href="${BILLING_URL}" target="_blank" rel="noopener noreferrer">Top Up${icon('out')}</a><button class="btn" type="button" data-act="test-key" data-id="${esc(k.id)}" data-fk="alert-test:${esc(k.id)}">Test Now</button>` });
   }
@@ -1114,9 +1117,8 @@ function readoutFor(type, item) {
     const who = !login ? 'Checking sign-in…' : login.loggedIn ? login.email || 'Signed in' : login.loggedIn === false ? 'Signed out' : "Couldn't check sign-in";
     const c = item.lastCheck;
     const u = item.usage;
-    const when = [u && u.text, c ? `checked ${ago(c.at)}` : ''].filter(Boolean).join(' · ');
     const why = c && !c.ok ? c.reason : u && u.error ? `Usage: ${u.error}` : '';
-    return { ident: esc(who), when, why };
+    return { ident: esc(who), when: c ? `checked ${ago(c.at)}` : '', why, usage: u && u.text ? u.text : '', hot: Boolean(u && ((u.session && u.session.pct >= 90) || (u.week && u.week.pct >= 90))) };
   }
   const c = item.lastCheck;
   const why = c && c.verdict !== 'ok' ? trimEnd(c.detail) || (c.status ? `HTTP ${c.status}` : 'No answer') : '';
@@ -1151,7 +1153,7 @@ function rowHtml(type, item, liveId) {
   return `<li class="row" data-line="${type}:${id}"${isLive ? ' data-live' : ''}${!item.enabled ? ' data-off' : ''}>
     <button class="port" type="button" data-act="connect" data-target="${type}:${id}" data-fk="port:${id}" aria-label="Plug the cable into ${label}" title="Plug the cable in here"><span class="slot"></span></button>
     <span class="symbol" data-kind="${type}" aria-hidden="true">${icon(type === 'account' ? 'person' : 'key')}</span>
-    <div class="row-text">${title}${inline}<span class="row-sub">${r.ident}${r.when ? ` · ${esc(r.when)}` : ''}</span>${r.why ? `<span class="row-why">${esc(r.why)}</span>` : ''}</div>
+    <div class="row-text">${title}${inline}<span class="row-sub">${r.ident}${r.when ? ` · ${esc(r.when)}` : ''}</span>${r.usage ? `<span class="row-usage"${r.hot ? ' data-hot' : ''}>${esc(r.usage)}</span>` : ''}${r.why ? `<span class="row-why">${esc(r.why)}</span>` : ''}</div>
     ${state}${toggle}
     <button class="icon-btn more" type="button" data-act="menu" data-type="${type}" data-id="${id}" data-fk="menu:${id}" aria-haspopup="menu" aria-expanded="${expanded}" aria-label="Actions for ${label}" title="Actions">${icon('more')}</button>
     ${grip}
