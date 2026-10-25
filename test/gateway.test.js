@@ -126,12 +126,12 @@ test('lists models even while every key is set aside, so the desktop app can con
   assert.equal(r.status, 402, 'real requests still skip it');
 });
 
-test("a key whose credit doesn't cover Claude Code is set aside only for Claude Code", async () => {
+test("a key whose credit doesn't cover Claude Code is set aside for every request, since each goes out as Claude Code", async () => {
   useKeys('ok');
   const [entry] = vault.load().keys;
   state.recordKey(entry.id, { verdict: 'used-up', status: 400, detail: 'Your credit balance is too low', scope: 'claude-code' });
   let r = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token } });
-  assert.equal(r.status, 200, 'other API use goes through');
+  assert.equal(r.status, 402, 'the desktop app is billed as Claude Code too');
   r = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token, 'user-agent': 'claude-cli/2.1.310 (external, cli)' } });
   assert.equal(r.status, 402);
   r = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token, 'anthropic-beta': 'claude-code-20250219' } });

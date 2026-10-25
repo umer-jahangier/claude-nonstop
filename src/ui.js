@@ -110,6 +110,7 @@ function snapshot(ctx) {
     current: s.current,
     currentAt: s.currentAt,
     desktopKey: s.desktop,
+    desktopAdvice: s.desktopAdvice && { ...s.desktopAdvice, text: require('./desktopadvice').message(s.desktopAdvice) },
     claudeFound: Boolean(claude.findClaude()),
     checking: checks.checking(),
     accounts: cfg.accounts.map((a) => ({
@@ -131,7 +132,7 @@ function snapshot(ctx) {
     // Your relay order, accounts and keys mixed, as "account:<id>" / "key:<id>".
     order: relay.lines(cfg, v.keys).map((l) => relay.lineId(l.type, l.item.id)),
     pinned: cfg.pinned || null,
-    settings: { cooldownMinutes: cfg.cooldownMinutes, accountRecheckMinutes: cfg.accountRecheckMinutes, desktopStrictSandbox: Boolean(cfg.desktopStrictSandbox), desktopConnectors: cfg.desktopConnectors || [] },
+    settings: { cooldownMinutes: cfg.cooldownMinutes, accountRecheckMinutes: cfg.accountRecheckMinutes, desktopStrictSandbox: Boolean(cfg.desktopStrictSandbox), desktopConnectors: cfg.desktopConnectors || [], desktopAccount: cfg.desktopAccount || 'default', desktopAlerts: cfg.desktopAlerts !== false },
     traffic: events.stats(),
     shell: shell.status(),
     service: service.status(),
@@ -360,7 +361,17 @@ function editSettings(body) {
       c[name] = n;
     }
     if (typeof body.desktopStrictSandbox === 'boolean') c.desktopStrictSandbox = body.desktopStrictSandbox;
+    if (typeof body.desktopAlerts === 'boolean') c.desktopAlerts = body.desktopAlerts;
+    if (body.desktopAccount !== undefined) {
+      if (!c.accounts.some((a) => a.id === body.desktopAccount)) throw httpError(400, 'That account no longer exists.');
+      c.desktopAccount = body.desktopAccount;
+    }
   });
+  // A different account (or alerts turned off) changes the advice: work it out again now.
+  if (body.desktopAccount !== undefined || body.desktopAlerts !== undefined) {
+    state.setDesktopAdvice(null);
+    require('./desktopadvice').tick().catch(() => {});
+  }
 }
 
 function addConnector(body) {

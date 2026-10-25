@@ -8,7 +8,14 @@ const { readJson, writeJson } = require('./files');
 
 function load() {
   const s = readJson(paths.STATE, {});
-  return { keys: s.keys || {}, accounts: s.accounts || {}, current: s.current || null, currentAt: s.currentAt || null, desktop: s.desktop || null };
+  return {
+    keys: s.keys || {},
+    accounts: s.accounts || {},
+    current: s.current || null,
+    currentAt: s.currentAt || null,
+    desktop: s.desktop || null,
+    desktopAdvice: s.desktopAdvice || null,
+  };
 }
 
 function update(change) {
@@ -40,12 +47,13 @@ function setCurrent(label) {
   });
 }
 
-// The key the desktop app's requests last went out on. Kept apart from `current`: the
-// desktop app runs only on API keys, whatever line terminal sessions are on.
+// The key the desktop app's requests last went out on, and when. Kept apart from `current`:
+// the desktop app runs only on API keys, whatever line terminal sessions are on.
 function setDesktop(label) {
-  if ((load().desktop || {}).label === label) return;
   update((s) => (s.desktop = { label, at: Date.now() }));
 }
+
+const setDesktopAdvice = (advice) => update((s) => (s.desktopAdvice = advice));
 
 function clearCooldowns() {
   update((s) => {
@@ -54,4 +62,4 @@ function clearCooldowns() {
   });
 }
 
-module.exports = { load, recordKey, recordAccount, forgetKey, forgetAccount, isCoolingDown, setCurrent, setDesktop, clearCooldowns };
+module.exports = { load, recordKey, recordAccount, forgetKey, forgetAccount, isCoolingDown, setCurrent, setDesktop, setDesktopAdvice, clearCooldowns };
