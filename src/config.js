@@ -15,6 +15,7 @@ const DEFAULTS = {
   upstream: 'https://api.anthropic.com',
   autoUpdate: true, // the gateway installs new releases by itself
   desktopStrictSandbox: false, // keep the desktop app's Code sessions to an allowlist of sites
+  desktopConnectors: [], // MCP servers the desktop app lists as connectors in third-party mode
 };
 
 const DEFAULT_ACCOUNT = { id: 'default', label: 'Main account', kind: 'default', enabled: true };

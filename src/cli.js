@@ -26,6 +26,9 @@ Accounts and keys:
   claude-nonstop accounts check      check which accounts have usage left
   claude-nonstop accounts remove <n> sign out and remove account n
   claude-nonstop desktop             set the Claude desktop app up to use your keys
+  claude-nonstop connectors          list the desktop app's connectors
+  claude-nonstop connectors add <name> <https-url> [--no-oauth]
+  claude-nonstop connectors remove <name>
 
 Setup:
   claude-nonstop setup               everything at once (the installers run this)
@@ -71,6 +74,7 @@ async function main(argv) {
     case 'pause':
     case 'resume':
     case 'desktop':
+    case 'connectors':
     case 'setup':
     case 'service':
     case 'shell':

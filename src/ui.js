@@ -130,7 +130,7 @@ function snapshot(ctx) {
     // Your relay order, accounts and keys mixed, as "account:<id>" / "key:<id>".
     order: relay.lines(cfg, v.keys).map((l) => relay.lineId(l.type, l.item.id)),
     pinned: cfg.pinned || null,
-    settings: { cooldownMinutes: cfg.cooldownMinutes, accountRecheckMinutes: cfg.accountRecheckMinutes, desktopStrictSandbox: Boolean(cfg.desktopStrictSandbox) },
+    settings: { cooldownMinutes: cfg.cooldownMinutes, accountRecheckMinutes: cfg.accountRecheckMinutes, desktopStrictSandbox: Boolean(cfg.desktopStrictSandbox), desktopConnectors: cfg.desktopConnectors || [] },
     traffic: events.stats(),
     shell: shell.status(),
     service: service.status(),
@@ -362,6 +362,23 @@ function editSettings(body) {
   });
 }
 
+function addConnector(body) {
+  let entry;
+  try {
+    entry = desktop.connector(String(body.name || '').trim(), String(body.url || '').trim(), { oauth: body.oauth !== false });
+  } catch (err) {
+    throw httpError(400, `${err.message[0].toUpperCase()}${err.message.slice(1)}.`);
+  }
+  const same = (e) => e.name.toLowerCase() === entry.name.toLowerCase();
+  config.update((c) => (c.desktopConnectors = [...(c.desktopConnectors || []).filter((e) => !same(e)), entry]));
+  return entry;
+}
+
+function removeConnector(name) {
+  config.update((c) => (c.desktopConnectors = (c.desktopConnectors || []).filter((e) => e.name.toLowerCase() !== name.toLowerCase())));
+  return { ok: true };
+}
+
 // Runs `claude-nonstop desktop --quiet` in its own process: the system's admin prompt can
 // stay open for a while, and the gateway must keep serving meanwhile.
 function desktopAuto() {
@@ -407,6 +424,8 @@ async function route(method, pathname, body, ctx) {
   if (area === 'desktop' && method === 'POST' && !id) return desktopSetup(ctx);
   if (area === 'desktop' && method === 'POST' && id === 'reveal') return desktop.reveal();
   if (area === 'desktop' && method === 'POST' && id === 'auto') return desktopAuto();
+  if (area === 'connectors' && method === 'POST' && !id) return addConnector(body);
+  if (area === 'connectors' && method === 'DELETE' && id) return removeConnector(decodeURIComponent(id));
   if (area === 'settings' && method === 'PATCH') return editSettings(body);
   if (area === 'pin' && method === 'PUT') return setPin(body);
   if (area === 'pin' && method === 'DELETE') {

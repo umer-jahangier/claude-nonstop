@@ -38,11 +38,34 @@ function settings(cfg, v) {
     // sandbox mode) unless this list contains "*". This is your own computer, so by default
     // sessions reach any site, as in a normal install. Settings → Strict sandbox restores it.
     ...(cfg.desktopStrictSandbox ? {} : { coworkEgressAllowedHosts: JSON.stringify(['*']) }),
+    // Third-party mode leaves the built-in browser and desktop extensions off unless they
+    // are switched on, so Code sessions get the same browser pane and extensions as before.
+    builtinBrowserEnabled: 'true',
+    isDesktopExtensionEnabled: 'true',
+    // It also hides the claude.ai connector directory and the button for adding your own;
+    // connectors come only from this list. `claude-nonstop connectors add` fills it.
+    ...(connectors(cfg).length ? { managedMcpServers: JSON.stringify(connectors(cfg)) } : {}),
   };
 }
 
+const connectors = (cfg) => (Array.isArray(cfg.desktopConnectors) ? cfg.desktopConnectors : []);
+
+// A connector entry the app accepts: a remote server by URL, signing in through OAuth
+// unless it needs no sign-in.
+function connector(name, url, { oauth = true } = {}) {
+  if (!name || !/^[\w .-]{1,64}$/.test(name)) throw new Error('a connector name is letters, numbers, spaces, dots, dashes or underscores, up to 64 characters');
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new Error(`${url} isn't a URL`);
+  }
+  if (parsed.protocol !== 'https:') throw new Error('the desktop app only connects to https:// servers');
+  return { name, transport: 'http', url: parsed.href, ...(oauth ? { oauth: true } : {}) };
+}
+
 // Every key claude-nonstop may write, so one it no longer wants is removed, not left behind.
-const MANAGED_KEYS = ['inferenceProvider', 'inferenceGatewayBaseUrl', 'inferenceGatewayApiKey', 'inferenceGatewayAuthScheme', 'claudeAiImport', 'coworkEgressAllowedHosts'];
+const MANAGED_KEYS = ['inferenceProvider', 'inferenceGatewayBaseUrl', 'inferenceGatewayApiKey', 'inferenceGatewayAuthScheme', 'claudeAiImport', 'coworkEgressAllowedHosts', 'builtinBrowserEnabled', 'isDesktopExtensionEnabled', 'managedMcpServers'];
 
 // A copy of the settings as JSON, for typing into the app's window by hand if ever needed.
 function write(cfg, v) {
@@ -214,4 +237,4 @@ function reveal(file = paths.DESKTOP_CONFIG) {
   return { ok: true };
 }
 
-module.exports = { settings, write, status, reveal, STEPS, appInstalled, applied, managedChange, managedRemoval, macProfile, PROFILE };
+module.exports = { settings, connector, write, status, reveal, STEPS, appInstalled, applied, managedChange, managedRemoval, macProfile, PROFILE };

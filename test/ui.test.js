@@ -142,6 +142,18 @@ test('validates timing settings', async () => {
   assert.equal(JSON.parse((await apiCall('GET', '/api/state')).body).settings.cooldownMinutes, 45);
 });
 
+test('adds and removes desktop connectors, and puts them in the app settings', async () => {
+  assert.equal((await apiCall('POST', '/api/connectors', { name: 'Docs', url: 'http://example.com/mcp' })).status, 400);
+  assert.equal((await apiCall('POST', '/api/connectors', { name: 'Docs', url: 'https://example.com/mcp' })).status, 200);
+  let s = JSON.parse((await apiCall('GET', '/api/state')).body);
+  assert.deepEqual(s.settings.desktopConnectors, [{ name: 'Docs', transport: 'http', url: 'https://example.com/mcp', oauth: true }]);
+  const r = JSON.parse((await apiCall('POST', '/api/desktop')).body);
+  assert.deepEqual(JSON.parse(r.settings.managedMcpServers), s.settings.desktopConnectors);
+  assert.equal((await apiCall('DELETE', `/api/connectors/${encodeURIComponent('docs')}`)).status, 200);
+  s = JSON.parse((await apiCall('GET', '/api/state')).body);
+  assert.deepEqual(s.settings.desktopConnectors, []);
+});
+
 test('writes the desktop app file with the gateway address and token', async () => {
   const r = JSON.parse((await apiCall('POST', '/api/desktop')).body);
   assert.equal(r.settings.inferenceProvider, 'gateway');

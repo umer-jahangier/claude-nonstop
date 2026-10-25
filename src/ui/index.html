@@ -770,6 +770,9 @@ main { position: relative; z-index: 1; }
       <h1 class="view-title">Claude desktop app</h1>
       <p class="view-lede">The desktop app can run on your API keys through this gateway, which switches keys by itself when one runs out. Your Claude.ai subscription stays one click away on the app's sign-in screen.</p>
       <div class="group desk-card" id="desktop-auto" aria-live="polite"></div>
+      <div class="group-head"><h2>Connectors</h2></div>
+      <ul class="group list flat" id="desktop-connectors"></ul>
+      <p class="group-foot">When the app runs on your API keys it hides its own connector directory and Add button, and lists the connectors you add here instead. Adding or removing one updates the app's settings: on a Mac, approve the updated profile in System Settings, then reopen the app. On Claude.ai sign-in, the app's own Connectors page works as usual.</p>
       <div class="group-head"><h2>Or set it up by hand</h2></div>
       <ol class="group list steps" id="desktop-steps"></ol>
       <div class="group-head"><h2>Connection details</h2></div>
@@ -1166,6 +1169,8 @@ function renderDesktop() {
     <div class="row"><span class="k">API key</span><span class="v mono">${esc(shown)}</span><span class="acts"><button class="icon-btn" type="button" data-act="toggle-token" data-fk="toggle-token" aria-label="${ui.showToken ? 'Hide' : 'Show'} the gateway key" title="${ui.showToken ? 'Hide' : 'Show'}">${icon('eye')}</button><button class="icon-btn" type="button" data-act="copy-token" data-fk="copy-token" aria-label="Copy the gateway key" title="Copy">${icon('copy')}</button></span></div>
     <div class="row"><span class="k">Auth scheme</span><span class="v">Bearer</span></div>`;
   $('#desktop-file').textContent = desktopInfo ? `The same values are saved in ${desktopInfo.file}` : '';
+  $('#desktop-connectors').innerHTML = S.settings.desktopConnectors.map((c) => `<li class="row"><span class="row-text"><span class="row-title">${esc(c.name)}</span><span class="row-sub mono">${esc(c.url)}${c.oauth ? '' : ' · no sign-in'}</span></span><span class="acts"><button class="icon-btn" type="button" data-act="remove-connector" data-id="${esc(c.name)}" data-fk="remove-connector-${esc(c.name)}" aria-label="Remove the ${esc(c.name)} connector" title="Remove">${icon('trash')}</button></span></li>`).join('')
+    + `<li class="row add"><button class="add-btn" type="button" data-act="add-connector" data-fk="add-connector"><span class="tile">${icon('plus-circle')}</span>Add Connector…</button></li>`;
   renderDesktopCard();
 }
 
@@ -1191,6 +1196,14 @@ function renderDesktopCard() {
   }
   card.dataset.state = state;
   card.innerHTML = `<span class="desk-icon">${icon(state === 'done' ? 'check' : 'desktop')}</span><div>${body}</div>`;
+}
+
+// Hands a changed connector list to the desktop app, the same way the Strict sandbox switch does.
+async function applyConnectors(done) {
+  if (!S.desktop.installed) { toast(`${done} It applies when the desktop app is set up.`); return; }
+  toast(`${done} Updating the desktop app's settings. Approve the change if asked, then reopen the app.`);
+  await api('POST', '/api/desktop/auto');
+  await refresh();
 }
 
 function renderSettings() {
@@ -2597,6 +2610,19 @@ function sheetContent() {
       <div class="sheet-actions"><button class="btn large" type="button" data-act="close-sheet">Cancel</button><button class="btn large primary" type="submit">Save and Test</button></div>
     </form>`;
   }
+  if (sh.kind === 'add-connector') {
+    return `<form data-form="add-connector" autocomplete="off">
+      <h2 id="sheet-title">Add a connector</h2>
+      <p class="lede">A remote MCP server, by its https:// address. The desktop app lists it under Connectors when it runs on your API keys, and asks you to sign in to it there.</p>
+      <div class="fields">
+        <div class="field"><label for="f-cname">Name</label><input id="f-cname" name="name" maxlength="64" placeholder="Linear, Notion…" autofocus spellcheck="false"></div>
+        <div class="field"><label for="f-curl">Address</label><input id="f-curl" class="mono-input" name="url" type="url" placeholder="https://mcp.example.com/mcp" spellcheck="false" autocapitalize="off"></div>
+      </div>
+      <p class="hint">Find the address in the service's MCP or connector docs. Servers that need no sign-in can be added with <code>claude-nonstop connectors add &lt;name&gt; &lt;url&gt; --no-oauth</code>.</p>
+      <p class="sheet-error" id="sheet-error" role="alert" hidden></p>
+      <div class="sheet-actions"><button class="btn large" type="button" data-act="close-sheet">Cancel</button><button class="btn large primary" type="submit">Add</button></div>
+    </form>`;
+  }
   if (sh.kind === 'confirm') {
     const item = itemFor(sh.type, sh.id);
     const name = esc(item ? item.label : 'this line');
@@ -2726,6 +2752,12 @@ const actions = {
   'add-account': () => openSheet('add-account'),
   'add-key': () => { if (ui.view !== 'relay') showView('relay'); openSheet('add-key'); },
   'close-sheet': () => closeSheet(),
+  'add-connector': () => openSheet('add-connector'),
+  'remove-connector': async (id) => {
+    await api('DELETE', `/api/connectors/${encodeURIComponent(id)}`);
+    await refresh();
+    await applyConnectors(`Removed ${id}.`);
+  },
   'ask-remove': (id, el) => openSheet('confirm', { type: el.dataset.type, id }),
   rename: (id, el) => {
     const item = itemFor(el.dataset.type, id);
@@ -2893,6 +2925,12 @@ document.addEventListener('submit', async (event) => {
       await closeSheet();
       await refresh();
       toast(r.check.verdict === 'ok' ? 'Key saved, and it works.' : r.check.verdict === 'used-up' ? `Key saved, but it's used up: ${r.check.detail || `HTTP ${r.check.status}`}` : `Key saved. The test said: ${r.check.detail || (r.check.status ? `HTTP ${r.check.status}` : 'no answer')}`);
+    } else if (kind === 'add-connector') {
+      if (!String(data.name || '').trim()) { sheetError('Give the connector a name, like Linear or Notion.'); return; }
+      const c = await api('POST', '/api/connectors', { name: data.name, url: data.url });
+      await closeSheet();
+      await refresh();
+      await applyConnectors(`Added ${c.name}.`);
     } else if (kind === 'rename') {
       const name = String(data.label || '').trim();
       const id = form.dataset.id;

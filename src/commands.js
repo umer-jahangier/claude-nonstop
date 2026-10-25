@@ -402,6 +402,50 @@ function desktopCommand(args = []) {
   return 0;
 }
 
+// Connectors for the desktop app in third-party mode, where its own Add button is hidden.
+function connectorsCommand(args = []) {
+  ensureHome();
+  const [sub, ...rest] = args;
+  const list = () => config.load().desktopConnectors || [];
+  if (sub === 'add') {
+    const noAuth = rest.includes('--no-oauth');
+    const [name, url] = rest.filter((a) => a !== '--no-oauth');
+    if (!name || !url) {
+      say('usage: claude-nonstop connectors add <name> <https-url> [--no-oauth]');
+      return 1;
+    }
+    let entry;
+    try {
+      entry = desktop.connector(name, url, { oauth: !noAuth });
+    } catch (err) {
+      say(err.message);
+      return 1;
+    }
+    config.update((c) => {
+      c.desktopConnectors = [...(c.desktopConnectors || []).filter((e) => e.name.toLowerCase() !== name.toLowerCase()), entry];
+    });
+    out(`Added the connector ${name} (${entry.url}).`);
+  } else if (sub === 'remove') {
+    const name = rest.join(' ');
+    if (!list().some((e) => e.name.toLowerCase() === name.toLowerCase())) {
+      say(`there is no connector called ${name || '""'}. \`claude-nonstop connectors\` lists them.`);
+      return 1;
+    }
+    config.update((c) => {
+      c.desktopConnectors = c.desktopConnectors.filter((e) => e.name.toLowerCase() !== name.toLowerCase());
+    });
+    out(`Removed the connector ${name}.`);
+  } else {
+    const all = list();
+    if (!all.length) out('No connectors yet. Add one with `claude-nonstop connectors add <name> <https-url>`.');
+    for (const e of all) out(`  ${e.name}  ${e.url}${e.oauth ? '' : '  (no sign-in)'}`);
+    out('Connectors show in the Claude desktop app when it runs on your API keys. On Claude.ai sign-in, use its own Connectors page.');
+    return 0;
+  }
+  if (setUpDesktop(false) === 'manual') out('Run `claude-nonstop desktop` to give the desktop app the new list.');
+  return 0;
+}
+
 // ---------------------------------------------------------------- setup / service / shell
 
 function optionValue(args, name) {
@@ -607,6 +651,7 @@ module.exports = {
   pause: (args) => pauseCommand(true, args),
   resume: (args) => pauseCommand(false, args),
   desktop: desktopCommand,
+  connectors: connectorsCommand,
   setup,
   service: serviceCommand,
   shell: shellCommand,

@@ -151,6 +151,8 @@ Then **quit and reopen the desktop app.** Its sign-in screen offers the third-pa
 
 **Your chats come along.** Third-party mode keeps its own history, separate from claude.ai. claude-nonstop turns on Anthropic's [import](https://claude.com/docs/third-party/claude-desktop/import): in the desktop app, open **Settings → Import & export → Import…** to bring over your claude.ai chats and projects and the Code and Cowork sessions already on this computer. A new chat also offers the import when it finds earlier sessions. It's a copy: your claude.ai history stays where it is, and running it again adds only what's new.
 
+**Browser, extensions, plugins and connectors work as before.** Third-party mode turns some of these off unless they're switched on, so claude-nonstop switches them on: the built-in browser in Code sessions (with its address bar, not just the localhost preview), desktop extensions, and Anthropic's plugin marketplace in Claude Code. The app also hides its connector directory and its Add button in third-party mode, and takes connectors only from its managed settings. Add yours on the page's **Desktop App** tab, or with `claude-nonstop connectors add <name> <https-url>`, and the app lists them under Connectors and asks you to sign in to each one. On a Mac, each change to the list means approving the updated profile in System Settings. Connectors made by Anthropic itself (such as Gmail or Google Drive) only work on the Claude.ai sign-in.
+
 Installed the desktop app later? Run `claude-nonstop desktop`, or click **Set Up Automatically** on the page's **Desktop App** tab.
 
 ## Commands
@@ -175,6 +177,9 @@ Installed the desktop app later? Run `claude-nonstop desktop`, or click **Set Up
 | `claude-nonstop accounts on <n>` / `off <n>` | Turn account n on or off |
 | `claude-nonstop accounts remove <n>` | Sign out of account n and remove it |
 | `claude-nonstop desktop` | Set up the Claude desktop app |
+| `claude-nonstop connectors` | List the connectors the desktop app shows when it runs on your API keys |
+| `claude-nonstop connectors add <name> <https-url>` | Add a connector (signs in with OAuth; `--no-oauth` for servers without sign-in) |
+| `claude-nonstop connectors remove <name>` | Remove a connector |
 | `claude-nonstop setup` | Run the whole setup again (safe to repeat) |
 | `claude-nonstop service install` / `uninstall` | Start the gateway at login, or stop doing so |
 | `claude-nonstop shell install` / `uninstall` | Make plain `claude` go through claude-nonstop, or undo it |
