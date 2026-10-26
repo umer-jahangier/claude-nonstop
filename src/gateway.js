@@ -314,6 +314,8 @@ function asResponsesBody(json, model, { chatgpt }) {
   const out = { ...json, model, store: false };
   if (chatgpt) {
     out.stream = true;
+    // The backend takes input only as a list of items.
+    if (typeof out.input === 'string') out.input = [{ type: 'message', role: 'user', content: [{ type: 'input_text', text: out.input }] }];
     delete out.previous_response_id;
     delete out.service_tier;
     delete out.safety_identifier;
