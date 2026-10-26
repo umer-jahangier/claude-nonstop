@@ -23,6 +23,7 @@ const tls = require('./tls');
 const service = require('./service');
 const shell = require('./shell');
 const clients = require('./clients');
+const codex = require('./codex');
 const prompt = require('./prompt');
 const openaiAuth = require('./openai-auth');
 const providers = require('./providers');
@@ -421,7 +422,11 @@ function connectCommand(args = []) {
   out(`from the other service goes to that line's default (${cfg.models.anthropic} / ${cfg.models.openai}).`);
   if (show('codex')) {
     out('');
-    out('Codex CLI: add this to ~/.codex/config.toml, then run `codex` as usual:');
+    if (codex.installed() && !args.includes('--print')) {
+      const c = codex.apply(cfg, v);
+      out(`Codex: ${c.changed ? 'now set up' : 'already set up'} in ${c.file}. Run \`codex\` (or open the Codex app) as usual; it needs no OpenAI sign-in.`);
+      out('The lines it holds, if you want to add them to another Codex by hand:');
+    } else out('Codex CLI: add this to ~/.codex/config.toml, then run `codex` as usual:');
     out('');
     out(`  model = "${cfg.models.openai}"`);
     out('  model_provider = "claude-nonstop"');
@@ -430,9 +435,8 @@ function connectCommand(args = []) {
     out('  name = "claude-nonstop"');
     out(`  base_url = "${url}/v1"`);
     out('  wire_api = "responses"');
-    out('  env_key = "CLAUDE_NONSTOP_TOKEN"');
-    out('');
-    out(`  and put the token in your shell: export CLAUDE_NONSTOP_TOKEN=${v.gatewayToken}`);
+    out(`  experimental_bearer_token = "${v.gatewayToken}"`);
+    out('  requires_openai_auth = false');
   }
   if (show('cursor')) {
     out('');
@@ -612,6 +616,14 @@ async function setup(args = []) {
   if (wired.ok) out('- Claude Code in the terminal, VS Code, and Cursor sends its requests through the local gateway.');
   else out(`! Couldn't point Claude Code at the gateway (${wired.reason}). Fix ${clients.settingsFile()} and run \`claude-nonstop setup\` again.`);
   if (wired.permissionChanged) out('- Running as root, so bypass-permissions mode was turned off. Claude Code refuses to start in that mode as root.');
+  if (codex.installed()) {
+    try {
+      const c = codex.apply(config.load(), v);
+      out(`- Codex (the \`codex\` command and the Codex app) sends its requests through the local gateway too, so it needs no OpenAI sign-in (${c.file}).`);
+    } catch (err) {
+      out(`! Couldn't point Codex at the gateway: ${err.message}. Run \`claude-nonstop connect codex\` to see the lines to add by hand.`);
+    }
+  }
   out('');
   out('Next: add your subscription accounts and API keys in the web UI.');
   if (!args.includes('--no-open')) return ui([]);
@@ -686,6 +698,7 @@ async function uninstall(args = []) {
   shell.uninstall();
   out('- Plain `claude` runs Claude Code directly again (in new terminals).');
   if (clients.remove().ok) out('- Claude Code in the terminal, VS Code, and Cursor no longer uses the local gateway.');
+  if (codex.remove().changed) out('- Codex no longer uses the local gateway; its earlier model settings are back.');
   if (system.remove().hosts) out(`- The short address ${hostsfile.PRIMARY} and the desktop app's settings are removed from this computer.`);
   else out(`! Couldn't remove the ${hostsfile.PRIMARY} lines from ${hostsfile.hostsPath()} (it needs administrator rights). They're harmless; delete them by hand if you like.`);
   tls.uninstall();

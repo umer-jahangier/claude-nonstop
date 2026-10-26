@@ -176,7 +176,7 @@ The gateway speaks three formats: Anthropic's Messages API (`/v1/messages`, Clau
 
 **OpenAI API keys.** Paste one where you'd paste a Claude key; it's told apart by how it looks (`sk-…` rather than `sk-ant-api…`). Keys next to each other in the order still work as one team, even across services.
 
-**Codex.** `claude-nonstop connect codex` prints the lines for `~/.codex/config.toml`:
+**Codex.** When Codex (the `codex` command or the Codex app) is on this computer, `claude-nonstop setup` points it at the gateway by writing a `claude-nonstop` model provider into `~/.codex/config.toml` and selecting it; `claude-nonstop connect codex` does the same on its own, and `claude-nonstop uninstall` puts Codex's earlier model settings back. Codex then needs no OpenAI sign-in: run `codex` as usual and its requests go out on whichever line is next, a Claude account included. The lines it writes:
 
 ```toml
 model = "gpt-5.5"
@@ -186,10 +186,9 @@ model_provider = "claude-nonstop"
 name = "claude-nonstop"
 base_url = "http://127.0.0.1:43117/v1"
 wire_api = "responses"
-env_key = "CLAUDE_NONSTOP_TOKEN"
+experimental_bearer_token = "<gateway token>"
+requires_openai_auth = false
 ```
-
-and the token to export as `CLAUDE_NONSTOP_TOKEN`. Then run `codex` as usual: its requests go out on whichever line is next, a Claude account included.
 
 **Cursor.** In Cursor's model settings turn on **Override OpenAI Base URL**, enter `http://127.0.0.1:43117/v1` and the gateway token as the API key (`claude-nonstop connect cursor` prints both). This is Cursor's own-key mode, which Cursor limits: Tab completions and some agent features stay off, and requests still pass through Cursor's servers.
 
@@ -215,7 +214,7 @@ and the token to export as `CLAUDE_NONSTOP_TOKEN`. Then run `codex` as usual: it
 | `claude-nonstop accounts` | List accounts and who each one is signed in as |
 | `claude-nonstop accounts add [name]` | Add a Claude account and sign in to it |
 | `claude-nonstop accounts add [name] --chatgpt` | Add a ChatGPT account and sign in to it (`--import-codex` takes Codex's existing sign-in) |
-| `claude-nonstop connect [codex\|cursor]` | How to point Codex, Cursor or any OpenAI-compatible tool at the gateway |
+| `claude-nonstop connect [codex\|cursor]` | Point Codex at the gateway (done by setup too), and show how to point Cursor or any OpenAI-compatible tool at it |
 | `claude-nonstop accounts login <n>` | Sign in to account n again |
 | `claude-nonstop accounts check` | Check which accounts have usage left |
 | `claude-nonstop accounts on <n>` / `off <n>` | Turn account n on or off |
@@ -267,6 +266,7 @@ Nothing is hidden. Here's everything, and how each part is undone:
 | --- | --- | --- |
 | The app, its Node.js, your encrypted keys and settings | `~/.claude-nonstop` | `claude-nonstop uninstall --purge` |
 | The `claude` shortcut | A marked block in your zsh, bash and fish startup files; on Windows, a `claude.cmd` placed first on your user PATH | `claude-nonstop shell uninstall` |
+| Codex's model provider | `model`, `model_provider` and a `[model_providers.claude-nonstop]` table in `~/.codex/config.toml` (earlier values kept in `~/.claude-nonstop/codex.json`) | `claude-nonstop uninstall` |
 | Start at login | macOS LaunchAgent `dev.claude-nonstop.gateway`; Linux systemd user service `claude-nonstop` (or an autostart entry); Windows `HKCU\…\Run` entry | `claude-nonstop service uninstall` |
 | Short address | A marked block in your hosts file (`/etc/hosts`, or `C:\Windows\System32\drivers\etc\hosts`) | `claude-nonstop uninstall` |
 | Trusted certificate | macOS login keychain; Windows current-user root store; Linux browser certificate stores | `claude-nonstop uninstall` |
