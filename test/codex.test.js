@@ -82,3 +82,22 @@ test('removal of a configuration we never touched changes nothing', () => {
   assert.equal(codex.remove().changed, false);
   assert.equal(read(), 'model = "gpt-5.5"\n');
 });
+
+test('the web UI reports Codex and sets it up with one request', async () => {
+  fs.rmSync(process.env.CODEX_HOME, { recursive: true, force: true });
+  fs.mkdirSync(process.env.CODEX_HOME, { recursive: true }); // Codex's folder counts as installed
+  config.update((c) => (c.models = { anthropic: 'claude-sonnet-5-5', openai: 'gpt-5.5' }));
+  const ui = require('../src/ui');
+  const ctx = require('../src/server').createContext();
+  let snap = await ui.route('GET', '/api/state', {}, ctx);
+  assert.deepEqual({ installed: snap.codex.installed, wired: snap.codex.wired }, { installed: true, wired: false });
+  const r = await ui.route('POST', '/api/codex', {}, ctx);
+  assert.equal(r.wired, true);
+  snap = await ui.route('GET', '/api/state', {}, ctx);
+  assert.equal(snap.codex.wired, true);
+  assert.deepEqual(snap.settings.models, { anthropic: 'claude-sonnet-5-5', openai: 'gpt-5.5' });
+  // Changing the default OpenAI model updates what Codex asks for.
+  await ui.route('PATCH', '/api/settings', { models: { openai: 'gpt-5.4' } }, ctx);
+  assert.match(read(), /^model = "gpt-5\.4"/);
+  await assert.rejects(ui.route('PATCH', '/api/settings', { models: { openai: 'not a model' } }, ctx));
+});

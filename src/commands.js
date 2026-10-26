@@ -167,6 +167,7 @@ async function status() {
   out(`  claude shortcut    ${shell.status().installed ? 'on' : 'off'}`);
   const d = desktop.status(desktop.settings(cfg, v));
   out(`  Desktop app        ${!d.installed ? 'not installed' : d.automatic ? 'set up to use the gateway' : 'not set up yet (run `claude-nonstop desktop`)'}`);
+  out(`  Codex              ${!codex.installed() ? 'not installed' : codex.status(cfg).wired ? 'set up to use the gateway (no OpenAI sign-in needed)' : 'not set up yet (run `claude-nonstop connect codex`)'}`);
   // Where a new terminal session starts: the cable's line, else the first line in your order
   // with usage left. The gateway serves the desktop app from the API keys in that order.
   const usable = (l) => (l.type === 'account' ? !(s.accounts[l.item.id] && !s.accounts[l.item.id].ok) : !state.isCoolingDown(l.item.id, cfg.cooldownMinutes));

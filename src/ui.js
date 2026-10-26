@@ -24,6 +24,7 @@ const shell = require('./shell');
 const { sameToken, readBody } = require('./gateway');
 const openaiAuth = require('./openai-auth');
 const providers = require('./providers');
+const codex = require('./codex');
 const hosts = require('./hosts');
 const events = require('./events');
 const checks = require('./checks');
@@ -143,6 +144,7 @@ function snapshot(ctx) {
     shell: shell.status(),
     service: service.status(),
     desktop: { ...desktop.status(desktop.settings(cfg, v)), platform: process.platform, steps: desktop.STEPS, baseUrl: `http://127.0.0.1:${cfg.port}` },
+    codex: { installed: codex.installed(), ...codex.status(cfg) },
   };
 }
 
@@ -432,7 +434,7 @@ function editSettings(body) {
       for (const id of ['anthropic', 'openai']) {
         if (typeof body.models[id] !== 'string') continue;
         const model = body.models[id].trim();
-        if (!model || model.length > 80) throw httpError(400, 'Give a model name.');
+        if (!model || model.length > 80 || !/^[\w.:/-]+$/.test(model)) throw httpError(400, 'Give a model name, like claude-sonnet-5-5 or gpt-5.5.');
         c.models = { ...c.models, [id]: model };
       }
     }
@@ -443,6 +445,14 @@ function editSettings(body) {
       c.desktopAccount = body.desktopAccount;
     }
   });
+  // Codex is told the model it should ask for; keep it current.
+  if (body.models && codex.status(config.load()).wired) {
+    try {
+      codex.apply(config.load(), vault.loadWithTokens());
+    } catch (err) {
+      log(`codex: couldn't update its model: ${err.message}`);
+    }
+  }
   // A different account (or alerts turned off) changes the advice: work it out again now.
   if (body.desktopAccount !== undefined || body.desktopAlerts !== undefined) {
     state.setDesktopAdvice(null);
@@ -510,6 +520,12 @@ async function route(method, pathname, body, ctx) {
     if (method === 'POST' && action === 'input') return jobInput(id, body.text);
   }
   if (area === 'desktop' && method === 'POST' && !id) return desktopSetup(ctx);
+  if (area === 'codex' && method === 'POST' && !id) {
+    const { cfg, vault: v } = ctx.current();
+    const r = codex.apply(cfg, v);
+    log(`codex ${r.changed ? 'set up' : 'already set up'} in ${r.file}`);
+    return { ...r, wired: codex.status(cfg).wired };
+  }
   if (area === 'desktop' && method === 'POST' && id === 'reveal') return desktop.reveal();
   if (area === 'desktop' && method === 'POST' && id === 'auto') return desktopAuto();
   if (area === 'connectors' && method === 'POST' && !id) return addConnector(body);

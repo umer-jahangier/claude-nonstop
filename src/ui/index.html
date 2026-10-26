@@ -284,9 +284,14 @@ main { max-width: 1080px; margin: 0 auto; padding: 12px 20px 72px 44px; }
 .list > .row:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
 .row-text { flex: 1; min-width: 0; display: grid; gap: 1px; }
 .badge { display: inline-block; margin-left: 0.4em; padding: 0 0.45em; border-radius: 999px; font-size: 0.6875rem; line-height: 1.5; font-weight: 600; letter-spacing: 0.02em; vertical-align: 0.1em; color: var(--muted, #888); border: 1px solid currentColor; opacity: 0.8; }
-.service-pick { display: flex; gap: 0.5rem; }
-.service-pick label { flex: 1; display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 0.75rem; border: 1px solid var(--line, rgba(128,128,128,0.35)); border-radius: 0.6rem; cursor: pointer; }
-.service-pick input { margin: 0; }
+.field .service-pick { flex: 1; display: flex; gap: 8px; padding: 7px 0; }
+.field .service-pick label { flex: 1; width: auto; display: flex; align-items: center; gap: 8px; min-height: 30px; padding: 0 10px; border-radius: 7px; background: var(--fill); color: var(--label); cursor: pointer; white-space: nowrap; }
+.field .service-pick label:has(input:checked) { box-shadow: inset 0 0 0 2px var(--focus); }
+.field .service-pick label .hint { margin: 0; font-size: 0.75rem; }
+.field input[type="radio"], .field input[type="checkbox"] { flex: none; width: auto; height: auto; margin: 0; accent-color: var(--focus); }
+.field label.check { width: auto; flex: 1; display: flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer; }
+.model-input { flex: none; width: 190px; height: 30px; padding: 0 8px; border: 0; border-radius: 7px; background: var(--fill); color: var(--label); font-family: var(--mono); font-size: 0.8125rem; letter-spacing: 0; text-align: right; }
+.model-input:focus-visible { outline-offset: 0; }
 .row-title { font-size: 0.9375rem; line-height: 1.33; font-weight: 500; letter-spacing: -0.015em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row-sub { font-size: 0.8125rem; line-height: 1.33; color: var(--label-2); letter-spacing: -0.003em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row-why { font-size: 0.8125rem; line-height: 1.38; color: var(--label-2); letter-spacing: -0.003em; overflow-wrap: anywhere; }
@@ -718,7 +723,7 @@ main { position: relative; z-index: 1; }
     <div class="segmented" role="tablist" aria-label="Sections">
       <span class="seg-thumb" aria-hidden="true"></span>
       <button class="seg" role="tab" id="tab-relay" aria-controls="view-relay" aria-selected="true" data-view="relay">Relay</button>
-      <button class="seg" role="tab" id="tab-desktop" aria-controls="view-desktop" aria-selected="false" data-view="desktop" tabindex="-1">Desktop App</button>
+      <button class="seg" role="tab" id="tab-desktop" aria-controls="view-desktop" aria-selected="false" data-view="desktop" tabindex="-1">Apps</button>
       <button class="seg" role="tab" id="tab-settings" aria-controls="view-settings" aria-selected="false" data-view="settings" tabindex="-1">Settings</button>
     </div>
     <div class="tool-end">
@@ -775,15 +780,23 @@ main { position: relative; z-index: 1; }
 
   <section id="view-desktop" role="tabpanel" aria-labelledby="tab-desktop" hidden>
     <div class="view">
-      <h1 class="view-title">Claude desktop app</h1>
-      <p class="view-lede">The desktop app can run on your API keys through this gateway, which switches keys by itself when one runs out. Your Claude.ai subscription stays one click away on the app's sign-in screen.</p>
+      <h1 class="view-title">Apps</h1>
+      <p class="view-lede">Every app that reaches this gateway runs on your whole order: Claude and ChatGPT accounts, then API keys. Claude Code in the terminal is set up by <code>claude-nonstop setup</code>; the apps here each take one step.</p>
+      <div class="group-head"><h2>Claude desktop app</h2></div>
       <div class="group desk-card" id="desktop-auto" aria-live="polite"></div>
+      <p class="group-foot">On its sign-in screen, the third-party option runs the app through this gateway; its Claude.ai sign-in stays one click away.</p>
+      <div class="group-head"><h2>Codex</h2></div>
+      <div class="group desk-card" id="codex-card" aria-live="polite"></div>
+      <p class="group-foot">Codex (the <code>codex</code> command and the Codex app) reads <code>~/.codex/config.toml</code>. Setting it up writes a claude-nonstop model provider there and selects it, so Codex needs no OpenAI sign-in. Only those lines are touched, and <code>claude-nonstop uninstall</code> puts the earlier ones back.</p>
+      <div class="group-head"><h2>Cursor and other OpenAI-compatible tools</h2></div>
+      <div class="group list values" id="openai-values"></div>
+      <p class="group-foot">Cursor: in its model settings turn on <b>Override OpenAI Base URL</b> and enter these. Cursor limits its own-key mode (Tab and some agent features stay off, and requests still pass through Cursor's servers). Anything else that takes <code>OPENAI_BASE_URL</code> and <code>OPENAI_API_KEY</code> works the same way.</p>
       <div class="group-head"><h2>Connectors</h2></div>
       <ul class="group list flat" id="desktop-connectors"></ul>
       <p class="group-foot">When the app runs on your API keys it hides its own connector directory and Add button, and lists the connectors you add here instead. Adding or removing one updates the app's settings: on a Mac, approve the updated profile in System Settings, then reopen the app. On Claude.ai sign-in, the app's own Connectors page works as usual.</p>
-      <div class="group-head"><h2>Or set it up by hand</h2></div>
+      <div class="group-head"><h2>Or set the desktop app up by hand</h2></div>
       <ol class="group list steps" id="desktop-steps"></ol>
-      <div class="group-head"><h2>Connection details</h2></div>
+      <div class="group-head"><h2>Desktop app connection details</h2></div>
       <div class="group list values" id="desktop-values"></div>
       <p class="group-foot" id="desktop-file"></p>
     </div>
@@ -817,6 +830,18 @@ main { position: relative; z-index: 1; }
       </form>
       <div class="group"><button class="row-btn" type="button" data-act="recheck-everything" data-fk="forget">Forget All Cooldowns</button></div>
       <p class="group-foot">Changes save as you make them. Forgetting cooldowns tries every key and account again on the next session.</p>
+      <div class="group-head"><h2>Default models</h2></div>
+      <form class="group list flat" id="models-form">
+        <label class="row field-row" for="model-anthropic">
+          <span class="row-text"><span class="row-title">On a Claude line</span><span class="row-sub">When a tool asks for a GPT model (Codex, Cursor) and a Claude account or key answers</span></span>
+          <input class="model-input" id="model-anthropic" name="anthropic" spellcheck="false" autocapitalize="off" autocomplete="off">
+        </label>
+        <label class="row field-row" for="model-openai">
+          <span class="row-text"><span class="row-title">On an OpenAI line</span><span class="row-sub">When a tool asks for a Claude model (Claude Code, the desktop app) and a ChatGPT account or OpenAI key answers</span></span>
+          <input class="model-input" id="model-openai" name="openai" spellcheck="false" autocapitalize="off" autocomplete="off">
+        </label>
+      </form>
+      <p class="group-foot">A request for a model from the line's own service keeps that model. These also set what Codex is told to use.</p>
       <div class="group-head"><h2>Claude desktop app</h2></div>
       <ul class="group list flat" id="desktop-prefs"></ul>
       <p class="group-foot">In third-party mode the desktop app keeps its Code sessions to a short list of sites unless told otherwise. claude-nonstop lets them reach any site, like a normal install. Turn Strict sandbox on to keep the restriction. Changing it updates the app's settings: on a Mac, approve the updated profile in System Settings, then reopen the app.</p>
@@ -1192,6 +1217,35 @@ function renderDesktop() {
   $('#desktop-connectors').innerHTML = S.settings.desktopConnectors.map((c) => `<li class="row"><span class="row-text"><span class="row-title">${esc(c.name)}</span><span class="row-sub mono">${esc(c.url)}${c.oauth ? '' : ' · no sign-in'}</span></span><span class="acts"><button class="icon-btn" type="button" data-act="remove-connector" data-id="${esc(c.name)}" data-fk="remove-connector-${esc(c.name)}" aria-label="Remove the ${esc(c.name)} connector" title="Remove">${icon('trash')}</button></span></li>`).join('')
     + `<li class="row add"><button class="add-btn" type="button" data-act="add-connector" data-fk="add-connector"><span class="tile">${icon('plus-circle')}</span>Add Connector…</button></li>`;
   renderDesktopCard();
+  renderCodexCard();
+  const openaiBase = `${S.desktop.baseUrl}/v1`;
+  $('#openai-values').innerHTML = `
+    <div class="row"><span class="k">Base URL</span><span class="v mono">${esc(openaiBase)}</span><span class="acts"><button class="icon-btn" type="button" data-act="copy" data-value="${esc(openaiBase)}" data-fk="copy-openai-url" aria-label="Copy the base URL" title="Copy">${icon('copy')}</button></span></div>
+    <div class="row"><span class="k">API key</span><span class="v mono">${esc(shown)}</span><span class="acts"><button class="icon-btn" type="button" data-act="toggle-token" data-fk="toggle-token-2" aria-label="${ui.showToken ? 'Hide' : 'Show'} the gateway key" title="${ui.showToken ? 'Hide' : 'Show'}">${icon('eye')}</button><button class="icon-btn" type="button" data-act="copy-token" data-fk="copy-token-2" aria-label="Copy the gateway key" title="Copy">${icon('copy')}</button></span></div>
+    <div class="row"><span class="k">Models</span><span class="v">${esc(S.settings.models.anthropic)}, ${esc(S.settings.models.openai)}, or any Claude or GPT model name</span></div>`;
+}
+
+const CODEX_URL = 'https://developers.openai.com/codex';
+function renderCodexCard() {
+  const c = S.codex || {};
+  const card = $('#codex-card');
+  let state = 'todo';
+  let body;
+  if (!c.installed) {
+    state = 'missing';
+    body = `<h2>Codex isn't installed</h2><p>Install the Codex CLI or the Codex app, then come back here to point it at the gateway with one click.</p>
+      <div class="desk-acts"><a class="btn" href="${CODEX_URL}" target="_blank" rel="noopener noreferrer">Get Codex${icon('out')}</a></div>`;
+  } else if (c.wired) {
+    state = 'done';
+    body = `<h2>Set up</h2><p>Codex sends every request through this gateway and needs no OpenAI sign-in. Run <code>codex</code> or open the Codex app as usual; it answers as <code>${esc(S.settings.models.openai)}</code> on an OpenAI line and as <code>${esc(S.settings.models.anthropic)}</code> on a Claude one.</p>`;
+  } else if (busy.has('codex')) {
+    body = `<h2>Setting up…</h2><div class="desk-acts"><button class="btn primary" type="button" disabled>${SPINNER}Setting Up…</button></div>`;
+  } else {
+    body = `<h2>Point Codex at the gateway</h2><p>claude-nonstop adds a model provider to <code>${esc(c.file || '~/.codex/config.toml')}</code> and selects it. Nothing else in the file changes.</p>
+      <div class="desk-acts"><button class="btn primary" type="button" data-act="codex-setup" data-fk="codex-setup">Set Up Codex</button></div>`;
+  }
+  card.dataset.state = state;
+  card.innerHTML = `<span class="desk-icon">${icon(state === 'done' ? 'check' : 'desktop')}</span><div>${body}</div>`;
 }
 
 const DOWNLOAD_URL = 'https://claude.com/download';
@@ -1227,7 +1281,7 @@ async function applyConnectors(done) {
 }
 
 function renderSettings() {
-  for (const [id, value] of [['cooldown', S.settings.cooldownMinutes], ['recheck', S.settings.accountRecheckMinutes]]) {
+  for (const [id, value] of [['cooldown', S.settings.cooldownMinutes], ['recheck', S.settings.accountRecheckMinutes], ['model-anthropic', S.settings.models.anthropic], ['model-openai', S.settings.models.openai]]) {
     const input = document.getElementById(id);
     if (document.activeElement !== input) input.value = value;
   }
@@ -2629,7 +2683,7 @@ function sheetContent() {
           <label><input type="radio" name="service" value="claude" checked> Claude <span class="hint">(Anthropic)</span></label>
           <label><input type="radio" name="service" value="chatgpt"> ChatGPT <span class="hint">(OpenAI)</span></label>
         </div></div>
-        ${codex ? `<div class="field"><label><input type="checkbox" name="importCodex" value="1"> Use the sign-in Codex already has on this computer, instead of signing in again</label></div>` : ''}
+        ${codex ? `<div class="field"><label class="check"><input type="checkbox" name="importCodex" value="1">Use the sign-in Codex already has on this computer</label></div>` : ''}
       </div>
       <p class="sheet-error" id="sheet-error" role="alert" hidden></p>
       <div class="sheet-actions"><button class="btn large" type="button" data-act="close-sheet">Cancel</button><button class="btn large primary" type="submit">Add and Sign In</button></div>
@@ -2793,6 +2847,11 @@ const actions = {
     await api('PATCH', '/api/settings', { desktopAlerts: on });
     await refresh();
   },
+  'codex-setup': () => withBusy('codex', async () => {
+    const r = await api('POST', '/api/codex');
+    await refresh();
+    toast(r.wired ? 'Codex is set up. Run codex or open the Codex app.' : "Codex couldn't be set up.", !r.wired);
+  }),
   'desktop-auto': () => withBusy('desktop', async () => {
     const r = await api('POST', '/api/desktop/auto');
     await refresh();
@@ -2956,6 +3015,10 @@ for (const id of ['cooldown', 'recheck']) {
   input.addEventListener('change', () => $('#settings-form').requestSubmit());
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); input.blur(); } });
 }
+for (const input of $$('.model-input')) {
+  input.addEventListener('change', () => $('#models-form').requestSubmit());
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); input.blur(); } });
+}
 
 document.addEventListener('submit', async (event) => {
   const form = event.target;
@@ -3007,6 +3070,10 @@ document.addEventListener('submit', async (event) => {
       toast('Code sent.');
     } else if (kind === 'settings-form') {
       await api('PATCH', '/api/settings', { cooldownMinutes: Number(data.cooldownMinutes), accountRecheckMinutes: Number(data.accountRecheckMinutes) });
+      await refresh();
+      toast('Saved.');
+    } else if (kind === 'models-form') {
+      await api('PATCH', '/api/settings', { models: { anthropic: String(data.anthropic || '').trim(), openai: String(data.openai || '').trim() } });
       await refresh();
       toast('Saved.');
     }
