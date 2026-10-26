@@ -3,8 +3,9 @@
 const pkg = require('../package.json');
 
 const HELP = `claude-nonstop ${pkg.version}
-Keeps Claude Code working through plan limits: it starts each session on the first of
-your subscription accounts and API keys with usage left, in the order you choose.
+Keeps Claude Code (and Codex, Cursor, any OpenAI-compatible tool) working through plan
+limits: each request goes out on the first of your Claude and ChatGPT accounts and API
+keys with usage left, in the order you choose.
 
 Run Claude Code (after \`claude-nonstop setup\`, plain \`claude\` does this too):
   claude-nonstop [claude args]       first account or key with usage left
@@ -18,13 +19,15 @@ Accounts and keys:
   claude-nonstop pause <n>           keep account or key n but stop using it
   claude-nonstop resume <n>          use it again
   claude-nonstop keys                check every API key
-  claude-nonstop keys add [label]    save a key (typed hidden, or piped on stdin)
+  claude-nonstop keys add [label]    save a Claude or OpenAI key (typed hidden, or piped on stdin)
   claude-nonstop keys remove <n>     forget key number n
   claude-nonstop accounts            list subscription accounts
-  claude-nonstop accounts add [label]   add an account and sign in to it
+  claude-nonstop accounts add [label]   add a Claude account and sign in to it
+  claude-nonstop accounts add [label] --chatgpt   add a ChatGPT account (--import-codex takes Codex's sign-in)
   claude-nonstop accounts login <n>  sign in again
   claude-nonstop accounts check      check which accounts have usage left
   claude-nonstop accounts remove <n> sign out and remove account n
+  claude-nonstop connect [codex|cursor]  how to point Codex, Cursor or any OpenAI-compatible tool at the gateway
   claude-nonstop desktop             set the Claude desktop app up to use your keys
   claude-nonstop connectors          list the desktop app's connectors
   claude-nonstop connectors add <name> <https-url> [--no-oauth]
@@ -74,6 +77,7 @@ async function main(argv) {
     case 'pause':
     case 'resume':
     case 'desktop':
+    case 'connect':
     case 'connectors':
     case 'setup':
     case 'service':

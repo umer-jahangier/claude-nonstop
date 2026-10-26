@@ -16,7 +16,7 @@ const state = require('./state');
 const claude = require('./claude');
 const supervise = require('./supervise');
 const { request } = require('./http');
-const { KEYS_HEADER } = require('./gateway');
+const { KEYS_HEADER, LINE_HEADER } = require('./gateway');
 const { log, ensureHome } = require('./files');
 
 // Claude Code subcommands that don't start a session run as-is, with no account picking.
@@ -123,6 +123,26 @@ async function firstLine(cfg, bin, mode) {
 
 // The environment (and settings) that run Claude Code on a line, or null if it can't be used.
 async function prepareLine(line, cfg, first) {
+  if (line.kind === 'account' && accounts.isChatgpt(line.account)) {
+    // A ChatGPT account has no Claude Code sign-in of its own: the session goes through
+    // the gateway, which sends its requests out on that account as Codex.
+    const { account } = line;
+    if (!(await gatewayRunning(cfg))) {
+      say(`the gateway isn't running, which a session on ${account.label} (ChatGPT) needs. Start it with \`claude-nonstop service install\`.`);
+      return null;
+    }
+    const v = vault.loadWithTokens();
+    const env = { ...process.env };
+    delete env.ANTHROPIC_API_KEY;
+    env.ANTHROPIC_BASE_URL = gatewayUrl(cfg);
+    env.ANTHROPIC_AUTH_TOKEN = v.gatewayToken;
+    const header = `${LINE_HEADER}: account:${account.id}`;
+    env.ANTHROPIC_CUSTOM_HEADERS = env.ANTHROPIC_CUSTOM_HEADERS ? `${env.ANTHROPIC_CUSTOM_HEADERS}\n${header}` : header;
+    if (first) say(`using ${account.label} (ChatGPT) through the local gateway, answering as ${cfg.models.openai}`);
+    log(`launch: ${account.label} (ChatGPT) through the gateway`);
+    state.setCurrent(account.label);
+    return { env };
+  }
   if (line.kind === 'account') {
     const { account } = line;
     log(`launch: ${account.label}`);

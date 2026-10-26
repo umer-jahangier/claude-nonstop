@@ -283,6 +283,10 @@ main { max-width: 1080px; margin: 0 auto; padding: 12px 20px 72px 44px; }
 .list > .row:first-child { border-top-left-radius: 12px; border-top-right-radius: 12px; }
 .list > .row:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
 .row-text { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.badge { display: inline-block; margin-left: 0.4em; padding: 0 0.45em; border-radius: 999px; font-size: 0.6875rem; line-height: 1.5; font-weight: 600; letter-spacing: 0.02em; vertical-align: 0.1em; color: var(--muted, #888); border: 1px solid currentColor; opacity: 0.8; }
+.service-pick { display: flex; gap: 0.5rem; }
+.service-pick label { flex: 1; display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 0.75rem; border: 1px solid var(--line, rgba(128,128,128,0.35)); border-radius: 0.6rem; cursor: pointer; }
+.service-pick input { margin: 0; }
 .row-title { font-size: 0.9375rem; line-height: 1.33; font-weight: 500; letter-spacing: -0.015em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row-sub { font-size: 0.8125rem; line-height: 1.33; color: var(--label-2); letter-spacing: -0.003em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row-why { font-size: 0.8125rem; line-height: 1.38; color: var(--label-2); letter-spacing: -0.003em; overflow-wrap: anywhere; }
@@ -1134,7 +1138,7 @@ function rowHtml(type, item, liveId) {
   const r = readoutFor(type, item);
   const title = ui.renaming === item.id
     ? `<form class="rename" data-form="rename" data-type="${type}" data-id="${id}"><input class="rename-input row-title" name="label" value="${esc(ui.renameValue)}" maxlength="60" aria-label="New name for ${label}" autocomplete="off" spellcheck="false" data-fk="rename-input"></form>`
-    : `<span class="row-title">${label}</span>`;
+    : `<span class="row-title">${label}${item.provider === 'openai' ? `<span class="badge">${type === 'account' ? 'ChatGPT' : 'OpenAI'}</span>` : ''}</span>`;
   let state;
   let word;
   if (busy.has(item.id) || checking.has(item.id) || signingIn) {
@@ -2498,7 +2502,7 @@ function menuItems(type, item) {
   items.push({ act: `toggle-${type}`, label: item.enabled ? 'Pause' : 'Resume', icon: item.enabled ? 'pause' : 'play' });
   items.push({ act: `move-${type}`, dir: 'up', label: 'Move Up', icon: 'up', disabled: index === 0 });
   items.push({ act: `move-${type}`, dir: 'down', label: 'Move Down', icon: 'down', disabled: index === list.length - 1 });
-  if (type === 'key' || item.kind === 'profile') {
+  if (type === 'key' || item.kind === 'profile' || item.kind === 'chatgpt') {
     items.push({ sep: true });
     items.push({ act: 'ask-remove', label: 'Remove…', icon: 'trash', danger: true });
   }
@@ -2615,10 +2619,18 @@ let sheetReturn = null;
 function sheetContent() {
   const sh = ui.sheet;
   if (sh.kind === 'add-account') {
+    const codex = S.settings && S.settings.codexAuthFound;
     return `<form data-form="add-account" autocomplete="off">
       <h2 id="sheet-title">Add a subscription account</h2>
-      <p class="lede">Your browser opens Anthropic's sign-in page. Sign in with the account you want to add, and it joins the relay after the others.</p>
-      <div class="fields"><div class="field"><label for="f-label">Name</label><input id="f-label" name="label" maxlength="60" placeholder="Work, Personal…" autofocus spellcheck="false"></div></div>
+      <p class="lede">Your browser opens the service's own sign-in page. Sign in with the account you want to add, and it joins the relay after the others. Any tool you've connected can then run on it.</p>
+      <div class="fields">
+        <div class="field"><label for="f-label">Name</label><input id="f-label" name="label" maxlength="60" placeholder="Work, Personal…" autofocus spellcheck="false"></div>
+        <div class="field"><label>Service</label><div class="service-pick" role="radiogroup">
+          <label><input type="radio" name="service" value="claude" checked> Claude <span class="hint">(Anthropic)</span></label>
+          <label><input type="radio" name="service" value="chatgpt"> ChatGPT <span class="hint">(OpenAI)</span></label>
+        </div></div>
+        ${codex ? `<div class="field"><label><input type="checkbox" name="importCodex" value="1"> Use the sign-in Codex already has on this computer, instead of signing in again</label></div>` : ''}
+      </div>
       <p class="sheet-error" id="sheet-error" role="alert" hidden></p>
       <div class="sheet-actions"><button class="btn large" type="button" data-act="close-sheet">Cancel</button><button class="btn large primary" type="submit">Add and Sign In</button></div>
     </form>`;
@@ -2626,12 +2638,12 @@ function sheetContent() {
   if (sh.kind === 'add-key') {
     return `<form data-form="add-key" autocomplete="off">
       <h2 id="sheet-title">Add an API key</h2>
-      <p class="lede">Used once every account is out. It's tested as soon as you save it. <a href="${KEYS_URL}" target="_blank" rel="noopener noreferrer">Get a key from Anthropic</a></p>
+      <p class="lede">A Claude key (<code>sk-ant-api…</code>) or an OpenAI key (<code>sk-…</code>); it's told apart by how it looks and tested as soon as you save it. <a href="${KEYS_URL}" target="_blank" rel="noopener noreferrer">Get a Claude key</a> · <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">Get an OpenAI key</a></p>
       <div class="fields">
         <div class="field"><label for="f-label">Name</label><input id="f-label" name="label" maxlength="60" placeholder="Personal, Team…" autofocus spellcheck="false"></div>
-        <div class="field"><label for="f-key">Key</label><input id="f-key" class="mono-input" name="key" type="password" placeholder="sk-ant-api03-…" spellcheck="false" autocapitalize="off" autocomplete="off"></div>
+        <div class="field"><label for="f-key">Key</label><input id="f-key" class="mono-input" name="key" type="password" placeholder="sk-ant-api03-… or sk-…" spellcheck="false" autocapitalize="off" autocomplete="off"></div>
       </div>
-      <p class="hint">Encrypted on this computer, with the encryption key kept in ${esc(S.keystore || 'your system keychain')}. It's only ever sent to Anthropic.</p>
+      <p class="hint">Encrypted on this computer, with the encryption key kept in ${esc(S.keystore || 'your system keychain')}. It's only ever sent to the service it belongs to.</p>
       <p class="sheet-error" id="sheet-error" role="alert" hidden></p>
       <div class="sheet-actions"><button class="btn large" type="button" data-act="close-sheet">Cancel</button><button class="btn large primary" type="submit">Save and Test</button></div>
     </form>`;
@@ -2677,7 +2689,7 @@ function jobHtml() {
   return `<h2 id="sheet-title">Signing in to ${name}</h2>
     <div class="job-status">${SPINNER}<p>Finish signing in in the browser window that opened. This updates by itself.</p></div>
     <p class="hint" id="job-link"${v.url ? '' : ' hidden'}>No browser window? <a id="job-url" href="${esc(v.url || '#')}" target="_blank" rel="noopener noreferrer">Open the sign-in page</a></p>
-    <form class="fields code-field" data-form="job-input" autocomplete="off"><div class="field"><label for="job-code">Code</label><input id="job-code" class="mono-input" name="text" placeholder="Paste it if the page shows one" spellcheck="false" autocapitalize="off"><button class="btn" type="submit">Send</button></div></form>
+    ${v.chatgpt ? '' : `<form class="fields code-field" data-form="job-input" autocomplete="off"><div class="field"><label for="job-code">Code</label><input id="job-code" class="mono-input" name="text" placeholder="Paste it if the page shows one" spellcheck="false" autocapitalize="off"><button class="btn" type="submit">Send</button></div></form>`}
     ${details}
     <div class="sheet-actions"><button class="btn large" type="button" data-act="close-sheet">Hide</button></div>`;
 }
@@ -2957,12 +2969,17 @@ document.addEventListener('submit', async (event) => {
     if (kind === 'add-account') {
       if (!String(data.label || '').trim()) { sheetError('Give the account a name, like Work or Personal.'); return; }
       submit.innerHTML = `${SPINNER}Adding…`;
-      const r = await api('POST', '/api/accounts', { label: data.label });
+      const r = await api('POST', '/api/accounts', { label: data.label, service: data.service || 'claude', importCodex: Boolean(data.importCodex) });
       await refresh();
+      if (r.imported) {
+        await closeSheet();
+        toast(`Added with Codex's sign-in${r.email ? ` (${r.email})` : ''}.`);
+        return;
+      }
       startJob(r.job, r.id);
       openSheet('job');
     } else if (kind === 'add-key') {
-      if (!String(data.key || '').trim()) { sheetError('Paste the API key. It starts with sk-ant-api.'); return; }
+      if (!String(data.key || '').trim()) { sheetError('Paste the API key. Claude keys start with sk-ant-api, OpenAI keys with sk-.'); return; }
       submit.innerHTML = `${SPINNER}Testing…`;
       const r = await api('POST', '/api/keys', { label: data.label, key: data.key });
       await closeSheet();

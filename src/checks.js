@@ -33,13 +33,15 @@ function once(id, work) {
 
 // The probe also renews the account's sign-in token, so its usage is read right after.
 const account = (a, bin = claude.findClaude()) =>
-  bin
-    ? once(a.id, async () => {
-        const r = await accounts.probe(a, bin);
-        await usage.refresh(a).catch(() => null);
-        return r;
-      })
-    : Promise.resolve(null);
+  accounts.isChatgpt(a)
+    ? once(a.id, () => accounts.probeChatgpt(a))
+    : bin
+      ? once(a.id, async () => {
+          const r = await accounts.probe(a, bin);
+          await usage.refresh(a).catch(() => null);
+          return r;
+        })
+      : Promise.resolve(null);
 const key = (entry, cfg = config.load()) => once(entry.id, () => keys.check(entry, cfg));
 
 // A result counts as known when it gave a clear answer: usage left or a limit for an

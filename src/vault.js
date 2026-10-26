@@ -1,7 +1,8 @@
 'use strict';
 
-// Secrets (your API keys, plus the tokens that guard the local gateway and web UI)
-// are stored in vault.json, encrypted with AES-256-GCM under the key from keystore.js.
+// Secrets (your API keys, your ChatGPT sign-ins, plus the tokens that guard the local
+// gateway and web UI) are stored in vault.json, encrypted with AES-256-GCM under the key
+// from keystore.js.
 
 const crypto = require('crypto');
 const paths = require('./paths');
@@ -13,6 +14,8 @@ const newToken = () => `cn_${crypto.randomBytes(24).toString('base64url')}`;
 function fill(v) {
   return {
     keys: Array.isArray(v.keys) ? v.keys : [],
+    // ChatGPT sign-ins, by account id (see openai-auth.js). Claude sign-ins stay in Claude Code's own store.
+    accounts: v.accounts && typeof v.accounts === 'object' ? v.accounts : {},
     gatewayToken: v.gatewayToken || null,
     uiToken: v.uiToken || null,
   };

@@ -1,9 +1,12 @@
 'use strict';
 
-// Subscription accounts. The first is your normal Claude Code login. Each extra one
-// is its own Claude Code config folder (CLAUDE_CONFIG_DIR, the documented way to stay
-// signed in to several accounts). Signing in always goes through Claude Code's own
+// Subscription accounts. The first is your normal Claude Code login. Each extra Claude
+// account is its own Claude Code config folder (CLAUDE_CONFIG_DIR, the documented way to
+// stay signed in to several accounts). Signing in always goes through Claude Code's own
 // `claude auth login`, and the login stays in Claude Code's credential store.
+//
+// A ChatGPT account (kind 'chatgpt', provider 'openai') is signed in the way Codex does it
+// (openai-auth.js) and its sign-in lives in the vault. It's checked with one tiny request.
 
 const crypto = require('crypto');
 const fs = require('fs');
@@ -91,6 +94,51 @@ function createProfile(label) {
   return { id, label, kind: 'profile', configDir, enabled: true };
 }
 
+const isChatgpt = (account) => account && account.kind === 'chatgpt';
+
+// A ChatGPT account: no config folder, its sign-in is in the vault (openai-auth.js).
+function createChatgpt(label) {
+  ensureHome();
+  return { id: `gpt-${crypto.randomBytes(4).toString('hex')}`, label, kind: 'chatgpt', provider: 'openai', enabled: true };
+}
+
+// Does a ChatGPT account have usage left right now? One tiny request to the Codex backend.
+async function probeChatgpt(account, cfg = require('./config').load()) {
+  const openaiAuth = require('./openai-auth');
+  const providers = require('./providers');
+  const { request } = require('./http');
+  let creds;
+  try {
+    creds = await openaiAuth.current(account.id);
+  } catch (err) {
+    const result = { ok: false, reason: `sign-in could not be renewed: ${err.message}` };
+    state.recordAccount(account.id, result);
+    return result;
+  }
+  if (!creds) {
+    const result = { ok: false, reason: 'not signed in' };
+    state.recordAccount(account.id, result);
+    return result;
+  }
+  const body = JSON.stringify({ model: (cfg.models && cfg.models.openai) || providers.openai.defaultModel, input: [{ type: 'message', role: 'user', content: [{ type: 'input_text', text: 'Reply with OK' }] }], instructions: 'Reply with OK.', store: false, stream: true, max_output_tokens: 16 });
+  const r = await request(`${providers.openai.chatgptUpstream(cfg)}/responses`, {
+    method: 'POST',
+    headers: { ...providers.openai.accountHeaders(creds), 'content-type': 'application/json', 'content-length': Buffer.byteLength(body) },
+    body,
+    timeoutMs: 60000,
+  });
+  const detail = providers.openai.errorMessage(r.body) || (r.status ? `HTTP ${r.status}` : r.body);
+  let result;
+  if (r.status >= 200 && r.status < 300) result = { ok: true, reason: '' };
+  else if (r.status === 429) result = { ok: false, reason: `usage limit reached: ${detail}` };
+  else if (r.status === 401 || r.status === 403) result = { ok: false, reason: `sign-in refused: ${detail}` };
+  else result = { ok: false, reason: detail };
+  state.recordAccount(account.id, result);
+  const u = providers.openai.usageFromHeaders(r.headers || {});
+  if (u) state.recordUsage(account.id, { ...u, at: Date.now() });
+  return result;
+}
+
 // The environment Claude Code runs with for an account.
 function env(account, base = process.env) {
   const out = { ...base };
@@ -143,6 +191,7 @@ function parseJsonOutput(stdout) {
 // run from claude-nonstop's own folder so it loads no project config and leaves no
 // conversation behind for `claude -c` to pick up.
 async function probe(account, bin) {
+  if (isChatgpt(account)) return probeChatgpt(account);
   ensureHome();
   // User settings may point Claude Code at the gateway, and on a root server they may
   // force bypass-permissions. A probe has to reach this account's own sign-in.
@@ -170,6 +219,10 @@ function findEmail(value) {
 }
 
 async function status(account, bin) {
+  if (isChatgpt(account)) {
+    const creds = require('./openai-auth').stored(account.id);
+    return { loggedIn: Boolean(creds), email: creds ? creds.email : null, method: 'chatgpt', plan: creds ? creds.plan : null };
+  }
   ensureHome();
   const r = await claude.capture(bin, ['auth', 'status', '--json'], { env: env(account), cwd: paths.HOME, timeoutMs: 30000 });
   // Without Claude Code there's no telling whether the account is signed in, so don't say it isn't.
@@ -189,6 +242,11 @@ function logout(account, bin) {
 // Deletes an extra account: signs it out (which revokes its login), removes the links to
 // your shared history without touching what they point at, then removes its folder.
 async function remove(account, bin) {
+  if (isChatgpt(account)) {
+    require('./openai-auth').forget(account.id);
+    state.forgetAccount(account.id);
+    return;
+  }
   if (account.kind !== 'profile') throw new Error('the main account can only be turned off, not removed');
   const rel = path.relative(paths.PROFILES, account.configDir);
   if (!rel || rel.startsWith('..') || path.isAbsolute(rel)) throw new Error('refusing to delete a folder outside claude-nonstop profiles');
@@ -211,6 +269,9 @@ async function remove(account, bin) {
 module.exports = {
   mainConfigDir,
   createProfile,
+  createChatgpt,
+  isChatgpt,
+  probeChatgpt,
   syncSharedFiles,
   env,
   probe,

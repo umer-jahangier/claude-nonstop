@@ -272,19 +272,25 @@ test('forwards model listing for the desktop app', async () => {
   assert.equal(r.status, 200);
 });
 
-test('the model list comes from an account when there is no key, and from a built-in list when nothing can answer', async () => {
+test('the model list is answered by the gateway itself, in the client\'s own format, so the desktop app can connect', async () => {
   useKeys();
   useAccounts('ok');
   try {
     api.requests.length = 0;
     let r = await call(`${base}/v1/models`, { headers: { 'x-api-key': token } });
     assert.equal(r.status, 200);
-    assert.equal(api.requests[0].bearer, testAccountToken('ok'));
+    assert.equal(api.requests.length, 0, 'listing models spends no line');
+    assert.ok(JSON.parse(r.body).data.some((m) => m.type === 'model' && /^claude-/.test(m.id)), 'Anthropic\'s list shape for an Anthropic client');
     assert.equal(state.load().desktop.label.includes('ok account'), false, 'listing models is not use');
     noAccounts();
     r = await call(`${base}/v1/models`, { headers: { 'x-api-key': token } });
     assert.equal(r.status, 200, 'the app can still connect');
     assert.ok(JSON.parse(r.body).data.some((m) => /^claude-/.test(m.id)));
+    // An OpenAI-format client (a bearer token, no anthropic-version) gets OpenAI's list shape.
+    r = await call(`${base}/v1/models`, { headers: { authorization: `Bearer ${token}` } });
+    const list = JSON.parse(r.body);
+    assert.equal(list.object, 'list');
+    assert.ok(list.data.every((m) => m.object === 'model'));
   } finally {
     noAccounts();
   }

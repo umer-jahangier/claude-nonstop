@@ -18,6 +18,9 @@ const DEFAULTS = {
   desktopConnectors: [], // MCP servers the desktop app lists as connectors in third-party mode
   desktopAccount: 'default', // the account the desktop app signs in to with Claude.ai
   desktopAlerts: true, // say when to switch the desktop app between that account and API keys
+  // The model a line answers with when the request asked for one from the other service.
+  models: { anthropic: 'claude-sonnet-5-5', openai: 'gpt-5.5' },
+  modelAliases: {}, // requested model name -> the one to use, applied before the family check
 };
 
 const DEFAULT_ACCOUNT = { id: 'default', label: 'Main account', kind: 'default', enabled: true };
@@ -25,6 +28,7 @@ const DEFAULT_ACCOUNT = { id: 'default', label: 'Main account', kind: 'default',
 function load() {
   const saved = readJson(paths.CONFIG, {});
   const cfg = { ...DEFAULTS, ...saved };
+  cfg.models = { ...DEFAULTS.models, ...(saved.models || {}) };
   cfg.accounts = Array.isArray(saved.accounts) && saved.accounts.length ? saved.accounts : [{ ...DEFAULT_ACCOUNT }];
   if (process.env.CLAUDE_NONSTOP_PORT) cfg.port = Number(process.env.CLAUDE_NONSTOP_PORT);
   if (process.env.CLAUDE_NONSTOP_UPSTREAM) cfg.upstream = process.env.CLAUDE_NONSTOP_UPSTREAM;

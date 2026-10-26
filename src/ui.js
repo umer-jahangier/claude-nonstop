@@ -22,6 +22,8 @@ const desktop = require('./desktop');
 const service = require('./service');
 const shell = require('./shell');
 const { sameToken, readBody } = require('./gateway');
+const openaiAuth = require('./openai-auth');
+const providers = require('./providers');
 const hosts = require('./hosts');
 const events = require('./events');
 const checks = require('./checks');
@@ -118,6 +120,7 @@ function snapshot(ctx) {
       id: a.id,
       label: a.label,
       kind: a.kind,
+      provider: a.provider || 'anthropic',
       enabled: a.enabled !== false,
       lastCheck: s.accounts[a.id] || null,
       usage: s.usage[a.id] ? { ...s.usage[a.id], text: usage.describe(s.usage[a.id]) } : null,
@@ -126,6 +129,7 @@ function snapshot(ctx) {
       id: k.id,
       label: k.label,
       masked: keys.mask(k.key),
+      provider: k.provider || 'anthropic',
       addedAt: k.addedAt,
       lastCheck: s.keys[k.id] || null,
       coolingDown: state.isCoolingDown(k.id, cfg.cooldownMinutes),
@@ -134,7 +138,7 @@ function snapshot(ctx) {
     // Your relay order, accounts and keys mixed, as "account:<id>" / "key:<id>".
     order: relay.lines(cfg, v.keys).map((l) => relay.lineId(l.type, l.item.id)),
     pinned: cfg.pinned || null,
-    settings: { cooldownMinutes: cfg.cooldownMinutes, accountRecheckMinutes: cfg.accountRecheckMinutes, desktopStrictSandbox: Boolean(cfg.desktopStrictSandbox), desktopConnectors: cfg.desktopConnectors || [], desktopAccount: cfg.desktopAccount || 'default', desktopAlerts: cfg.desktopAlerts !== false },
+    settings: { cooldownMinutes: cfg.cooldownMinutes, accountRecheckMinutes: cfg.accountRecheckMinutes, models: cfg.models, codexAuthFound: Boolean(openaiAuth.readCodexAuth()), desktopStrictSandbox: Boolean(cfg.desktopStrictSandbox), desktopConnectors: cfg.desktopConnectors || [], desktopAccount: cfg.desktopAccount || 'default', desktopAlerts: cfg.desktopAlerts !== false },
     traffic: events.stats(),
     shell: shell.status(),
     service: service.status(),
@@ -257,42 +261,103 @@ function startLogin(account, bin) {
   return job;
 }
 
+// A ChatGPT sign-in: OpenAI's page opens in the browser; this computer catches the redirect
+// (openai-auth.js). The job's output carries the address, so the page can show the link.
+function startChatgptLogin(account) {
+  const id = crypto.randomBytes(8).toString('hex');
+  const job = { id, accountId: account.id, output: '', done: false, ok: false, child: null, chatgpt: true };
+  jobs.set(id, job);
+  openaiAuth.startLogin(account.id).then((login) => {
+    job.output = `Sign in to ChatGPT in the browser window that opened.\n${login.url}\n`;
+    job.cancel = login.cancel;
+    openBrowser(login.url);
+    return login.done;
+  }).then((creds) => {
+    job.done = true;
+    job.ok = true;
+    job.output += `\nSigned in${creds.email ? ` as ${creds.email}` : ''}${creds.plan ? ` (${creds.plan})` : ''}.\n`;
+    state.forgetAccount(account.id);
+    log(`sign-in for "${account.label}" finished`);
+    checks.account(account, null);
+  }).catch((err) => {
+    job.done = true;
+    job.ok = false;
+    job.output += `\n${err.message}\n`;
+    log(`sign-in for "${account.label}" failed: ${err.message}`);
+  });
+  return job;
+}
+
+function openBrowser(url) {
+  const opts = { detached: true, stdio: 'ignore', windowsHide: true };
+  if (process.platform === 'linux' && !process.env.DISPLAY && !process.env.WAYLAND_DISPLAY) return false;
+  try {
+    const cmd = process.platform === 'darwin' ? ['open', [url]] : process.platform === 'win32' ? ['rundll32', ['url.dll,FileProtocolHandler', url]] : ['xdg-open', [url]];
+    const child = spawn(cmd[0], cmd[1], opts);
+    child.on('error', () => {});
+    child.unref();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function jobView(id) {
   const job = jobs.get(id);
   if (!job) throw httpError(404, 'That sign-in is no longer running.');
   const url = (job.output.match(/https:\/\/\S+/) || [null])[0];
-  return { done: job.done, ok: job.ok, output: job.output.trim().split('\n').slice(-12).join('\n'), url };
+  return { done: job.done, ok: job.ok, output: job.output.trim().split('\n').slice(-12).join('\n'), url, chatgpt: Boolean(job.chatgpt) };
 }
 
 function jobInput(id, text) {
   const job = jobs.get(id);
   if (!job || job.done) throw httpError(404, 'That sign-in is no longer running.');
+  if (!job.child) throw httpError(400, 'This sign-in finishes in the browser; there is no code to paste.');
   job.child.stdin.write(`${String(text || '').trim()}\n`);
 }
 
 function addAccount(body) {
-  const bin = requireClaude();
   const cfg = config.load();
-  const account = accounts.createProfile(clean(body.label) || `Account ${cfg.accounts.length + 1}`);
+  const label = clean(body.label) || `Account ${cfg.accounts.length + 1}`;
+  if (body.service === 'chatgpt' || body.service === 'openai') {
+    const account = accounts.createChatgpt(label);
+    config.update((c) => c.accounts.push(account));
+    log(`added ChatGPT account "${account.label}"`);
+    if (body.importCodex) {
+      try {
+        const creds = openaiAuth.importCodexAuth(account.id);
+        checks.account(account, null);
+        return { id: account.id, imported: true, email: creds.email, plan: creds.plan };
+      } catch (err) {
+        config.update((c) => (c.accounts = c.accounts.filter((a) => a.id !== account.id)));
+        throw httpError(400, `${err.message[0].toUpperCase()}${err.message.slice(1)}`);
+      }
+    }
+    return { id: account.id, job: startChatgptLogin(account).id };
+  }
+  const bin = requireClaude();
+  const account = accounts.createProfile(label);
   config.update((c) => c.accounts.push(account));
   log(`added account "${account.label}"`);
   return { id: account.id, job: startLogin(account, bin).id };
 }
 
 function loginAccount(id) {
-  return { job: startLogin(findAccount(id), requireClaude()).id };
+  const account = findAccount(id);
+  if (accounts.isChatgpt(account)) return { job: startChatgptLogin(account).id };
+  return { job: startLogin(account, requireClaude()).id };
 }
 
 async function accountStatuses() {
   const bin = claude.findClaude();
-  if (!bin) return {};
-  const list = config.load().accounts;
+  const list = config.load().accounts.filter((a) => bin || accounts.isChatgpt(a));
   const results = await Promise.all(list.map((a) => accounts.status(a, bin)));
   return Object.fromEntries(list.map((a, i) => [a.id, results[i]]));
 }
 
 function checkAccount(id) {
-  return checks.account(findAccount(id), requireClaude());
+  const account = findAccount(id);
+  return checks.account(account, accounts.isChatgpt(account) ? null : requireClaude());
 }
 
 // The page asks for this whenever it opens; anything with a clear answer from the last
@@ -315,7 +380,7 @@ function editAccount(id, body) {
 
 async function removeAccount(id) {
   const account = findAccount(id);
-  if (account.kind !== 'profile') throw httpError(400, 'The main account is your normal Claude Code login. Turn it off instead.');
+  if (account.kind !== 'profile' && !accounts.isChatgpt(account)) throw httpError(400, 'The main account is your normal Claude Code login. Turn it off instead.');
   await accounts.remove(account, claude.findClaude());
   config.update((c) => {
     c.accounts = c.accounts.filter((a) => a.id !== id);
@@ -362,6 +427,14 @@ function editSettings(body) {
       const n = Number(body[name]);
       if (!Number.isInteger(n) || n < 1 || n > 1440) throw httpError(400, 'Use a whole number of minutes between 1 and 1440.');
       c[name] = n;
+    }
+    if (body.models && typeof body.models === 'object') {
+      for (const id of ['anthropic', 'openai']) {
+        if (typeof body.models[id] !== 'string') continue;
+        const model = body.models[id].trim();
+        if (!model || model.length > 80) throw httpError(400, 'Give a model name.');
+        c.models = { ...c.models, [id]: model };
+      }
     }
     if (typeof body.desktopStrictSandbox === 'boolean') c.desktopStrictSandbox = body.desktopStrictSandbox;
     if (typeof body.desktopAlerts === 'boolean') c.desktopAlerts = body.desktopAlerts;
@@ -518,4 +591,4 @@ async function handle(req, res, ctx) {
   }
 }
 
-module.exports = { handle };
+module.exports = { handle, route };

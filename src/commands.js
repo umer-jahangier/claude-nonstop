@@ -24,6 +24,8 @@ const service = require('./service');
 const shell = require('./shell');
 const clients = require('./clients');
 const prompt = require('./prompt');
+const openaiAuth = require('./openai-auth');
+const providers = require('./providers');
 const { gatewayRunning, gatewayUrl } = require('./launch');
 const { FRIENDLY_HOST } = require('./hosts');
 const { ensureHome, readJson, log } = require('./files');
@@ -181,9 +183,10 @@ async function status() {
 
 function describeLine(cfg, s, l, i) {
   const paused = relay.isPaused(cfg, l.type, l.item) ? ' (paused)' : '';
+  const p = providers.of(l.item);
   const what = l.type === 'account'
-    ? `${l.item.label} (account)${paused}: ${describeAccountCheck(s.accounts[l.item.id], s.usage[l.item.id])}`
-    : `${l.item.label} (API key ${keys.mask(l.item.key)})${paused}: ${describeKeyCheck(s.keys[l.item.id])}`;
+    ? `${l.item.label} (${accounts.isChatgpt(l.item) ? 'ChatGPT account' : 'Claude account'})${paused}: ${describeAccountCheck(s.accounts[l.item.id], s.usage[l.item.id])}`
+    : `${l.item.label} (${p.name} API key ${keys.mask(l.item.key)})${paused}: ${describeKeyCheck(s.keys[l.item.id])}`;
   return `${i + 1}. ${what}`;
 }
 
@@ -242,7 +245,7 @@ async function checkAllKeys() {
 }
 
 async function addKey(label) {
-  const key = await prompt.secret('Paste your Claude API key (it stays hidden): ');
+  const key = await prompt.secret('Paste your Claude or OpenAI API key (it stays hidden): ');
   const problem = keys.problemWith(key);
   if (problem) {
     say(`can't save it: ${problem}`);
@@ -292,16 +295,36 @@ async function listAccounts() {
   const s = state.load();
   out('Subscription accounts, tried in this order:');
   for (const [i, a] of cfg.accounts.entries()) {
-    const login = bin ? await accounts.status(a, bin) : { loggedIn: null, error: 'Claude Code was not found' };
-    const who = login.loggedIn ? `signed in${login.email ? ` as ${login.email}` : ''}` : login.loggedIn === false ? 'not signed in' : `sign-in not checked (${login.error})`;
-    out(`  ${i + 1}. ${a.label}${a.enabled === false ? ' (off)' : ''}: ${who}; ${describeAccountCheck(s.accounts[a.id], s.usage[a.id])}`);
+    const login = bin || accounts.isChatgpt(a) ? await accounts.status(a, bin) : { loggedIn: null, error: 'Claude Code was not found' };
+    const who = login.loggedIn ? `signed in${login.email ? ` as ${login.email}` : ''}${login.plan ? ` (${login.plan})` : ''}` : login.loggedIn === false ? 'not signed in' : `sign-in not checked (${login.error})`;
+    out(`  ${i + 1}. ${a.label} (${accounts.isChatgpt(a) ? 'ChatGPT' : 'Claude'})${a.enabled === false ? ' (off)' : ''}: ${who}; ${describeAccountCheck(s.accounts[a.id], s.usage[a.id])}`);
   }
   out('');
-  out('Add one with `claude-nonstop accounts add "Work"` or in `claude-nonstop ui`.');
+  out('Add one with `claude-nonstop accounts add "Work"` (a Claude account) or `claude-nonstop accounts add "Work" --chatgpt`, or in `claude-nonstop ui`.');
+  return 0;
+}
+
+// Signs in to a ChatGPT account: OpenAI's own page in the browser, caught by openai-auth.js.
+async function signInChatgpt(account) {
+  const login = await openaiAuth.startLogin(account.id);
+  out(`Sign in to "${account.label}" in the browser window that opens (OpenAI's own sign-in page).`);
+  if (!openBrowser(login.url)) out(`Open this address in a browser:\n  ${login.url}`);
+  else out(`No window? Open this address:\n  ${login.url}`);
+  let creds;
+  try {
+    creds = await login.done;
+  } catch (err) {
+    say(`sign-in didn't finish: ${err.message}. Try again with \`claude-nonstop accounts login ${account.label}\`.`);
+    return 1;
+  }
+  state.forgetAccount(account.id);
+  const check = await accounts.probeChatgpt(account);
+  out(`Signed in to "${account.label}"${creds.email ? ` as ${creds.email}` : ''}${creds.plan ? ` (${creds.plan})` : ''}: ${check.ok ? 'it has usage left' : check.reason}`);
   return 0;
 }
 
 async function signIn(account, bin) {
+  if (accounts.isChatgpt(account)) return signInChatgpt(account);
   out(`Sign in to "${account.label}" in the browser window that opens (Anthropic's own sign-in page).`);
   const code = await claude.runInteractive(bin, accounts.LOGIN_ARGS, accounts.env(account));
   state.forgetAccount(account.id);
@@ -318,15 +341,38 @@ async function accountsCommand([sub, ...rest] = []) {
   if (!sub || sub === 'list') return listAccounts();
   const cfg = config.load();
   if (sub === 'add') {
+    const flags = new Set(rest.filter((a) => a.startsWith('--')));
+    const label = rest.filter((a) => !a.startsWith('--')).join(' ').trim().slice(0, 60) || `Account ${cfg.accounts.length + 1}`;
+    if (flags.has('--chatgpt') || flags.has('--openai') || flags.has('--codex') || flags.has('--import-codex')) {
+      const account = accounts.createChatgpt(label);
+      config.update((c) => c.accounts.push(account));
+      log(`added ChatGPT account "${account.label}"`);
+      if (flags.has('--import-codex')) {
+        try {
+          const creds = openaiAuth.importCodexAuth(account.id);
+          const check = await accounts.probeChatgpt(account);
+          out(`Added "${account.label}" with Codex's sign-in${creds.email ? ` (${creds.email})` : ''}: ${check.ok ? 'it has usage left' : check.reason}`);
+          return 0;
+        } catch (err) {
+          config.update((c) => (c.accounts = c.accounts.filter((a) => a.id !== account.id)));
+          say(err.message);
+          return 1;
+        }
+      }
+      return signInChatgpt(account);
+    }
     const bin = requireClaude();
-    const account = accounts.createProfile(rest.join(' ').trim().slice(0, 60) || `Account ${cfg.accounts.length + 1}`);
+    const account = accounts.createProfile(label);
     config.update((c) => c.accounts.push(account));
     log(`added account "${account.label}"`);
     return signIn(account, bin);
   }
-  if (sub === 'login') return signIn(pickItem(cfg.accounts, rest[0] || '1', 'account'), requireClaude());
+  if (sub === 'login') {
+    const account = pickItem(cfg.accounts, rest[0] || '1', 'account');
+    return signIn(account, accounts.isChatgpt(account) ? null : requireClaude());
+  }
   if (sub === 'check') {
-    const bin = requireClaude();
+    const bin = cfg.accounts.some((a) => a.enabled !== false && !accounts.isChatgpt(a)) ? requireClaude() : claude.findClaude();
     for (const a of cfg.accounts.filter((x) => x.enabled !== false)) {
       const r = await accounts.probe(a, bin);
       out(`  ${a.label}: ${r.ok ? 'has usage left' : r.reason}`);
@@ -343,7 +389,7 @@ async function accountsCommand([sub, ...rest] = []) {
   }
   if (sub === 'remove' || sub === 'rm') {
     const account = pickItem(cfg.accounts, rest[0], 'account');
-    if (account.kind !== 'profile') {
+    if (account.kind !== 'profile' && !accounts.isChatgpt(account)) {
       say('the main account is your normal Claude Code login. Turn it off with `claude-nonstop accounts off 1` instead.');
       return 1;
     }
@@ -357,6 +403,55 @@ async function accountsCommand([sub, ...rest] = []) {
   }
   say(`unknown command: accounts ${sub}`);
   return 1;
+}
+
+// ---------------------------------------------------------------- other tools
+
+// How to point other tools at the gateway: Codex (the Responses API), Cursor and anything
+// else that takes an OpenAI-compatible base address, and Claude Code itself.
+function connectCommand(args = []) {
+  ensureHome();
+  const cfg = config.load();
+  const v = vault.loadWithTokens();
+  const url = gatewayUrl(cfg);
+  const show = (name) => !args.length || args.includes(name);
+  out(`Gateway address   ${url}`);
+  out(`Gateway token     ${v.gatewayToken}`);
+  out('Any account or API key in your order can answer any of these tools; a request for a model');
+  out(`from the other service goes to that line's default (${cfg.models.anthropic} / ${cfg.models.openai}).`);
+  if (show('codex')) {
+    out('');
+    out('Codex CLI: add this to ~/.codex/config.toml, then run `codex` as usual:');
+    out('');
+    out(`  model = "${cfg.models.openai}"`);
+    out('  model_provider = "claude-nonstop"');
+    out('');
+    out('  [model_providers.claude-nonstop]');
+    out('  name = "claude-nonstop"');
+    out(`  base_url = "${url}/v1"`);
+    out('  wire_api = "responses"');
+    out('  env_key = "CLAUDE_NONSTOP_TOKEN"');
+    out('');
+    out(`  and put the token in your shell: export CLAUDE_NONSTOP_TOKEN=${v.gatewayToken}`);
+  }
+  if (show('cursor')) {
+    out('');
+    out('Cursor: Settings → Models → turn on "Override OpenAI Base URL" and enter');
+    out(`  Base URL  ${url}/v1`);
+    out(`  API key   ${v.gatewayToken}`);
+    out("  (Cursor's own-key mode is a limited path: its Tab completions and some agent features stay off.)");
+  }
+  if (show('openai') || show('other')) {
+    out('');
+    out('Any other OpenAI-compatible tool:');
+    out(`  OPENAI_BASE_URL=${url}/v1  OPENAI_API_KEY=${v.gatewayToken}`);
+  }
+  if (show('claude')) {
+    out('');
+    out('Claude Code and the Claude desktop app are set up by `claude-nonstop setup`; by hand:');
+    out(`  ANTHROPIC_BASE_URL=${url}  ANTHROPIC_AUTH_TOKEN=${v.gatewayToken}`);
+  }
+  return 0;
 }
 
 // ---------------------------------------------------------------- desktop
@@ -654,6 +749,7 @@ async function reset(args = []) {
 }
 
 module.exports = {
+  connect: connectCommand,
   serve,
   ui,
   status,

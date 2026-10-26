@@ -2,6 +2,8 @@
 
 **Keep Claude Code working through plan limits.** When your Claude subscription hits its session or weekly limit, claude-nonstop starts your next session on your next account. When every account is out, it moves to your API keys, one by one. You keep typing `claude` like always.
 
+**Any subscription, any tool.** The same local gateway also takes ChatGPT accounts and OpenAI API keys, and answers Codex, Cursor and any OpenAI-compatible tool as well as Claude Code. A Codex session can run on your Claude subscription; Claude Code can run on your ChatGPT one. See [Other tools and accounts](#other-tools-and-accounts).
+
 [![CI](https://github.com/umer-jahangier/claude-nonstop/actions/workflows/ci.yml/badge.svg)](https://github.com/umer-jahangier/claude-nonstop/actions/workflows/ci.yml)
 [![Latest release](https://img.shields.io/github/v/release/umer-jahangier/claude-nonstop)](https://github.com/umer-jahangier/claude-nonstop/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -26,6 +28,7 @@ That's the default order. Mix it however you like (say Work account, then a key,
 - [Everyday use](#everyday-use)
 - [The web page](#the-web-page)
 - [The Claude desktop app](#the-claude-desktop-app)
+- [Other tools and accounts](#other-tools-and-accounts)
 - [Commands](#commands)
 - [How it works](#how-it-works)
 - [Security and privacy](#security-and-privacy)
@@ -46,6 +49,7 @@ That's the default order. Mix it however you like (say Work account, then a key,
 - **One command to install, nothing to configure by hand.** It brings its own Node.js, installs Claude Code if you don't have it, and sets everything up.
 - **A web page at `https://claude.nonstop`** to add accounts and keys, see what's in use, and switch lines by dragging a cable. Dark by default, with Light and Automatic (your computer's setting) one click away.
 - **Works in the terminal and in the Claude desktop app**, on macOS, Windows and Linux.
+- **ChatGPT accounts and OpenAI keys too.** Add them next to your Claude ones. Codex, Cursor and other OpenAI-format tools point at the same gateway, and every tool can run on every line: requests are translated between Anthropic's and OpenAI's formats on the way.
 - **Your secrets stay on your computer, encrypted.** Keys are only ever sent to Anthropic.
 - **Updates itself** from GitHub releases.
 
@@ -164,6 +168,35 @@ Then **quit and reopen the desktop app.** Its sign-in screen offers the third-pa
 
 Installed the desktop app later? Run `claude-nonstop desktop`, or click **Set Up Automatically** on the page's **Desktop App** tab.
 
+## Other tools and accounts
+
+The gateway speaks three formats: Anthropic's Messages API (`/v1/messages`, Claude Code and the Claude desktop app), OpenAI's Responses API (`/v1/responses`, Codex) and OpenAI's Chat Completions API (`/v1/chat/completions`, Cursor and most OpenAI-compatible tools). A request in any of them walks your order and goes out on the first line with usage left, whatever service that line is on. Same format and service: it goes through as it came. Different: it's translated on the way out and the answer translated on the way back, tool calls, images and streaming included. A request for a model from the other service (say `gpt-5.5` arriving at a Claude account) goes to that line's default model, `claude-sonnet-5-5` and `gpt-5.5` unless you change `models` in the web page's **Settings** or `config.json`.
+
+**ChatGPT accounts.** `claude-nonstop accounts add "Work" --chatgpt`, or **Add Account…** on the web page and pick **ChatGPT**. OpenAI's own sign-in page opens, the way Codex signs in; the sign-in lands in claude-nonstop's encrypted vault and renews itself. Already signed in to Codex on this computer? Add `--import-codex` (or tick the box on the page) to take that sign-in over instead. Requests on a ChatGPT account go to the Codex backend as Codex, which is the only way OpenAI takes a subscription sign-in. Usage comes back with every answer and shows on the account's line like a Claude account's.
+
+**OpenAI API keys.** Paste one where you'd paste a Claude key; it's told apart by how it looks (`sk-…` rather than `sk-ant-api…`). Keys next to each other in the order still work as one team, even across services.
+
+**Codex.** `claude-nonstop connect codex` prints the lines for `~/.codex/config.toml`:
+
+```toml
+model = "gpt-5.5"
+model_provider = "claude-nonstop"
+
+[model_providers.claude-nonstop]
+name = "claude-nonstop"
+base_url = "http://127.0.0.1:43117/v1"
+wire_api = "responses"
+env_key = "CLAUDE_NONSTOP_TOKEN"
+```
+
+and the token to export as `CLAUDE_NONSTOP_TOKEN`. Then run `codex` as usual: its requests go out on whichever line is next, a Claude account included.
+
+**Cursor.** In Cursor's model settings turn on **Override OpenAI Base URL**, enter `http://127.0.0.1:43117/v1` and the gateway token as the API key (`claude-nonstop connect cursor` prints both). This is Cursor's own-key mode, which Cursor limits: Tab completions and some agent features stay off, and requests still pass through Cursor's servers.
+
+**Anything else** that takes an OpenAI base address: `OPENAI_BASE_URL=http://127.0.0.1:43117/v1` and `OPENAI_API_KEY=<gateway token>`.
+
+**Claude Code on a ChatGPT account.** When a session starts on a ChatGPT line (or moves to one at a limit), claude-nonstop runs Claude Code through the gateway on that account, so Claude Code keeps working on GPT answers. The reverse happens by itself too: Codex pointed at the gateway runs on your Claude accounts when they're next in your order.
+
 ## Commands
 
 | Command | What it does |
@@ -177,10 +210,12 @@ Installed the desktop app later? Run `claude-nonstop desktop`, or click **Set Up
 | `claude-nonstop move <n> up\|down` | Move account or key n (its number in `status`) one place |
 | `claude-nonstop pause <n>` / `resume <n>` | Stop using account or key n without removing it, or use it again |
 | `claude-nonstop keys` | Test every API key |
-| `claude-nonstop keys add [name]` | Save a key (typed hidden, or piped on stdin) |
+| `claude-nonstop keys add [name]` | Save a Claude or OpenAI key (typed hidden, or piped on stdin) |
 | `claude-nonstop keys remove <n>` | Remove key number n |
 | `claude-nonstop accounts` | List accounts and who each one is signed in as |
-| `claude-nonstop accounts add [name]` | Add an account and sign in to it |
+| `claude-nonstop accounts add [name]` | Add a Claude account and sign in to it |
+| `claude-nonstop accounts add [name] --chatgpt` | Add a ChatGPT account and sign in to it (`--import-codex` takes Codex's existing sign-in) |
+| `claude-nonstop connect [codex\|cursor]` | How to point Codex, Cursor or any OpenAI-compatible tool at the gateway |
 | `claude-nonstop accounts login <n>` | Sign in to account n again |
 | `claude-nonstop accounts check` | Check which accounts have usage left |
 | `claude-nonstop accounts on <n>` / `off <n>` | Turn account n on or off |
@@ -217,12 +252,12 @@ Claude Code's own subcommands (`claude mcp`, `claude doctor`, `claude update`, `
 
 - **Everything runs on your computer.** The gateway and the web page accept connections from this computer only, and answer only to their own names.
 - **API keys are encrypted at rest** (AES-256-GCM). The encryption key is held by the macOS Keychain, Windows DPAPI or the Linux Secret Service; headless Linux machines without one fall back to a file only you can read, and the page tells you when that's the case.
-- **Keys are only sent to `api.anthropic.com`.** After you save a key, only a masked form is ever shown again.
+- **Keys are only sent to the service they belong to**: Claude keys to `api.anthropic.com`, OpenAI keys to `api.openai.com`, ChatGPT sign-ins to `chatgpt.com`. After you save a key, only a masked form is ever shown again.
 - **The web page needs a one-time link** from `claude-nonstop ui`, which becomes an HttpOnly, SameSite=Strict cookie. Every request also carries a header other websites can't send, so pages you visit can't reach it.
 - **The gateway has its own random token**, so other programs on your computer can't spend your keys.
 - **HTTPS uses a certificate made on your computer.** The certificate authority that signs it is used once, for this computer's own names, and its private key is thrown away immediately: it's never saved, so it can never sign anything else. Uninstalling removes it from your trusted certificates.
 - **The globe's "This computer" spot is guessed from your timezone** inside the page. It's never sent anywhere.
-- **No telemetry.** The only outside connections claude-nonstop makes are to Anthropic (your requests and the account checks) and to GitHub (to check for updates).
+- **No telemetry.** The only outside connections claude-nonstop makes are to Anthropic and OpenAI (your requests, sign-ins and the account checks) and to GitHub (to check for updates).
 
 ## What setup changes on your computer
 
@@ -277,7 +312,9 @@ This stops the gateway, removes the `claude` shortcut, the short address, the tr
 
 ### Is this allowed?
 
-claude-nonstop runs the unmodified Claude Code and uses only documented features. Every account and key you add must be your own: each teammate installs claude-nonstop and adds their own. Sharing a subscription account between people is against Anthropic's terms.
+claude-nonstop runs the unmodified Claude Code and uses only documented features. Every account and key you add must be your own: each teammate installs claude-nonstop and adds their own. Sharing a subscription account between people is against Anthropic's and OpenAI's terms.
+
+Running one service's subscription from another company's tool (Codex on a Claude account, Claude Code on a ChatGPT account) is your call to make: both providers take a subscription only from their own client, so the gateway presents each request as that client. Their terms don't cover this, and either could stop accepting it or act on the account. Use it with that in mind.
 
 ### Why does it ask for my password?
 
