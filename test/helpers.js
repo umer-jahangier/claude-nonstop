@@ -164,6 +164,7 @@ function signInFakeChatgpt(accountId, kind, { expiresAt = Date.now() + 3600000 }
 // its limit, 'quota' a key out of credit, 'stale' a sign-in that needs renewing.
 function startFakeOpenAI() {
   const requests = [];
+  const modelRequests = [];
   const sse = (res, events) => {
     res.writeHead(200, { 'content-type': 'text/event-stream', 'x-codex-primary-used-percent': '42', 'x-codex-primary-window-minutes': '300', 'x-codex-primary-reset-at': '1800000000', 'x-codex-secondary-used-percent': '7', 'x-codex-secondary-window-minutes': '10080', 'x-codex-secondary-reset-at': '1800500000' });
     let i = 0;
@@ -184,12 +185,19 @@ function startFakeOpenAI() {
     req.on('end', () => {
       const text = Buffer.concat(chunks).toString('utf8');
       const bearer = String(req.headers.authorization || '').replace(/^Bearer /i, '');
-      requests.push({ method: req.method, url: req.url, bearer, headers: req.headers, body: text });
       const send = (status, value, headers = {}) => {
         const out = JSON.stringify(value);
         res.writeHead(status, { 'content-type': 'application/json', 'content-length': Buffer.byteLength(out), ...headers });
         res.end(out);
       };
+      // The Codex backend's model list (asked for apart from the requests a test counts).
+      if (req.url.startsWith('/backend-api/codex/models')) {
+        modelRequests.push({ url: req.url, bearer, headers: req.headers });
+        if (!/^oat-test-(ok|second|tool|limited)/.test(bearer)) return send(401, { detail: 'Unauthorized' });
+        if (!/client_version=/.test(req.url)) return send(400, { error: { message: 'client_version required' } });
+        return send(200, { models: [...api.chatgptModels.map((slug, i) => ({ slug, display_name: slug.toUpperCase(), visibility: 'list', priority: i + 1 })), { slug: 'codex-auto-review', visibility: 'hide', priority: 43 }] });
+      }
+      requests.push({ method: req.method, url: req.url, bearer, headers: req.headers, body: text });
       if (req.url === '/oauth/token') {
         let form = {};
         try {
@@ -230,6 +238,10 @@ function startFakeOpenAI() {
         send(400, { detail: 'Stream must be true' });
         return;
       }
+      if (chatgpt && !api.chatgptModels.includes(json.model)) {
+        send(400, { error: { message: `The '${json.model}' model is not supported when using Codex with a ChatGPT account.`, type: 'invalid_request_error', param: null, code: null } });
+        return;
+      }
       const usage = { input_tokens: 11, input_tokens_details: { cached_tokens: 1 }, output_tokens: 3, output_tokens_details: { reasoning_tokens: 0 }, total_tokens: 14 };
       const output = kind === 'tool'
         ? [{ id: 'fc_1', type: 'function_call', status: 'completed', call_id: 'call_1', name: 'get_weather', arguments: '{"city":"Lahore"}' }]
@@ -255,17 +267,21 @@ function startFakeOpenAI() {
       sse(res, events);
     });
   });
+  // What the fake Codex backend lists for ChatGPT accounts; a test may change it.
+  const api = { chatgptModels: ['gpt-6.1-sol', 'gpt-5.5'] };
   return new Promise((resolve) => {
     server.listen(0, '127.0.0.1', () => {
-      resolve({
+      Object.assign(api, {
         url: `http://127.0.0.1:${server.address().port}`,
         requests,
+        modelRequests,
         close: () =>
           new Promise((done) => {
             server.closeAllConnections();
             server.close(done);
           }),
       });
+      resolve(api);
     });
   });
 }

@@ -72,6 +72,7 @@ function useLines(...lines) {
   state.clearCooldowns();
   api.requests.length = 0;
   openai.requests.length = 0;
+  openai.modelRequests.length = 0;
 }
 
 before(async () => {
@@ -197,6 +198,49 @@ test('a Codex request on a ChatGPT account goes to the Codex backend as Codex, s
   assert.equal(usage.session.pct, 42);
   assert.equal(usage.week.pct, 7);
   assert.equal(usage.session.resetsAt, 1800000000000);
+});
+
+test('a ChatGPT account gets a model its backend lists: the one asked for when listed, else the backend\'s first choice', async () => {
+  useLines(['chatgpt', 'ok']);
+  const chatgptModels = require('../src/chatgpt-models');
+  const [account] = config.load().accounts;
+  chatgptModels.forget(account.id);
+  // gpt-5.5 is listed by the fake backend: sent as is.
+  let r = await call(`${base}/v1/responses`, { method: 'POST', headers: auth, body: { model: 'gpt-5.5', input: 'hi' } });
+  assert.equal(JSON.parse(r.body).output[0].content[0].text, 'ok via gpt-5.5');
+  assert.equal(openai.modelRequests.length, 1);
+  assert.match(openai.modelRequests[0].url, /client_version=\d/);
+  // gpt-5.4 isn't: the backend's first choice goes instead, with the list kept from before.
+  r = await call(`${base}/v1/responses`, { method: 'POST', headers: auth, body: { model: 'gpt-5.4', input: 'hi' } });
+  assert.equal(r.status, 200);
+  assert.equal(JSON.parse(r.body).output[0].content[0].text, 'ok via gpt-6.1-sol');
+  assert.equal(openai.modelRequests.length, 1);
+  // A Claude name from Claude Code maps to the OpenAI default, and from there onto the list.
+  r = await call(`${base}/v1/messages`, { method: 'POST', headers: { 'x-api-key': token, 'anthropic-version': '2026-10-21' }, body: { model: 'claude-opus-5-5', max_tokens: 20, messages: [{ role: 'user', content: 'hi' }] } });
+  assert.equal(JSON.parse(r.body).content[0].text, 'ok via gpt-5.5');
+  assert.deepEqual(state.load().chatgptModels[account.id].slugs, ['gpt-6.1-sol', 'gpt-5.5']);
+  // /v1/models lists what the backend listed.
+  r = await call(`${base}/v1/models`, { headers: auth });
+  assert.ok(JSON.parse(r.body).data.some((m) => m.id === 'gpt-6.1-sol'));
+});
+
+test('when the backend\'s list changes under a kept copy, the refused request is sent again with a model it lists now', async () => {
+  useLines(['chatgpt', 'ok']);
+  const chatgptModels = require('../src/chatgpt-models');
+  const [account] = config.load().accounts;
+  chatgptModels.forget(account.id);
+  await call(`${base}/v1/responses`, { method: 'POST', headers: auth, body: { model: 'gpt-5.5', input: 'hi' } });
+  openai.chatgptModels = ['gpt-6.2-sol'];
+  try {
+    const r = await call(`${base}/v1/responses`, { method: 'POST', headers: auth, body: { model: 'gpt-5.5', input: 'hi' } });
+    assert.equal(r.status, 200);
+    assert.equal(JSON.parse(r.body).output[0].content[0].text, 'ok via gpt-6.2-sol');
+    assert.equal(openai.requests.filter((q) => q.url === '/backend-api/codex/responses').length, 3, 'the refused request, then the one that worked');
+    assert.equal(openai.modelRequests.length, 2);
+  } finally {
+    openai.chatgptModels = ['gpt-6.1-sol', 'gpt-5.5'];
+    chatgptModels.forget(account.id);
+  }
 });
 
 test('a client that didn\'t ask to stream still gets a whole answer from the Codex backend, which only streams', async () => {

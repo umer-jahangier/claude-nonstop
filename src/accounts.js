@@ -120,7 +120,9 @@ async function probeChatgpt(account, cfg = require('./config').load()) {
     state.recordAccount(account.id, result);
     return result;
   }
-  const body = JSON.stringify({ model: (cfg.models && cfg.models.openai) || providers.openai.defaultModel, input: [{ type: 'message', role: 'user', content: [{ type: 'input_text', text: 'Reply with OK' }] }], instructions: 'Reply with OK.', store: false, stream: true, max_output_tokens: 16 });
+  const wanted = (cfg.models && cfg.models.openai) || providers.openai.defaultModel;
+  const model = await require('./chatgpt-models').pick(wanted, account.id, creds, cfg, { force: true });
+  const body = JSON.stringify({ model, input: [{ type: 'message', role: 'user', content: [{ type: 'input_text', text: 'Reply with OK' }] }], instructions: 'Reply with OK.', store: false, stream: true, max_output_tokens: 16 });
   const r = await request(`${providers.openai.chatgptUpstream(cfg)}/responses`, {
     method: 'POST',
     headers: { ...providers.openai.accountHeaders(creds), 'content-type': 'application/json', 'content-length': Buffer.byteLength(body) },

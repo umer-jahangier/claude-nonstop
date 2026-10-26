@@ -31,6 +31,7 @@ const state = require('./state');
 const accounts = require('./accounts');
 const usage = require('./usage');
 const openaiAuth = require('./openai-auth');
+const chatgptModels = require('./chatgpt-models');
 const { log } = require('./files');
 
 // What a Claude subscription sign-in needs to be accepted: Claude Code's identity and betas.
@@ -523,6 +524,12 @@ function sendModels(req, res, cfg, allKeys) {
   const ids = used.size ? [...used] : ['anthropic'];
   const models = [];
   for (const id of ['anthropic', 'openai']) if (ids.includes(id)) models.push(...providers.byId(id).models.map(([m, name]) => [m, name, id]));
+  // What each ChatGPT sign-in's backend listed last.
+  const seen = new Set(models.map((m) => m[0]));
+  for (const a of cfg.accounts) {
+    if (a.kind !== 'chatgpt' || a.enabled === false) continue;
+    for (const m of chatgptModels.known(a.id) || []) if (!seen.has(m.slug) && seen.add(m.slug)) models.push([m.slug, m.name, 'openai']);
+  }
   sendJson(res, 200, translate.modelList(speaksOpenAI(req) ? 'openai' : 'messages', models));
 }
 
@@ -623,6 +630,8 @@ async function handle(req, res, ctx) {
     let url;
     let headers;
     let creds = null;
+    let chatgptModel = model;
+    const chatgptBody = (m) => (inbound === 'responses' ? asResponsesBody(json, m, { chatgpt: true }) : Buffer.from(JSON.stringify(translate.writeRequest('responses', { ...parsed, stream: true }, { model: m, store: false, stream: true, includeEncrypted: true }))));
     if (line.kind === 'account' && provider.id === 'anthropic') {
       const { token: t, why } = claudeToken(item, cfg);
       if (!t) {
@@ -639,7 +648,9 @@ async function handle(req, res, ctx) {
         continue;
       }
       creds = r.creds;
-      outBody = inbound === 'responses' ? asResponsesBody(json, model, { chatgpt: true }) : Buffer.from(JSON.stringify(translate.writeRequest('responses', { ...parsed, stream: true }, { model, store: false, stream: true, includeEncrypted: true })));
+      // The Codex backend takes only the models on its own list for this account.
+      chatgptModel = await chatgptModels.pick(model, item.id, creds, cfg);
+      outBody = chatgptBody(chatgptModel);
       url = `${providers.openai.chatgptUpstream(cfg)}/responses`;
       headers = chatgptHeaders(creds, outBody.length);
     } else if (line.kind === 'key') {
@@ -673,6 +684,25 @@ async function handle(req, res, ctx) {
       }
       upRes = r.res;
       upstream = r.upstream;
+      if (chatgpt && upRes.statusCode === 400 && attempt === 0) {
+        // The backend's model list may have changed since it was last asked: ask again,
+        // and send the request once more with a model it lists now.
+        const text = (await readBody(upRes, MAX_ERROR_BODY).catch(() => Buffer.alloc(0))).toString('utf8');
+        if (chatgptModels.isModelRefusal(400, text)) {
+          const again = await chatgptModels.pick(model, item.id, creds, cfg, { force: true });
+          if (again !== chatgptModel) {
+            log(`gateway: ${label}: the ChatGPT backend no longer lists ${chatgptModel}; sending ${again} instead`);
+            chatgptModel = again;
+            outBody = chatgptBody(chatgptModel);
+            headers = chatgptHeaders(creds, outBody.length);
+            continue;
+          }
+        }
+        // Not a model problem, or nothing better to send: hand the answer on as it is.
+        upstream.destroy();
+        fail(400, 'invalid_request_error', `${label}: ${provider.errorMessage(text) || text || 'HTTP 400'}`);
+        return;
+      }
       if (chatgpt && upRes.statusCode === 401 && attempt === 0) {
         upstream.destroy();
         try {

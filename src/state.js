@@ -17,6 +17,7 @@ function load() {
     desktopAdvice: s.desktopAdvice || null,
     desktopLimitedAt: s.desktopLimitedAt || null,
     usage: s.usage || {},
+    chatgptModels: s.chatgptModels || {},
   };
 }
 
@@ -34,9 +35,12 @@ const forgetAccount = (id) =>
   update((s) => {
     delete s.accounts[id];
     delete s.usage[id];
+    delete s.chatgptModels[id];
   });
 // How much of an account's plan is used (see usage.js).
 const recordUsage = (id, usage) => update((s) => (s.usage[id] = usage));
+// The model names a ChatGPT account's backend listed last (see chatgpt-models.js).
+const recordChatgptModels = (id, slugs) => update((s) => (s.chatgptModels[id] = { slugs, at: Date.now() }));
 
 function isCoolingDown(id, minutes) {
   const k = load().keys[id];
@@ -69,4 +73,4 @@ function clearCooldowns() {
   });
 }
 
-module.exports = { load, recordKey, recordAccount, recordUsage, forgetKey, forgetAccount, isCoolingDown, setCurrent, setDesktop, setDesktopAdvice, setDesktopLimited, clearCooldowns };
+module.exports = { load, recordKey, recordAccount, recordUsage, recordChatgptModels, forgetKey, forgetAccount, isCoolingDown, setCurrent, setDesktop, setDesktopAdvice, setDesktopLimited, clearCooldowns };
