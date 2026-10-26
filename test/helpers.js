@@ -234,6 +234,12 @@ function startFakeOpenAI() {
         send(429, { error: { message: 'You exceeded your current quota, please check your plan and billing details.', type: 'insufficient_quota', code: 'insufficient_quota' } });
         return;
       }
+      for (const field of ['user', 'metadata', 'previous_response_id', 'service_tier', 'truncation']) {
+        if (chatgpt && field in json) {
+          send(400, { detail: `Unsupported parameter: ${field}` });
+          return;
+        }
+      }
       if (chatgpt && !Array.isArray(json.input)) {
         send(400, { detail: 'Input must be a list' });
         return;

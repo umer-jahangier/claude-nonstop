@@ -521,11 +521,15 @@ function deliver(res, upRes, upstream, { inbound, wire, clientStream, upstreamSt
 
 // Every model the lines in use can answer for, in the client's own list format. Answered by
 // the gateway itself: the lists are well known, and asking a line would spend its attention.
+// The models on offer, the service of the line in use first: a tool that reads this list
+// shows that service's models at the top.
 function sendModels(req, res, cfg, allKeys) {
-  const used = new Set(relay.active(cfg, allKeys).map((l) => providers.of(l.item).id));
+  const active = relay.active(cfg, allKeys);
+  const used = new Set(active.map((l) => providers.of(l.item).id));
   const ids = used.size ? [...used] : ['anthropic'];
+  const first = active.length ? providers.of(active[0].item).id : 'anthropic';
   const models = [];
-  for (const id of ['anthropic', 'openai']) if (ids.includes(id)) models.push(...providers.byId(id).models.map(([m, name]) => [m, name, id]));
+  for (const id of [first, ...['anthropic', 'openai'].filter((x) => x !== first)]) if (ids.includes(id)) models.push(...providers.byId(id).models.map(([m, name]) => [m, name, id]));
   // What each ChatGPT sign-in's backend listed last.
   const seen = new Set(models.map((m) => m[0]));
   for (const a of cfg.accounts) {
@@ -633,7 +637,8 @@ async function handle(req, res, ctx) {
     let headers;
     let creds = null;
     let chatgptModel = model;
-    const chatgptBody = (m) => (inbound === 'responses' ? asResponsesBody(json, m, { chatgpt: true }) : Buffer.from(JSON.stringify(translate.writeRequest('responses', { ...parsed, stream: true }, { model: m, store: false, stream: true, includeEncrypted: true }))));
+    // Whatever format it came in, a request to the Codex backend is shaped the same way.
+    const chatgptBody = (m) => asResponsesBody(inbound === 'responses' ? json : translate.writeRequest('responses', { ...parsed, stream: true }, { model: m, store: false, stream: true, includeEncrypted: true }), m, { chatgpt: true });
     if (line.kind === 'account' && provider.id === 'anthropic') {
       const { token: t, why } = claudeToken(item, cfg);
       if (!t) {

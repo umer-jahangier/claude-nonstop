@@ -257,10 +257,27 @@ test('a client that didn\'t ask to stream still gets a whole answer from the Cod
 
 test('Claude Code on a ChatGPT account: translated out as Codex, back as a Claude message', async () => {
   useLines(['chatgpt', 'ok']);
-  const r = await call(`${base}/v1/messages`, { method: 'POST', headers: { 'x-api-key': token, 'anthropic-version': '2026-10-21' }, body: { model: 'claude-opus-5-5', max_tokens: 20, messages: [{ role: 'user', content: 'hi' }] } });
-  assert.equal(r.status, 200);
+  // Claude Code sends who's asking; the Codex backend refuses that and other fields it doesn't take.
+  const r = await call(`${base}/v1/messages`, { method: 'POST', headers: { 'x-api-key': token, 'anthropic-version': '2026-10-21' }, body: { model: 'claude-opus-5-5', max_tokens: 20, metadata: { user_id: 'user_abc' }, messages: [{ role: 'user', content: 'hi' }] } });
+  assert.equal(r.status, 200, r.body);
   assert.equal(JSON.parse(r.body).content[0].text, 'ok via gpt-5.5');
   assert.equal(openai.requests[0].url, '/backend-api/codex/responses');
+  const sent = JSON.parse(openai.requests[0].body);
+  assert.equal(sent.user, undefined);
+  assert.equal(sent.metadata, undefined);
+  assert.deepEqual(sent.include, ['reasoning.encrypted_content']);
+});
+
+test('/v1/models puts the service of the line in use first', async () => {
+  useLines(['chatgpt', 'ok'], ['key', testKey('ok')]);
+  let r = await call(`${base}/v1/models`, { headers: auth });
+  let ids = JSON.parse(r.body).data.map((m) => m.id);
+  assert.match(ids[0], /^gpt/);
+  assert.ok(ids.some((m) => /^claude/.test(m)));
+  useLines(['key', testKey('ok')], ['chatgpt', 'ok']);
+  r = await call(`${base}/v1/models`, { headers: auth });
+  ids = JSON.parse(r.body).data.map((m) => m.id);
+  assert.match(ids[0], /^claude/);
 });
 
 test('an account at its limit is set aside and the request moves down the order, across services', async () => {
