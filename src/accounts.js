@@ -96,6 +96,7 @@ function env(account, base = process.env) {
   const out = { ...base };
   delete out.ANTHROPIC_API_KEY;
   delete out.ANTHROPIC_AUTH_TOKEN;
+  delete out.ANTHROPIC_BASE_URL;
   if (account.kind === 'profile') {
     out.CLAUDE_CONFIG_DIR = account.configDir;
     delete out.CLAUDE_CODE_OAUTH_TOKEN;
@@ -143,7 +144,10 @@ function parseJsonOutput(stdout) {
 // conversation behind for `claude -c` to pick up.
 async function probe(account, bin) {
   ensureHome();
-  const r = await claude.capture(bin, PROBE_ARGS, { env: env(account), cwd: paths.HOME, timeoutMs: 120000 });
+  // User settings may point Claude Code at the gateway, and on a root server they may
+  // force bypass-permissions. A probe has to reach this account's own sign-in.
+  const args = claude.withoutRootBypass([...PROBE_ARGS, '--setting-sources', 'project,local']);
+  const r = await claude.capture(bin, args, { env: env(account), cwd: paths.HOME, timeoutMs: 120000 });
   const parsed = parseJsonOutput(r.stdout);
   const result =
     parsed && parsed.is_error === false

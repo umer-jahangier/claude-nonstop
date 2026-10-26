@@ -22,6 +22,7 @@ const system = require('./system');
 const tls = require('./tls');
 const service = require('./service');
 const shell = require('./shell');
+const clients = require('./clients');
 const prompt = require('./prompt');
 const { gatewayRunning, gatewayUrl } = require('./launch');
 const { FRIENDLY_HOST } = require('./hosts');
@@ -489,7 +490,7 @@ async function setup(args = []) {
     } else {
       out(`- The web page is at http://${FRIENDLY_HOST}. For the short address ${hostsfile.PRIMARY}, run \`claude-nonstop setup\` again and allow the change.`);
     }
-    if (desktopSettings && desktop.appInstalled()) setUpDesktop(false);
+    if (desktopSettings) setUpDesktop(false);
   }
   if (!args.includes('--no-service')) {
     try {
@@ -512,6 +513,10 @@ async function setup(args = []) {
       }
     }
   }
+  const wired = clients.apply(config.load(), v);
+  if (wired.ok) out('- Claude Code in the terminal, VS Code, and Cursor sends its requests through the local gateway.');
+  else out(`! Couldn't point Claude Code at the gateway (${wired.reason}). Fix ${clients.settingsFile()} and run \`claude-nonstop setup\` again.`);
+  if (wired.permissionChanged) out('- Running as root, so bypass-permissions mode was turned off. Claude Code refuses to start in that mode as root.');
   out('');
   out('Next: add your subscription accounts and API keys in the web UI.');
   if (!args.includes('--no-open')) return ui([]);
@@ -585,6 +590,7 @@ async function uninstall(args = []) {
   out('- The gateway is stopped and no longer starts at login.');
   shell.uninstall();
   out('- Plain `claude` runs Claude Code directly again (in new terminals).');
+  if (clients.remove().ok) out('- Claude Code in the terminal, VS Code, and Cursor no longer uses the local gateway.');
   if (system.remove().hosts) out(`- The short address ${hostsfile.PRIMARY} and the desktop app's settings are removed from this computer.`);
   else out(`! Couldn't remove the ${hostsfile.PRIMARY} lines from ${hostsfile.hostsPath()} (it needs administrator rights). They're harmless; delete them by hand if you like.`);
   tls.uninstall();

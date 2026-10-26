@@ -13,6 +13,7 @@ const keys = require('../src/keys');
 const config = require('../src/config');
 const accounts = require('../src/accounts');
 const state = require('../src/state');
+const claude = require('../src/claude');
 
 let api;
 let env;
@@ -42,7 +43,7 @@ test('starts on the main account when it has usage left', async () => {
   assert.equal(r.code, 0, r.stderr);
   const [s] = sessions();
   assert.equal(s.account, 'default');
-  assert.deepEqual(s.args, ['fix the bug']);
+  assert.deepEqual(s.args, claude.withoutRootBypass(['fix the bug']));
   assert.equal(s.env.ANTHROPIC_API_KEY, null);
   assert.equal(s.env.ANTHROPIC_AUTH_TOKEN, null);
   assert.match(r.stderr, /using Main account/);

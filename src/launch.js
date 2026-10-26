@@ -185,7 +185,8 @@ async function launch(args, { mode = 'auto' } = {}) {
   if (supervise.supervisable(args)) return supervise.run({ bin, args, cfg, mode, line, prepare });
   const prepared = await prepare(line);
   if (!prepared) return 1;
-  return claude.runInteractive(bin, prepared.settings ? ['--settings', JSON.stringify(prepared.settings), ...args] : args, prepared.env);
+  const launched = prepared.settings ? ['--settings', JSON.stringify(prepared.settings), ...args] : args;
+  return claude.runInteractive(bin, claude.withoutRootBypass(launched), prepared.env);
 }
 
 // apiKeyHelper mode: print the first working key and nothing else (Claude Code rejects

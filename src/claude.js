@@ -221,4 +221,32 @@ function atLeast(v, min = MIN_VERSION) {
   return true;
 }
 
-module.exports = { findClaude, command, runInteractive, spawnInteractive, stopInteractive, start, capture, version, atLeast, MIN_VERSION };
+// Claude Code refuses bypass-permissions mode when it is running as root. A launch that
+// would ask for that mode is started in the normal mode instead, so the CLI still runs
+// on a server. An explicit mode other than bypass-permissions is left as it was.
+function isRoot() {
+  return process.platform !== 'win32' && typeof process.getuid === 'function' && process.getuid() === 0;
+}
+
+function withoutRootBypass(args) {
+  if (!isRoot()) return args.slice();
+  const out = [];
+  let mode = null;
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === '--dangerously-skip-permissions') continue;
+    if (arg === '--permission-mode') {
+      mode = args[++i];
+      continue;
+    }
+    if (String(arg).startsWith('--permission-mode=')) {
+      mode = arg.slice('--permission-mode='.length);
+      continue;
+    }
+    out.push(arg);
+  }
+  if (!mode || mode === 'bypassPermissions') mode = 'default';
+  return ['--permission-mode', mode, ...out];
+}
+
+module.exports = { findClaude, command, runInteractive, spawnInteractive, stopInteractive, start, capture, version, atLeast, withoutRootBypass, isRoot, MIN_VERSION };

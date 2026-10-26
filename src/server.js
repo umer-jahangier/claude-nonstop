@@ -198,6 +198,12 @@ async function serve({ port } = {}) {
     const next = ctx.tlsPort
       ? `https://${hostsfile.PRIMARY}`
       : `http://${short ? hostsfile.PRIMARY : FRIENDLY_HOST}${port80 ? '' : `:${mainPort}`}`;
+    try {
+      const wired = require('./clients').apply();
+      if (!wired.ok) log(`claude-nonstop: couldn't point Claude Code at the gateway (${wired.reason})`);
+    } catch (err) {
+      log(`claude-nonstop: couldn't point Claude Code at the gateway (${err.message})`);
+    }
     if (next === uiUrl) return;
     uiUrl = next;
     writeJson(paths.SERVER, { pid: process.pid, port: mainPort, uiUrl, version: pkg.version, startedAt });

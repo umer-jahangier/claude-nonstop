@@ -354,7 +354,7 @@ async function run({ bin, args, cfg, mode, line, prepare }) {
     for (;;) {
       const prepared = await prepare(line);
       if (!prepared) return 1;
-      const fullArgs = withSettings(runArgs, { ...(prepared.settings || {}), hooks: hookSettings() });
+      const fullArgs = claude.withoutRootBypass(withSettings(runArgs, { ...(prepared.settings || {}), hooks: hookSettings() }));
       const env = { ...prepared.env, CLAUDE_NONSTOP_EVENTS: events };
       const result = await runOnce(bin, fullArgs, env, { events, line, cfg, bin, mode });
       if (!result.next) return result.code;

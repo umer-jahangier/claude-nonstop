@@ -31,7 +31,7 @@ Accounts and keys:
   claude-nonstop connectors remove <name>
 
 Setup:
-  claude-nonstop setup               everything at once (the installers run this)
+  claude-nonstop setup               everything at once, including the terminal, VS Code, and Cursor
   claude-nonstop service install | uninstall | status
   claude-nonstop shell install | uninstall
   claude-nonstop update               install the newest version now (it also updates itself within the hour)

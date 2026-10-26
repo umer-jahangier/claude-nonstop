@@ -109,6 +109,7 @@ claude-nonstop: using Work (subscription)
 ## Everyday use
 
 - **Just type `claude`.** claude-nonstop picks the first account with usage left, or your first working key when every account is out. Everything else about Claude Code stays the same.
+- **VS Code, Cursor, and any other Claude Code** that reads your user settings use the same gateway. Setup writes the gateway address into Claude Code's settings, so those installs walk your accounts and then your API keys without a separate sign-in. Start a new chat after setup so the editor picks that up. On a machine running as root, setup also turns off bypass-permissions mode, which Claude Code refuses to start with as root.
 - **Hit a limit in the middle of your work?** Nothing to do. claude-nonstop reopens the same conversation on your next account (or your API keys) and tells Claude to continue where it left off. You'll see Claude Code restart for a moment, then the work carries on.
 - **Only one account, or everything is out?** Claude Code waits in the open session and continues the task by itself when your limit resets (shown as *Continuing automatically at 3:45pm*). On API keys, claude-nonstop does the waiting and continues as soon as an account or a key has usage again. Leave the terminal open.
 - **Running on API keys?** When a key runs out, the next key takes over on the very same request.

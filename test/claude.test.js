@@ -32,6 +32,21 @@ test("finds Claude Code on PATH but never claude-nonstop's own shim", () => {
   }
 });
 
+test('root launches Claude Code in a mode it allows', () => {
+  const forced = claude.withoutRootBypass(['-p', 'hi']);
+  const kept = claude.withoutRootBypass(['--permission-mode', 'plan', '-p']);
+  const replaced = claude.withoutRootBypass(['--permission-mode', 'bypassPermissions', '--dangerously-skip-permissions']);
+  if (claude.isRoot()) {
+    assert.deepEqual(forced, ['--permission-mode', 'default', '-p', 'hi']);
+    assert.deepEqual(kept, ['--permission-mode', 'plan', '-p']);
+    assert.deepEqual(replaced, ['--permission-mode', 'default']);
+  } else {
+    assert.deepEqual(forced, ['-p', 'hi']);
+    assert.deepEqual(kept, ['--permission-mode', 'plan', '-p']);
+    assert.deepEqual(replaced, ['--permission-mode', 'bypassPermissions', '--dangerously-skip-permissions']);
+  }
+});
+
 test('a saved Claude Code location that no longer exists is looked up again', () => {
   const moved = makeClaude(path.join(root, 'native bin'));
   const before = process.env.PATH;
