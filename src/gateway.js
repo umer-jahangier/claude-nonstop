@@ -8,7 +8,8 @@
 //   out, on the first API key with credit, as an ordinary API request. Any Claude Code
 //   signal on a key (the CLI user agent with x-app, or the claude-code beta) makes Anthropic
 //   bill the request as Claude Code, which much API credit doesn't cover, so on a key every
-//   identity is dropped and the request is plain API. The app's own identity never goes out.
+//   identity is dropped, in the headers and in the system prompt (asPlainApiBody), and the
+//   request is plain API. The app's own identity never goes out.
 //
 //   A terminal Claude Code session on API keys (x-claude-nonstop-keys names its keys). The
 //   request goes out as plain API too, on one of the session's keys.
@@ -227,6 +228,57 @@ function asClaudeCodeBody(body) {
   return Buffer.from(JSON.stringify(json));
 }
 
+// The request body as an ordinary API request: Anthropic also reads Claude Code's identity
+// from the system prompt, and bills it as Claude Code (which much API credit doesn't cover,
+// so the key answers 400 "credit balance is too low"). Two blocks do it: the billing header
+// Claude Code puts first, and a block that is exactly its identity line ("You are Claude
+// Code, ..." or the Agent SDK's). The billing header is dropped (it says nothing to the
+// model); the identity line is kept, joined to the text after it, where it no longer marks
+// the request. Left alone when there's nothing to change, or it isn't a JSON body.
+const BILLING_HEADER = /^x-anthropic-billing-header:/i;
+const IDENTITY_LINE = /^You are (?:Claude Code|a Claude agent)\b[^\n]*\bAnthropic's\b[^\n]*\.$/;
+
+function asPlainApiBody(body) {
+  let json;
+  try {
+    json = JSON.parse(body.toString('utf8'));
+  } catch {
+    return body;
+  }
+  if (!json || typeof json !== 'object' || Array.isArray(json) || json.system === undefined) return body;
+  const sys = json.system;
+  if (typeof sys === 'string') {
+    if (!IDENTITY_LINE.test(sys)) return body;
+    json.system = `${sys}\n`;
+    return Buffer.from(JSON.stringify(json));
+  }
+  if (!Array.isArray(sys)) return body;
+  const isText = (b) => b && b.type === 'text' && typeof b.text === 'string';
+  let changed = false;
+  const out = [];
+  for (const block of sys) {
+    if (isText(block) && BILLING_HEADER.test(block.text)) {
+      changed = true;
+      continue;
+    }
+    out.push(block);
+  }
+  for (let i = 0; i < out.length; i++) {
+    const block = out[i];
+    if (!isText(block) || !IDENTITY_LINE.test(block.text)) continue;
+    changed = true;
+    const next = out[i + 1];
+    if (isText(next)) {
+      out.splice(i, 2, { ...next, text: `${block.text}\n\n${next.text}` });
+    } else {
+      out[i] = { ...block, text: `${block.text}\n` };
+    }
+  }
+  if (!changed) return body;
+  json.system = out;
+  return Buffer.from(JSON.stringify(json));
+}
+
 // An account the desktop app can use right now: on, signed in, and not seen at its limit
 // in the last while. Returns its token, or null with why not.
 function accountToken(account, cfg) {
@@ -406,6 +458,7 @@ async function handle(req, res, ctx) {
   }
 
   const eligible = keysFor(req, cfg, vault.keys);
+  const keyBody = asPlainApiBody(body);
   let attempted = 0;
   let cooled = 0;
   let lastError = '';
@@ -416,8 +469,8 @@ async function handle(req, res, ctx) {
       continue;
     }
     attempted++;
-    const headers = upstreamHeaders(req.headers, entry.key, body.length);
-    const { res: upRes, upstream, error } = await forward(cfg, req, body, headers);
+    const headers = upstreamHeaders(req.headers, entry.key, keyBody.length);
+    const { res: upRes, upstream, error } = await forward(cfg, req, keyBody, headers);
     if (error) {
       log(`gateway: upstream connection failed: ${error.message}`);
       if (!res.destroyed && !res.headersSent) {
@@ -500,4 +553,4 @@ async function handle(req, res, ctx) {
   }
 }
 
-module.exports = { handle, sameToken, sendError, readBody, isAccountToken, KEYS_HEADER };
+module.exports = { handle, sameToken, sendError, readBody, isAccountToken, asPlainApiBody, KEYS_HEADER };

@@ -325,3 +325,22 @@ test('a key pinned from the web UI takes every request at once', async () => {
     config.update((c) => (c.pinned = null));
   }
 });
+
+test('a request on a key leaves out the system blocks that mark it as Claude Code', () => {
+  const { asPlainApiBody } = require('../src/gateway');
+  const id = "You are Claude Code, Anthropic's official CLI for Claude, running within the Claude Agent SDK.";
+  const send = (system) => JSON.parse(asPlainApiBody(Buffer.from(JSON.stringify({ messages: [], system }))).toString('utf8')).system;
+
+  assert.deepEqual(send([
+    { type: 'text', text: 'x-anthropic-billing-header: cc_version=2.1.308; cc_entrypoint=claude-desktop-3p;' },
+    { type: 'text', text: id },
+    { type: 'text', text: 'Be helpful.', cache_control: { type: 'ephemeral' } },
+  ]), [{ type: 'text', text: `${id}\n\nBe helpful.`, cache_control: { type: 'ephemeral' } }]);
+  assert.deepEqual(send([{ type: 'text', text: id }]), [{ type: 'text', text: `${id}\n` }]);
+  assert.equal(send(id), `${id}\n`);
+  assert.equal(send('You are a helpful assistant.'), 'You are a helpful assistant.');
+
+  const untouched = Buffer.from('{"messages":[],"system":[{"type":"text","text":"Hi"}]}');
+  assert.equal(asPlainApiBody(untouched), untouched);
+  assert.equal(asPlainApiBody(Buffer.from('not json')).toString(), 'not json');
+});
