@@ -103,6 +103,19 @@ function findAccount(id) {
 
 // ---------------------------------------------------------------- state
 
+// What the Default models dropdowns offer: each service's own names, plus whatever each
+// ChatGPT account's backend listed last (those are the only names it takes).
+function modelChoices(cfg, s) {
+  const openai = providers.openai.models.map(([id, name]) => [id, name, 'OpenAI API']);
+  const seen = new Set(openai.map((m) => m[0]));
+  for (const a of cfg.accounts) {
+    if (a.kind !== 'chatgpt') continue;
+    const listed = (s.chatgptModels || {})[a.id];
+    for (const slug of (listed && listed.slugs) || []) if (!seen.has(slug) && seen.add(slug)) openai.push([slug, slug, `ChatGPT: ${a.label}`]);
+  }
+  return { anthropic: providers.anthropic.models.map(([id, name]) => [id, name, 'Claude']), openai };
+}
+
 function snapshot(ctx) {
   const { cfg, vault: v } = ctx.current();
   const s = state.load();
@@ -139,7 +152,7 @@ function snapshot(ctx) {
     // Your relay order, accounts and keys mixed, as "account:<id>" / "key:<id>".
     order: relay.lines(cfg, v.keys).map((l) => relay.lineId(l.type, l.item.id)),
     pinned: cfg.pinned || null,
-    settings: { cooldownMinutes: cfg.cooldownMinutes, accountRecheckMinutes: cfg.accountRecheckMinutes, models: cfg.models, codexAuthFound: Boolean(openaiAuth.readCodexAuth()), desktopStrictSandbox: Boolean(cfg.desktopStrictSandbox), desktopConnectors: cfg.desktopConnectors || [], desktopAccount: cfg.desktopAccount || 'default', desktopAlerts: cfg.desktopAlerts !== false },
+    settings: { cooldownMinutes: cfg.cooldownMinutes, accountRecheckMinutes: cfg.accountRecheckMinutes, models: cfg.models, modelChoices: modelChoices(cfg, s), codexAuthFound: Boolean(openaiAuth.readCodexAuth()), desktopStrictSandbox: Boolean(cfg.desktopStrictSandbox), desktopConnectors: cfg.desktopConnectors || [], desktopAccount: cfg.desktopAccount || 'default', desktopAlerts: cfg.desktopAlerts !== false },
     traffic: events.stats(),
     shell: shell.status(),
     service: service.status(),

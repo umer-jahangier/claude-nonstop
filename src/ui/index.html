@@ -292,6 +292,7 @@ main { max-width: 1080px; margin: 0 auto; padding: 12px 20px 72px 44px; }
 .field label.check { width: auto; flex: 1; display: flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer; }
 .model-input { flex: none; width: 190px; height: 30px; padding: 0 8px; border: 0; border-radius: 7px; background: var(--fill); color: var(--label); font-family: var(--mono); font-size: 0.8125rem; letter-spacing: 0; text-align: right; }
 .model-input:focus-visible { outline-offset: 0; }
+select.model-input { text-align: left; cursor: pointer; appearance: none; -webkit-appearance: none; padding-right: 26px; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%23888' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>"); background-repeat: no-repeat; background-position: right 9px center; }
 .row-title { font-size: 0.9375rem; line-height: 1.33; font-weight: 500; letter-spacing: -0.015em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row-sub { font-size: 0.8125rem; line-height: 1.33; color: var(--label-2); letter-spacing: -0.003em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row-why { font-size: 0.8125rem; line-height: 1.38; color: var(--label-2); letter-spacing: -0.003em; overflow-wrap: anywhere; }
@@ -834,14 +835,14 @@ main { position: relative; z-index: 1; }
       <form class="group list flat" id="models-form">
         <label class="row field-row" for="model-anthropic">
           <span class="row-text"><span class="row-title">On a Claude line</span><span class="row-sub">When a tool asks for a GPT model (Codex, Cursor) and a Claude account or key answers</span></span>
-          <input class="model-input" id="model-anthropic" name="anthropic" spellcheck="false" autocapitalize="off" autocomplete="off">
+          <select class="model-input" id="model-anthropic" name="anthropic"></select>
         </label>
         <label class="row field-row" for="model-openai">
           <span class="row-text"><span class="row-title">On an OpenAI line</span><span class="row-sub">When a tool asks for a Claude model (Claude Code, the desktop app) and a ChatGPT account or OpenAI key answers</span></span>
-          <input class="model-input" id="model-openai" name="openai" spellcheck="false" autocapitalize="off" autocomplete="off">
+          <select class="model-input" id="model-openai" name="openai"></select>
         </label>
       </form>
-      <p class="group-foot">A request for a model from the line's own service keeps that model. These also set what Codex is told to use.</p>
+      <p class="group-foot">A request for a model from the line's own service keeps that model: Claude Code on a Claude account uses the model picked in Claude Code, Codex on a ChatGPT account the one picked in Codex. The OpenAI list grows with the names each ChatGPT account's backend lists. These also set what Codex is told to use.</p>
       <div class="group-head"><h2>Claude desktop app</h2></div>
       <ul class="group list flat" id="desktop-prefs"></ul>
       <p class="group-foot">In third-party mode the desktop app keeps its Code sessions to a short list of sites unless told otherwise. claude-nonstop lets them reach any site, like a normal install. Turn Strict sandbox on to keep the restriction. Changing it updates the app's settings: on a Mac, approve the updated profile in System Settings, then reopen the app.</p>
@@ -1280,11 +1281,25 @@ async function applyConnectors(done) {
   await refresh();
 }
 
+function renderModelChoices(select, choices, value) {
+  const groups = new Map();
+  for (const [id, name, group] of choices) {
+    if (!groups.has(group)) groups.set(group, []);
+    groups.get(group).push([id, name]);
+  }
+  if (value && !choices.some((c) => c[0] === value)) groups.set('As set', [[value, value]]);
+  select.innerHTML = [...groups].map(([group, items]) => `<optgroup label="${esc(group)}">${items.map(([id, name]) => `<option value="${esc(id)}">${esc(name)}</option>`).join('')}</optgroup>`).join('');
+  select.value = value || '';
+}
+
 function renderSettings() {
-  for (const [id, value] of [['cooldown', S.settings.cooldownMinutes], ['recheck', S.settings.accountRecheckMinutes], ['model-anthropic', S.settings.models.anthropic], ['model-openai', S.settings.models.openai]]) {
+  for (const [id, value] of [['cooldown', S.settings.cooldownMinutes], ['recheck', S.settings.accountRecheckMinutes]]) {
     const input = document.getElementById(id);
     if (document.activeElement !== input) input.value = value;
   }
+  const choices = S.settings.modelChoices || { anthropic: [], openai: [] };
+  renderModelChoices($('#model-anthropic'), choices.anthropic, S.settings.models.anthropic);
+  renderModelChoices($('#model-openai'), choices.openai, S.settings.models.openai);
   const facts = [
     ['Plain claude command', S.shell.installed ? 'On' : 'Off', S.shell.installed ? 'Runs through claude-nonstop, so sessions move on when a limit hits.' : 'Runs Claude Code directly. Turn it on with <code>claude-nonstop shell install</code>.'],
     ['Starts at login', S.service.installed ? 'On' : 'Off', S.service.installed ? 'The gateway starts when you log in and installs updates by itself.' : 'The gateway stops when you restart. Keep it on with <code>claude-nonstop service install</code>.'],

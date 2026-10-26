@@ -96,6 +96,16 @@ test('the web UI reports Codex and sets it up with one request', async () => {
   snap = await ui.route('GET', '/api/state', {}, ctx);
   assert.equal(snap.codex.wired, true);
   assert.deepEqual(snap.settings.models, { anthropic: 'claude-sonnet-5-5', openai: 'gpt-5.5' });
+  // The dropdowns offer each service's names, plus what a ChatGPT account's backend listed.
+  assert.ok(snap.settings.modelChoices.anthropic.some(([id]) => id === 'claude-opus-5-5'));
+  assert.ok(snap.settings.modelChoices.openai.some(([id, , group]) => id === 'gpt-5.5' && group === 'OpenAI API'));
+  config.update((c) => c.accounts.push({ id: 'gpt-test', label: 'Work', kind: 'chatgpt', provider: 'openai', enabled: true }));
+  require('../src/state').recordChatgptModels('gpt-test', ['gpt-6.1-sol', 'gpt-5.5']);
+  snap = await ui.route('GET', '/api/state', {}, ctx);
+  const sol = snap.settings.modelChoices.openai.find(([id]) => id === 'gpt-6.1-sol');
+  assert.deepEqual(sol, ['gpt-6.1-sol', 'gpt-6.1-sol', 'ChatGPT: Work']);
+  assert.equal(snap.settings.modelChoices.openai.filter(([id]) => id === 'gpt-5.5').length, 1, 'no duplicates');
+  config.update((c) => (c.accounts = c.accounts.filter((a) => a.id !== 'gpt-test')));
   // Changing the default OpenAI model updates what Codex asks for.
   await ui.route('PATCH', '/api/settings', { models: { openai: 'gpt-5.4' } }, ctx);
   assert.match(read(), /^model = "gpt-5\.4"/);
