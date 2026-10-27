@@ -281,15 +281,45 @@ function asPlainApiBody(body) {
 
 // An account the desktop app can use right now: on, signed in, and not seen at its limit
 // in the last while. Returns its token, or null with why not.
-function accountToken(account, cfg) {
+// A Claude.ai sign-in good for at least another minute.
+const fresh = (creds) => Boolean(creds && (!creds.expiresAt || creds.expiresAt > Date.now() + 60000));
+
+const limitedRecently = (account, cfg) => {
   const recent = state.load().accounts[account.id];
-  if (recent && !recent.ok && accounts.isLimitReason(recent.reason) && Date.now() - recent.at < cfg.accountRecheckMinutes * 60000) {
-    return { token: null, why: recent.reason };
-  }
-  const creds = usage.readCredentials(account);
+  return recent && !recent.ok && accounts.isLimitReason(recent.reason) && Date.now() - recent.at < cfg.accountRecheckMinutes * 60000 ? recent.reason : null;
+};
+
+// An account's sign-in token, renewed first when it has expired. The gateway only reads
+// tokens; Claude Code renews them when it runs. On a computer where nothing else runs Claude
+// Code under an account (a server, say), its token would stay expired and the account would
+// be passed over for good, so the gateway runs Claude Code's quick usage check under that
+// account, which renews the token the normal way, and reads it again.
+async function accountToken(account, cfg) {
+  const limited = limitedRecently(account, cfg);
+  if (limited) return { token: null, why: limited };
+  let creds = usage.readCredentials(account);
   if (!creds) return { token: null, why: 'no sign-in token found' };
-  if (creds.expiresAt && creds.expiresAt < Date.now()) return { token: null, why: 'sign-in token expired' };
+  if (!fresh(creds)) {
+    log(`gateway: ${account.label}: sign-in token expired, renewing it`);
+    await require('./checks').account(account);
+    const nowLimited = limitedRecently(account, cfg);
+    if (nowLimited) return { token: null, why: nowLimited };
+    creds = usage.readCredentials(account);
+    if (!fresh(creds)) return { token: null, why: 'sign-in token expired and could not be renewed (sign in to this account again)' };
+  }
   return { token: creds.token, why: '' };
+}
+
+// Renews every Claude.ai sign-in that is about to expire, so a request never waits for it.
+async function renewExpiring(cfg) {
+  for (const account of cfg.accounts) {
+    if (account.enabled === false || limitedRecently(account, cfg)) continue;
+    const creds = usage.readCredentials(account);
+    if (creds && creds.expiresAt && creds.expiresAt < Date.now() + 10 * 60000) {
+      log(`gateway: ${account.label}: sign-in token expires soon, renewing it`);
+      await require('./checks').account(account);
+    }
+  }
 }
 
 // Headers for a request on a Claude.ai sign-in: exactly as sent, sign-in and identity included.
@@ -405,7 +435,7 @@ async function handle(req, res, ctx) {
     for (const group of relay.groups(cfg, vault.keys)) {
       if (group.kind !== 'account') continue;
       const { account } = group;
-      const { token, why } = accountToken(account, cfg);
+      const { token, why } = await accountToken(account, cfg);
       if (!token) {
         log(`gateway: ${account.label}: ${why}; trying the next line`);
         continue;
@@ -553,4 +583,4 @@ async function handle(req, res, ctx) {
   }
 }
 
-module.exports = { handle, sameToken, sendError, readBody, isAccountToken, asPlainApiBody, KEYS_HEADER };
+module.exports = { handle, renewExpiring, sameToken, sendError, readBody, isAccountToken, asPlainApiBody, KEYS_HEADER };

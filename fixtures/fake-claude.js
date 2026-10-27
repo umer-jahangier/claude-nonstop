@@ -26,6 +26,16 @@ function record(entry) {
 if (args.includes('-p')) {
   const isLimited = limited.includes(account) || limited.includes('all');
   record({ kind: 'probe', account });
+  // Like Claude Code, running renews an expired sign-in (FAKE_CLAUDE_NO_RENEW: a refresh token that no longer works).
+  const creds = path.join(configDir || path.join(require('os').homedir(), '.claude'), '.credentials.json');
+  if (!process.env.FAKE_CLAUDE_NO_RENEW && fs.existsSync(creds)) {
+    const c = JSON.parse(fs.readFileSync(creds, 'utf8'));
+    if (c.claudeAiOauth && c.claudeAiOauth.expiresAt < Date.now() + 5 * 60000) {
+      c.claudeAiOauth.expiresAt = Date.now() + 8 * 3600000;
+      fs.writeFileSync(creds, JSON.stringify(c));
+      record({ kind: 'renewed', account });
+    }
+  }
   process.stdout.write(
     `${JSON.stringify({ type: 'result', is_error: isLimited, result: isLimited ? "You've hit your session limit · resets 3:45pm" : 'OK' })}\n`,
   );
