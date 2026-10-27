@@ -336,15 +336,45 @@ function asResponsesBody(json, model, { chatgpt }) {
 
 // A Claude account the gateway can use right now: on, signed in, and not seen at its limit
 // in the last while. Returns its token, or null with why not.
-function claudeToken(account, cfg) {
+// A Claude.ai sign-in good for at least another minute.
+const fresh = (creds) => Boolean(creds && (!creds.expiresAt || creds.expiresAt > Date.now() + 60000));
+
+const limitedRecently = (account, cfg) => {
   const recent = state.load().accounts[account.id];
-  if (recent && !recent.ok && accounts.isLimitReason(recent.reason) && Date.now() - recent.at < cfg.accountRecheckMinutes * 60000) {
-    return { token: null, why: recent.reason };
-  }
-  const creds = usage.readCredentials(account);
+  return recent && !recent.ok && accounts.isLimitReason(recent.reason) && Date.now() - recent.at < cfg.accountRecheckMinutes * 60000 ? recent.reason : null;
+};
+
+// An account's sign-in token, renewed first when it has expired. The gateway only reads
+// tokens; Claude Code renews them when it runs. On a computer where nothing else runs Claude
+// Code under an account (a server, say), its token would stay expired and the account would
+// be passed over for good, so the gateway runs Claude Code's quick usage check under that
+// account, which renews the token the normal way, and reads it again.
+async function claudeToken(account, cfg) {
+  const limited = limitedRecently(account, cfg);
+  if (limited) return { token: null, why: limited };
+  let creds = usage.readCredentials(account);
   if (!creds) return { token: null, why: 'no sign-in token found' };
-  if (creds.expiresAt && creds.expiresAt < Date.now()) return { token: null, why: 'sign-in token expired' };
+  if (!fresh(creds)) {
+    log(`gateway: ${account.label}: sign-in token expired, renewing it`);
+    await require('./checks').account(account);
+    const nowLimited = limitedRecently(account, cfg);
+    if (nowLimited) return { token: null, why: nowLimited };
+    creds = usage.readCredentials(account);
+    if (!fresh(creds)) return { token: null, why: 'sign-in token expired and could not be renewed (sign in to this account again)' };
+  }
   return { token: creds.token, why: '' };
+}
+
+// Renews every Claude.ai sign-in that is about to expire, so a request never waits for it.
+async function renewExpiring(cfg) {
+  for (const account of cfg.accounts) {
+    if (account.enabled === false || accounts.isChatgpt(account) || limitedRecently(account, cfg)) continue;
+    const creds = usage.readCredentials(account);
+    if (creds && creds.expiresAt && creds.expiresAt < Date.now() + 10 * 60000) {
+      log(`gateway: ${account.label}: sign-in token expires soon, renewing it`);
+      await require('./checks').account(account);
+    }
+  }
 }
 
 // A ChatGPT account the gateway can use right now, with a sign-in good for a while.
@@ -640,7 +670,7 @@ async function handle(req, res, ctx) {
     // Whatever format it came in, a request to the Codex backend is shaped the same way.
     const chatgptBody = (m) => asResponsesBody(inbound === 'responses' ? json : translate.writeRequest('responses', { ...parsed, stream: true }, { model: m, store: false, stream: true, includeEncrypted: true }), m, { chatgpt: true });
     if (line.kind === 'account' && provider.id === 'anthropic') {
-      const { token: t, why } = claudeToken(item, cfg);
+      const { token: t, why } = await claudeToken(item, cfg);
       if (!t) {
         log(`gateway: ${label}: ${why}; trying the next line`);
         continue;
@@ -837,7 +867,7 @@ async function rawAnthropic(req, res, ctx, body, desktop) {
     let outBody;
     let headers;
     if (line.kind === 'account') {
-      const { token } = claudeToken(item, cfg);
+      const { token } = await claudeToken(item, cfg);
       if (!token) continue;
       outBody = asClaudeCodeBody(body);
       headers = claudeAccountHeaders(req.headers, true, token, outBody.length);
@@ -862,4 +892,4 @@ async function rawAnthropic(req, res, ctx, body, desktop) {
   if (!res.destroyed && !res.headersSent) sendError(res, 402, 'billing_error', 'claude-nonstop: no Anthropic line could take this request.');
 }
 
-module.exports = { handle, sameToken, sendError, readBody, isAccountToken, asPlainApiBody, asClaudeCodeBody, modelFor, KEYS_HEADER, LINE_HEADER };
+module.exports = { handle, claudeToken, renewExpiring, sameToken, sendError, readBody, isAccountToken, asPlainApiBody, asClaudeCodeBody, modelFor, KEYS_HEADER, LINE_HEADER };

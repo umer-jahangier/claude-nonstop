@@ -230,6 +230,11 @@ async function serve({ port } = {}) {
     setTimeout(() => require('./desktopadvice').start(), 6000).unref();
     // How much of each account's plan is used, refreshed every few minutes.
     setTimeout(() => require('./usage').start(), 7000).unref();
+    // Claude.ai sign-ins last a few hours. Renew any about to run out, so accounts stay
+    // usable on a computer where nothing else runs Claude Code.
+    const renew = () => require('./gateway').renewExpiring(config.load()).catch((err) => log(`gateway: renewing sign-ins failed: ${err.message}`));
+    setTimeout(renew, 8000).unref();
+    setInterval(renew, 5 * 60000).unref();
   }
 
   const stop = (code = 0) => {

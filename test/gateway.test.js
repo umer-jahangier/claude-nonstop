@@ -3,11 +3,12 @@
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('http');
-const { isolate, startFakeApi, testKey, testAccountToken, signInFakeAccount, call } = require('./helpers');
+const { isolate, installFakeClaude, readFakeLog, startFakeApi, testKey, testAccountToken, signInFakeAccount, call } = require('./helpers');
 const fs = require('fs');
 const path = require('path');
 
-isolate();
+const { root } = isolate();
+process.env.CLAUDE_NONSTOP_CLAUDE = installFakeClaude(root);
 const vault = require('../src/vault');
 const keys = require('../src/keys');
 const state = require('../src/state');
@@ -203,6 +204,45 @@ test('the desktop app runs on your subscription accounts first, in your order, a
     api.requests.length = 0;
     await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token } });
     assert.deepEqual(api.requests.map((q) => q.bearer), [testAccountToken('ok')], 'the limited account is skipped for a while');
+  } finally {
+    noAccounts();
+  }
+});
+
+test('an expired sign-in is renewed through Claude Code, not passed over (a server where nothing else runs Claude Code)', async () => {
+  useKeys('credit');
+  useAccounts('ok');
+  const dir = config.load().accounts[0].configDir;
+  signInFakeAccount(dir, 'ok', { expiresAt: Date.now() - 14 * 3600000 });
+  try {
+    api.requests.length = 0;
+    const r = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token, 'user-agent': 'Claude/1.0 Electron' } });
+    assert.equal(r.status, 200, r.body);
+    assert.ok(readFakeLog().some((e) => e.kind === 'renewed'), 'Claude Code renewed the sign-in');
+    assert.deepEqual(api.requests.filter((q) => q.url === '/v1/messages').map((q) => q.bearer), [testAccountToken('ok')], 'and the request went out on the account');
+
+    // A sign-in that can't be renewed is passed over, and the request moves on.
+    signInFakeAccount(dir, 'ok', { expiresAt: Date.now() - 1000 });
+    process.env.FAKE_CLAUDE_NO_RENEW = '1';
+    useKeys('ok');
+    api.requests.length = 0;
+    const next = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token, 'user-agent': 'Claude/1.0 Electron' } });
+    assert.equal(next.status, 200);
+    assert.equal(api.requests.at(-1).key, testKey('ok'));
+  } finally {
+    delete process.env.FAKE_CLAUDE_NO_RENEW;
+    noAccounts();
+  }
+});
+
+test('the gateway renews sign-ins that are about to expire, before any request needs them', async () => {
+  useAccounts('ok');
+  const dir = config.load().accounts[0].configDir;
+  signInFakeAccount(dir, 'ok', { expiresAt: Date.now() + 2 * 60000 });
+  try {
+    await require('../src/gateway').renewExpiring(config.load());
+    const after = JSON.parse(fs.readFileSync(path.join(dir, '.credentials.json'), 'utf8')).claudeAiOauth.expiresAt;
+    assert.ok(after > Date.now() + 3600000);
   } finally {
     noAccounts();
   }
