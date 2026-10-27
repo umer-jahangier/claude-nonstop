@@ -310,10 +310,14 @@ async function accountToken(account, cfg) {
   return { token: creds.token, why: '' };
 }
 
-// Renews every Claude.ai sign-in that is about to expire, so a request never waits for it.
+// Keeps every Claude.ai sign-in alive: one about to expire is renewed through Claude Code's
+// one-word usage check, so a request never waits for it and no account needs signing in
+// again. Paused accounts and accounts at their limit are kept alive too: Claude Code renews
+// the sign-in before it asks, even when the answer is a limit. Nothing is spent on a
+// sign-in that still has time left, so each account costs about one tiny request per
+// sign-in lifetime (a few a day).
 async function renewExpiring(cfg) {
   for (const account of cfg.accounts) {
-    if (account.enabled === false || limitedRecently(account, cfg)) continue;
     const creds = usage.readCredentials(account);
     if (creds && creds.expiresAt && creds.expiresAt < Date.now() + 10 * 60000) {
       log(`gateway: ${account.label}: sign-in token expires soon, renewing it`);
