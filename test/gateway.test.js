@@ -258,6 +258,24 @@ test('the gateway renews sign-ins that are about to expire, before any request n
   }
 });
 
+test("a burst rate limit on an account isn't a usage limit: it's skipped for seconds, and with nothing else the client is told to retry", async () => {
+  useKeys('credit');
+  useAccounts('burst', 'ok');
+  try {
+    api.requests.length = 0;
+    const r = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token, 'user-agent': 'Claude/1.0 Electron' } });
+    assert.equal(r.status, 200, 'moved on to the next account');
+    assert.notEqual(state.load().accounts['acct-burst-0']?.ok, false, 'not recorded as out of usage');
+
+    useAccounts('burst');
+    const again = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token, 'user-agent': 'Claude/1.0 Electron' } });
+    assert.equal(again.status, 429, 'a retryable answer, not a billing error');
+    assert.ok(Number(again.headers['retry-after']) > 0);
+  } finally {
+    noAccounts();
+  }
+});
+
 test("a subscription sign-in gets Claude Code's system line first, since Anthropic takes only Claude Code's requests on it", async () => {
   useKeys();
   useAccounts('ok');

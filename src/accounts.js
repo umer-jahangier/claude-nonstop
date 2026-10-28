@@ -157,7 +157,8 @@ async function probe(account, bin) {
   return result;
 }
 
-const isLimitReason = (reason) => /limit/i.test(reason || '');
+// A plan limit (session, weekly, usage): not a passing "rate limit" on a burst of requests.
+const isLimitReason = (reason) => /usage limit|session limit|weekly limit|limit reached|hit your|out of (extra )?usage/i.test(reason || '') && !/would exceed your account's rate limit/i.test(reason || '');
 
 function findEmail(value) {
   if (!value || typeof value !== 'object') return null;

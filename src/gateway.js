@@ -38,6 +38,8 @@ const OAUTH_BETA = 'oauth-2025-04-20';
 // the desktop app's startup probe doesn't, so the gateway puts it first when it's missing.
 const CLAUDE_CODE_SYSTEM = "You are Claude Code, Anthropic's official CLI for Claude.";
 
+// Accounts refused for a passing rate limit, by id: skipped until this time (ms).
+const busyUntil = new Map();
 const MAX_BODY = 64 * 1024 * 1024;
 const MAX_ERROR_BODY = 4 * 1024 * 1024;
 const KEYS_HEADER = 'x-claude-nonstop-keys';
@@ -433,12 +435,19 @@ async function handle(req, res, ctx) {
   // The desktop app's requests walk your accounts first, then keys as plain API.
   const desktop = !isSession(req);
   const free = isFree(req);
+  // Seconds until an account refused only for a burst can be tried again.
+  let busy = 0;
 
   // The desktop app walks your relay order: a subscription account first, when one has usage.
   if (desktop) {
     for (const group of relay.groups(cfg, vault.keys)) {
       if (group.kind !== 'account') continue;
       const { account } = group;
+      if ((busyUntil.get(account.id) || 0) > Date.now()) {
+        busy = Math.max(busy, Math.ceil((busyUntil.get(account.id) - Date.now()) / 1000));
+        log(`gateway: ${account.label}: rate limited for a few seconds; trying the next line`);
+        continue;
+      }
       const { token, why } = await accountToken(account, cfg);
       if (!token) {
         log(`gateway: ${account.label}: ${why}; trying the next line`);
@@ -463,8 +472,15 @@ async function handle(req, res, ctx) {
         const detail = keys.errorMessage(errBody.toString('utf8')) || `HTTP ${upRes.statusCode}`;
         // A usage limit says so (in the message, or in Anthropic's unified limit header);
         // any other 429 is a passing refusal, so the account isn't set aside for it.
+        // "would exceed your account's rate limit" is a short burst refusal, not the plan
+        // running out: that account is only skipped for this request and the next few seconds.
         const limited = upRes.statusCode === 429 &&
-          (/limit/i.test(detail) || /rejected/i.test(String(upRes.headers['anthropic-ratelimit-unified-status'] || '')));
+          (accounts.isLimitReason(detail) || /rejected/i.test(String(upRes.headers['anthropic-ratelimit-unified-status'] || '')));
+        if (upRes.statusCode === 429 && !limited) {
+          const wait = Math.min(60, Math.max(5, Number(upRes.headers['retry-after']) || 10));
+          busyUntil.set(account.id, Date.now() + wait * 1000);
+          busy = Math.max(busy, wait);
+        }
         if (upRes.statusCode !== 429 || limited) {
           state.recordAccount(account.id, { ok: false, reason: limited ? `usage limit reached: ${detail}` : `sign-in refused: ${detail}` });
         }
@@ -570,6 +586,16 @@ async function handle(req, res, ctx) {
   if (free) {
     log('gateway: no line could list models; answering with the built-in list');
     if (!res.destroyed && !res.headersSent) sendBuiltinModels(res);
+    return;
+  }
+  if (busy) {
+    // Only a passing rate limit stood in the way: answer like Anthropic does, so Claude Code
+    // waits and retries by itself instead of stopping on a billing error.
+    log(`gateway: every line is busy or out; accounts rate limited for ${busy}s, asking the client to retry`);
+    if (!res.destroyed && !res.headersSent) {
+      res.setHeader('retry-after', String(busy));
+      sendError(res, 429, 'rate_limit_error', `claude-nonstop: your accounts are rate limited for a few seconds; retrying in ${busy}s.`);
+    }
     return;
   }
   events.emit('exhausted', {});
