@@ -762,6 +762,63 @@ async function reset(args = []) {
   return 0;
 }
 
+// ---------------------------------------------------------------- ssh
+
+// Servers the desktop app's SSH sessions can use (ssh.js explains the tunnel).
+function sshCommand([sub, host] = []) {
+  ensureHome();
+  const ssh = require('./ssh');
+  if (!sub || sub === 'list') {
+    const cfg = config.load();
+    if (!cfg.sshHosts.length) {
+      out('No servers set up for SSH sessions. Add one with `claude-nonstop ssh add <host>`.');
+      return 0;
+    }
+    const live = readJson(paths.SSH_STATUS, { tunnels: [] }).tunnels;
+    out(`The desktop app reaches the gateway at ${ssh.gatewayUrl(cfg)}, on this computer and through a tunnel on:`);
+    for (const h of cfg.sshHosts) {
+      const t = live.find((x) => x.host === h);
+      out(`  ${h}  ${t ? (t.state === 'up' ? 'tunnel up' : t.state === 'down' ? `tunnel down: ${t.why}` : 'connecting') : 'tunnel not open (is the gateway running?)'}`);
+    }
+    return 0;
+  }
+  if ((sub !== 'add' && sub !== 'remove') || !host) {
+    out('Usage: claude-nonstop ssh [add|remove] <host>');
+    return 1;
+  }
+  if (!ssh.validHost(host)) {
+    out(`! ${host} isn't a host name ssh can use.`);
+    return 1;
+  }
+  if (sub === 'add') {
+    if (!ssh.available()) {
+      out('! The gateway needs its HTTPS certificate and the claude.nonstop name first: run `claude-nonstop setup`.');
+      return 1;
+    }
+    out(`Setting up ${host}: the claude.nonstop name and the gateway's certificate authority…`);
+    const r = ssh.prepare(host);
+    if (!r.ok) {
+      out(`! ${host} wasn't set up: ${r.why}.`);
+      return 1;
+    }
+    config.update((cfg) => {
+      if (!cfg.sshHosts.includes(host)) cfg.sshHosts.push(host);
+    });
+    out(`- ${host} is set up. The gateway keeps a tunnel open to it while it runs.`);
+  } else {
+    const r = ssh.unprepare(host);
+    if (!r.ok) out(`! ${host} couldn't be cleaned up (${r.why}); it's removed here anyway.`);
+    config.update((cfg) => {
+      cfg.sshHosts = cfg.sshHosts.filter((h) => h !== host);
+    });
+    out(`- ${host} is removed.`);
+  }
+  // The gateway URL the desktop app needs changes with the first host added or the last removed.
+  desktop.write(config.load(), vault.loadWithTokens());
+  setUpDesktop(false);
+  return 0;
+}
+
 module.exports = {
   connect: connectCommand,
   serve,
@@ -774,6 +831,7 @@ module.exports = {
   resume: (args) => pauseCommand(false, args),
   desktop: desktopCommand,
   connectors: connectorsCommand,
+  ssh: sshCommand,
   setup,
   service: serviceCommand,
   shell: shellCommand,

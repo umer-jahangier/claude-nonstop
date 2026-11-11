@@ -27,7 +27,9 @@ const PROFILE = path.join(paths.HOME, 'claude-nonstop-desktop.mobileconfig');
 function settings(cfg, v) {
   return {
     inferenceProvider: 'gateway',
-    inferenceGatewayBaseUrl: `http://127.0.0.1:${cfg.port}`,
+    // With SSH hosts set up, a name the app doesn't take for loopback, so its SSH sessions
+    // can start; it still leads here, and through a tunnel on each server (ssh.js).
+    inferenceGatewayBaseUrl: require('./ssh').inUse(cfg) ? require('./ssh').gatewayUrl(cfg) : `http://127.0.0.1:${cfg.port}`,
     inferenceGatewayApiKey: v.gatewayToken,
     inferenceGatewayAuthScheme: 'bearer',
     // Third-party mode keeps its own history, so turn on Anthropic's import: Settings →

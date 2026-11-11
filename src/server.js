@@ -9,6 +9,9 @@
 //   port 443         HTTPS with the certificate setup made and this computer trusts
 //                    (tls.js), so https://claude.nonstop shows no "Not secure" warning;
 //                    plain-http visits to the short names are sent there
+//   127.0.0.1:43118  HTTPS too, for the desktop app's SSH sessions: a reverse tunnel brings
+//                    a server's own 127.0.0.1:43118 here, and https://claude.nonstop:43118
+//                    names the gateway the same way on both machines (ssh.js)
 // Every connection that doesn't come from this computer is closed before it's read.
 
 const fs = require('fs');
@@ -189,6 +192,16 @@ async function serve({ port } = {}) {
     servers.push(port443);
     ctx.ports.add(443);
   }
+  const tunnelPort = ctx.current().cfg.sshTunnelPort;
+  if (tlsOptions && tunnelPort) {
+    const tunnel = createServer(ctx, tlsOptions);
+    const busy = await listen(tunnel, { port: tunnelPort, host: '127.0.0.1' });
+    if (busy) log(`claude-nonstop: port ${tunnelPort} is in use, so SSH sessions in the desktop app can't reach the gateway (${busy.code || busy.message})`);
+    else {
+      servers.push(tunnel);
+      ctx.ports.add(tunnelPort);
+    }
+  }
   const startedAt = new Date().toISOString();
   let uiUrl = '';
   const publish = () => {
@@ -210,6 +223,11 @@ async function serve({ port } = {}) {
     log(`claude-nonstop ${pkg.version}: gateway on http://127.0.0.1:${mainPort}, web UI at ${uiUrl}`);
   };
   publish();
+  // Reverse tunnels for the desktop app's SSH sessions, kept up while the server runs and
+  // matched to the settings whenever they change.
+  const ssh = require('./ssh');
+  ssh.reconcile(ctx.current().cfg);
+  fs.watchFile(paths.CONFIG, { interval: 3000 }, () => ssh.reconcile(config.load()));
   // Setup may add the short names while the server runs; pick them up when it does.
   fs.watchFile(hostsfile.hostsPath(), { interval: 5000 }, publish);
 
@@ -241,6 +259,7 @@ async function serve({ port } = {}) {
     const info = readJson(paths.SERVER, null);
     if (info && info.pid === process.pid) fs.rmSync(paths.SERVER, { force: true });
     for (const server of servers) server.close();
+    require('./ssh').stopAll();
     process.exit(code);
   };
   process.on('SIGTERM', () => stop(0));

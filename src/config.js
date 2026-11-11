@@ -21,6 +21,10 @@ const DEFAULTS = {
   // The model a line answers with when the request asked for one from the other service.
   models: { anthropic: 'claude-sonnet-5-5', openai: 'gpt-5.5' },
   modelAliases: {}, // requested model name -> the one to use, applied before the family check
+  // The desktop app's SSH sessions reach the gateway through a reverse tunnel: on each host
+  // named here, the server's 127.0.0.1:sshTunnelPort leads back to this computer's (ssh.js).
+  sshTunnelPort: 43118,
+  sshHosts: [],
 };
 
 const DEFAULT_ACCOUNT = { id: 'default', label: 'Main account', kind: 'default', enabled: true };
@@ -29,6 +33,7 @@ function load() {
   const saved = readJson(paths.CONFIG, {});
   const cfg = { ...DEFAULTS, ...saved };
   cfg.models = { ...DEFAULTS.models, ...(saved.models || {}) };
+  cfg.sshHosts = Array.isArray(saved.sshHosts) ? saved.sshHosts : [];
   cfg.accounts = Array.isArray(saved.accounts) && saved.accounts.length ? saved.accounts : [{ ...DEFAULT_ACCOUNT }];
   if (process.env.CLAUDE_NONSTOP_PORT) cfg.port = Number(process.env.CLAUDE_NONSTOP_PORT);
   if (process.env.CLAUDE_NONSTOP_UPSTREAM) cfg.upstream = process.env.CLAUDE_NONSTOP_UPSTREAM;

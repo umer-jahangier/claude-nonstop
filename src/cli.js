@@ -32,6 +32,9 @@ Accounts and keys:
   claude-nonstop connectors          list the desktop app's connectors
   claude-nonstop connectors add <name> <https-url> [--no-oauth]
   claude-nonstop connectors remove <name>
+  claude-nonstop ssh                 servers the desktop app's SSH sessions can use, and their tunnels
+  claude-nonstop ssh add <host>      let SSH sessions on <host> reach the gateway (an ~/.ssh/config name works)
+  claude-nonstop ssh remove <host>   undo that on <host>
 
 Setup:
   claude-nonstop setup               everything at once, including the terminal, VS Code, and Cursor
@@ -79,6 +82,7 @@ async function main(argv) {
     case 'desktop':
     case 'connect':
     case 'connectors':
+    case 'ssh':
     case 'setup':
     case 'service':
     case 'shell':

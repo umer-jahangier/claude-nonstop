@@ -17,6 +17,7 @@ module.exports = {
   CONFIG: path.join(HOME, 'config.json'),
   STATE: path.join(HOME, 'state.json'),
   SERVER: path.join(HOME, 'server.json'),
+  SSH_STATUS: path.join(HOME, 'ssh-tunnels.json'), // written by the gateway, read by `ssh`
   PROFILES: path.join(HOME, 'profiles'),
   LOG: path.join(HOME, 'claude-nonstop.log'),
   GATEWAY_LOG: path.join(HOME, 'gateway.log'),
