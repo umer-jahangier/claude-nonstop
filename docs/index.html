@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>claude-nonstop · Keep Claude Code working through usage limits</title>
-<meta name="description" content="Free, open-source tool by Umer Jahangier that keeps Claude Code, Codex and the Claude desktop app working through usage limits by switching accounts, then API keys.">
+<meta name="description" content="Free, open-source tool by Umer Jahangier that keeps Claude Code, Codex and the Claude desktop app working through usage limits: next account, then API keys.">
 <meta name="author" content="Muhammad Umer (Umer Jahangier)">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 <meta name="google-site-verification" content="1LB4ZIWvWy8WoZV8dKLjAAnKZr0qMV4szFTtsrf-Bf0">
@@ -99,7 +99,8 @@
     "@id": "https://umer-jahangier.github.io/#person"
    },
    "sameAs": [
-    "https://github.com/umer-jahangier/claude-nonstop"
+    "https://github.com/umer-jahangier/claude-nonstop",
+    "https://www.npmjs.com/package/@umer-jahangier/claude-nonstop"
    ]
   },
   {
@@ -119,7 +120,9 @@
    },
    "sameAs": [
     "https://github.com/umer-jahangier",
-    "https://www.linkedin.com/in/muhammad-umer-jahangier"
+    "https://www.linkedin.com/in/muhammad-umer-jahangier",
+    "https://dev.to/umer_jahangier",
+    "https://www.npmjs.com/~umer-jahangier"
    ]
   },
   {
@@ -243,7 +246,7 @@
   --fill-2: rgba(120, 120, 128, 0.2);
   --track: rgba(120, 120, 128, 0.16);
   --thumb: #ffffff;
-  --accent: #0066cc;
+  --accent: #0058b0;
   --accent-fill: #0071e3;
   --accent-hover: #0077ed;
   --accent-tint: rgba(0, 113, 227, 0.1);
@@ -318,10 +321,12 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 8px; border: 3px solid transparent; background-clip: content-box; }
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+p a:not(.btn), li > a:not(.row-title):not(.btn), td a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, currentColor 45%, transparent); }
+p a:not(.btn):hover, li > a:not(.row-title):not(.btn):hover, td a:hover { text-decoration-color: currentColor; }
 :focus { outline: none; }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 7px; }
 button { font: inherit; letter-spacing: inherit; color: inherit; }
-code, kbd { font-family: var(--mono); font-size: 0.84em; letter-spacing: 0; padding: 1px 5px; border-radius: 5px; background: var(--fill); white-space: nowrap; }
+code, kbd { font-family: var(--mono); font-size: 0.84em; letter-spacing: 0; padding: 1px 5px; border-radius: 5px; background: var(--fill); color: var(--label); white-space: nowrap; }
 pre code { padding: 0; background: none; font-size: inherit; white-space: pre; }
 .i { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
@@ -563,8 +568,8 @@ footer a:hover { color: var(--accent); }
 
   <figure class="shot">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="img/web-ui-dark.webp" type="image/webp">
-      <source srcset="img/web-ui-light.webp" type="image/webp">
+      <source media="(prefers-color-scheme: dark)" srcset="img/web-ui-dark-800.webp 800w, img/web-ui-dark.webp 1600w" sizes="(min-width: 1080px) 1040px, calc(100vw - 40px)" type="image/webp">
+      <source srcset="img/web-ui-light-800.webp 800w, img/web-ui-light.webp 1600w" sizes="(min-width: 1080px) 1040px, calc(100vw - 40px)" type="image/webp">
       <img src="img/web-ui-dark.jpg" width="1600" height="1089" loading="lazy" decoding="async" alt="The claude-nonstop web page: the line in use, subscription accounts and API keys in one list, a cable plugged into the live line, and live activity.">
     </picture>
     <figcaption>The page that comes with it, at <code>https://claude.nonstop</code>, shown here with example accounts. Drag the cable to switch lines.</figcaption>
@@ -644,7 +649,7 @@ footer a:hover { color: var(--accent); }
 
 <footer>
   <div class="col">
-    <p>claude-nonstop is made by <a href="https://umer-jahangier.github.io/" rel="author">Muhammad Umer (Umer Jahangier)</a> and is open source under the MIT license. <a href="https://github.com/umer-jahangier/claude-nonstop">Source</a> · <a href="https://github.com/umer-jahangier/claude-nonstop/releases">Releases</a> · <a href="https://github.com/umer-jahangier/claude-nonstop/issues">Issues</a> · <a href="llms.txt">llms.txt</a></p>
+    <p>claude-nonstop is made by <a href="https://umer-jahangier.github.io/" rel="author">Muhammad Umer (Umer Jahangier)</a> and is open source under the MIT license. <a href="https://github.com/umer-jahangier/claude-nonstop">Source</a> · <a href="https://github.com/umer-jahangier/claude-nonstop/releases">Releases</a> · <a href="https://www.npmjs.com/package/@umer-jahangier/claude-nonstop">npm</a> · <a href="https://github.com/umer-jahangier/claude-nonstop/issues">Issues</a> · <a href="https://dev.to/umer_jahangier/how-i-keep-claude-code-running-through-usage-limits-958">The story behind it</a> · <a href="llms.txt">llms.txt</a></p>
     <p>It's an independent project, not affiliated with or endorsed by Anthropic or OpenAI. Claude and Claude Code are trademarks of Anthropic. ChatGPT and Codex are trademarks of OpenAI.</p>
   </div>
 </footer>

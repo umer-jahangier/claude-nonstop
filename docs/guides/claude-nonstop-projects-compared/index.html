@@ -63,7 +63,9 @@
    "url": "https://umer-jahangier.github.io/",
    "sameAs": [
     "https://github.com/umer-jahangier",
-    "https://www.linkedin.com/in/muhammad-umer-jahangier"
+    "https://www.linkedin.com/in/muhammad-umer-jahangier",
+    "https://dev.to/umer_jahangier",
+    "https://www.npmjs.com/~umer-jahangier"
    ]
   },
   {
@@ -146,7 +148,7 @@
   --fill-2: rgba(120, 120, 128, 0.2);
   --track: rgba(120, 120, 128, 0.16);
   --thumb: #ffffff;
-  --accent: #0066cc;
+  --accent: #0058b0;
   --accent-fill: #0071e3;
   --accent-hover: #0077ed;
   --accent-tint: rgba(0, 113, 227, 0.1);
@@ -221,10 +223,12 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 8px; border: 3px solid transparent; background-clip: content-box; }
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+p a:not(.btn), li > a:not(.row-title):not(.btn), td a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, currentColor 45%, transparent); }
+p a:not(.btn):hover, li > a:not(.row-title):not(.btn):hover, td a:hover { text-decoration-color: currentColor; }
 :focus { outline: none; }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 7px; }
 button { font: inherit; letter-spacing: inherit; color: inherit; }
-code, kbd { font-family: var(--mono); font-size: 0.84em; letter-spacing: 0; padding: 1px 5px; border-radius: 5px; background: var(--fill); white-space: nowrap; }
+code, kbd { font-family: var(--mono); font-size: 0.84em; letter-spacing: 0; padding: 1px 5px; border-radius: 5px; background: var(--fill); color: var(--label); white-space: nowrap; }
 pre code { padding: 0; background: none; font-size: inherit; white-space: pre; }
 .i { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
@@ -464,7 +468,7 @@ footer a:hover { color: var(--accent); }
 
 <footer>
   <div class="col">
-    <p><a href="../../">claude-nonstop</a> is made by <a href="https://umer-jahangier.github.io/" rel="author">Muhammad Umer (Umer Jahangier)</a> and is open source under the MIT license. <a href="https://github.com/umer-jahangier/claude-nonstop">Source</a> · <a href="https://www.npmjs.com/package/@umer-jahangier/claude-nonstop">npm</a> · <a href="https://github.com/umer-jahangier/claude-nonstop/releases">Releases</a> · <a href="../../llms.txt">llms.txt</a></p>
+    <p><a href="../../">claude-nonstop</a> is made by <a href="https://umer-jahangier.github.io/" rel="author">Muhammad Umer (Umer Jahangier)</a> and is open source under the MIT license. <a href="https://github.com/umer-jahangier/claude-nonstop">Source</a> · <a href="https://www.npmjs.com/package/@umer-jahangier/claude-nonstop">npm</a> · <a href="https://github.com/umer-jahangier/claude-nonstop/releases">Releases</a> · <a href="https://dev.to/umer_jahangier/how-i-keep-claude-code-running-through-usage-limits-958">The story behind it</a> · <a href="../../llms.txt">llms.txt</a></p>
     <p>It's an independent project, not affiliated with or endorsed by Anthropic or OpenAI. Claude and Claude Code are trademarks of Anthropic. ChatGPT and Codex are trademarks of OpenAI.</p>
   </div>
 </footer>
