@@ -117,8 +117,38 @@ function mergeTurns(messages) {
   return out;
 }
 
-function writeRequest(req, { model = req.model, defaultMaxTokens = 16384 } = {}) {
-  const out = { model, max_tokens: req.maxTokens || defaultMaxTokens, messages: mergeTurns(req.messages).map((m) => ({ role: m.role, content: m.content.map(writePart).filter(Boolean) })) };
+// The output limit when the client set none (Codex, say, never does): the model's own
+// ceiling, so a long answer or a whole file in one tool call isn't cut off. Current models
+// write up to 128K tokens, which needs streaming; a whole answer stays under the API's
+// time limit at 32K. Thinking counts against the limit too.
+function defaultMaxTokens(model, stream) {
+  if (BUDGET_MODELS.test(String(model))) return 32000;
+  return stream ? 128000 : 32000;
+}
+
+// A tool's parameters as Anthropic takes them: an object schema with no oneOf, anyOf or
+// allOf at its top level. Alternatives are merged into one object whose properties are all
+// optional (the model still sees every field); allOf keeps what every part requires.
+function inputSchema(schema) {
+  const s = schema && typeof schema === 'object' ? schema : {};
+  const parts = s.allOf || s.anyOf || s.oneOf;
+  if (!Array.isArray(parts)) return s.type === 'object' || s.properties ? { ...s, type: 'object' } : { type: 'object', properties: {} };
+  const out = { ...s, type: 'object', properties: { ...(s.properties || {}) } };
+  delete out.allOf;
+  delete out.anyOf;
+  delete out.oneOf;
+  const required = new Set(Array.isArray(s.required) ? s.required : []);
+  for (const part of parts.map(inputSchema)) {
+    Object.assign(out.properties, part.properties || {});
+    if (s.allOf) for (const r of part.required || []) required.add(r);
+  }
+  if (required.size) out.required = [...required];
+  else delete out.required;
+  return out;
+}
+
+function writeRequest(req, { model = req.model } = {}) {
+  const out = { model, max_tokens: req.maxTokens || defaultMaxTokens(model, req.stream), messages: mergeTurns(req.messages).map((m) => ({ role: m.role, content: m.content.map(writePart).filter(Boolean) })) };
   // Every message needs some content; a tool-only or image-only turn is fine, an empty one isn't.
   out.messages = out.messages.filter((m) => m.content.length);
   if (!out.messages.length) out.messages = [{ role: 'user', content: [{ type: 'text', text: '(empty)' }] }];
@@ -126,7 +156,7 @@ function writeRequest(req, { model = req.model, defaultMaxTokens = 16384 } = {})
   if (req.system) out.system = req.system;
   if (req.stop && req.stop.length) out.stop_sequences = req.stop;
   if (req.tools && req.tools.length) {
-    out.tools = req.tools.map((t) => ({ name: t.name, description: t.description || '', input_schema: t.parameters || { type: 'object', properties: {} } }));
+    out.tools = req.tools.map((t) => ({ name: t.name, description: t.description || '', input_schema: inputSchema(t.parameters) }));
     const c = req.toolChoice;
     const forced = c === 'required' || (c && typeof c === 'object' && c.name);
     if (c === 'none') out.tool_choice = { type: 'none' };

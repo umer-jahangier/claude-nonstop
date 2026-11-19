@@ -250,3 +250,22 @@ test('errors are written in the client\'s own format', () => {
   assert.deepEqual(translate.errorBody('messages', 'api_error', 'x'), { type: 'error', error: { type: 'api_error', message: 'x' } });
   assert.deepEqual(translate.errorBody('chat', 'api_error', 'x'), { error: { message: 'x', type: 'api_error', param: null, code: null } });
 });
+
+test("with no output limit from the client, a request gets the model's own ceiling", () => {
+  const req = (stream) => translate.readRequest('responses', { model: 'gpt-5.5', stream, input: 'hi' });
+  assert.equal(translate.writeRequest('messages', req(true), { model: 'claude-opus-5-5' }).max_tokens, 128000);
+  assert.equal(translate.writeRequest('messages', req(false), { model: 'claude-opus-5-5' }).max_tokens, 32000);
+  assert.equal(translate.writeRequest('messages', req(true), { model: 'claude-haiku-4-5' }).max_tokens, 32000);
+  const capped = translate.readRequest('responses', { model: 'gpt-5.5', stream: true, max_output_tokens: 500, input: 'hi' });
+  assert.equal(translate.writeRequest('messages', capped, { model: 'claude-opus-5-5' }).max_tokens, 500, "the client's own limit is kept");
+});
+
+test('tool schemas with oneOf, anyOf or allOf at the top become one object for Claude', () => {
+  const req = translate.readRequest('responses', { model: 'gpt-5.5', input: 'hi', tools: [
+    { type: 'function', name: 'either', parameters: { anyOf: [{ type: 'object', properties: { a: { type: 'string' } }, required: ['a'] }, { type: 'object', properties: { b: { type: 'number' } }, required: ['b'] }] } },
+    { type: 'function', name: 'both', parameters: { allOf: [{ type: 'object', properties: { a: { type: 'string' } }, required: ['a'] }, { properties: { b: { type: 'number' } } }] } },
+  ] });
+  const [either, both] = translate.writeRequest('messages', req, { model: 'claude-opus-5-5' }).tools.map((t) => t.input_schema);
+  assert.deepEqual(either, { type: 'object', properties: { a: { type: 'string' }, b: { type: 'number' } } });
+  assert.deepEqual(both, { type: 'object', properties: { a: { type: 'string' }, b: { type: 'number' } }, required: ['a'] });
+});
