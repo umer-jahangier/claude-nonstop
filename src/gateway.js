@@ -43,6 +43,8 @@ const OAUTH_BETA = 'oauth-2025-04-20';
 const CLAUDE_CODE_SYSTEM = "You are Claude Code, Anthropic's official CLI for Claude.";
 const ANTHROPIC_VERSION = '2026-10-21';
 
+// Accounts refused for a passing rate limit, by id: skipped until this time (ms).
+const busyUntil = new Map();
 const MAX_BODY = 64 * 1024 * 1024;
 const MAX_ERROR_BODY = 4 * 1024 * 1024;
 const KEYS_HEADER = 'x-claude-nonstop-keys';
@@ -394,10 +396,15 @@ async function claudeToken(account, cfg) {
   return { token: creds.token, why: '' };
 }
 
-// Renews every Claude.ai sign-in that is about to expire, so a request never waits for it.
+// Keeps every Claude.ai sign-in alive: one about to expire is renewed through Claude Code's
+// one-word usage check, so a request never waits for it and no account needs signing in
+// again. Paused accounts and accounts at their limit are kept alive too: Claude Code renews
+// the sign-in before it asks, even when the answer is a limit. Nothing is spent on a
+// sign-in that still has time left, so each account costs about one tiny request per
+// sign-in lifetime (a few a day). ChatGPT sign-ins renew themselves (openai-auth.js).
 async function renewExpiring(cfg) {
   for (const account of cfg.accounts) {
-    if (account.enabled === false || accounts.isChatgpt(account) || limitedRecently(account, cfg)) continue;
+    if (accounts.isChatgpt(account)) continue;
     const creds = usage.readCredentials(account);
     if (creds && creds.expiresAt && creds.expiresAt < Date.now() + 10 * 60000) {
       log(`gateway: ${account.label}: sign-in token expires soon, renewing it`);
@@ -418,6 +425,22 @@ async function chatgptCredentials(account, cfg) {
     return { creds, why: '' };
   } catch (err) {
     return { creds: null, why: `sign-in could not be renewed: ${err.message}` };
+  }
+}
+
+// Keeps every Claude.ai sign-in alive: one about to expire is renewed through Claude Code's
+// one-word usage check, so a request never waits for it and no account needs signing in
+// again. Paused accounts and accounts at their limit are kept alive too: Claude Code renews
+// the sign-in before it asks, even when the answer is a limit. Nothing is spent on a
+// sign-in that still has time left, so each account costs about one tiny request per
+// sign-in lifetime (a few a day).
+async function renewExpiring(cfg) {
+  for (const account of cfg.accounts) {
+    const creds = usage.readCredentials(account);
+    if (creds && creds.expiresAt && creds.expiresAt < Date.now() + 10 * 60000) {
+      log(`gateway: ${account.label}: sign-in token expires soon, renewing it`);
+      await require('./checks').account(account);
+    }
   }
 }
 
@@ -677,6 +700,8 @@ async function handle(req, res, ctx) {
   }
 
   let attempted = 0;
+  // Seconds until an account refused only for a burst can be tried again.
+  let busy = 0;
   let cooled = 0;
   let lastError = '';
   const fail = (status, type, message) => {
@@ -685,6 +710,11 @@ async function handle(req, res, ctx) {
 
   for (const line of lines) {
     const { item } = line;
+    if (line.kind === 'account' && (busyUntil.get(item.id) || 0) > Date.now()) {
+      busy = Math.max(busy, Math.ceil((busyUntil.get(item.id) - Date.now()) / 1000));
+      log(`gateway: ${item.label}: rate limited for a few seconds; trying the next line`);
+      continue;
+    }
     const provider = providers.of(item);
     const wire = provider.wire;
     const model = modelFor(requested, provider, cfg);
@@ -801,7 +831,14 @@ async function handle(req, res, ctx) {
       // A usage limit says so; any other 429 is a passing refusal, so the account isn't set aside for it.
       const limited = status === 429 && (provider.id === 'openai'
         ? providers.openai.isLimit(status, text, upRes.headers)
-        : /limit/i.test(detail) || /rejected/i.test(String(upRes.headers['anthropic-ratelimit-unified-status'] || '')));
+        : accounts.isLimitReason(detail) || /rejected/i.test(String(upRes.headers['anthropic-ratelimit-unified-status'] || '')));
+      // "would exceed your account's rate limit" is a short burst refusal, not the plan
+      // running out: that account is only skipped for this request and the next few seconds.
+      if (status === 429 && !limited) {
+        const wait = Math.min(60, Math.max(5, Number(upRes.headers['retry-after']) || 10));
+        busyUntil.set(item.id, Date.now() + wait * 1000);
+        busy = Math.max(busy, wait);
+      }
       if (status !== 429 || limited) {
         state.recordAccount(item.id, { ok: false, reason: limited ? `usage limit reached: ${detail}` : `sign-in refused: ${detail}` });
       }
@@ -860,6 +897,16 @@ async function handle(req, res, ctx) {
     return;
   }
 
+  if (busy) {
+    // Only a passing rate limit stood in the way: answer like the service does, so the client
+    // waits and retries by itself instead of stopping on a billing error.
+    log(`gateway: every line is busy or out; accounts rate limited for ${busy}s, asking the client to retry`);
+    if (!res.destroyed && !res.headersSent) {
+      res.setHeader('retry-after', String(busy));
+      sendError(res, 429, 'rate_limit_error', `claude-nonstop: your accounts are rate limited for a few seconds; retrying in ${busy}s.`, inbound);
+    }
+    return;
+  }
   events.emit('exhausted', {});
   const reason = desktop
     ? 'no subscription account has usage left and no API key has credit right now. Add an account or top up a key in the web UI, or sign in to Claude.ai in the desktop app.'

@@ -243,6 +243,34 @@ test('the gateway renews sign-ins that are about to expire, before any request n
     await require('../src/gateway').renewExpiring(config.load());
     const after = JSON.parse(fs.readFileSync(path.join(dir, '.credentials.json'), 'utf8')).claudeAiOauth.expiresAt;
     assert.ok(after > Date.now() + 3600000);
+
+    // A paused account is kept alive too; one with time left costs nothing.
+    config.update((c) => (c.accounts[0].enabled = false));
+    signInFakeAccount(dir, 'ok', { expiresAt: Date.now() + 2 * 60000 });
+    const probes = () => readFakeLog().filter((e) => e.kind === 'probe').length;
+    await require('../src/gateway').renewExpiring(config.load());
+    assert.ok(JSON.parse(fs.readFileSync(path.join(dir, '.credentials.json'), 'utf8')).claudeAiOauth.expiresAt > Date.now() + 3600000, 'paused, still renewed');
+    const before = probes();
+    await require('../src/gateway').renewExpiring(config.load());
+    assert.equal(probes(), before, 'nothing spent while the sign-in has time left');
+  } finally {
+    noAccounts();
+  }
+});
+
+test("a burst rate limit on an account isn't a usage limit: it's skipped for seconds, and with nothing else the client is told to retry", async () => {
+  useKeys('credit');
+  useAccounts('burst', 'ok');
+  try {
+    api.requests.length = 0;
+    const r = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token, 'user-agent': 'Claude/1.0 Electron' } });
+    assert.equal(r.status, 200, 'moved on to the next account');
+    assert.notEqual(state.load().accounts['acct-burst-0']?.ok, false, 'not recorded as out of usage');
+
+    useAccounts('burst');
+    const again = await call(`${base}/v1/messages`, { method: 'POST', body: message(), headers: { 'x-api-key': token, 'user-agent': 'Claude/1.0 Electron' } });
+    assert.equal(again.status, 429, 'a retryable answer, not a billing error');
+    assert.ok(Number(again.headers['retry-after']) > 0);
   } finally {
     noAccounts();
   }
