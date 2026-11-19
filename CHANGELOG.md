@@ -2,6 +2,11 @@
 
 Every release of claude-nonstop, newest first. Full notes, and the code at each version, are on the [releases page](https://github.com/umer-jahangier/claude-nonstop/releases). The installer and `claude-nonstop update` install the latest release; the npm package is [`@umer-jahangier/claude-nonstop`](https://www.npmjs.com/package/@umer-jahangier/claude-nonstop).
 
+## [1.16.3](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.16.3) · 2026-11-20
+
+- Updates install only releases signed with the claude-nonstop release key (Ed25519 over the version and SHA-256), with the version inside the tarball checked too.
+- The local certificate authority is name-constrained to this computer's own names and addresses; `claude-nonstop setup` replaces an older one.
+
 ## [1.16.2](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.16.2) · 2026-11-19
 
 - Published on npm as `@umer-jahangier/claude-nonstop`; npm update and uninstall hints name it.

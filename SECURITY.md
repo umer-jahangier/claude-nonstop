@@ -17,6 +17,7 @@ Include what an attacker can do, the steps to reproduce it, and the version (`cl
 - **API keys** are encrypted at rest (AES-256-GCM). The encryption key is held by the macOS Keychain, Windows DPAPI or the Linux Secret Service.
 - **Each key is only sent to its own service:** Claude keys to `api.anthropic.com`, OpenAI keys to `api.openai.com`, ChatGPT sign-ins to `chatgpt.com`.
 - **The gateway and the web page** accept connections from this computer only, and only under their own names. The gateway requires its own random token; the web page requires a one-time sign-in link and a header other websites can't send.
-- **The local HTTPS certificate** is signed by a certificate authority whose private key is discarded right after use, so it can't sign anything else.
+- **The local HTTPS certificate** is signed by a certificate authority whose private key is discarded right after use, so it can't sign anything else, and the authority is name-constrained to this computer's own names and addresses.
+- **Updates are signed.** Installed copies install only releases whose tarball carries an Ed25519 signature from the release key pinned in the app; the key is kept off GitHub.
 
 Out of scope: other programs running as your user on the same computer, which can read your files and talk to localhost like you can.
