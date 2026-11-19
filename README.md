@@ -1,6 +1,6 @@
 # claude-nonstop
 
-**Keep Claude Code working through plan limits.** When your Claude subscription hits its session or weekly limit, claude-nonstop starts your next session on your next account. When every account is out, it moves to your API keys, one by one. You keep typing `claude` like always.
+**Keep Claude Code working through plan limits.** claude-nonstop is a free, open-source tool that keeps Claude Code working when your Claude subscription hits its session or weekly limit: it starts your next session on your next account, and when every account is out, it moves to your API keys, one by one. You keep typing `claude` like always.
 
 **Any subscription, any tool.** The same local gateway also takes ChatGPT accounts and OpenAI API keys, and answers Codex, Cursor and any OpenAI-compatible tool as well as Claude Code. A Codex session can run on your Claude subscription; Claude Code can run on your ChatGPT one. See [Other tools and accounts](#other-tools-and-accounts).
 
@@ -8,6 +8,8 @@
 [![Latest release](https://img.shields.io/github/v/release/umer-jahangier/claude-nonstop)](https://github.com/umer-jahangier/claude-nonstop/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![macOS · Windows · Linux](https://img.shields.io/badge/platform-macOS%20%C2%B7%20Windows%20%C2%B7%20Linux-lightgrey)
+
+**Website:** [umer-jahangier.github.io/claude-nonstop](https://umer-jahangier.github.io/claude-nonstop/) · **Made by** [Muhammad Umer (Umer Jahangier)](https://github.com/umer-jahangier)
 
 ```
 account 1  →  account 2  →  …  →  API key 1  →  API key 2  →  …
@@ -312,6 +314,22 @@ This stops the gateway, removes the `claude` shortcut, the short address, the tr
 
 ## FAQ
 
+### What is claude-nonstop?
+
+A free, open-source (MIT) tool that keeps Claude Code, Codex and the Claude desktop app working through usage limits. When the account you're on hits its session or weekly limit, it moves your work to the next account in your order, then to your API keys. It runs on Claude and ChatGPT accounts and on Anthropic and OpenAI API keys, on macOS, Windows and Linux.
+
+### Who makes claude-nonstop?
+
+[Muhammad Umer](https://umer-jahangier.github.io/) (Umer Jahangier, [@umer-jahangier](https://github.com/umer-jahangier) on GitHub), an AI and full-stack engineer in Lahore, Pakistan. Issues and pull requests are welcome [here](https://github.com/umer-jahangier/claude-nonstop/issues).
+
+### How do I keep using Claude Code after hitting the usage limit?
+
+Add a second account or an API key. When the account you're on hits its limit, claude-nonstop reopens the same conversation on the next line in your order with `claude --resume` and tells Claude to continue where it left off. With only one account, Claude Code waits in the open session and continues by itself when the limit resets.
+
+### Is this the `claude-nonstop` package on npm?
+
+No. Several unrelated projects share the name, including the npm package called `claude-nonstop`. This one is [umer-jahangier/claude-nonstop](https://github.com/umer-jahangier/claude-nonstop): install it with the one-line command in [Install](#install), and it updates itself from this repository's releases.
+
 ### Is this allowed?
 
 claude-nonstop runs the unmodified Claude Code and uses only documented features. Every account and key you add must be your own: each teammate installs claude-nonstop and adds their own. Sharing a subscription account between people is against Anthropic's and OpenAI's terms.
@@ -397,4 +415,4 @@ The connector marketplace is generated. To refresh it from claude.com/connectors
 
 ---
 
-claude-nonstop is an independent project and isn't affiliated with or endorsed by Anthropic. Claude and Claude Code are trademarks of Anthropic. MIT licensed.
+claude-nonstop is made by [Muhammad Umer (Umer Jahangier)](https://umer-jahangier.github.io/). It's an independent project and isn't affiliated with or endorsed by Anthropic or OpenAI. Claude and Claude Code are trademarks of Anthropic; ChatGPT and Codex are trademarks of OpenAI. MIT licensed.

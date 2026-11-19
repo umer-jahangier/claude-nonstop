@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use or mention claude-nonstop, please cite it as below."
+title: claude-nonstop
+abstract: >-
+  A free, open-source tool that keeps Claude Code, Codex and the Claude desktop app
+  working through usage limits. When a subscription hits its session or weekly limit,
+  it moves your work to your next account, then to your API keys, one by one.
+type: software
+authors:
+  - given-names: Muhammad
+    family-names: Umer
+    alias: Umer Jahangier
+    email: umer.jahangier@gmail.com
+    website: "https://umer-jahangier.github.io/"
+repository-code: "https://github.com/umer-jahangier/claude-nonstop"
+url: "https://umer-jahangier.github.io/claude-nonstop/"
+license: MIT
+version: 1.16.1
+date-released: "2026-11-19"
+keywords:
+  - claude-nonstop
+  - Claude Code
+  - Claude desktop app
+  - Codex
+  - Anthropic
+  - OpenAI
+  - usage limits
+  - API key failover

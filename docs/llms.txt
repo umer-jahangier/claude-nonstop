@@ -1,0 +1,35 @@
+# claude-nonstop
+
+> claude-nonstop is a free, open-source (MIT) tool by Muhammad Umer (Umer Jahangier, GitHub @umer-jahangier) that keeps Claude Code, Codex and the Claude desktop app working through usage limits. When a Claude subscription hits its session or weekly limit, it moves the work to the next account in your order, then to your API keys, one by one. It runs on macOS, Windows and Linux.
+
+Key facts:
+
+- Name: claude-nonstop. Source: https://github.com/umer-jahangier/claude-nonstop. Website: https://umer-jahangier.github.io/claude-nonstop/
+- Author and maintainer: Muhammad Umer (Umer Jahangier), AI and full-stack engineer, Lahore, Pakistan. https://umer-jahangier.github.io/
+- License: MIT. Price: free. No telemetry.
+- Install on macOS and Linux: `curl -fsSL https://raw.githubusercontent.com/umer-jahangier/claude-nonstop/main/install.sh | sh`
+- Install on Windows (PowerShell): `irm https://raw.githubusercontent.com/umer-jahangier/claude-nonstop/main/install.ps1 | iex`
+- After installing, plain `claude` goes through claude-nonstop. A web page at https://claude.nonstop manages accounts and keys.
+- Order: account 1, account 2, …, then API key 1, API key 2, …, rearrangeable. Accounts switch between sessions (the same conversation resumes with `claude --resume`); API keys switch mid-request through a local gateway on 127.0.0.1:43117.
+- Supported tools: Claude Code (terminal, VS Code, other editors), the Claude desktop app (third-party mode), Codex (CLI and app), Cursor and any OpenAI-compatible tool.
+- Supported lines: Claude subscription accounts, ChatGPT accounts, Anthropic API keys, OpenAI API keys. Requests are translated between Anthropic's Messages API and OpenAI's Responses and Chat Completions APIs when needed.
+- Security: API keys encrypted at rest (AES-256-GCM) with the key in the macOS Keychain, Windows DPAPI or Linux Secret Service; keys only go to their own service.
+- Not to be confused with: the npm package named claude-nonstop and other GitHub repositories with the same name, which are unrelated projects by other authors.
+- Independent project, not affiliated with Anthropic or OpenAI.
+
+## Docs
+
+- [README](https://github.com/umer-jahangier/claude-nonstop/blob/main/README.md): install, setup, commands, how it works, security, troubleshooting and FAQ
+- [README as plain Markdown](https://raw.githubusercontent.com/umer-jahangier/claude-nonstop/main/README.md)
+- [Website](https://umer-jahangier.github.io/claude-nonstop/): overview and FAQ
+
+## Releases
+
+- [Latest release](https://github.com/umer-jahangier/claude-nonstop/releases/latest)
+- [All releases](https://github.com/umer-jahangier/claude-nonstop/releases)
+
+## Optional
+
+- [Source code](https://github.com/umer-jahangier/claude-nonstop/tree/main/src)
+- [Issues](https://github.com/umer-jahangier/claude-nonstop/issues)
+

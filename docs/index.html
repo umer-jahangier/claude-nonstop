@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>claude-nonstop · Keep Claude Code working through usage limits</title>
+<meta name="description" content="Free, open-source tool by Umer Jahangier that keeps Claude Code, Codex and the Claude desktop app working through usage limits by switching accounts, then API keys.">
+<meta name="author" content="Muhammad Umer (Umer Jahangier)">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<link rel="canonical" href="https://umer-jahangier.github.io/claude-nonstop/">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="alternate" type="text/plain" href="llms.txt" title="claude-nonstop for language models">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="claude-nonstop">
+<meta property="og:title" content="claude-nonstop · Keep Claude Code working through usage limits">
+<meta property="og:description" content="When a Claude subscription hits its limit, claude-nonstop moves to your next account, then your API keys. Works with Claude Code, Codex and the Claude desktop app. Free and open source, by Umer Jahangier.">
+<meta property="og:url" content="https://umer-jahangier.github.io/claude-nonstop/">
+<meta property="og:image" content="https://umer-jahangier.github.io/claude-nonstop/og.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta property="og:image:alt" content="claude-nonstop: account 1, account 2, then API keys, one by one.">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="claude-nonstop · Keep Claude Code working through usage limits">
+<meta name="twitter:description" content="Moves Claude Code, Codex and the Claude desktop app to your next account, then your API keys, when a limit hits. Free and open source.">
+<meta name="twitter:image" content="https://umer-jahangier.github.io/claude-nonstop/og.png">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "WebSite",
+   "@id": "https://umer-jahangier.github.io/claude-nonstop/#website",
+   "url": "https://umer-jahangier.github.io/claude-nonstop/",
+   "name": "claude-nonstop",
+   "inLanguage": "en",
+   "publisher": {
+    "@id": "https://umer-jahangier.github.io/#person"
+   }
+  },
+  {
+   "@type": "WebPage",
+   "@id": "https://umer-jahangier.github.io/claude-nonstop/#webpage",
+   "url": "https://umer-jahangier.github.io/claude-nonstop/",
+   "name": "claude-nonstop · Keep Claude Code working through usage limits",
+   "isPartOf": {
+    "@id": "https://umer-jahangier.github.io/claude-nonstop/#website"
+   },
+   "about": {
+    "@id": "https://umer-jahangier.github.io/claude-nonstop/#software"
+   },
+   "mainEntity": {
+    "@id": "https://umer-jahangier.github.io/claude-nonstop/#software"
+   },
+   "inLanguage": "en",
+   "dateModified": "2026-11-19",
+   "primaryImageOfPage": "https://umer-jahangier.github.io/claude-nonstop/og.png"
+  },
+  {
+   "@type": [
+    "SoftwareApplication",
+    "SoftwareSourceCode"
+   ],
+   "@id": "https://umer-jahangier.github.io/claude-nonstop/#software",
+   "name": "claude-nonstop",
+   "alternateName": "umer-jahangier/claude-nonstop",
+   "description": "Free, open-source tool that keeps Claude Code, Codex and the Claude desktop app working through usage limits. When a Claude subscription hits its session or weekly limit, it moves to your next account, then to your API keys, one by one. Runs on Claude and ChatGPT accounts and on Anthropic and OpenAI API keys.",
+   "url": "https://umer-jahangier.github.io/claude-nonstop/",
+   "applicationCategory": "DeveloperApplication",
+   "applicationSubCategory": "Command-line tool",
+   "operatingSystem": "macOS, Windows, Linux",
+   "isAccessibleForFree": true,
+   "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+   },
+   "license": "https://opensource.org/licenses/MIT",
+   "codeRepository": "https://github.com/umer-jahangier/claude-nonstop",
+   "programmingLanguage": "JavaScript",
+   "runtimePlatform": "Node.js",
+   "downloadUrl": "https://github.com/umer-jahangier/claude-nonstop/releases/latest",
+   "installUrl": "https://umer-jahangier.github.io/claude-nonstop/#install",
+   "releaseNotes": "https://github.com/umer-jahangier/claude-nonstop/releases",
+   "screenshot": "https://umer-jahangier.github.io/claude-nonstop/img/web-ui-dark.jpg",
+   "image": "https://umer-jahangier.github.io/claude-nonstop/og.png",
+   "keywords": "claude-nonstop, Claude Code, Claude Code usage limit, Claude Code rate limit, multiple Claude accounts, account switching, API key failover, Claude desktop app, Codex, ChatGPT, OpenAI, Anthropic, LLM gateway",
+   "author": {
+    "@id": "https://umer-jahangier.github.io/#person"
+   },
+   "creator": {
+    "@id": "https://umer-jahangier.github.io/#person"
+   },
+   "maintainer": {
+    "@id": "https://umer-jahangier.github.io/#person"
+   },
+   "sameAs": [
+    "https://github.com/umer-jahangier/claude-nonstop"
+   ]
+  },
+  {
+   "@type": "Person",
+   "@id": "https://umer-jahangier.github.io/#person",
+   "name": "Muhammad Umer",
+   "alternateName": [
+    "Umer Jahangier",
+    "umer-jahangier"
+   ],
+   "url": "https://umer-jahangier.github.io/",
+   "jobTitle": "AI Engineer & Full-Stack Software Engineer",
+   "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Lahore",
+    "addressCountry": "PK"
+   },
+   "sameAs": [
+    "https://github.com/umer-jahangier",
+    "https://www.linkedin.com/in/muhammad-umer-jahangier"
+   ]
+  },
+  {
+   "@type": "FAQPage",
+   "@id": "https://umer-jahangier.github.io/claude-nonstop/#faq",
+   "url": "https://umer-jahangier.github.io/claude-nonstop/#faq",
+   "isPartOf": {
+    "@id": "https://umer-jahangier.github.io/claude-nonstop/#webpage"
+   },
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "What is claude-nonstop?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "claude-nonstop is a free, open-source tool that keeps Claude Code working through plan limits. When a Claude subscription hits its session or weekly limit, it starts your next session on your next account, and when every account is out it moves to your API keys, one by one. The same local gateway also runs Codex, Cursor and the Claude desktop app, on Claude and ChatGPT accounts and on Anthropic and OpenAI API keys."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Who made claude-nonstop?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Muhammad Umer (Umer Jahangier, @umer-jahangier on GitHub), an AI and full-stack engineer in Lahore, Pakistan. The source is at github.com/umer-jahangier/claude-nonstop under the MIT license."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "How do I keep using Claude Code after hitting the usage limit?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Add a second account or an API key to claude-nonstop. When the account you're on hits its session or weekly limit, claude-nonstop reopens the same conversation on the next line in your order with claude --resume and tells Claude to continue where it left off. With only one account, it waits for the reset and continues by itself."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Does claude-nonstop work with Codex and ChatGPT?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. Setup points Codex at the local gateway, so Codex needs no OpenAI sign-in, and you can add ChatGPT accounts and OpenAI API keys next to your Claude ones. When a tool runs on another service's line, requests are translated between Anthropic's and OpenAI's formats, tool calls and streaming included."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Does it work with the Claude desktop app?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. The installer sets up the desktop app's third-party mode with the settings Anthropic documents. In that mode each request walks your order: subscription accounts first, then API keys. Your claude.ai chats can be brought over with the app's own import."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Is claude-nonstop free?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. It's free and open source under the MIT license, with no account, server or telemetry of its own. It runs on your own subscriptions and API keys."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Is it safe? Where are my keys stored?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Everything runs on your computer. API keys are encrypted at rest with AES-256-GCM, and the encryption key is held by the macOS Keychain, Windows DPAPI or the Linux Secret Service. Keys are only sent to the service they belong to, and the gateway accepts connections from your computer only."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Is using several accounts allowed?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "claude-nonstop runs the unmodified Claude Code and uses only documented features. Every account and key you add must be your own: sharing a subscription between people is against Anthropic's and OpenAI's terms. Running one company's subscription from the other company's tool (Codex on a Claude account, say) isn't covered by their terms, so either could stop accepting it."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do I need API keys?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "No. With only subscription accounts, claude-nonstop moves from one to the next. API keys are the fallback for when every account is out."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Which operating systems does it support?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "macOS, Windows and Linux. The installer brings its own Node.js, so there's nothing to install first."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Is this the claude-nonstop package on npm?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "No. Several unrelated projects use the name. This claude-nonstop is umer-jahangier/claude-nonstop on GitHub: you install it with the one-line command on this page, and it updates itself from that repository's releases. The npm package called claude-nonstop is a different project by another author."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "How do I update or uninstall it?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "It updates itself from GitHub releases within the hour, and claude-nonstop update installs the newest version right away. claude-nonstop uninstall removes it and undoes every change setup made; add --purge to delete your saved keys and accounts too."
+     }
+    }
+   ]
+  }
+ ]
+}
+</script>
+<style>
+:root {
+  color-scheme: light dark;
+  --ground: #f2f2f7;
+  --group: #ffffff;
+  --label: #1d1d1f;
+  --label-2: #6e6e73;
+  --sep: rgba(60, 60, 67, 0.17);
+  --fill: rgba(120, 120, 128, 0.12);
+  --fill-2: rgba(120, 120, 128, 0.2);
+  --track: rgba(120, 120, 128, 0.16);
+  --thumb: #ffffff;
+  --accent: #0066cc;
+  --accent-fill: #0071e3;
+  --accent-hover: #0077ed;
+  --accent-tint: rgba(0, 113, 227, 0.1);
+  --focus: rgba(0, 113, 227, 0.45);
+  --select: rgba(0, 113, 227, 0.2);
+  --green: #34c759;
+  --orange: #ff9500;
+  --red: #ff3b30;
+  --key-tile: #8e8e93;
+  --bar: rgba(242, 242, 247, 0.78);
+  --bar-edge: rgba(0, 0, 0, 0.1);
+  --scroll: rgba(120, 120, 128, 0.42);
+  --shadow-thumb: 0 3px 8px rgba(0, 0, 0, 0.12), 0 1px 1px rgba(0, 0, 0, 0.05);
+  --shadow-shot: 0 0 0 0.5px rgba(0, 0, 0, 0.08), 0 30px 80px -24px rgba(0, 0, 0, 0.28);
+  --hair: 1px;
+  --font: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --spring: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ground: #000000;
+    --group: #1c1c1e;
+    --label: #f5f5f7;
+    --label-2: #98989d;
+    --sep: rgba(84, 84, 88, 0.55);
+    --fill: rgba(120, 120, 128, 0.24);
+    --fill-2: rgba(120, 120, 128, 0.36);
+    --track: rgba(120, 120, 128, 0.32);
+    --thumb: #636366;
+    --accent: #2997ff;
+    --accent-tint: rgba(41, 151, 255, 0.16);
+    --focus: rgba(41, 151, 255, 0.55);
+    --select: rgba(41, 151, 255, 0.32);
+    --green: #30d158;
+    --orange: #ff9f0a;
+    --red: #ff453a;
+    --key-tile: #636366;
+    --bar: rgba(22, 22, 24, 0.76);
+    --bar-edge: rgba(255, 255, 255, 0.1);
+    --scroll: rgba(120, 120, 128, 0.5);
+    --shadow-thumb: 0 3px 8px rgba(0, 0, 0, 0.32);
+    --shadow-shot: 0 0 0 0.5px rgba(255, 255, 255, 0.12), 0 30px 80px -24px rgba(0, 0, 0, 0.9);
+  }
+}
+@media (min-resolution: 2dppx) { :root { --hair: 0.5px; } }
+@media (prefers-contrast: more) {
+  :root { --sep: rgba(60, 60, 67, 0.45); --label-2: #48484a; }
+  .group { box-shadow: 0 0 0 1px var(--sep); }
+}
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root { --sep: rgba(235, 235, 245, 0.4); --label-2: #c7c7cc; }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-padding-top: 72px; scrollbar-color: var(--scroll) transparent; -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--label);
+  font-family: var(--font);
+  font-size: 1.0625rem;
+  line-height: 1.53;
+  letter-spacing: -0.012em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+::selection { background: var(--select); }
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 8px; border: 3px solid transparent; background-clip: content-box; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+:focus { outline: none; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 7px; }
+button { font: inherit; letter-spacing: inherit; color: inherit; }
+code, kbd { font-family: var(--mono); font-size: 0.84em; letter-spacing: 0; padding: 1px 5px; border-radius: 5px; background: var(--fill); white-space: nowrap; }
+pre code { padding: 0; background: none; font-size: inherit; white-space: pre; }
+.i { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+[hidden] { display: none !important; }
+.skip { position: absolute; left: 12px; top: -48px; z-index: 20; padding: 8px 12px; border-radius: 8px; background: var(--accent-fill); color: #fff; }
+.skip:focus { top: 10px; }
+
+.toolbar {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--bar);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  box-shadow: 0 var(--hair) 0 var(--bar-edge);
+}
+.toolbar-inner { max-width: 1040px; margin: 0 auto; height: 52px; padding: 0 20px; display: flex; align-items: center; gap: 20px; }
+.brand { display: flex; align-items: center; gap: 9px; color: var(--label); font-weight: 600; font-size: 0.9375rem; letter-spacing: -0.015em; margin-right: auto; }
+.brand:hover { text-decoration: none; }
+.brand svg { width: 26px; height: 26px; }
+.nav { display: flex; gap: 20px; font-size: 0.875rem; letter-spacing: -0.01em; }
+.nav a { color: var(--label); }
+.nav a:hover { color: var(--accent); text-decoration: none; }
+@media (max-width: 560px) { .nav .wide { display: none; } }
+
+main { padding: 0 20px; }
+.col { max-width: 720px; margin: 0 auto; }
+
+.hero { padding: 80px 0 8px; }
+h1 {
+  margin: 0;
+  font-size: clamp(2.375rem, 1.5rem + 3.6vw, 3.5rem);
+  line-height: 1.06;
+  font-weight: 700;
+  letter-spacing: -0.034em;
+  text-wrap: balance;
+  max-width: 15ch;
+}
+.lead { margin: 22px 0 0; font-size: clamp(1.1875rem, 1.1rem + 0.4vw, 1.3125rem); line-height: 1.45; letter-spacing: -0.018em; color: var(--label-2); max-width: 60ch; text-wrap: pretty; }
+.lead strong { color: var(--label); font-weight: 600; }
+
+.install { margin-top: 36px; }
+.group { position: relative; background: var(--group); border-radius: 12px; }
+.segmented { position: relative; display: inline-grid; grid-auto-flow: column; grid-auto-columns: 1fr; padding: 2px; border-radius: 9px; background: var(--track); }
+.segmented button {
+  position: relative; z-index: 1; height: 28px; padding: 0 14px; border: 0; border-radius: 7px; background: none; cursor: pointer;
+  font-size: 0.8125rem; font-weight: 500; letter-spacing: -0.005em; color: var(--label); white-space: nowrap;
+  transition: background-color 0.2s var(--spring), box-shadow 0.2s var(--spring);
+}
+.segmented button[aria-selected="true"] { background: var(--thumb); box-shadow: var(--shadow-thumb); }
+.install-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 12px 12px 16px; }
+.install-head .what { font-size: 0.8125rem; color: var(--label-2); letter-spacing: -0.003em; }
+.cmd { display: flex; align-items: center; gap: 8px; padding: 0 8px 8px; }
+.cmd pre {
+  flex: 1; min-width: 0; margin: 0; padding: 12px 14px; border-radius: 8px; background: var(--fill);
+  font-family: var(--mono); font-size: 0.8125rem; line-height: 1.5; letter-spacing: 0; overflow-x: auto; white-space: pre;
+}
+.cmd pre::-webkit-scrollbar { height: 6px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 34px; padding: 0 14px; border: 0; border-radius: 8px;
+  background: var(--fill); color: var(--accent); font-size: 0.875rem; font-weight: 500; letter-spacing: -0.008em; cursor: pointer; white-space: nowrap;
+  transition: background-color 0.12s ease, transform 0.12s ease;
+}
+.btn:hover { background: var(--fill-2); text-decoration: none; }
+.btn:active { transform: scale(0.97); }
+.btn.primary { background: var(--accent-fill); color: #fff; }
+.btn.primary:hover { background: var(--accent-hover); }
+.btn .i { width: 15px; height: 15px; }
+.copy { flex: none; min-width: 84px; }
+.after { margin: 14px 4px 0 16px; font-size: 0.875rem; line-height: 1.45; color: var(--label-2); letter-spacing: -0.006em; max-width: 64ch; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0 0; }
+.by { margin: 22px 0 0; font-size: 0.875rem; color: var(--label-2); letter-spacing: -0.006em; }
+
+section { padding-top: 72px; }
+h2 { margin: 0 0 10px; font-size: 1.625rem; line-height: 1.18; font-weight: 700; letter-spacing: -0.026em; text-wrap: balance; }
+h3 { margin: 32px 0 6px; font-size: 1.0625rem; line-height: 1.35; font-weight: 600; letter-spacing: -0.02em; }
+section > p, .faq p { margin: 0 0 14px; max-width: 68ch; text-wrap: pretty; }
+.sub { color: var(--label-2); }
+
+.relay { margin: 26px 0 0; }
+.relay .group { overflow: hidden; }
+.relay ol { position: relative; z-index: 1; list-style: none; margin: 0; padding: 0; }
+.live-band {
+  position: absolute; left: 0; right: 0; top: 0; height: 64px; z-index: 0;
+  background: var(--accent-tint);
+  transform: translateY(64px);
+  transition: transform 0.62s var(--spring), height 0.62s var(--spring);
+}
+.row { position: relative; display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 16px; }
+.row + .row::before { content: ""; position: absolute; top: 0; left: 58px; right: 0; height: var(--hair); background: var(--sep); }
+.tile { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 7px; background: var(--accent-fill); color: #fff; flex: none; }
+.tile .i { width: 18px; height: 18px; stroke-width: 1.7; }
+.tile.key { background: var(--key-tile); }
+.row-text { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.row-title { font-size: 0.9375rem; line-height: 1.33; font-weight: 500; letter-spacing: -0.015em; }
+.row-sub { font-size: 0.8125rem; line-height: 1.38; color: var(--label-2); letter-spacing: -0.003em; }
+.state { display: inline-flex; align-items: center; gap: 7px; font-size: 0.8125rem; color: var(--label-2); letter-spacing: -0.003em; white-space: nowrap; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); transition: background-color 0.3s ease; }
+.row[data-s="out"] .dot { background: var(--orange); }
+.row[data-s="spent"] .dot { background: var(--red); }
+.row[data-s="live"] .dot { display: none; }
+.row[data-s="live"] .state { padding: 3px 9px; border-radius: 999px; background: var(--accent-tint); color: var(--accent); font-size: 0.75rem; font-weight: 600; letter-spacing: 0; }
+.relay figcaption { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; margin: 10px 4px 0 16px; font-size: 0.8125rem; line-height: 1.38; color: var(--label-2); }
+.textbtn { padding: 0; border: 0; background: none; color: var(--accent); cursor: pointer; font-size: 0.8125rem; }
+.textbtn:hover { text-decoration: underline; text-underline-offset: 2px; }
+
+.list .row { align-items: flex-start; min-height: 0; padding: 14px 16px; }
+.list .tile { margin-top: 2px; }
+.list .row-sub { font-size: 0.875rem; line-height: 1.45; letter-spacing: -0.006em; }
+.list .row-title { font-weight: 600; }
+.list .row + .row::before { left: 58px; }
+
+.shot { margin: 34px auto 0; max-width: 1040px; }
+.shot img { display: block; width: 100%; height: auto; border-radius: 12px; box-shadow: var(--shadow-shot); background: var(--group); }
+.shot figcaption { max-width: 720px; margin: 14px auto 0; padding: 0 16px; font-size: 0.8125rem; color: var(--label-2); }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; letter-spacing: -0.012em; }
+caption { text-align: left; }
+th, td { text-align: left; vertical-align: top; padding: 12px 16px; }
+thead th { font-size: 0.75rem; font-weight: 600; color: var(--label-2); letter-spacing: 0; padding-top: 14px; padding-bottom: 8px; }
+tbody tr { position: relative; }
+tbody td, tbody th { border-top: var(--hair) solid var(--sep); }
+tbody th { font-weight: 600; }
+td { color: var(--label-2); }
+
+.faq h3 { margin-top: 30px; }
+.faq h3:first-of-type { margin-top: 18px; }
+
+footer { margin-top: 96px; padding: 28px 20px 48px; border-top: var(--hair) solid var(--sep); }
+footer .col { font-size: 0.8125rem; line-height: 1.5; color: var(--label-2); letter-spacing: -0.003em; }
+footer p { margin: 0 0 8px; max-width: 72ch; }
+footer a { color: var(--label-2); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--sep); }
+footer a:hover { color: var(--accent); }
+
+@media (max-width: 560px) {
+  .hero { padding-top: 48px; }
+  section { padding-top: 56px; }
+  .install-head { flex-wrap: wrap; }
+  .install-head .what { display: none; }
+  .row + .row::before, .list .row + .row::before { left: 16px; }
+  .copy { min-width: 0; padding: 0 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-person" viewBox="0 0 20 20"><circle cx="10" cy="6.8" r="3.1"/><path d="M4 16.5c.9-3.1 3.2-4.6 6-4.6s5.1 1.5 6 4.6"/></symbol>
+  <symbol id="i-key" viewBox="0 0 20 20"><circle cx="6.6" cy="13.4" r="3.1"/><path d="M8.8 11.2 16 4M13.4 6.6l2 2M11.6 8.4l1.6 1.6"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 20 20"><path d="M7 2.5v4M13 2.5v4M5 6.5h10v2.5a5 5 0 0 1-10 0zM10 14v3.5"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 20 20"><rect x="7" y="7" width="9" height="9" rx="2"/><path d="M4 13V5a1 1 0 0 1 1-1h8"/></symbol>
+  <symbol id="i-check" viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 6.6"/></symbol>
+  <symbol id="i-out" viewBox="0 0 20 20"><path d="M7 13 13.5 6.5M8 6.5h5.5V12"/></symbol>
+  <symbol id="i-resume" viewBox="0 0 20 20"><path d="M16 10a6 6 0 1 1-1.8-4.3"/><path d="M16 3.6v3.3h-3.3"/></symbol>
+  <symbol id="i-history" viewBox="0 0 20 20"><path d="M4 5.5h12M4 10h12M4 14.5h7.5"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 20 20"><rect x="4.6" y="9" width="10.8" height="7.6" rx="2"/><path d="M7.2 9V6.8a2.8 2.8 0 0 1 5.6 0V9"/></symbol>
+  <symbol id="i-github" viewBox="0 0 20 20"><path d="M7.6 16.4c-3.4 1-3.4-1.7-4.8-2.1m9.6 3.2v-2.6a2.3 2.3 0 0 0-.6-1.7c2-.2 4.2-1 4.2-4.6a3.6 3.6 0 0 0-1-2.5 3.3 3.3 0 0 0 0-2.5s-.8-.2-2.6 1a8.9 8.9 0 0 0-4.7 0C5.9 3.4 5.1 3.6 5.1 3.6a3.3 3.3 0 0 0 0 2.5 3.6 3.6 0 0 0-1 2.5c0 3.6 2.2 4.4 4.2 4.6a2.3 2.3 0 0 0-.6 1.7v2.6"/></symbol>
+</svg>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="toolbar">
+  <div class="toolbar-inner">
+    <a class="brand" href="./" aria-label="claude-nonstop home">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="tile-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3d9bff"/><stop offset="1" stop-color="#0058d0"/></linearGradient></defs><path d="M32 0C8.6 0 0 8.6 0 32s8.6 32 32 32 32-8.6 32-32S55.4 0 32 0Z" fill="url(#tile-g)"/><path d="M32 32C27 22 11 21 11 32C11 43 27 42 32 32C37 22 53 21 53 32C53 43 37 42 32 32Z" fill="none" stroke="#fff" stroke-opacity=".92" stroke-width="6.5" stroke-linecap="round" transform="translate(32 32) scale(.84) translate(-32 -32)"/></svg>
+      <span>claude-nonstop</span>
+    </a>
+    <nav class="nav" aria-label="Page">
+      <a class="wide" href="#how-it-works">How it works</a>
+      <a class="wide" href="#faq">FAQ</a>
+      <a href="https://github.com/umer-jahangier/claude-nonstop">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="col hero">
+    <h1>Keep Claude Code working through usage limits.</h1>
+    <p class="lead"><strong>claude-nonstop</strong> is a free, open-source tool that keeps Claude Code, Codex and the Claude desktop app working when a subscription hits its session or weekly limit. It moves your work to your next account, then to your API keys, one by one, and you keep typing <code>claude</code> like always.</p>
+
+    <div class="install group" id="install">
+      <div class="install-head">
+        <div class="segmented" role="tablist" aria-label="Your computer">
+          <button type="button" role="tab" id="tab-unix" aria-controls="cmd-unix" aria-selected="true">macOS and Linux</button>
+          <button type="button" role="tab" id="tab-win" aria-controls="cmd-win" aria-selected="false" tabindex="-1">Windows</button>
+        </div>
+        <span class="what">One command, nothing to install first</span>
+      </div>
+      <div class="cmd" id="cmd-unix" role="tabpanel" aria-labelledby="tab-unix">
+        <pre><code>curl -fsSL https://raw.githubusercontent.com/umer-jahangier/claude-nonstop/main/install.sh | sh</code></pre>
+        <button class="btn primary copy" type="button" data-copy="curl -fsSL https://raw.githubusercontent.com/umer-jahangier/claude-nonstop/main/install.sh | sh"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg><span>Copy</span></button>
+      </div>
+      <div class="cmd" id="cmd-win" role="tabpanel" aria-labelledby="tab-win" hidden>
+        <pre><code>irm https://raw.githubusercontent.com/umer-jahangier/claude-nonstop/main/install.ps1 | iex</code></pre>
+        <button class="btn primary copy" type="button" data-copy="irm https://raw.githubusercontent.com/umer-jahangier/claude-nonstop/main/install.ps1 | iex"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg><span>Copy</span></button>
+      </div>
+    </div>
+    <p class="after">Paste it into a terminal (PowerShell on Windows). It brings its own Node.js, installs Claude Code if you don't have it, and opens a page to add your accounts and keys. Then open a new terminal and type <code>claude</code>.</p>
+
+    <div class="actions">
+      <a class="btn" href="https://github.com/umer-jahangier/claude-nonstop"><svg class="i" aria-hidden="true"><use href="#i-github"/></svg>Source on GitHub</a>
+      <a class="btn" href="https://github.com/umer-jahangier/claude-nonstop/releases/latest">Latest release<svg class="i" aria-hidden="true"><use href="#i-out"/></svg></a>
+    </div>
+    <p class="by">MIT licensed · macOS, Windows and Linux · made by <a href="https://umer-jahangier.github.io/" rel="author">Muhammad Umer (Umer Jahangier)</a></p>
+  </div>
+
+  <div class="col">
+    <section id="relay" aria-labelledby="relay-h">
+      <h2 id="relay-h">One order, worked from the top</h2>
+      <p>Your accounts and keys sit in one list. Every session starts on the first line with usage left. When it runs out, the same conversation carries on with the next line, and API keys take over only when every account is out.</p>
+      <figure class="relay">
+        <div class="group">
+          <span class="live-band" aria-hidden="true"></span>
+          <ol id="relay-list" aria-label="An example order">
+            <li class="row" data-s="out"><span class="tile"><svg class="i" aria-hidden="true"><use href="#i-person"/></svg></span><span class="row-text"><span class="row-title">Work</span><span class="row-sub">Claude account</span></span><span class="state"><span class="dot"></span><span class="st">Limit reached</span></span></li>
+            <li class="row" data-s="live"><span class="tile"><svg class="i" aria-hidden="true"><use href="#i-person"/></svg></span><span class="row-text"><span class="row-title">Main account</span><span class="row-sub">Claude account</span></span><span class="state"><span class="dot"></span><span class="st">In use</span></span></li>
+            <li class="row" data-s="ok"><span class="tile"><svg class="i" aria-hidden="true"><use href="#i-person"/></svg></span><span class="row-text"><span class="row-title">ChatGPT</span><span class="row-sub">ChatGPT account</span></span><span class="state"><span class="dot"></span><span class="st">Ready</span></span></li>
+            <li class="row" data-s="ok"><span class="tile key"><svg class="i" aria-hidden="true"><use href="#i-key"/></svg></span><span class="row-text"><span class="row-title">Personal</span><span class="row-sub">Anthropic API key</span></span><span class="state"><span class="dot"></span><span class="st">Works</span></span></li>
+            <li class="row" data-s="ok"><span class="tile key"><svg class="i" aria-hidden="true"><use href="#i-key"/></svg></span><span class="row-text"><span class="row-title">Backup</span><span class="row-sub">OpenAI API key</span></span><span class="state"><span class="dot"></span><span class="st">Works</span></span></li>
+          </ol>
+        </div>
+        <figcaption><span id="relay-note">An example order: Work hit its limit, so the session moved on to Main account.</span><button class="textbtn" type="button" id="relay-toggle" hidden>Play</button></figcaption>
+      </figure>
+    </section>
+
+    <section id="features" aria-labelledby="features-h">
+      <h2 id="features-h">What you get</h2>
+      <ul class="group list" role="list" style="list-style:none;margin:20px 0 0;padding:0">
+        <li class="row"><span class="tile"><svg class="i" aria-hidden="true"><use href="#i-person"/></svg></span><span class="row-text"><span class="row-title">Subscriptions first</span><span class="row-sub">Sessions start on the first account with usage left. API keys are used only when every account is out.</span></span></li>
+        <li class="row"><span class="tile"><svg class="i" aria-hidden="true"><use href="#i-resume"/></svg></span><span class="row-text"><span class="row-title">Never stalls at a limit</span><span class="row-sub">If an account runs out mid-task, the same conversation reopens on your next line and carries on by itself. With nothing left, it waits for the reset.</span></span></li>
+        <li class="row"><span class="tile key"><svg class="i" aria-hidden="true"><use href="#i-key"/></svg></span><span class="row-text"><span class="row-title">Keys switch mid-request</span><span class="row-sub">A local gateway sends each request on your first working key. When a key runs out of credit, the same request goes out again on the next one.</span></span></li>
+        <li class="row"><span class="tile"><svg class="i" aria-hidden="true"><use href="#i-plug"/></svg></span><span class="row-text"><span class="row-title">Every tool, every line</span><span class="row-sub">Claude Code, Codex, Cursor and the Claude desktop app run on Claude and ChatGPT accounts and on Anthropic and OpenAI keys, translated on the way.</span></span></li>
+        <li class="row"><span class="tile"><svg class="i" aria-hidden="true"><use href="#i-history"/></svg></span><span class="row-text"><span class="row-title">Your chats stay</span><span class="row-sub">Every account shares one Claude Code history, so <code>claude --resume</code> shows all of it.</span></span></li>
+        <li class="row"><span class="tile key"><svg class="i" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="row-text"><span class="row-title">Secrets stay on your computer</span><span class="row-sub">Keys are encrypted at rest, with the encryption key in your system's credential store. No telemetry.</span></span></li>
+      </ul>
+    </section>
+  </div>
+
+  <figure class="shot">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="img/web-ui-dark.webp" type="image/webp">
+      <source srcset="img/web-ui-light.webp" type="image/webp">
+      <img src="img/web-ui-dark.jpg" width="1600" height="1089" loading="lazy" decoding="async" alt="The claude-nonstop web page: the line in use, subscription accounts and API keys in one list, a cable plugged into the live line, and live activity.">
+    </picture>
+    <figcaption>The page that comes with it, at <code>https://claude.nonstop</code>, shown here with example accounts. Drag the cable to switch lines.</figcaption>
+  </figure>
+
+  <div class="col">
+    <section id="how-it-works" aria-labelledby="how-h">
+      <h2 id="how-h">How it works</h2>
+      <h3>Choosing a line</h3>
+      <p>Before a session starts, claude-nonstop asks each account in your order whether it has usage left, with one tiny request run by Claude Code itself. The session starts on the first one that does. An account that hit its limit is skipped for a while before it's asked again.</p>
+      <h3>When a limit hits mid-task</h3>
+      <p>claude-nonstop runs the unmodified Claude Code with a few documented hooks. When a turn stops on a usage limit, it reopens the same conversation on your next line with <code>claude --resume</code> and tells Claude to continue where it left off. When an account has usage again, the session moves back to it.</p>
+      <h3>API keys switch mid-request</h3>
+      <p>Requests go through a local gateway on <code>127.0.0.1</code>. If a key answers that its credit is too low, the gateway sends the same request again on the next key, so a running session never notices. A used-up key is skipped for 30 minutes, in case you top it up.</p>
+      <h3>Codex, Cursor and the Claude desktop app</h3>
+      <p>The gateway speaks Anthropic's Messages API and OpenAI's Responses and Chat Completions APIs. Setup points Codex and the Claude desktop app at it for you. A request that needs another service's format is translated on the way out and back, tool calls and streaming included.</p>
+    </section>
+
+    <section id="works-with" aria-labelledby="works-h">
+      <h2 id="works-h">Works with</h2>
+      <div class="group table-wrap" style="margin-top:20px">
+        <table>
+          <caption class="sr-only">Tools claude-nonstop works with, and the accounts and keys they can run on</caption>
+          <thead><tr><th scope="col">Tool</th><th scope="col">How it connects</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Claude Code</th><td>In the terminal, VS Code and any editor that reads Claude Code's settings</td></tr>
+            <tr><th scope="row">Claude desktop app</th><td>Its third-party mode, set up by the installer</td></tr>
+            <tr><th scope="row">Codex</th><td>The <code>codex</code> command and the Codex app, set up by the installer, with no OpenAI sign-in needed</td></tr>
+            <tr><th scope="row">Cursor and others</th><td>Any tool that takes an OpenAI base address</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px" class="sub">Each of them can run on Claude accounts, ChatGPT accounts, Anthropic API keys and OpenAI API keys, in the order you choose.</p>
+    </section>
+
+    <section id="faq" class="faq" aria-labelledby="faq-h">
+      <h2 id="faq-h">Frequently asked questions</h2>
+      <h3>What is claude-nonstop?</h3>
+      <p>claude-nonstop is a free, open-source tool that keeps Claude Code working through plan limits. When a Claude subscription hits its session or weekly limit, it starts your next session on your next account, and when every account is out it moves to your API keys, one by one. The same local gateway also runs Codex, Cursor and the Claude desktop app, on Claude and ChatGPT accounts and on Anthropic and OpenAI API keys.</p>
+      <h3>Who made claude-nonstop?</h3>
+      <p>Muhammad Umer (Umer Jahangier, <a href="https://github.com/umer-jahangier">@umer-jahangier</a> on GitHub), an AI and full-stack engineer in Lahore, Pakistan. The source is at <a href="https://github.com/umer-jahangier/claude-nonstop">github.com/umer-jahangier/claude-nonstop</a> under the MIT license.</p>
+      <h3>How do I keep using Claude Code after hitting the usage limit?</h3>
+      <p>Add a second account or an API key to claude-nonstop. When the account you're on hits its session or weekly limit, claude-nonstop reopens the same conversation on the next line in your order with <code>claude --resume</code> and tells Claude to continue where it left off. With only one account, it waits for the reset and continues by itself.</p>
+      <h3>Does claude-nonstop work with Codex and ChatGPT?</h3>
+      <p>Yes. Setup points Codex at the local gateway, so Codex needs no OpenAI sign-in, and you can add ChatGPT accounts and OpenAI API keys next to your Claude ones. When a tool runs on another service's line, requests are translated between Anthropic's and OpenAI's formats, tool calls and streaming included.</p>
+      <h3>Does it work with the Claude desktop app?</h3>
+      <p>Yes. The installer sets up the desktop app's third-party mode with the settings Anthropic documents. In that mode each request walks your order: subscription accounts first, then API keys. Your claude.ai chats can be brought over with the app's own import.</p>
+      <h3>Is claude-nonstop free?</h3>
+      <p>Yes. It's free and open source under the MIT license, with no account, server or telemetry of its own. It runs on your own subscriptions and API keys.</p>
+      <h3>Is it safe? Where are my keys stored?</h3>
+      <p>Everything runs on your computer. API keys are encrypted at rest with AES-256-GCM, and the encryption key is held by the macOS Keychain, Windows DPAPI or the Linux Secret Service. Keys are only sent to the service they belong to, and the gateway accepts connections from your computer only.</p>
+      <h3>Is using several accounts allowed?</h3>
+      <p>claude-nonstop runs the unmodified Claude Code and uses only documented features. Every account and key you add must be your own: sharing a subscription between people is against Anthropic's and OpenAI's terms. Running one company's subscription from the other company's tool (Codex on a Claude account, say) isn't covered by their terms, so either could stop accepting it.</p>
+      <h3>Do I need API keys?</h3>
+      <p>No. With only subscription accounts, claude-nonstop moves from one to the next. API keys are the fallback for when every account is out.</p>
+      <h3>Which operating systems does it support?</h3>
+      <p>macOS, Windows and Linux. The installer brings its own Node.js, so there's nothing to install first.</p>
+      <h3>Is this the claude-nonstop package on npm?</h3>
+      <p>No. Several unrelated projects use the name. This claude-nonstop is <a href="https://github.com/umer-jahangier/claude-nonstop">umer-jahangier/claude-nonstop</a> on GitHub: you install it with the one-line command on this page, and it updates itself from that repository's releases. The npm package called claude-nonstop is a different project by another author.</p>
+      <h3>How do I update or uninstall it?</h3>
+      <p>It updates itself from GitHub releases within the hour, and <code>claude-nonstop update</code> installs the newest version right away. <code>claude-nonstop uninstall</code> removes it and undoes every change setup made; add <code>--purge</code> to delete your saved keys and accounts too.</p>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="col">
+    <p>claude-nonstop is made by <a href="https://umer-jahangier.github.io/" rel="author">Muhammad Umer (Umer Jahangier)</a> and is open source under the MIT license. <a href="https://github.com/umer-jahangier/claude-nonstop">Source</a> · <a href="https://github.com/umer-jahangier/claude-nonstop/releases">Releases</a> · <a href="https://github.com/umer-jahangier/claude-nonstop/issues">Issues</a> · <a href="llms.txt">llms.txt</a></p>
+    <p>It's an independent project, not affiliated with or endorsed by Anthropic or OpenAI. Claude and Claude Code are trademarks of Anthropic. ChatGPT and Codex are trademarks of OpenAI.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var tabs = [document.getElementById('tab-unix'), document.getElementById('tab-win')];
+  function pick(tab, focus) {
+    tabs.forEach(function (t) {
+      var on = t === tab;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+    if (focus) tab.focus();
+  }
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { pick(t); });
+    t.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); pick(tabs[(i + 1) % 2], true); }
+    });
+  });
+  if (/Windows/i.test(navigator.userAgent)) pick(tabs[1]);
+
+  document.querySelectorAll('[data-copy]').forEach(function (b) {
+    var label = b.querySelector('span');
+    var use = b.querySelector('use');
+    b.addEventListener('click', function () {
+      var text = b.getAttribute('data-copy');
+      var done = function () {
+        label.textContent = 'Copied';
+        use.setAttribute('href', '#i-check');
+        setTimeout(function () { label.textContent = 'Copy'; use.setAttribute('href', '#i-copy'); }, 1800);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function () { select(b); });
+      else select(b);
+    });
+  });
+  function select(b) {
+    var range = document.createRange();
+    range.selectNodeContents(b.parentNode.querySelector('code'));
+    var s = window.getSelection(); s.removeAllRanges(); s.addRange(range);
+    b.querySelector('span').textContent = /Mac|iPhone|iPad/.test(navigator.platform) ? 'Press ⌘C' : 'Press Ctrl+C';
+  }
+
+  var list = document.getElementById('relay-list');
+  var rows = Array.prototype.slice.call(list.children);
+  var band = list.parentNode.querySelector('.live-band');
+  var note = document.getElementById('relay-note');
+  var toggle = document.getElementById('relay-toggle');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var notes = [
+    'Every session starts on the first line with usage left.',
+    'Work hit its limit, so the session moved on to Main account.',
+    'Main account is out too. A ChatGPT account takes over.',
+    'Every account is out, so the API keys take over.',
+    'When a key runs out of credit, the same request goes out on the next one.'
+  ];
+  var at = 1, timer = null, playing = false;
+  function show(n) {
+    at = n;
+    rows.forEach(function (r, i) {
+      var key = i >= 3;
+      var s = i < n ? (key ? 'spent' : 'out') : i === n ? 'live' : 'ok';
+      r.setAttribute('data-s', s);
+      r.querySelector('.st').textContent = s === 'live' ? 'In use' : s === 'out' ? 'Limit reached' : s === 'spent' ? 'Used up' : key ? 'Works' : 'Ready';
+    });
+    var h = rows[n].offsetTop;
+    band.style.transform = 'translateY(' + h + 'px)';
+    band.style.height = rows[n].offsetHeight + 'px';
+    note.textContent = notes[n];
+  }
+  function stop() { clearTimeout(timer); timer = null; playing = false; toggle.textContent = 'Play'; }
+  function step() {
+    if (at >= rows.length - 1) { stop(); toggle.textContent = 'Play again'; return; }
+    show(at + 1);
+    timer = setTimeout(step, 2200);
+  }
+  function play() {
+    playing = true; toggle.textContent = 'Pause';
+    if (at >= rows.length - 1) show(0);
+    timer = setTimeout(step, 1600);
+  }
+  toggle.hidden = false;
+  toggle.addEventListener('click', function () { playing ? stop() : play(); });
+  show(1);
+  window.addEventListener('resize', function () { show(at); });
+  if (!reduced.matches && 'IntersectionObserver' in window) {
+    var started = false;
+    new IntersectionObserver(function (entries, obs) {
+      if (entries[0].isIntersecting && !started) { started = true; obs.disconnect(); show(0); play(); }
+    }, { threshold: 0.6 }).observe(list);
+  }
+})();
+</script>
+</body>
+</html>
+
