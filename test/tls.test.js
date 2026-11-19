@@ -68,3 +68,26 @@ test('plain-http visits to the short names are sent to https', async () => {
     srv.close();
   }
 });
+
+test("the authority is name-constrained: it vouches for the gateway's own names and nothing else", async () => {
+  const tlsLib = require('tls');
+  const handshake = (made, servername) => new Promise((resolve) => {
+    const server = tlsLib.createServer({ cert: made.cert, key: made.key }, (s) => s.end());
+    server.listen(0, '127.0.0.1', () => {
+      const c = tlsLib.connect({ port: server.address().port, host: '127.0.0.1', servername, ca: made.ca }, () => {
+        c.end();
+        server.close();
+        resolve('ok');
+      });
+      c.on('error', (err) => {
+        server.close();
+        resolve(err.message);
+      });
+    });
+  });
+  const own = tls.issue();
+  for (const name of ['claude.nonstop', 'claude-nonstop', 'claude-nonstop.localhost', 'localhost']) assert.equal(await handshake(own, name), 'ok', name);
+  // Even a certificate the authority itself signed is refused for any other site.
+  const foreign = tls.issue({ names: ['example.com'], ips: [] });
+  assert.notEqual(await handshake(foreign, 'example.com'), 'ok');
+});

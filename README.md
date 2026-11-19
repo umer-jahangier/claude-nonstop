@@ -258,7 +258,9 @@ Claude Code's own subcommands (`claude mcp`, `claude doctor`, `claude update`, `
 - **Keys are only sent to the service they belong to**: Claude keys to `api.anthropic.com`, OpenAI keys to `api.openai.com`, ChatGPT sign-ins to `chatgpt.com`. After you save a key, only a masked form is ever shown again.
 - **The web page needs a one-time link** from `claude-nonstop ui`, which becomes an HttpOnly, SameSite=Strict cookie. Every request also carries a header other websites can't send, so pages you visit can't reach it.
 - **The gateway has its own random token**, so other programs on your computer can't spend your keys.
-- **HTTPS uses a certificate made on your computer.** The certificate authority that signs it is used once, for this computer's own names, and its private key is thrown away immediately: it's never saved, so it can never sign anything else. Uninstalling removes it from your trusted certificates.
+- **HTTPS uses a certificate made on your computer.** The certificate authority that signs it is used once, for this computer's own names, and its private key is thrown away immediately: it's never saved, so it can never sign anything else. It is also name-constrained: browsers, macOS and OpenSSL accept what it signs only for `claude.nonstop`, `claude-nonstop`, `localhost` (and `*.localhost`), `127.0.0.1` and `::1`, so it couldn't vouch for any other site even in principle. Uninstalling removes it from your trusted certificates.
+- **Updates are signed.** Each release carries its own tarball and an Ed25519 signature over its version and SHA-256, made with a key that stays on the publisher's computer, never on GitHub. Installed copies check that signature against keys built into them, plus the version inside the tarball, and install nothing that doesn't match, so a release published through a hijacked repository or GitHub account can't reach your computer. Set `"autoUpdate": false` in `~/.claude-nonstop/config.json` to update only when you run `claude-nonstop update`, which checks the same way.
+- **Code sessions in the desktop app may reach any site by default**, as in a normal install. For projects with secrets or customer data, turn on **Strict sandbox** in the web page's **Settings**: the desktop app then keeps its own allowlist of sites, and the change is applied right away.
 - **The globe's "This computer" spot is guessed from your timezone** inside the page. It's never sent anywhere.
 - **No telemetry.** The only outside connections claude-nonstop makes are to Anthropic and OpenAI (your requests, sign-ins and the account checks) and to GitHub (to check for updates).
 
@@ -279,7 +281,7 @@ Nothing is hidden. Here's everything, and how each part is undone:
 
 ## Updating
 
-claude-nonstop checks GitHub for a new release every hour (and a minute after it starts) and installs it by itself, so you rarely need to do anything. To update right now:
+claude-nonstop checks GitHub for a new release every hour (and a minute after it starts) and installs it by itself, so you rarely need to do anything. It installs only releases signed with the claude-nonstop release key (see [Security and privacy](#security-and-privacy)). To update right now:
 
 ```bash
 claude-nonstop update
@@ -402,6 +404,9 @@ curl -fsSL https://raw.githubusercontent.com/umer-jahangier/claude-nonstop/main/
 **Prefer npm?** `npm install -g @umer-jahangier/claude-nonstop`, then run `claude-nonstop setup`. The command is still `claude-nonstop`. (This needs Node.js 18 or newer, and doesn't update itself: update with the same `npm install -g`.) Not the unscoped `claude-nonstop` package, which is an unrelated project.
 
 ## Development
+
+Releases are published with `node scripts/release.js <version> --notes "..."`: it tags the commit, builds the tarball with `git archive`, signs it with the release key in `~/.config/claude-nonstop/`, and attaches both to the GitHub release. A release made any other way is refused by installed copies.
+
 
 ```bash
 git clone https://github.com/umer-jahangier/claude-nonstop

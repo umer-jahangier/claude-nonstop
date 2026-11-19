@@ -64,3 +64,64 @@ test('a copy installed with npm never updates itself', async () => {
   assert.equal(result.updated, false);
   assert.match(result.note, /npm/);
 });
+
+// ---------------------------------------------------------------- signed releases
+
+const http = require('http');
+const crypto = require('crypto');
+
+const releaseKey = crypto.generateKeyPairSync('ed25519');
+process.env.CLAUDE_NONSTOP_TEST_RELEASE_KEY = releaseKey.publicKey.export({ type: 'spki', format: 'pem' });
+const sign = (version, file, key = releaseKey.privateKey) => crypto.sign(null, Buffer.from(update.signedText(version, crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'))), key).toString('base64');
+
+// Serves files at http://127.0.0.1:<port>/<name>, for a release's download URLs.
+function serve(files) {
+  const server = http.createServer((req, res) => {
+    const body = files[req.url.slice(1)];
+    if (body === undefined) return res.writeHead(404).end();
+    res.writeHead(200).end(body);
+  });
+  return new Promise((resolve) => server.listen(0, '127.0.0.1', () => resolve({ url: `http://127.0.0.1:${server.address().port}`, close: () => server.close() })));
+}
+
+async function tryRelease(version, tarball, signature) {
+  const app = path.join(root, 'app');
+  const files = { 'r.tar.gz': fs.readFileSync(tarball), ...(signature === undefined ? {} : { 'r.sig': signature }) };
+  const s = await serve(files);
+  try {
+    await update.installRelease({ tag: `v${version}`, version, tarball: `${s.url}/r.tar.gz`, signature: signature === undefined ? null : `${s.url}/r.sig` }, app);
+    return null;
+  } catch (err) {
+    return err.message;
+  } finally {
+    s.close();
+  }
+}
+
+const app = () => fs.readFileSync(path.join(root, 'app', 'bin', 'claude-nonstop.js'), 'utf8');
+
+test('a release signed with a release key installs', async () => {
+  const tarball = makeRelease('signed', { 'bin/claude-nonstop.js': 'signed', 'package.json': '{"version":"9.9.10"}' });
+  assert.equal(await tryRelease('9.9.10', tarball, sign('9.9.10', tarball)), null);
+  assert.equal(app(), 'signed');
+});
+
+test('an unsigned, wrongly signed, altered or mislabelled release is refused, and the app is left as it was', async () => {
+  const tarball = makeRelease('evil', { 'bin/claude-nonstop.js': 'evil', 'package.json': '{"version":"9.9.11"}' });
+  assert.match(await tryRelease('9.9.11', tarball, undefined), /no signed tarball/);
+  const stranger = crypto.generateKeyPairSync('ed25519').privateKey;
+  assert.match(await tryRelease('9.9.11', tarball, sign('9.9.11', tarball, stranger)), /isn't signed by the claude-nonstop release key/);
+  const other = makeRelease('other', { 'bin/claude-nonstop.js': 'other', 'package.json': '{"version":"9.9.11"}' });
+  assert.match(await tryRelease('9.9.11', tarball, sign('9.9.11', other)), /isn't signed/, 'a signature for different bytes');
+  assert.match(await tryRelease('9.9.12', tarball, sign('9.9.11', tarball)), /isn't signed/, 'a signature for another version');
+  const mislabelled = makeRelease('mislabelled', { 'bin/claude-nonstop.js': 'old code', 'package.json': '{"version":"1.0.0"}' });
+  assert.match(await tryRelease('9.9.13', mislabelled, sign('9.9.13', mislabelled)), /holds 1.0.0/, 'no rolling back to old code under a new number');
+  assert.equal(app(), 'signed');
+});
+
+test('the pinned keys are real Ed25519 public keys, and the test key only counts under the test runner', () => {
+  assert.equal(update.RELEASE_KEYS.length, 2);
+  for (const pem of update.RELEASE_KEYS) assert.equal(crypto.createPublicKey(pem).asymmetricKeyType, 'ed25519');
+  const r = spawnSync(process.execPath, ['-e', `const u=require(${JSON.stringify(path.join(__dirname, '..', 'src', 'update'))});process.stdout.write(String(u.verifySignature('1.0.0','00',${JSON.stringify(crypto.sign(null, Buffer.from(update.signedText('1.0.0', '00')), releaseKey.privateKey).toString('base64'))})))`], { env: { ...process.env, NODE_TEST_CONTEXT: '' }, encoding: 'utf8' });
+  assert.equal(r.stdout, 'false');
+});

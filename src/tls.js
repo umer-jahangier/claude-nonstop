@@ -7,6 +7,9 @@
 // claude-nonstop.localhost, localhost, 127.0.0.1, ::1), and its private key is thrown away
 // the moment that's done. It is never written to disk, so nothing can ever use the
 // authority to sign anything else, which makes trusting it on this computer safe. The
+// authority's certificate also carries name constraints (RFC 5280): browsers, macOS and
+// OpenSSL accept certificates it signs only for this computer's own names and addresses,
+// so even if its key were somehow recovered it couldn't vouch for any other site. The
 // authority's certificate is then added to the system's trusted roots (macOS asks for your
 // password, Windows asks you to confirm, Linux browsers trust it through their NSS store).
 //
@@ -111,8 +114,22 @@ function certificate({ subject, issuer, spki, issuerSpki, signingKey, days, exte
   return seq(tbs, ECDSA_SHA256, bits(signature));
 }
 
-// Makes the throwaway authority and the one certificate it will ever sign.
-function issue() {
+// Name constraints: the authority may vouch only for these names (and their subdomains,
+// which covers claude-nonstop.localhost) and these exact addresses.
+const PERMITTED_DNS = ['claude.nonstop', 'claude-nonstop', 'localhost'];
+function nameConstraints() {
+  const subtree = (generalName) => seq(generalName);
+  const dns = PERMITTED_DNS.map((n) => subtree(tlv(0x82, Buffer.from(n, 'ascii'))));
+  const ips = IPS.map((ip) => {
+    const addr = ipBytes(ip);
+    return subtree(tlv(0x87, Buffer.concat([addr, Buffer.alloc(addr.length, 0xff)])));
+  });
+  return seq(tlv(0xa0, Buffer.concat([...dns, ...ips])));
+}
+
+// Makes the throwaway authority and the one certificate it will ever sign. `names` and
+// `ips` are for tests; a real certificate always covers DNS_NAMES and IPS.
+function issue({ names = DNS_NAMES, ips = IPS } = {}) {
   const ca = crypto.generateKeyPairSync('ec', { namedCurve: 'prime256v1' });
   const leaf = crypto.generateKeyPairSync('ec', { namedCurve: 'prime256v1' });
   const caSpki = ca.publicKey.export({ type: 'spki', format: 'der' });
@@ -127,6 +144,7 @@ function issue() {
     extensions: [
       extension('2.5.29.19', true, seq(bool(true), integer(Buffer.from([0])))),
       extension('2.5.29.15', true, bits(Buffer.from([0x06]), 1)),
+      extension('2.5.29.30', true, nameConstraints()),
     ],
   });
   const leafDer = certificate({
@@ -140,7 +158,7 @@ function issue() {
       extension('2.5.29.19', true, seq()),
       extension('2.5.29.15', true, bits(Buffer.from([0x80]), 7)),
       extension('2.5.29.37', false, seq(oid('1.3.6.1.5.5.7.3.1'))),
-      extension('2.5.29.17', false, seq(...DNS_NAMES.map((n) => tlv(0x82, Buffer.from(n, 'ascii'))), ...IPS.map((ip) => tlv(0x87, ipBytes(ip))))),
+      extension('2.5.29.17', false, seq(...names.map((n) => tlv(0x82, Buffer.from(n, 'ascii'))), ...ips.map((ip) => tlv(0x87, ipBytes(ip))))),
     ],
   });
   // The authority's private key goes out of scope here and is never stored.
@@ -172,7 +190,7 @@ function save(made) {
   fs.writeFileSync(FILES.ca, made.ca);
   fs.writeFileSync(FILES.cert, made.cert);
   fs.writeFileSync(FILES.key, made.key, { mode: 0o600 });
-  writeJson(FILES.state, { fingerprint: made.fingerprint, trusted: false, createdAt: new Date().toISOString() });
+  writeJson(FILES.state, { fingerprint: made.fingerprint, trusted: false, constrained: true, createdAt: new Date().toISOString() });
 }
 
 // ---------------------------------------------------------------- the system's trusted roots
@@ -232,7 +250,8 @@ function setup() {
   if (process.env.CLAUDE_NONSTOP_NO_TLS === '1') return false;
   let state = readJson(FILES.state, null);
   const current = read();
-  if (state && state.trusted && current && daysLeft(current.x509) > RENEW_DAYS) return true;
+  // An authority made before name constraints existed is replaced by one that has them.
+  if (state && state.trusted && state.constrained && current && daysLeft(current.x509) > RENEW_DAYS) return true;
   if (state && state.trusted) removeTrust(state);
   const made = issue();
   save(made);

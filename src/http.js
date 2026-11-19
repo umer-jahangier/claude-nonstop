@@ -43,7 +43,13 @@ function downloadFile(url, dest, { redirects = 5, timeoutMs = 120000 } = {}) {
     const req = lib.get(target, { headers: { 'user-agent': 'claude-nonstop' }, agent: false }, (res) => {
       if ([301, 302, 303, 307, 308].includes(res.statusCode) && res.headers.location && redirects > 0) {
         res.resume();
-        resolve(downloadFile(new URL(res.headers.location, target).toString(), dest, { redirects: redirects - 1, timeoutMs }));
+        const next = new URL(res.headers.location, target);
+        // An https download never continues over plain http.
+        if (target.protocol === 'https:' && next.protocol !== 'https:') {
+          reject(new Error(`download refused: ${target.host} redirected to ${next.protocol}`));
+          return;
+        }
+        resolve(downloadFile(next.toString(), dest, { redirects: redirects - 1, timeoutMs }));
         return;
       }
       if (res.statusCode !== 200) {
