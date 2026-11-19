@@ -310,7 +310,7 @@ claude-nonstop uninstall          # keeps your saved keys and accounts
 claude-nonstop uninstall --purge  # also deletes them
 ```
 
-This stops the gateway, removes the `claude` shortcut, the short address, the trusted certificate and the desktop app settings (on macOS, remove the profile in **System Settings → General → Device Management**), and tells you about anything it couldn't undo. Installed with npm? Finish with `npm uninstall -g claude-nonstop`.
+This stops the gateway, removes the `claude` shortcut, the short address, the trusted certificate and the desktop app settings (on macOS, remove the profile in **System Settings → General → Device Management**), and tells you about anything it couldn't undo. Installed with npm? Finish with `npm uninstall -g @umer-jahangier/claude-nonstop`.
 
 ## FAQ
 
@@ -328,7 +328,7 @@ Add a second account or an API key. When the account you're on hits its limit, c
 
 ### Is this the `claude-nonstop` package on npm?
 
-No. Several unrelated projects share the name, including the npm package called `claude-nonstop`. This one is [umer-jahangier/claude-nonstop](https://github.com/umer-jahangier/claude-nonstop): install it with the one-line command in [Install](#install), and it updates itself from this repository's releases.
+No. Several unrelated projects share the name, including the npm package called plain `claude-nonstop`, by another author. This one is [umer-jahangier/claude-nonstop](https://github.com/umer-jahangier/claude-nonstop), and on npm it's [`@umer-jahangier/claude-nonstop`](https://www.npmjs.com/package/@umer-jahangier/claude-nonstop). The one-line command in [Install](#install) is the recommended way: it updates itself from this repository's releases.
 
 ### Is this allowed?
 
@@ -399,7 +399,7 @@ curl -fsSL https://raw.githubusercontent.com/umer-jahangier/claude-nonstop/main/
 
 **Other environment variables:** `CLAUDE_NONSTOP_HOME` moves the data folder (default `~/.claude-nonstop`); `CLAUDE_NONSTOP_PORT` changes the gateway port (default `43117`).
 
-**Prefer npm?** `npm install -g github:umer-jahangier/claude-nonstop`, then run `claude-nonstop setup`. (This needs Node.js 18 or newer, and doesn't update itself: update with npm.)
+**Prefer npm?** `npm install -g @umer-jahangier/claude-nonstop`, then run `claude-nonstop setup`. The command is still `claude-nonstop`. (This needs Node.js 18 or newer, and doesn't update itself: update with the same `npm install -g`.) Not the unscoped `claude-nonstop` package, which is an unrelated project.
 
 ## Development
 

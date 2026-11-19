@@ -741,7 +741,7 @@ async function uninstall(args = []) {
     }
     out('- The claude-nonstop app is removed.');
   } else {
-    out('- Installed with npm? Finish with: npm uninstall -g claude-nonstop');
+    out('- Installed with npm? Finish with: npm uninstall -g @umer-jahangier/claude-nonstop');
   }
   if (purge) {
     try {

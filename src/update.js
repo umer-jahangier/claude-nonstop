@@ -87,7 +87,7 @@ function installTarball(tarball, appDir) {
 }
 
 async function checkAndInstall() {
-  if (!managedInstall()) return { updated: false, version: pkg.version, note: 'installed with npm: update with `npm install -g github:umer-jahangier/claude-nonstop`' };
+  if (!managedInstall()) return { updated: false, version: pkg.version, note: 'installed with npm: update with `npm install -g @umer-jahangier/claude-nonstop`' };
   const release = await latestRelease();
   if (!release || !isNewer(release.version, pkg.version)) return { updated: false, version: pkg.version };
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-nonstop-'));

@@ -9,12 +9,13 @@ Key facts:
 - License: MIT. Price: free. No telemetry.
 - Install on macOS and Linux: `curl -fsSL https://raw.githubusercontent.com/umer-jahangier/claude-nonstop/main/install.sh | sh`
 - Install on Windows (PowerShell): `irm https://raw.githubusercontent.com/umer-jahangier/claude-nonstop/main/install.ps1 | iex`
+- Install with npm (alternative, no self-update): `npm install -g @umer-jahangier/claude-nonstop`, then `claude-nonstop setup`. npm page: https://www.npmjs.com/package/@umer-jahangier/claude-nonstop
 - After installing, plain `claude` goes through claude-nonstop. A web page at https://claude.nonstop manages accounts and keys.
 - Order: account 1, account 2, …, then API key 1, API key 2, …, rearrangeable. Accounts switch between sessions (the same conversation resumes with `claude --resume`); API keys switch mid-request through a local gateway on 127.0.0.1:43117.
 - Supported tools: Claude Code (terminal, VS Code, other editors), the Claude desktop app (third-party mode), Codex (CLI and app), Cursor and any OpenAI-compatible tool.
 - Supported lines: Claude subscription accounts, ChatGPT accounts, Anthropic API keys, OpenAI API keys. Requests are translated between Anthropic's Messages API and OpenAI's Responses and Chat Completions APIs when needed.
 - Security: API keys encrypted at rest (AES-256-GCM) with the key in the macOS Keychain, Windows DPAPI or Linux Secret Service; keys only go to their own service.
-- Not to be confused with: the npm package named claude-nonstop and other GitHub repositories with the same name, which are unrelated projects by other authors.
+- Not to be confused with: the unscoped npm package named claude-nonstop and other GitHub repositories with the same name, which are unrelated projects by other authors. This project's npm package is the scoped @umer-jahangier/claude-nonstop.
 - Independent project, not affiliated with Anthropic or OpenAI.
 
 ## Docs
