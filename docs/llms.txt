@@ -24,6 +24,15 @@ Key facts:
 - [README as plain Markdown](https://raw.githubusercontent.com/umer-jahangier/claude-nonstop/main/README.md)
 - [Website](https://umer-jahangier.github.io/claude-nonstop/): overview and FAQ
 
+## Guides
+
+- [Claude Code usage limit: how to keep working when you hit it](https://umer-jahangier.github.io/claude-nonstop/guides/claude-code-usage-limit/): What Claude Code's session and weekly limits are, what your options are when you hit one, and how to continue the same conversation on another account or an API key automatically.
+- [How to use multiple Claude accounts in Claude Code](https://umer-jahangier.github.io/claude-nonstop/guides/multiple-claude-accounts/): Run Claude Code on several Claude subscriptions, keep one shared history, and switch to the next account automatically when one hits its limit.
+- [Use Codex with a Claude subscription or Claude API key](https://umer-jahangier.github.io/claude-nonstop/guides/codex-on-claude-subscription/): Point OpenAI's Codex at claude-nonstop's local gateway so it runs on your Claude accounts, ChatGPT accounts, Anthropic keys and OpenAI keys, in the order you choose.
+- [Run the Claude desktop app on your API keys](https://umer-jahangier.github.io/claude-nonstop/guides/claude-desktop-api-keys/): Set up the Claude desktop app's third-party mode with claude-nonstop, so it runs on your subscription accounts first and your Anthropic or OpenAI API keys when they're out.
+- [Automatic Anthropic and OpenAI API key failover](https://umer-jahangier.github.io/claude-nonstop/guides/api-key-failover/): Switch Claude Code, Codex and other tools to your next API key mid-request when one runs out of credit or hits its spend limit, without restarting the session.
+- [The claude-nonstop projects compared](https://umer-jahangier.github.io/claude-nonstop/guides/claude-nonstop-projects-compared/): Several open-source projects share the name claude-nonstop. What each one does, how they differ, and which one this site is about.
+
 ## Releases
 
 - [Latest release](https://github.com/umer-jahangier/claude-nonstop/releases/latest)

@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How to use multiple Claude accounts in Claude Code · claude-nonstop</title>
+<meta name="description" content="Run Claude Code on several Claude subscriptions, keep one shared history, and switch to the next account automatically when one hits its limit.">
+<meta name="author" content="Muhammad Umer (Umer Jahangier)">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<link rel="canonical" href="https://umer-jahangier.github.io/claude-nonstop/guides/multiple-claude-accounts/">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="claude-nonstop">
+<meta property="og:title" content="How to use multiple Claude accounts in Claude Code">
+<meta property="og:description" content="Run Claude Code on several Claude subscriptions, keep one shared history, and switch to the next account automatically when one hits its limit.">
+<meta property="og:url" content="https://umer-jahangier.github.io/claude-nonstop/guides/multiple-claude-accounts/">
+<meta property="og:image" content="https://umer-jahangier.github.io/claude-nonstop/og.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How to use multiple Claude accounts in Claude Code">
+<meta name="twitter:description" content="Run Claude Code on several Claude subscriptions, keep one shared history, and switch to the next account automatically when one hits its limit.">
+<meta name="twitter:image" content="https://umer-jahangier.github.io/claude-nonstop/og.png">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "TechArticle",
+   "@id": "https://umer-jahangier.github.io/claude-nonstop/guides/multiple-claude-accounts/#article",
+   "headline": "How to use multiple Claude accounts in Claude Code",
+   "description": "Run Claude Code on several Claude subscriptions, keep one shared history, and switch to the next account automatically when one hits its limit.",
+   "url": "https://umer-jahangier.github.io/claude-nonstop/guides/multiple-claude-accounts/",
+   "mainEntityOfPage": "https://umer-jahangier.github.io/claude-nonstop/guides/multiple-claude-accounts/",
+   "inLanguage": "en",
+   "datePublished": "2026-11-19",
+   "dateModified": "2026-11-19",
+   "author": {
+    "@id": "https://umer-jahangier.github.io/#person"
+   },
+   "publisher": {
+    "@id": "https://umer-jahangier.github.io/#person"
+   },
+   "about": {
+    "@id": "https://umer-jahangier.github.io/claude-nonstop/#software"
+   },
+   "image": "https://umer-jahangier.github.io/claude-nonstop/og.png",
+   "isPartOf": {
+    "@id": "https://umer-jahangier.github.io/claude-nonstop/#website"
+   }
+  },
+  {
+   "@type": "Person",
+   "@id": "https://umer-jahangier.github.io/#person",
+   "name": "Muhammad Umer",
+   "alternateName": [
+    "Umer Jahangier",
+    "umer-jahangier"
+   ],
+   "url": "https://umer-jahangier.github.io/",
+   "sameAs": [
+    "https://github.com/umer-jahangier",
+    "https://www.linkedin.com/in/muhammad-umer-jahangier"
+   ]
+  },
+  {
+   "@type": "SoftwareApplication",
+   "@id": "https://umer-jahangier.github.io/claude-nonstop/#software",
+   "name": "claude-nonstop",
+   "url": "https://umer-jahangier.github.io/claude-nonstop/",
+   "applicationCategory": "DeveloperApplication",
+   "operatingSystem": "macOS, Windows, Linux",
+   "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+   },
+   "author": {
+    "@id": "https://umer-jahangier.github.io/#person"
+   },
+   "sameAs": [
+    "https://github.com/umer-jahangier/claude-nonstop",
+    "https://www.npmjs.com/package/@umer-jahangier/claude-nonstop"
+   ]
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "claude-nonstop",
+     "item": "https://umer-jahangier.github.io/claude-nonstop/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Guides",
+     "item": "https://umer-jahangier.github.io/claude-nonstop/guides/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 3,
+     "name": "Use several Claude accounts in Claude Code",
+     "item": "https://umer-jahangier.github.io/claude-nonstop/guides/multiple-claude-accounts/"
+    }
+   ]
+  },
+  {
+   "@type": "FAQPage",
+   "@id": "https://umer-jahangier.github.io/claude-nonstop/guides/multiple-claude-accounts/#faq",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "Is it allowed to have more than one Claude subscription?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "You can hold more than one subscription, for example a personal and a work plan. What Anthropic's terms forbid is sharing one account between people."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do all accounts share the same chat history?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "With claude-nonstop, yes: the accounts share one Claude Code history, settings and plugins, so a conversation started on one account can be resumed on another."
+     }
+    }
+   ]
+  }
+ ]
+}
+</script>
+<style>
+:root {
+  color-scheme: light dark;
+  --ground: #f2f2f7;
+  --group: #ffffff;
+  --label: #1d1d1f;
+  --label-2: #6e6e73;
+  --sep: rgba(60, 60, 67, 0.17);
+  --fill: rgba(120, 120, 128, 0.12);
+  --fill-2: rgba(120, 120, 128, 0.2);
+  --track: rgba(120, 120, 128, 0.16);
+  --thumb: #ffffff;
+  --accent: #0066cc;
+  --accent-fill: #0071e3;
+  --accent-hover: #0077ed;
+  --accent-tint: rgba(0, 113, 227, 0.1);
+  --focus: rgba(0, 113, 227, 0.45);
+  --select: rgba(0, 113, 227, 0.2);
+  --green: #34c759;
+  --orange: #ff9500;
+  --red: #ff3b30;
+  --key-tile: #8e8e93;
+  --bar: rgba(242, 242, 247, 0.78);
+  --bar-edge: rgba(0, 0, 0, 0.1);
+  --scroll: rgba(120, 120, 128, 0.42);
+  --shadow-thumb: 0 3px 8px rgba(0, 0, 0, 0.12), 0 1px 1px rgba(0, 0, 0, 0.05);
+  --shadow-shot: 0 0 0 0.5px rgba(0, 0, 0, 0.08), 0 30px 80px -24px rgba(0, 0, 0, 0.28);
+  --hair: 1px;
+  --font: -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --spring: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ground: #000000;
+    --group: #1c1c1e;
+    --label: #f5f5f7;
+    --label-2: #98989d;
+    --sep: rgba(84, 84, 88, 0.55);
+    --fill: rgba(120, 120, 128, 0.24);
+    --fill-2: rgba(120, 120, 128, 0.36);
+    --track: rgba(120, 120, 128, 0.32);
+    --thumb: #636366;
+    --accent: #2997ff;
+    --accent-tint: rgba(41, 151, 255, 0.16);
+    --focus: rgba(41, 151, 255, 0.55);
+    --select: rgba(41, 151, 255, 0.32);
+    --green: #30d158;
+    --orange: #ff9f0a;
+    --red: #ff453a;
+    --key-tile: #636366;
+    --bar: rgba(22, 22, 24, 0.76);
+    --bar-edge: rgba(255, 255, 255, 0.1);
+    --scroll: rgba(120, 120, 128, 0.5);
+    --shadow-thumb: 0 3px 8px rgba(0, 0, 0, 0.32);
+    --shadow-shot: 0 0 0 0.5px rgba(255, 255, 255, 0.12), 0 30px 80px -24px rgba(0, 0, 0, 0.9);
+  }
+}
+@media (min-resolution: 2dppx) { :root { --hair: 0.5px; } }
+@media (prefers-contrast: more) {
+  :root { --sep: rgba(60, 60, 67, 0.45); --label-2: #48484a; }
+  .group { box-shadow: 0 0 0 1px var(--sep); }
+}
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root { --sep: rgba(235, 235, 245, 0.4); --label-2: #c7c7cc; }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-padding-top: 72px; scrollbar-color: var(--scroll) transparent; -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--label);
+  font-family: var(--font);
+  font-size: 1.0625rem;
+  line-height: 1.53;
+  letter-spacing: -0.012em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+::selection { background: var(--select); }
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-thumb { background: var(--scroll); border-radius: 8px; border: 3px solid transparent; background-clip: content-box; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+:focus { outline: none; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 7px; }
+button { font: inherit; letter-spacing: inherit; color: inherit; }
+code, kbd { font-family: var(--mono); font-size: 0.84em; letter-spacing: 0; padding: 1px 5px; border-radius: 5px; background: var(--fill); white-space: nowrap; }
+pre code { padding: 0; background: none; font-size: inherit; white-space: pre; }
+.i { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+[hidden] { display: none !important; }
+.skip { position: absolute; left: 12px; top: -48px; z-index: 20; padding: 8px 12px; border-radius: 8px; background: var(--accent-fill); color: #fff; }
+.skip:focus { top: 10px; }
+
+.toolbar {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--bar);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  box-shadow: 0 var(--hair) 0 var(--bar-edge);
+}
+.toolbar-inner { max-width: 1040px; margin: 0 auto; height: 52px; padding: 0 20px; display: flex; align-items: center; gap: 20px; }
+.brand { display: flex; align-items: center; gap: 9px; color: var(--label); font-weight: 600; font-size: 0.9375rem; letter-spacing: -0.015em; margin-right: auto; }
+.brand:hover { text-decoration: none; }
+.brand svg { width: 26px; height: 26px; }
+.nav { display: flex; gap: 20px; font-size: 0.875rem; letter-spacing: -0.01em; }
+.nav a { color: var(--label); }
+.nav a:hover { color: var(--accent); text-decoration: none; }
+@media (max-width: 560px) { .nav .wide { display: none; } }
+
+main { padding: 0 20px; }
+.col { max-width: 720px; margin: 0 auto; }
+
+.hero { padding: 80px 0 8px; }
+h1 {
+  margin: 0;
+  font-size: clamp(2.375rem, 1.5rem + 3.6vw, 3.5rem);
+  line-height: 1.06;
+  font-weight: 700;
+  letter-spacing: -0.034em;
+  text-wrap: balance;
+  max-width: 15ch;
+}
+.lead { margin: 22px 0 0; font-size: clamp(1.1875rem, 1.1rem + 0.4vw, 1.3125rem); line-height: 1.45; letter-spacing: -0.018em; color: var(--label-2); max-width: 60ch; text-wrap: pretty; }
+.lead strong { color: var(--label); font-weight: 600; }
+
+.install { margin-top: 36px; }
+.group { position: relative; background: var(--group); border-radius: 12px; }
+.segmented { position: relative; display: inline-grid; grid-auto-flow: column; grid-auto-columns: 1fr; padding: 2px; border-radius: 9px; background: var(--track); }
+.segmented button {
+  position: relative; z-index: 1; height: 28px; padding: 0 14px; border: 0; border-radius: 7px; background: none; cursor: pointer;
+  font-size: 0.8125rem; font-weight: 500; letter-spacing: -0.005em; color: var(--label); white-space: nowrap;
+  transition: background-color 0.2s var(--spring), box-shadow 0.2s var(--spring);
+}
+.segmented button[aria-selected="true"] { background: var(--thumb); box-shadow: var(--shadow-thumb); }
+.install-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 12px 12px 16px; }
+.install-head .what { font-size: 0.8125rem; color: var(--label-2); letter-spacing: -0.003em; }
+.cmd { display: flex; align-items: center; gap: 8px; padding: 0 8px 8px; }
+.cmd pre {
+  flex: 1; min-width: 0; margin: 0; padding: 12px 14px; border-radius: 8px; background: var(--fill);
+  font-family: var(--mono); font-size: 0.8125rem; line-height: 1.5; letter-spacing: 0; overflow-x: auto; white-space: pre;
+}
+.cmd pre::-webkit-scrollbar { height: 6px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 34px; padding: 0 14px; border: 0; border-radius: 8px;
+  background: var(--fill); color: var(--accent); font-size: 0.875rem; font-weight: 500; letter-spacing: -0.008em; cursor: pointer; white-space: nowrap;
+  transition: background-color 0.12s ease, transform 0.12s ease;
+}
+.btn:hover { background: var(--fill-2); text-decoration: none; }
+.btn:active { transform: scale(0.97); }
+.btn.primary { background: var(--accent-fill); color: #fff; }
+.btn.primary:hover { background: var(--accent-hover); }
+.btn .i { width: 15px; height: 15px; }
+.copy { flex: none; min-width: 84px; }
+.after { margin: 14px 4px 0 16px; font-size: 0.875rem; line-height: 1.45; color: var(--label-2); letter-spacing: -0.006em; max-width: 64ch; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0 0; }
+.by { margin: 22px 0 0; font-size: 0.875rem; color: var(--label-2); letter-spacing: -0.006em; }
+
+section { padding-top: 72px; }
+h2 { margin: 0 0 10px; font-size: 1.625rem; line-height: 1.18; font-weight: 700; letter-spacing: -0.026em; text-wrap: balance; }
+h3 { margin: 32px 0 6px; font-size: 1.0625rem; line-height: 1.35; font-weight: 600; letter-spacing: -0.02em; }
+section > p, .faq p { margin: 0 0 14px; max-width: 68ch; text-wrap: pretty; }
+.sub { color: var(--label-2); }
+
+.relay { margin: 26px 0 0; }
+.relay .group { overflow: hidden; }
+.relay ol { position: relative; z-index: 1; list-style: none; margin: 0; padding: 0; }
+.live-band {
+  position: absolute; left: 0; right: 0; top: 0; height: 64px; z-index: 0;
+  background: var(--accent-tint);
+  transform: translateY(64px);
+  transition: transform 0.62s var(--spring), height 0.62s var(--spring);
+}
+.row { position: relative; display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 16px; }
+.row + .row::before { content: ""; position: absolute; top: 0; left: 58px; right: 0; height: var(--hair); background: var(--sep); }
+.tile { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 7px; background: var(--accent-fill); color: #fff; flex: none; }
+.tile .i { width: 18px; height: 18px; stroke-width: 1.7; }
+.tile.key { background: var(--key-tile); }
+.row-text { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.row-title { font-size: 0.9375rem; line-height: 1.33; font-weight: 500; letter-spacing: -0.015em; }
+.row-sub { font-size: 0.8125rem; line-height: 1.38; color: var(--label-2); letter-spacing: -0.003em; }
+.state { display: inline-flex; align-items: center; gap: 7px; font-size: 0.8125rem; color: var(--label-2); letter-spacing: -0.003em; white-space: nowrap; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); transition: background-color 0.3s ease; }
+.row[data-s="out"] .dot { background: var(--orange); }
+.row[data-s="spent"] .dot { background: var(--red); }
+.row[data-s="live"] .dot { display: none; }
+.row[data-s="live"] .state { padding: 3px 9px; border-radius: 999px; background: var(--accent-tint); color: var(--accent); font-size: 0.75rem; font-weight: 600; letter-spacing: 0; }
+.relay figcaption { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; margin: 10px 4px 0 16px; font-size: 0.8125rem; line-height: 1.38; color: var(--label-2); }
+.textbtn { padding: 0; border: 0; background: none; color: var(--accent); cursor: pointer; font-size: 0.8125rem; }
+.textbtn:hover { text-decoration: underline; text-underline-offset: 2px; }
+
+.list .row { align-items: flex-start; min-height: 0; padding: 14px 16px; }
+.list .tile { margin-top: 2px; }
+.list .row-sub { font-size: 0.875rem; line-height: 1.45; letter-spacing: -0.006em; }
+.list .row-title { font-weight: 600; }
+.list .row + .row::before { left: 58px; }
+
+.shot { margin: 34px auto 0; max-width: 1040px; }
+.shot img { display: block; width: 100%; height: auto; border-radius: 12px; box-shadow: var(--shadow-shot); background: var(--group); }
+.shot figcaption { max-width: 720px; margin: 14px auto 0; padding: 0 16px; font-size: 0.8125rem; color: var(--label-2); }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; letter-spacing: -0.012em; }
+caption { text-align: left; }
+th, td { text-align: left; vertical-align: top; padding: 12px 16px; }
+thead th { font-size: 0.75rem; font-weight: 600; color: var(--label-2); letter-spacing: 0; padding-top: 14px; padding-bottom: 8px; }
+tbody tr { position: relative; }
+tbody td, tbody th { border-top: var(--hair) solid var(--sep); }
+tbody th { font-weight: 600; }
+td { color: var(--label-2); }
+
+.faq h3 { margin-top: 30px; }
+.faq h3:first-of-type { margin-top: 18px; }
+
+footer { margin-top: 96px; padding: 28px 20px 48px; border-top: var(--hair) solid var(--sep); }
+footer .col { font-size: 0.8125rem; line-height: 1.5; color: var(--label-2); letter-spacing: -0.003em; }
+footer p { margin: 0 0 8px; max-width: 72ch; }
+footer a { color: var(--label-2); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--sep); }
+footer a:hover { color: var(--accent); }
+
+@media (max-width: 560px) {
+  .hero { padding-top: 48px; }
+  section { padding-top: 56px; }
+  .install-head { flex-wrap: wrap; }
+  .install-head .what { display: none; }
+  .row + .row::before, .list .row + .row::before { left: 16px; }
+  .copy { min-width: 0; padding: 0 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; }
+}
+
+.crumbs { margin: 0; padding-top: 56px; font-size: 0.8125rem; color: var(--label-2); }
+.crumbs a { color: var(--label-2); }
+.guide h1 { font-size: clamp(2rem, 1.4rem + 2.6vw, 2.75rem); max-width: 22ch; margin-top: 10px; }
+.answer { margin: 22px 0 0; padding: 16px 18px; border-radius: 12px; background: var(--group); font-size: 1.0625rem; line-height: 1.53; max-width: 68ch; }
+.answer strong { font-weight: 600; }
+.guide h2 { margin-top: 0; }
+.guide section { padding-top: 48px; }
+.guide ol.steps { margin: 12px 0 0; padding-left: 1.25em; max-width: 68ch; }
+.guide ol.steps li { margin: 0 0 12px; padding-left: 4px; }
+.guide pre.block { margin: 12px 0 16px; padding: 12px 14px; border-radius: 8px; background: var(--group); font-family: var(--mono); font-size: 0.8125rem; line-height: 1.5; overflow-x: auto; max-width: 100%; }
+.guide pre.block code { background: none; padding: 0; white-space: pre; }
+.guide ul.plain { margin: 8px 0 14px; padding-left: 1.2em; max-width: 68ch; }
+.guide ul.plain li { margin: 0 0 8px; }
+.guide .table-wrap { margin-top: 16px; }
+.guide td { color: var(--label); }
+.guide td.sub { color: var(--label-2); }
+.related { list-style: none; margin: 14px 0 0; padding: 0; }
+.related li { margin: 0 0 8px; }
+.updated { margin-top: 18px; font-size: 0.8125rem; color: var(--label-2); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-person" viewBox="0 0 20 20"><circle cx="10" cy="6.8" r="3.1"/><path d="M4 16.5c.9-3.1 3.2-4.6 6-4.6s5.1 1.5 6 4.6"/></symbol>
+  <symbol id="i-key" viewBox="0 0 20 20"><circle cx="6.6" cy="13.4" r="3.1"/><path d="M8.8 11.2 16 4M13.4 6.6l2 2M11.6 8.4l1.6 1.6"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 20 20"><path d="M7 2.5v4M13 2.5v4M5 6.5h10v2.5a5 5 0 0 1-10 0zM10 14v3.5"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 20 20"><rect x="7" y="7" width="9" height="9" rx="2"/><path d="M4 13V5a1 1 0 0 1 1-1h8"/></symbol>
+  <symbol id="i-check" viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 6.6"/></symbol>
+  <symbol id="i-out" viewBox="0 0 20 20"><path d="M7 13 13.5 6.5M8 6.5h5.5V12"/></symbol>
+  <symbol id="i-resume" viewBox="0 0 20 20"><path d="M16 10a6 6 0 1 1-1.8-4.3"/><path d="M16 3.6v3.3h-3.3"/></symbol>
+  <symbol id="i-history" viewBox="0 0 20 20"><path d="M4 5.5h12M4 10h12M4 14.5h7.5"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 20 20"><rect x="4.6" y="9" width="10.8" height="7.6" rx="2"/><path d="M7.2 9V6.8a2.8 2.8 0 0 1 5.6 0V9"/></symbol>
+  <symbol id="i-github" viewBox="0 0 20 20"><path d="M7.6 16.4c-3.4 1-3.4-1.7-4.8-2.1m9.6 3.2v-2.6a2.3 2.3 0 0 0-.6-1.7c2-.2 4.2-1 4.2-4.6a3.6 3.6 0 0 0-1-2.5 3.3 3.3 0 0 0 0-2.5s-.8-.2-2.6 1a8.9 8.9 0 0 0-4.7 0C5.9 3.4 5.1 3.6 5.1 3.6a3.3 3.3 0 0 0 0 2.5 3.6 3.6 0 0 0-1 2.5c0 3.6 2.2 4.4 4.2 4.6a2.3 2.3 0 0 0-.6 1.7v2.6"/></symbol>
+</svg>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="toolbar">
+  <div class="toolbar-inner">
+    <a class="brand" href="../" aria-label="claude-nonstop home">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="tile-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3d9bff"/><stop offset="1" stop-color="#0058d0"/></linearGradient></defs><path d="M32 0C8.6 0 0 8.6 0 32s8.6 32 32 32 32-8.6 32-32S55.4 0 32 0Z" fill="url(#tile-g)"/><path d="M32 32C27 22 11 21 11 32C11 43 27 42 32 32C37 22 53 21 53 32C53 43 37 42 32 32Z" fill="none" stroke="#fff" stroke-opacity=".92" stroke-width="6.5" stroke-linecap="round" transform="translate(32 32) scale(.84) translate(-32 -32)"/></svg>
+      <span>claude-nonstop</span>
+    </a>
+    <nav class="nav" aria-label="Site">
+      <a class="wide" href="../">Guides</a>
+      <a class="wide" href="../../#install">Install</a>
+      <a href="https://github.com/umer-jahangier/claude-nonstop">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="guide">
+  <div class="col">
+    <p class="crumbs"><a href="../../">claude-nonstop</a> › <a href="../">Guides</a></p>
+    <article>
+      <h1>How to use multiple Claude accounts in Claude Code</h1>
+      <p class="answer">Claude Code can stay signed in to several accounts if each one has its own configuration folder (<code>CLAUDE_CONFIG_DIR</code>). <strong>claude-nonstop</strong> sets those folders up, shares one history, settings and plugins between them, and picks the first account with usage left for every session.</p>
+      <section aria-labelledby="s0">
+        <h2 id="s0">The manual way</h2>
+        <p>Anthropic documents running Claude Code with a different <code>CLAUDE_CONFIG_DIR</code> per account. Each folder keeps its own sign-in, so you can start Claude Code with one or the other:</p><pre class="block"><code>CLAUDE_CONFIG_DIR=~/.claude-work claude</code></pre><p>The catch: each folder also has its own history, settings and plugins, and you have to notice the limit and switch yourself.</p>
+      </section>
+      <section aria-labelledby="s1">
+        <h2 id="s1">With claude-nonstop</h2>
+        <ol class="steps"><li>Install claude-nonstop.<pre class="block"><code># macOS and Linux
+curl -fsSL https://raw.githubusercontent.com/umer-jahangier/claude-nonstop/main/install.sh | sh
+
+# Windows (PowerShell)
+irm https://raw.githubusercontent.com/umer-jahangier/claude-nonstop/main/install.ps1 | iex</code></pre></li><li>On its web page, click <strong>Add Account…</strong>, give the account a name and sign in on Anthropic's page. Repeat for each subscription.</li><li>Drag the accounts into the order you want. Each line shows its session and weekly usage, and when each resets.</li><li>Run <code>claude</code>. The session starts on the first account with usage left.</li></ol><p>Every account shares your history, settings, plugins, skills and MCP servers, so <code>claude -c</code> and <code>claude --resume</code> work across all of them. claude-nonstop never sees or stores the subscription credentials: each sign-in stays in Claude Code's own credential store.</p>
+      </section>
+      <section aria-labelledby="s2">
+        <h2 id="s2">Rules to follow</h2>
+        <p>Every account must be your own. Sharing one subscription between several people is against Anthropic's terms. Each teammate installs claude-nonstop and adds their own accounts.</p>
+      </section>
+      <section aria-labelledby="faq-h" class="faq">
+        <h2 id="faq-h">Questions</h2>
+        <h3>Is it allowed to have more than one Claude subscription?</h3>
+        <p>You can hold more than one subscription, for example a personal and a work plan. What Anthropic's terms forbid is sharing one account between people.</p>
+        <h3>Do all accounts share the same chat history?</h3>
+        <p>With claude-nonstop, yes: the accounts share one Claude Code history, settings and plugins, so a conversation started on one account can be resumed on another.</p>
+      </section>
+      <p class="updated">By <a href="https://umer-jahangier.github.io/" rel="author">Muhammad Umer (Umer Jahangier)</a>, author of claude-nonstop · Updated <time datetime="2026-11-19">November 19, 2026</time></p>
+    </article>
+    <section aria-labelledby="more-h">
+      <h2 id="more-h">More guides</h2>
+      <ul class="related">
+          <li><a href="../claude-code-usage-limit/">Keep working past the Claude Code usage limit</a></li>
+          <li><a href="../codex-on-claude-subscription/">Run Codex on Claude accounts and keys</a></li>
+          <li><a href="../claude-desktop-api-keys/">Run the Claude desktop app on API keys</a></li>
+          <li><a href="../api-key-failover/">Fail over between API keys automatically</a></li>
+          <li><a href="../claude-nonstop-projects-compared/">Which claude-nonstop is which</a></li>
+      </ul>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="col">
+    <p><a href="../../">claude-nonstop</a> is made by <a href="https://umer-jahangier.github.io/" rel="author">Muhammad Umer (Umer Jahangier)</a> and is open source under the MIT license. <a href="https://github.com/umer-jahangier/claude-nonstop">Source</a> · <a href="https://www.npmjs.com/package/@umer-jahangier/claude-nonstop">npm</a> · <a href="https://github.com/umer-jahangier/claude-nonstop/releases">Releases</a> · <a href="../../llms.txt">llms.txt</a></p>
+    <p>It's an independent project, not affiliated with or endorsed by Anthropic or OpenAI. Claude and Claude Code are trademarks of Anthropic. ChatGPT and Codex are trademarks of OpenAI.</p>
+  </div>
+</footer>
+</body>
+</html>

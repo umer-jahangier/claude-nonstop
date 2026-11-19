@@ -9,7 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![macOS · Windows · Linux](https://img.shields.io/badge/platform-macOS%20%C2%B7%20Windows%20%C2%B7%20Linux-lightgrey)
 
-**Website:** [umer-jahangier.github.io/claude-nonstop](https://umer-jahangier.github.io/claude-nonstop/) · **Made by** [Muhammad Umer (Umer Jahangier)](https://github.com/umer-jahangier)
+**Website:** [umer-jahangier.github.io/claude-nonstop](https://umer-jahangier.github.io/claude-nonstop/) · **Guides:** [usage limits](https://umer-jahangier.github.io/claude-nonstop/guides/claude-code-usage-limit/), [several accounts](https://umer-jahangier.github.io/claude-nonstop/guides/multiple-claude-accounts/), [Codex on Claude](https://umer-jahangier.github.io/claude-nonstop/guides/codex-on-claude-subscription/), [all guides](https://umer-jahangier.github.io/claude-nonstop/guides/) · **npm:** [`@umer-jahangier/claude-nonstop`](https://www.npmjs.com/package/@umer-jahangier/claude-nonstop) · **Made by** [Muhammad Umer (Umer Jahangier)](https://github.com/umer-jahangier)
 
 ```
 account 1  →  account 2  →  …  →  API key 1  →  API key 2  →  …
@@ -409,7 +409,7 @@ cd claude-nonstop
 npm test
 ```
 
-No dependencies. Tests run against a fake Claude API and a fake `claude` binary, and CI runs them on macOS, Windows and Linux with Node 18, 20 and 22, plus the installers end to end. The web page is a single file, [`src/ui/index.html`](src/ui/index.html); its design system is in [`DESIGN.md`](DESIGN.md).
+No dependencies. Tests run against a fake Claude API and a fake `claude` binary, and CI runs them on macOS, Windows and Linux with Node 18, 20 and 22, plus the installers end to end. The web page is a single file, [`src/ui/index.html`](src/ui/index.html); its design system is in [`DESIGN.md`](DESIGN.md). See [CONTRIBUTING.md](CONTRIBUTING.md) to send a change, [SECURITY.md](SECURITY.md) to report a vulnerability, and [CHANGELOG.md](CHANGELOG.md) for every release.
 
 The connector marketplace is generated. To refresh it from claude.com/connectors (each server is checked for how it signs in), run `node scripts/build-directory.js && node scripts/build-marketplace.js`, then `claude plugin validate connectors`.
 

@@ -90,7 +90,9 @@ after(async () => {
   await openai.close();
 });
 
-const auth = { authorization: `Bearer ${token}` };
+// Read when a request is sent: the token only exists once the before() hook above has run,
+// and Node 18 evaluates this file's top level before running that hook.
+const auth = { get authorization() { return `Bearer ${token}`; } };
 const parseSse = (text) => sse.parser()(text).map((r) => ({ event: r.event, data: r.data === '[DONE]' ? '[DONE]' : JSON.parse(r.data) }));
 
 test('keys of both services are told apart when saved', () => {

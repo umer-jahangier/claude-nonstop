@@ -37,7 +37,8 @@ test('only host names ssh reads as a destination are accepted', () => {
   for (const bad of ['-oProxyCommand=x', 'a b', 'a;b', '$(x)', '', null]) assert.equal(ssh.validHost(bad), false, String(bad));
 });
 
-test('the server script adds and removes exactly its own hosts line and trust anchor', () => {
+// The script runs on a Linux server over SSH; Windows' sh (Git Bash) can't stand in for one.
+test('the server script adds and removes exactly its own hosts line and trust anchor', { skip: process.platform === 'win32' && 'the script runs on a Linux server' }, () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'cn-ssh-'));
   const hosts = path.join(root, 'hosts');
   const anchors = path.join(root, 'anchors');

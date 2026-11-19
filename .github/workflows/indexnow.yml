@@ -1,0 +1,58 @@
+name: Notify search engines
+
+# After GitHub Pages publishes docs/, tell IndexNow (Bing, Yandex and others; Bing also
+# feeds ChatGPT search and Copilot) which pages changed, and refresh the sitemap dates.
+
+on:
+  push:
+    branches: [main]
+    paths: ["docs/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: indexnow
+  cancel-in-progress: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Refresh sitemap dates
+        run: |
+          today=$(date -u +%Y-%m-%d)
+          sed -i -E "s#<lastmod>[0-9-]+</lastmod>#<lastmod>$today</lastmod>#" docs/sitemap.xml
+          if ! git diff --quiet docs/sitemap.xml; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Sitemap dates: $today" docs/sitemap.xml
+            git push || echo "::warning::sitemap date not pushed; the next run will retry"
+          fi
+
+      - name: Wait for GitHub Pages to publish
+        run: |
+          for i in $(seq 1 30); do
+            status=$(curl -s -H "Authorization: Bearer ${{ github.token }}" \
+              "https://api.github.com/repos/${{ github.repository }}/pages/builds/latest" | jq -r .status)
+            [ "$status" = "built" ] && exit 0
+            sleep 10
+          done
+          echo "::warning::Pages build not finished after 5 minutes; notifying anyway"
+
+      - name: Send changed pages to IndexNow
+        run: |
+          base="https://umer-jahangier.github.io/claude-nonstop/"
+          key="af62fa65f7046da414e2ddc3f793c33e"
+          urls=$(grep -o '<loc>[^<]*</loc>' docs/sitemap.xml | sed -E 's#</?loc>##g' | jq -R . | jq -s .)
+          body=$(jq -n --argjson urls "$urls" --arg key "$key" \
+            '{host: "umer-jahangier.github.io", key: $key, keyLocation: ("https://umer-jahangier.github.io/claude-nonstop/" + $key + ".txt"), urlList: ($urls + ["https://umer-jahangier.github.io/claude-nonstop/llms.txt"])}')
+          for endpoint in https://api.indexnow.org/indexnow https://www.bing.com/indexnow https://yandex.com/indexnow; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$endpoint" -H 'content-type: application/json; charset=utf-8' -d "$body")
+            echo "$endpoint → HTTP $code"
+          done
