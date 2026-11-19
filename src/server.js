@@ -186,6 +186,8 @@ async function serve({ port } = {}) {
     servers.push(port80);
     ctx.ports.add(80);
   }
+  const renewed = tls.needsRenewal() && tls.renew();
+  if (renewed) log('claude-nonstop: replaced the local HTTPS certificate with one Claude Code accepts (DNS names only)');
   const tlsOptions = tls.serverOptions();
   const port443 = tlsOptions ? await listenLow(ctx, 443, tlsOptions) : null;
   if (port443) {
@@ -226,6 +228,12 @@ async function serve({ port } = {}) {
   // Reverse tunnels for the desktop app's SSH sessions, kept up while the server runs and
   // matched to the settings whenever they change.
   const ssh = require('./ssh');
+  if (renewed) {
+    for (const host of ctx.current().cfg.sshHosts || []) {
+      const r = ssh.prepare(host);
+      if (!r.ok) log(`claude-nonstop: couldn't give ${host} the new certificate (${r.why}); run \`claude-nonstop ssh add ${host}\` again`);
+    }
+  }
   ssh.reconcile(ctx.current().cfg);
   fs.watchFile(paths.CONFIG, { interval: 3000 }, () => ssh.reconcile(config.load()));
   // Setup may add the short names while the server runs; pick them up when it does.

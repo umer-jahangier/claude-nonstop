@@ -21,7 +21,7 @@ test('the certificate covers only this computer and its authority signs nothing 
   assert.equal(leaf.ca, false);
   assert.equal(leaf.verify(ca.publicKey), true);
   for (const name of ['claude.nonstop', 'claude-nonstop', 'claude-nonstop.localhost', 'localhost']) assert.equal(leaf.checkHost(name), name);
-  assert.equal(leaf.checkIP('127.0.0.1'), '127.0.0.1');
+  assert.ok(!/IP Address/.test(leaf.subjectAltName), 'Bun (Claude Code) refuses an IP address under an IP-constrained authority');
   assert.equal(leaf.checkHost('example.com'), undefined);
   const days = (new Date(leaf.validTo) - new Date(leaf.validFrom)) / 86400000;
   assert.ok(days <= 825, `Apple refuses server certificates valid for ${days} days`);

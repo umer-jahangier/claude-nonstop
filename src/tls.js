@@ -4,12 +4,15 @@
 //
 // Setup makes a certificate authority that exists for one purpose: it signs a single
 // certificate for this computer's own names (claude.nonstop, claude-nonstop,
-// claude-nonstop.localhost, localhost, 127.0.0.1, ::1), and its private key is thrown away
+// claude-nonstop.localhost, localhost), and its private key is thrown away
 // the moment that's done. It is never written to disk, so nothing can ever use the
 // authority to sign anything else, which makes trusting it on this computer safe. The
 // authority's certificate also carries name constraints (RFC 5280): browsers, macOS and
 // OpenSSL accept certificates it signs only for this computer's own names and addresses,
 // so even if its key were somehow recovered it couldn't vouch for any other site. The
+// certificate itself lists DNS names only: Claude Code runs on Bun, whose TLS library
+// (BoringSSL) can't check IP-address constraints and refuses any certificate under such an
+// authority that lists an IP address (UNSUPPORTED_CONSTRAINT_TYPE). The
 // authority's certificate is then added to the system's trusted roots (macOS asks for your
 // password, Windows asks you to confirm, Linux browsers trust it through their NSS store).
 //
@@ -128,8 +131,8 @@ function nameConstraints() {
 }
 
 // Makes the throwaway authority and the one certificate it will ever sign. `names` and
-// `ips` are for tests; a real certificate always covers DNS_NAMES and IPS.
-function issue({ names = DNS_NAMES, ips = IPS } = {}) {
+// `ips` are for tests; a real certificate covers DNS_NAMES and no IP addresses.
+function issue({ names = DNS_NAMES, ips = [] } = {}) {
   const ca = crypto.generateKeyPairSync('ec', { namedCurve: 'prime256v1' });
   const leaf = crypto.generateKeyPairSync('ec', { namedCurve: 'prime256v1' });
   const caSpki = ca.publicKey.export({ type: 'spki', format: 'der' });
@@ -250,8 +253,10 @@ function setup() {
   if (process.env.CLAUDE_NONSTOP_NO_TLS === '1') return false;
   let state = readJson(FILES.state, null);
   const current = read();
-  // An authority made before name constraints existed is replaced by one that has them.
-  if (state && state.trusted && state.constrained && current && daysLeft(current.x509) > RENEW_DAYS) return true;
+  // An authority made before name constraints existed is replaced by one that has them, and
+  // a certificate that lists IP addresses (1.16.3) by one that Claude Code accepts.
+  const listsIp = current && /IP Address/.test(current.x509.subjectAltName || '');
+  if (state && state.trusted && state.constrained && current && !listsIp && daysLeft(current.x509) > RENEW_DAYS) return true;
   if (state && state.trusted) removeTrust(state);
   const made = issue();
   save(made);
@@ -269,6 +274,20 @@ function serverOptions() {
   return { cert: current.cert, key: current.key };
 }
 
+// True when the trusted certificate lists an IP address, as 1.16.3 made them, which Claude
+// Code refuses. Fixed by renew().
+function needsRenewal() {
+  const state = readJson(FILES.state, null);
+  const current = read();
+  return Boolean(state && state.trusted && current && /IP Address/.test(current.x509.subjectAltName || ''));
+}
+
+// Replaces a certificate that needsRenewal(). On macOS and Linux this needs no prompt;
+// Windows asks to confirm the new authority. True when HTTPS is ready afterwards.
+function renew() {
+  return needsRenewal() ? setup() : Boolean(serverOptions());
+}
+
 function uninstall() {
   const state = readJson(FILES.state, null);
   const removed = removeTrust(state);
@@ -276,4 +295,4 @@ function uninstall() {
   return removed;
 }
 
-module.exports = { setup, serverOptions, uninstall, issue, DNS_NAMES, IPS, FILES };
+module.exports = { setup, serverOptions, needsRenewal, renew, uninstall, issue, DNS_NAMES, IPS, FILES };
