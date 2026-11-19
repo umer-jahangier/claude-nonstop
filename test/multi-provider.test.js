@@ -128,7 +128,7 @@ test('a chat-completions stream is rewritten chunk by chunk', async () => {
   assert.equal(JSON.parse(api.requests[0].body).model, 'claude-haiku-5-5', 'a Claude model is kept as asked');
 });
 
-test('a Codex request goes out on a Claude account as Claude Code, and the answer comes back as Responses events', async () => {
+test("a Codex request on a Claude account carries only the line a sign-in needs, not Claude Code's identity, and comes back as Responses events", async () => {
   useLines(['claude', 'ok']);
   const r = await call(`${base}/v1/responses`, { method: 'POST', headers: auth, body: { model: 'gpt-5.5', stream: true, store: false, instructions: 'You are Codex.', input: [{ type: 'message', role: 'user', content: [{ type: 'input_text', text: 'hi' }] }] } });
   assert.equal(r.status, 200);
@@ -137,11 +137,13 @@ test('a Codex request goes out on a Claude account as Claude Code, and the answe
   assert.equal(records[records.length - 1].event, 'response.completed');
   const q = api.requests[0];
   assert.equal(q.bearer, 'sk-ant-oat-test-ok');
-  assert.match(q.headers['user-agent'], /^claude-cli\//);
+  assert.doesNotMatch(String(q.headers['user-agent'] || ''), /^claude-cli\//, "Claude Code's user agent isn't put on Codex's request");
+  assert.equal(q.headers['x-app'], undefined);
   const sent = JSON.parse(q.body);
   assert.equal(sent.model, 'claude-sonnet-5-5');
-  assert.ok(Array.isArray(sent.system) && sent.system[0].text.startsWith('You are Claude Code'), 'Claude Code\'s line goes first for the sign-in');
-  assert.equal(sent.system[1].text, 'You are Codex.');
+  assert.equal(sent.system[0].text, "You are Claude Code, Anthropic's official CLI for Claude.", 'the line a sign-in needs, as a block of its own');
+  assert.match(sent.system[1].text, /required by the API connection only/);
+  assert.equal(sent.system[2].text, 'You are Codex.');
 });
 
 test('a Claude Code request goes out on an OpenAI API key as a Responses request, and comes back as a Claude message', async () => {

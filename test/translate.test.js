@@ -46,9 +46,20 @@ test('a Codex request becomes a Claude request: system text, image, tool call an
   assert.deepEqual(out.messages[2].content[0], { type: 'tool_result', tool_use_id: 'call_1', content: 'a.txt\nb.txt' });
   assert.equal(out.tools[0].name, 'shell');
   assert.deepEqual(out.tool_choice, { type: 'auto', disable_parallel_tool_use: true });
-  assert.deepEqual(out.thinking, { type: 'enabled', budget_tokens: 8192 });
-  assert.ok(out.max_tokens > 8192, 'room is left after the thinking budget');
-  assert.equal(out.temperature, undefined, 'thinking takes the model\'s own sampling');
+  assert.deepEqual(out.thinking, { type: 'adaptive' }, 'current models think adaptively');
+  assert.deepEqual(out.output_config, { effort: 'medium' }, "the client's reasoning effort sets how much");
+  assert.equal(out.temperature, undefined);
+  const older = translate.writeRequest('messages', req, { model: 'claude-haiku-4-5' });
+  assert.deepEqual(older.thinking, { type: 'enabled', budget_tokens: 8192 }, 'older models still take a budget');
+  assert.equal(older.output_config, undefined);
+});
+
+test('forced tool choice goes out only to models that take it', () => {
+  const req = translate.readRequest('chat', { model: 'gpt-5.5', messages: [{ role: 'user', content: 'go' }], tools: [{ type: 'function', function: { name: 'go', parameters: { type: 'object' } } }], tool_choice: 'required' });
+  assert.deepEqual(translate.writeRequest('messages', req, { model: 'claude-haiku-5-5' }).tool_choice, { type: 'any' });
+  for (const model of ['claude-opus-5-5', 'claude-sonnet-5-5', 'claude-fable-5-2']) {
+    assert.equal(translate.writeRequest('messages', req, { model }).tool_choice, undefined, `${model} refuses a forced choice`);
+  }
 });
 
 test('a chat-completions request becomes a Claude request, with tool calls both ways', () => {
@@ -71,7 +82,7 @@ test('a chat-completions request becomes a Claude request, with tool calls both 
   assert.equal(req.includeUsage, true);
   const out = translate.writeRequest('messages', req, { model: 'claude-haiku-5-5' });
   assert.equal(out.max_tokens, 200);
-  assert.equal(out.temperature, 0.2);
+  assert.equal(out.temperature, undefined, 'API version 2026-10-21 refuses sampling settings');
   assert.deepEqual(out.stop_sequences, ['END']);
   assert.deepEqual(out.messages[0].content[1], { type: 'image', source: { type: 'url', url: 'https://x.test/a.png' } });
   assert.equal(out.messages[1].content[0].type, 'tool_use');

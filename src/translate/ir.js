@@ -8,10 +8,11 @@
 //   message: { role: 'user' | 'assistant', content: [part] }
 //   part:    { type: 'text', text }
 //            { type: 'image', mediaType, data }  (base64)  or  { type: 'image', url }
-//            { type: 'tool_use', id, name, input }
+//            { type: 'tool_use', id, name, input, kind }  (kind: 'custom' | 'local_shell' when
+//              the client declared the tool that way; absent for ordinary function tools)
 //            { type: 'tool_result', toolUseId, content, isError }  (content: text or [part])
 //            { type: 'thinking', text }
-//   tool:    { name, description, parameters, strict }
+//   tool:    { name, description, parameters, strict, kind }  (kind as above, or 'function')
 //   toolChoice: 'auto' | 'none' | 'required' | { name }
 //   reasoning: { effort: 'low' | 'medium' | 'high' | 'xhigh' } or null
 //
@@ -63,7 +64,7 @@ function collector() {
           break;
         }
         case 'tool_start':
-          open = { type: 'tool_use', id: event.id, name: event.name, input: '', partial: true };
+          open = { type: 'tool_use', id: event.id, name: event.name, input: '', partial: true, ...(event.kind ? { kind: event.kind } : {}) };
           answer.content.push(open);
           break;
         case 'tool_args':
@@ -119,7 +120,7 @@ function* eventsOf(answer) {
     } else if (part.type === 'thinking') {
       yield { type: 'thinking', delta: part.text };
     } else if (part.type === 'tool_use') {
-      yield { type: 'tool_start', id: part.id, name: part.name };
+      yield { type: 'tool_start', id: part.id, name: part.name, ...(part.kind ? { kind: part.kind } : {}) };
       yield { type: 'tool_args', delta: JSON.stringify(part.input || {}) };
       yield { type: 'tool_end' };
     }

@@ -186,11 +186,13 @@ function anthropicBase(headers, sameFormat) {
 // Claude Code's identity on a request going out on a subscription sign-in: the CLI user
 // agent, x-app and the OAuth beta, which is what Claude Code itself sends on an account
 // (the claude-code beta is refused there).
-function claudeAccountHeaders(headers, sameFormat, token, length) {
+function claudeAccountHeaders(headers, sameFormat, token, length, { asClaudeCode = true } = {}) {
   const out = anthropicBase(headers, sameFormat);
   out['anthropic-beta'] = [OAUTH_BETA, ...splitBetas(out['anthropic-beta'])].join(',');
-  out['user-agent'] = CLI_USER_AGENT;
-  out['x-app'] = 'cli';
+  if (asClaudeCode) {
+    out['user-agent'] = CLI_USER_AGENT;
+    out['x-app'] = 'cli';
+  }
   out.authorization = `Bearer ${token}`;
   out['content-length'] = String(length);
   return out;
@@ -230,6 +232,30 @@ function parseJson(body) {
   } catch {
     return null;
   }
+}
+
+// Which client sent a request. Codex (and any other client of OpenAI's formats) is never
+// reshaped as Claude Code: its own instructions and tools are what its model must follow.
+// Claude Code and the Claude desktop app speak Anthropic's format.
+function clientOf(req, inbound) {
+  const agent = String(req.headers['user-agent'] || '') + String(req.headers.originator || '');
+  if (inbound === 'responses' || /codex/i.test(agent)) return 'codex';
+  if (inbound === 'chat') return 'openai';
+  return 'claude';
+}
+
+// A Claude.ai sign-in answers 429 to any request whose system prompt doesn't open with
+// Claude Code's identity line as a block of its own (tried live: headers don't matter). For
+// a client that isn't Claude Code the line is still sent, alone, followed by a note that it's
+// only the connection's and the client's own instructions, so its model keeps to them.
+const NOT_CLAUDE_CODE = 'The line above is required by the API connection only. Your actual identity, role, instructions and tools are the ones below: follow them, use only the tools provided, and do not describe yourself as Claude Code.';
+
+function asSignInBody(body) {
+  const json = parseJson(body);
+  if (!json || !json.messages) return body;
+  const sys = typeof json.system === 'string' ? [{ type: 'text', text: json.system }] : Array.isArray(json.system) ? json.system : [];
+  json.system = [{ type: 'text', text: CLAUDE_CODE_SYSTEM }, { type: 'text', text: NOT_CLAUDE_CODE }, ...sys.filter((b) => b && b.text)];
+  return Buffer.from(JSON.stringify(json));
 }
 
 // The request body as Claude Code would send it on a sign-in: the system prompt opens with
@@ -324,6 +350,9 @@ function asResponsesBody(json, model, { chatgpt }) {
     delete out.max_tool_calls;
     delete out.truncation;
     delete out.background;
+    // Sampling settings are refused too (tried live): the backend uses the model's own.
+    delete out.temperature;
+    delete out.top_p;
     const include = new Set([...(Array.isArray(out.include) ? out.include : []), 'reasoning.encrypted_content']);
     out.include = [...include];
     // Cached answers of another provider's reasoning can't be read here.
@@ -470,7 +499,7 @@ function pipe(res, upRes, upstream) {
 // Hands an upstream answer to the client in the client's own format. Same format and the
 // same streaming either side: the bytes go through untouched. Otherwise the answer is read
 // (whole, or event by event) and written again as the client asked.
-function deliver(res, upRes, upstream, { inbound, wire, clientStream, upstreamStream, model, includeUsage }) {
+function deliver(res, upRes, upstream, { inbound, wire, clientStream, upstreamStream, model, includeUsage, toolKinds = {} }) {
   if (inbound === wire && clientStream === upstreamStream) {
     pipe(res, upRes, upstream);
     return;
@@ -495,11 +524,11 @@ function deliver(res, upRes, upstream, { inbound, wire, clientStream, upstreamSt
       }
       const answer = translate.readAnswer(wire, json);
       if (!clientStream) {
-        sendJson(res, 200, translate.writeAnswer(inbound, answer, { model }));
+        sendJson(res, 200, translate.writeAnswer(inbound, answer, { model, toolKinds }));
         return;
       }
       res.writeHead(200, { ...headers, 'content-type': 'text/event-stream; charset=utf-8' });
-      const write = translate.streamWriter(inbound, { model, includeUsage });
+      const write = translate.streamWriter(inbound, { model, includeUsage, toolKinds });
       for (const event of translate.ir.eventsOf(answer)) res.write(write(event));
       res.end();
     }).catch(() => {
@@ -511,7 +540,7 @@ function deliver(res, upRes, upstream, { inbound, wire, clientStream, upstreamSt
   const read = translate.streamReader(wire);
   if (clientStream) {
     res.writeHead(200, { ...headers, 'content-type': 'text/event-stream; charset=utf-8' });
-    const write = translate.streamWriter(inbound, { model, includeUsage });
+    const write = translate.streamWriter(inbound, { model, includeUsage, toolKinds });
     let stopped = false;
     upRes.on('data', (chunk) => {
       for (const event of read(chunk)) {
@@ -541,7 +570,7 @@ function deliver(res, upRes, upstream, { inbound, wire, clientStream, upstreamSt
       sendError(res, 502, 'api_error', error.message, inbound);
       return;
     }
-    sendJson(res, 200, translate.writeAnswer(inbound, answer, { model }));
+    sendJson(res, 200, translate.writeAnswer(inbound, answer, { model, toolKinds }));
   };
   upRes.on('end', finish);
   upRes.on('error', finish);
@@ -631,6 +660,9 @@ async function handle(req, res, ctx) {
   }
   const clientStream = Boolean(json.stream);
   const requested = String(json.model || '');
+  const client = clientOf(req, inbound);
+  // How the client declared each tool, so the answer's tool calls go back the same way.
+  const toolKinds = inbound === 'responses' ? translate.FORMATS.responses.toolKinds(parsed) : {};
 
   const lines = [];
   const named = lineFor(req, cfg);
@@ -675,9 +707,10 @@ async function handle(req, res, ctx) {
         log(`gateway: ${label}: ${why}; trying the next line`);
         continue;
       }
-      outBody = asClaudeCodeBody(sameFormat ? body : Buffer.from(JSON.stringify(translate.writeRequest('messages', parsed, { model }))));
+      const messagesBody = sameFormat ? body : Buffer.from(JSON.stringify(translate.writeRequest('messages', parsed, { model })));
+      outBody = client === 'claude' ? asClaudeCodeBody(messagesBody) : asSignInBody(messagesBody);
       url = `${cfg.upstream}/v1/messages`;
-      headers = claudeAccountHeaders(req.headers, sameFormat, t, outBody.length);
+      headers = claudeAccountHeaders(req.headers, sameFormat, t, outBody.length, { asClaudeCode: client === 'claude' });
     } else if (chatgpt) {
       const r = await chatgptCredentials(item, cfg);
       if (!r.creds) {
@@ -701,7 +734,8 @@ async function handle(req, res, ctx) {
         url = `${cfg.upstream}/v1/messages`;
         headers = claudeKeyHeaders(req.headers, sameFormat, item.key, outBody.length);
       } else {
-        outBody = inbound === 'responses' ? asResponsesBody(json, model, { chatgpt: false }) : Buffer.from(JSON.stringify(translate.writeRequest('responses', parsed, { model, store: false })));
+        // A Responses request for the model it named goes to OpenAI exactly as it came.
+        outBody = inbound === 'responses' ? (sameFormat ? body : asResponsesBody(json, model, { chatgpt: false })) : Buffer.from(JSON.stringify(translate.writeRequest('responses', parsed, { model, store: false })));
         url = `${providers.openai.upstream(cfg)}/responses`;
         headers = openaiKeyHeaders(req.headers, sameFormat, item.key, outBody.length);
       }
@@ -822,7 +856,7 @@ async function handle(req, res, ctx) {
     }
     events.emit('request', { ...ref, status, path: req.url });
     log(`gateway: ${inbound} request went out on ${line.kind === 'key' ? `API key "${label}"` : label}${model !== requested ? ` as ${model}` : ''} (HTTP ${status})`);
-    deliver(res, upRes, upstream, { inbound, wire, clientStream, upstreamStream, model: requested || model, includeUsage: Boolean(parsed.includeUsage) });
+    deliver(res, upRes, upstream, { inbound, wire, clientStream, upstreamStream, model: requested || model, includeUsage: Boolean(parsed.includeUsage), toolKinds });
     return;
   }
 
@@ -892,4 +926,4 @@ async function rawAnthropic(req, res, ctx, body, desktop) {
   if (!res.destroyed && !res.headersSent) sendError(res, 402, 'billing_error', 'claude-nonstop: no Anthropic line could take this request.');
 }
 
-module.exports = { handle, claudeToken, renewExpiring, sameToken, sendError, readBody, isAccountToken, asPlainApiBody, asClaudeCodeBody, modelFor, KEYS_HEADER, LINE_HEADER };
+module.exports = { handle, claudeToken, renewExpiring, sameToken, sendError, readBody, isAccountToken, asPlainApiBody, asClaudeCodeBody, asSignInBody, clientOf, modelFor, KEYS_HEADER, LINE_HEADER };

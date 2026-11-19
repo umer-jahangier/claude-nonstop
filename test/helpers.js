@@ -82,6 +82,75 @@ function signInFakeAccount(configDir, kind, { expiresAt = Date.now() + 3600000 }
 
 const apiError = (type, message) => ({ type: 'error', error: { type, message } });
 
+// The 'tools' behaviour of both fake services: a model that calls the tool the user's last
+// message names (or the first tool), and once it's sent the tool's result answers
+// "got: <result>". The patch is what Codex's apply_patch takes, as raw text.
+const FAKE_PATCH = '*** Begin Patch\n*** Add File: hello.txt\n+hi\n*** End Patch';
+function fakeToolArgs(schema) {
+  const props = (schema && schema.properties) || {};
+  if (props.input && props.input.type === 'string') return { input: FAKE_PATCH };
+  if (props.command && props.command.type === 'array') return { command: ['echo', 'hi'] };
+  return { command: 'echo hi' };
+}
+const pickTool = (tools, said) => tools.find((t) => t.name && said.split(/\s+/).some((w) => w === t.name || w.replace('.', '__') === t.name)) || tools[0];
+
+function anthropicToolAnswer(json, res) {
+  const msgs = json.messages || [];
+  const last = msgs[msgs.length - 1] || { content: [] };
+  const parts = typeof last.content === 'string' ? [{ type: 'text', text: last.content }] : last.content;
+  const result = parts.find((p) => p.type === 'tool_result');
+  const said = parts.filter((p) => p.type === 'text').map((p) => p.text).join(' ');
+  let content;
+  if (result) {
+    const out = typeof result.content === 'string' ? result.content : (result.content || []).map((c) => c.text || '').join('');
+    content = [{ type: 'text', text: `got: ${out}` }];
+  } else {
+    const tool = pickTool(json.tools || [], said);
+    content = [{ type: 'tool_use', id: 'toolu_1', name: tool.name, input: fakeToolArgs(tool.input_schema) }];
+  }
+  const stop = result ? 'end_turn' : 'tool_use';
+  if (!json.stream) {
+    const text = JSON.stringify({ type: 'message', id: 'msg_tools', role: 'assistant', model: json.model, content, stop_reason: stop, usage: { input_tokens: 5, output_tokens: 2 } });
+    res.writeHead(200, { 'content-type': 'application/json', 'content-length': Buffer.byteLength(text) });
+    res.end(text);
+    return;
+  }
+  const ev = (type, body) => `event: ${type}\ndata: ${JSON.stringify({ type, ...body })}\n\n`;
+  res.writeHead(200, { 'content-type': 'text/event-stream' });
+  let s = ev('message_start', { message: { id: 'msg_tools', type: 'message', role: 'assistant', model: json.model, content: [], usage: { input_tokens: 5, output_tokens: 0 } } });
+  const c = content[0];
+  if (c.type === 'text') {
+    s += ev('content_block_start', { index: 0, content_block: { type: 'text', text: '' } });
+    s += ev('content_block_delta', { index: 0, delta: { type: 'text_delta', text: c.text } });
+  } else {
+    const args = JSON.stringify(c.input);
+    s += ev('content_block_start', { index: 0, content_block: { type: 'tool_use', id: c.id, name: c.name, input: {} } });
+    s += ev('content_block_delta', { index: 0, delta: { type: 'input_json_delta', partial_json: args.slice(0, 9) } });
+    s += ev('content_block_delta', { index: 0, delta: { type: 'input_json_delta', partial_json: args.slice(9) } });
+  }
+  s += ev('content_block_stop', { index: 0 });
+  s += ev('message_delta', { delta: { stop_reason: stop }, usage: { output_tokens: 2 } });
+  s += ev('message_stop', {});
+  res.end(s);
+}
+
+// The same model on OpenAI's Responses API: a custom tool is called with raw text.
+function openaiToolOutput(json) {
+  const input = Array.isArray(json.input) ? json.input : [];
+  const result = [...input].reverse().find((i) => i && /_call_output$/.test(i.type || ''));
+  if (result) return { text: `got: ${typeof result.output === 'string' ? result.output : Array.isArray(result.output) ? result.output.map((p) => p.text || '').join('') : JSON.stringify(result.output)}` };
+  const said = input.filter((i) => i && i.type === 'message' && i.role === 'user').map((i) => (typeof i.content === 'string' ? i.content : (i.content || []).map((c) => c.text || '').join(' '))).pop() || '';
+  // Tools may come grouped in namespaces, and in an additional_tools input item (Codex).
+  const flat = [];
+  const walk = (list, ns) => (list || []).forEach((t) => (t.type === 'namespace' ? walk(t.tools, t.name) : flat.push({ ...t, ns })));
+  walk(json.tools);
+  input.filter((i) => i && i.type === 'additional_tools').forEach((i) => walk(i.tools));
+  const tool = flat.find((t) => t.name && said.includes(t.ns && t.ns !== 'functions' ? `${t.ns}.${t.name}` : t.name)) || flat[0];
+  const where = tool.ns && tool.ns !== 'functions' ? { namespace: tool.ns } : {};
+  if (tool.type === 'custom') return { item: { id: 'ctc_1', type: 'custom_tool_call', status: 'completed', call_id: 'call_1', name: tool.name, ...where, input: FAKE_PATCH } };
+  return { item: { id: 'fc_1', type: 'function_call', status: 'completed', call_id: 'call_1', name: tool.name, ...where, arguments: JSON.stringify(fakeToolArgs(tool.parameters)) } };
+}
+
 // A stand-in for the Claude API that answers according to the key it's sent.
 function startFakeApi() {
   const requests = [];
@@ -108,6 +177,10 @@ function startFakeApi() {
         res.writeHead(status, { 'content-type': 'application/json', 'content-length': Buffer.byteLength(text) });
         res.end(text);
       };
+      if (kind === 'tools') {
+        anthropicToolAnswer(JSON.parse(body), res);
+        return;
+      }
       if (kind === 'ok' || kind === 'second') {
         if (/"stream"\s*:\s*true/.test(body)) {
           res.writeHead(200, { 'content-type': 'text/event-stream' });
@@ -193,7 +266,7 @@ function startFakeOpenAI() {
       // The Codex backend's model list (asked for apart from the requests a test counts).
       if (req.url.startsWith('/backend-api/codex/models')) {
         modelRequests.push({ url: req.url, bearer, headers: req.headers });
-        if (!/^oat-test-(ok|second|tool|limited)/.test(bearer)) return send(401, { detail: 'Unauthorized' });
+        if (!/^oat-test-(ok|second|tool|tools|limited)/.test(bearer)) return send(401, { detail: 'Unauthorized' });
         if (!/client_version=/.test(req.url)) return send(400, { error: { message: 'client_version required' } });
         return send(200, { models: [...api.chatgptModels.map((slug, i) => ({ slug, display_name: slug.toUpperCase(), visibility: 'list', priority: i + 1 })), { slug: 'codex-auto-review', visibility: 'hide', priority: 43 }] });
       }
@@ -234,7 +307,7 @@ function startFakeOpenAI() {
         send(429, { error: { message: 'You exceeded your current quota, please check your plan and billing details.', type: 'insufficient_quota', code: 'insufficient_quota' } });
         return;
       }
-      for (const field of ['user', 'metadata', 'previous_response_id', 'service_tier', 'truncation']) {
+      for (const field of ['user', 'metadata', 'previous_response_id', 'service_tier', 'truncation', 'temperature', 'top_p']) {
         if (chatgpt && field in json) {
           send(400, { detail: `Unsupported parameter: ${field}` });
           return;
@@ -253,6 +326,27 @@ function startFakeOpenAI() {
         return;
       }
       const usage = { input_tokens: 11, input_tokens_details: { cached_tokens: 1 }, output_tokens: 3, output_tokens_details: { reasoning_tokens: 0 }, total_tokens: 14 };
+      if (kind === 'tools') {
+        const { text: said, item } = openaiToolOutput(json);
+        const out = item ? [item] : [{ id: 'msg_1', type: 'message', status: 'completed', role: 'assistant', content: [{ type: 'output_text', text: said, annotations: [] }] }];
+        const done = { id: 'resp_tools', object: 'response', created_at: 1, status: 'completed', model: json.model, output: out, usage };
+        if (!json.stream) return send(200, done);
+        const evs = [{ type: 'response.created', response: { ...done, status: 'in_progress', output: [], usage: null } }];
+        if (item && item.type === 'custom_tool_call') {
+          evs.push({ type: 'response.output_item.added', output_index: 0, item: { ...item, input: '', status: 'in_progress' } });
+          evs.push({ type: 'response.custom_tool_call_input.delta', output_index: 0, item_id: item.id, delta: item.input.slice(0, 10) });
+          evs.push({ type: 'response.custom_tool_call_input.delta', output_index: 0, item_id: item.id, delta: item.input.slice(10) });
+        } else if (item) {
+          evs.push({ type: 'response.output_item.added', output_index: 0, item: { ...item, arguments: '', status: 'in_progress' } });
+          evs.push({ type: 'response.function_call_arguments.delta', output_index: 0, item_id: item.id, delta: item.arguments });
+        } else {
+          evs.push({ type: 'response.output_item.added', output_index: 0, item: { ...out[0], content: [], status: 'in_progress' } });
+          evs.push({ type: 'response.output_text.delta', output_index: 0, item_id: 'msg_1', content_index: 0, delta: said });
+        }
+        evs.push({ type: 'response.output_item.done', output_index: 0, item: out[0] });
+        evs.push({ type: 'response.completed', response: done });
+        return sse(res, evs);
+      }
       const output = kind === 'tool'
         ? [{ id: 'fc_1', type: 'function_call', status: 'completed', call_id: 'call_1', name: 'get_weather', arguments: '{"city":"Lahore"}' }]
         : [{ id: 'msg_1', type: 'message', status: 'completed', role: 'assistant', content: [{ type: 'output_text', text: `${kind} via ${json.model}`, annotations: [] }] }];
@@ -337,4 +431,4 @@ function call(url, { method = 'GET', headers = {}, body } = {}) {
   });
 }
 
-module.exports = { ROOT, BIN, isolate, installFakeClaude, readFakeLog, testKey, testAccountToken, signInFakeAccount, startFakeApi, testOpenaiKey, testChatgptToken, signInFakeChatgpt, startFakeOpenAI, freePort, runCli, call };
+module.exports = { FAKE_PATCH, ROOT, BIN, isolate, installFakeClaude, readFakeLog, testKey, testAccountToken, signInFakeAccount, startFakeApi, testOpenaiKey, testChatgptToken, signInFakeChatgpt, startFakeOpenAI, freePort, runCli, call };

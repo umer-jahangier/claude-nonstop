@@ -73,6 +73,13 @@ function readRequest(json) {
 
 const BUDGET = { low: 2048, medium: 8192, high: 16384, xhigh: 32768 };
 
+// Older Claude models take a thinking budget; every model since Opus 4.7 / Sonnet 5 takes
+// adaptive thinking with an effort level instead, and refuses a budget with a 400.
+const BUDGET_MODELS = /^claude-(?:3|(?:opus|sonnet|haiku)-4-[0-6]\b|(?:opus|sonnet|haiku)-4(?:-\d{8})?$)/;
+// Models that refuse a forced tool choice ("any" or a named tool) with a 400.
+const NO_FORCED_TOOLS = /^claude-(?:opus-5-5|sonnet-5-5|(?:fable|mythos)-5-[12])\b/;
+const EFFORTS = new Set(['low', 'medium', 'high', 'xhigh', 'max']);
+
 function writePart(part) {
   switch (part.type) {
     case 'text':
@@ -121,20 +128,25 @@ function writeRequest(req, { model = req.model, defaultMaxTokens = 16384 } = {})
   if (req.tools && req.tools.length) {
     out.tools = req.tools.map((t) => ({ name: t.name, description: t.description || '', input_schema: t.parameters || { type: 'object', properties: {} } }));
     const c = req.toolChoice;
-    if (c === 'required') out.tool_choice = { type: 'any' };
-    else if (c === 'none') out.tool_choice = { type: 'none' };
-    else if (c && typeof c === 'object' && c.name) out.tool_choice = { type: 'tool', name: c.name };
+    const forced = c === 'required' || (c && typeof c === 'object' && c.name);
+    if (c === 'none') out.tool_choice = { type: 'none' };
+    else if (forced && !NO_FORCED_TOOLS.test(String(model))) out.tool_choice = c === 'required' ? { type: 'any' } : { type: 'tool', name: c.name };
     else if (req.parallelToolCalls === false) out.tool_choice = { type: 'auto', disable_parallel_tool_use: true };
   }
-  if (req.reasoning && req.reasoning.effort && req.reasoning.effort !== 'none') {
-    const budget = BUDGET[req.reasoning.effort] || BUDGET.medium;
-    out.thinking = { type: 'enabled', budget_tokens: budget };
-    if (out.max_tokens <= budget) out.max_tokens = budget + 4096;
-    // Thinking takes the model's own sampling settings.
-  } else {
-    if (req.temperature !== undefined && req.temperature !== null) out.temperature = req.temperature;
-    if (req.topP !== undefined && req.topP !== null) out.top_p = req.topP;
+  const effort = req.reasoning && req.reasoning.effort;
+  if (BUDGET_MODELS.test(String(model))) {
+    if (effort && effort !== 'none' && effort !== 'minimal') {
+      const budget = BUDGET[effort] || BUDGET.medium;
+      out.thinking = { type: 'enabled', budget_tokens: budget };
+      if (out.max_tokens <= budget) out.max_tokens = budget + 4096;
+    }
+  } else if (effort) {
+    // Current models think adaptively; the client's effort sets how much.
+    out.thinking = { type: 'adaptive' };
+    out.output_config = { effort: EFFORTS.has(effort) ? effort : 'low' };
   }
+  // Sampling settings are refused on API version 2026-10-21, which the gateway speaks: the
+  // client's temperature and top_p are left out.
   if (req.metadata && req.metadata.user_id) out.metadata = { user_id: String(req.metadata.user_id) };
   return out;
 }
