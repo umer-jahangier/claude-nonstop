@@ -52,7 +52,7 @@ function settings(cfg, v) {
     // The app re-fetches both by itself.
     allowedPluginMarketplaces: JSON.stringify([OFFICIAL_MARKETPLACE, CONNECTOR_MARKETPLACE]),
     // Connectors added with `claude-nonstop connectors add` show for everyone, always.
-    ...(connectors(cfg).length ? { managedMcpServers: JSON.stringify(connectors(cfg)) } : {}),
+    ...(connectors(cfg).length ? { managedMcpServers: JSON.stringify(connectors(cfg).map(appEntry)) } : {}),
   };
 }
 
@@ -61,9 +61,22 @@ const CONNECTOR_MARKETPLACE = { source: 'github', repo: 'umer-jahangier/claude-n
 
 const connectors = (cfg) => (Array.isArray(cfg.desktopConnectors) ? cfg.desktopConnectors : []);
 
+// A connector as the app reads it. One that signs in with an access token gets it from
+// claude-nonstop each time the app connects: the app runs `claude-nonstop connectors headers
+// <name>`, which prints the Authorization header, so the token never sits in the app's
+// settings. Servers known to take a token (GitHub's) are handled that way even when they
+// were added as plain OAuth, which they don't support.
+function appEntry(e) {
+  const tokenServer = require('./connectorcatalog').tokenServerFor(e.url);
+  if (e.auth === 'token' || tokenServer) {
+    return { name: e.name, transport: e.transport || 'http', url: e.url, headersHelper: process.execPath, headersHelperArgs: [paths.APP_SCRIPT, 'connectors', 'headers', e.name], headersHelperTtlSec: 300 };
+  }
+  return { name: e.name, transport: e.transport || 'http', url: e.url, ...(e.oauth ? { oauth: true } : {}) };
+}
+
 // A connector entry the app accepts: a remote server by URL, signing in through OAuth
-// unless it needs no sign-in.
-function connector(name, url, { oauth = true } = {}) {
+// unless it needs no sign-in, or with an access token (token: true).
+function connector(name, url, { oauth = true, token = false, tokenFrom = null, transport = 'http' } = {}) {
   if (!name || !/^[\w .-]{1,64}$/.test(name)) throw new Error('a connector name is letters, numbers, spaces, dots, dashes or underscores, up to 64 characters');
   let parsed;
   try {
@@ -72,7 +85,9 @@ function connector(name, url, { oauth = true } = {}) {
     throw new Error(`${url} isn't a URL`);
   }
   if (parsed.protocol !== 'https:') throw new Error('the desktop app only connects to https:// servers');
-  return { name, transport: 'http', url: parsed.href, ...(oauth ? { oauth: true } : {}) };
+  if (transport !== 'http' && transport !== 'sse') throw new Error('a connector speaks http or sse');
+  if (token) return { name, transport, url: parsed.href, auth: 'token', ...(tokenFrom ? { tokenFrom } : {}) };
+  return { name, transport, url: parsed.href, ...(oauth ? { oauth: true } : {}) };
 }
 
 // Every key claude-nonstop may write, so one it no longer wants is removed, not left behind.
@@ -264,4 +279,4 @@ function reveal(file = paths.DESKTOP_CONFIG) {
   return { ok: true };
 }
 
-module.exports = { settings, connector, write, status, reveal, STEPS, appInstalled, appRunning, applied, managedChange, managedRemoval, macProfile, PROFILE };
+module.exports = { settings, connector, appEntry, write, status, reveal, STEPS, appInstalled, appRunning, applied, managedChange, managedRemoval, macProfile, PROFILE };

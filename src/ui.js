@@ -152,7 +152,7 @@ function snapshot(ctx) {
     // Your relay order, accounts and keys mixed, as "account:<id>" / "key:<id>".
     order: relay.lines(cfg, v.keys).map((l) => relay.lineId(l.type, l.item.id)),
     pinned: cfg.pinned || null,
-    settings: { cooldownMinutes: cfg.cooldownMinutes, accountRecheckMinutes: cfg.accountRecheckMinutes, models: cfg.models, modelChoices: modelChoices(cfg, s), codexAuthFound: Boolean(openaiAuth.readCodexAuth()), desktopStrictSandbox: Boolean(cfg.desktopStrictSandbox), desktopConnectors: cfg.desktopConnectors || [], desktopAccount: cfg.desktopAccount || 'default', desktopAlerts: cfg.desktopAlerts !== false },
+    settings: { cooldownMinutes: cfg.cooldownMinutes, accountRecheckMinutes: cfg.accountRecheckMinutes, models: cfg.models, modelChoices: modelChoices(cfg, s), codexAuthFound: Boolean(openaiAuth.readCodexAuth()), desktopStrictSandbox: Boolean(cfg.desktopStrictSandbox), desktopConnectors: (cfg.desktopConnectors || []).map((e) => ({ ...e, signIn: require('./connectorcatalog').describeAuth(e, v) })), desktopAccount: cfg.desktopAccount || 'default', desktopAlerts: cfg.desktopAlerts !== false },
     traffic: events.stats(),
     shell: shell.status(),
     service: service.status(),
@@ -539,21 +539,26 @@ function editSettings(body) {
   }
 }
 
-function addConnector(body) {
-  let entry;
+const sentence = (m) => `${m[0].toUpperCase()}${m.slice(1)}${/[.!?]$/.test(m) ? '' : '.'}`;
+
+async function addConnector(body) {
   try {
-    entry = desktop.connector(String(body.name || '').trim(), String(body.url || '').trim(), { oauth: body.oauth !== false });
+    return await require('./connectorcatalog').add({ slug: body.slug, name: body.name, url: body.url, token: body.token, noAuth: body.oauth === false, oauth: body.oauth === true });
   } catch (err) {
-    throw httpError(400, `${err.message[0].toUpperCase()}${err.message.slice(1)}.`);
+    const e = httpError(400, sentence(err.message));
+    if (err.code === 'needs-token') e.needsToken = true;
+    throw e;
   }
-  const same = (e) => e.name.toLowerCase() === entry.name.toLowerCase();
-  config.update((c) => (c.desktopConnectors = [...(c.desktopConnectors || []).filter((e) => !same(e)), entry]));
-  return entry;
 }
 
 function removeConnector(name) {
-  config.update((c) => (c.desktopConnectors = (c.desktopConnectors || []).filter((e) => e.name.toLowerCase() !== name.toLowerCase())));
+  require('./connectorcatalog').remove(name);
   return { ok: true };
+}
+
+function connectorCatalog() {
+  const cat = require('./connectorcatalog');
+  return { connectors: cat.catalog(), gh: Boolean(cat.ghToken()) };
 }
 
 // Runs `claude-nonstop desktop --quiet` in its own process: the system's admin prompt can
@@ -612,6 +617,7 @@ async function route(method, pathname, body, ctx) {
   }
   if (area === 'desktop' && method === 'POST' && id === 'reveal') return desktop.reveal();
   if (area === 'desktop' && method === 'POST' && id === 'auto') return desktopAuto();
+  if (area === 'connectors' && method === 'GET' && id === 'catalog') return connectorCatalog();
   if (area === 'connectors' && method === 'POST' && !id) return addConnector(body);
   if (area === 'connectors' && method === 'DELETE' && id) return removeConnector(decodeURIComponent(id));
   if (area === 'settings' && method === 'PATCH') return editSettings(body);
@@ -687,7 +693,7 @@ async function handle(req, res, ctx) {
     json(res, 200, result === undefined ? { ok: true } : result);
   } catch (err) {
     ctx.invalidate();
-    json(res, err.status || 500, { error: err.message });
+    json(res, err.status || 500, { error: err.message, ...(err.needsToken ? { needsToken: true } : {}) });
   }
 }
 

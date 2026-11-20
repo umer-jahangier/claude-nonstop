@@ -688,6 +688,19 @@ main { position: relative; z-index: 1; }
 .chat-row.picked { background: var(--accent-tint); }
 .chat-empty { padding: 18px 14px; font-size: 0.875rem; color: var(--label-2); }
 .merge-into { margin-top: 12px; }
+.cat-filters { display: flex; gap: 8px; }
+.cat-filters > .fields:first-child { flex: 1; }
+.cat-select { flex: none; width: 190px; }
+.cat-list { max-height: min(52vh, 480px); }
+.cat-item + .cat-item .cat-row::before { content: ""; position: absolute; top: 0; left: 82px; right: 0; height: var(--hair); background: var(--sep); }
+.cat-row + .cat-row::before { display: none; }
+.cat-tile { flex: none; width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; background: var(--accent-tint); color: var(--accent); font-weight: 600; font-size: 0.875rem; }
+.cat-row .t b em { font-style: normal; font-weight: 500; font-size: 0.75rem; color: var(--label-2); margin-left: 6px; }
+.cat-row.have { cursor: default; }
+.cat-token { padding: 2px 14px 12px 82px; background: var(--accent-tint); }
+.cat-token input { width: 100%; height: 36px; padding: 0 10px; border: 1px solid var(--sep); border-radius: 8px; background: var(--sheet); color: var(--label); font: inherit; }
+.cat-token .hint { margin: 6px 0 0; font-size: 0.75rem; }
+.sheet-actions .grow { flex: 1; }
 .field select { flex: 1; min-width: 0; height: 44px; padding: 0; border: 0; background: transparent; color: var(--label); font: inherit; letter-spacing: -0.012em; }
 .field select:focus-visible { outline: none; }
 </style>
@@ -952,7 +965,7 @@ async function api(method, path, body) {
   const res = await fetch(path, { method, headers: { 'x-claude-nonstop': '1', ...(body ? { 'content-type': 'application/json' } : {}) }, body: body ? JSON.stringify(body) : undefined });
   let data = {};
   try { data = await res.json(); } catch {}
-  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+  if (!res.ok) throw Object.assign(new Error(data.error || `Request failed (${res.status})`), { data });
   return data;
 }
 
@@ -1233,8 +1246,10 @@ function renderDesktop() {
     <div class="row"><span class="k">API key</span><span class="v mono">${esc(shown)}</span><span class="acts"><button class="icon-btn" type="button" data-act="toggle-token" data-fk="toggle-token" aria-label="${ui.showToken ? 'Hide' : 'Show'} the gateway key" title="${ui.showToken ? 'Hide' : 'Show'}">${icon('eye')}</button><button class="icon-btn" type="button" data-act="copy-token" data-fk="copy-token" aria-label="Copy the gateway key" title="Copy">${icon('copy')}</button></span></div>
     <div class="row"><span class="k">Auth scheme</span><span class="v">Bearer</span></div>`;
   $('#desktop-file').textContent = desktopInfo ? `The same values are saved in ${desktopInfo.file}` : '';
-  $('#desktop-connectors').innerHTML = S.settings.desktopConnectors.map((c) => `<li class="row"><span class="row-text"><span class="row-title">${esc(c.name)}</span><span class="row-sub mono">${esc(c.url)}${c.oauth ? '' : ' · no sign-in'}</span></span><span class="acts"><button class="icon-btn" type="button" data-act="remove-connector" data-id="${esc(c.name)}" data-fk="remove-connector-${esc(c.name)}" aria-label="Remove the ${esc(c.name)} connector" title="Remove">${icon('trash')}</button></span></li>`).join('')
-    + `<li class="row add"><button class="add-btn" type="button" data-act="add-connector" data-fk="add-connector"><span class="tile">${icon('plus-circle')}</span>Add Connector…</button></li>`;
+  const signInNote = { oauth: '', none: ' · no sign-in', gh: ' · your GitHub CLI sign-in', token: ' · your access token', 'token-missing': ' · needs an access token' };
+  $('#desktop-connectors').innerHTML = S.settings.desktopConnectors.map((c) => `<li class="row"><span class="row-text"><span class="row-title">${esc(c.name)}</span><span class="row-sub mono">${esc(c.url)}${signInNote[c.signIn] || ''}</span></span><span class="acts"><button class="icon-btn" type="button" data-act="remove-connector" data-id="${esc(c.name)}" data-fk="remove-connector-${esc(c.name)}" aria-label="Remove the ${esc(c.name)} connector" title="Remove">${icon('trash')}</button></span></li>`).join('')
+    + `<li class="row add"><button class="add-btn" type="button" data-act="browse-connectors" data-fk="browse-connectors"><span class="tile">${icon('plus-circle')}</span>Browse Connectors…</button></li>`
+    + `<li class="row add"><button class="add-btn" type="button" data-act="add-connector" data-fk="add-connector"><span class="tile">${icon('plus-circle')}</span>Add by Address…</button></li>`;
   renderDesktopCard();
   renderCodexCard();
   const openaiBase = `${S.desktop.baseUrl}/v1`;
@@ -2772,17 +2787,19 @@ function sheetContent() {
   }
   if (sh.kind === 'add-connector') {
     return `<form data-form="add-connector" autocomplete="off">
-      <h2 id="sheet-title">Add a connector</h2>
-      <p class="lede">A remote MCP server, by its https:// address. The desktop app lists it under Connectors when it runs on your API keys, and asks you to sign in to it there.</p>
+      <h2 id="sheet-title">Add a connector by address</h2>
+      <p class="lede">Any remote MCP server, by its https:// address. claude-nonstop checks how it signs in: most let the desktop app sign you in there, some need nothing, and the rest take an access token or API key, which it asks for here.</p>
       <div class="fields">
         <div class="field"><label for="f-cname">Name</label><input id="f-cname" name="name" maxlength="64" placeholder="Linear, Notion…" autofocus spellcheck="false"></div>
         <div class="field"><label for="f-curl">Address</label><input id="f-curl" class="mono-input" name="url" type="url" placeholder="https://mcp.example.com/mcp" spellcheck="false" autocapitalize="off"></div>
+        <div class="field" id="f-ctoken-row"${sh.needsToken ? '' : ' hidden'}><label for="f-ctoken">Token</label><input id="f-ctoken" class="mono-input" name="token" type="password" placeholder="Access token or API key" spellcheck="false" autocapitalize="off"></div>
       </div>
-      <p class="hint">Find the address in the service's MCP or connector docs. Servers that need no sign-in can be added with <code>claude-nonstop connectors add &lt;name&gt; &lt;url&gt; --no-oauth</code>.</p>
+      <p class="hint">Find the address in the service's MCP or connector docs. A token is kept encrypted on this computer and handed to the app only when it connects.</p>
       <p class="sheet-error" id="sheet-error" role="alert" hidden></p>
       <div class="sheet-actions"><button class="btn large" type="button" data-act="close-sheet">Cancel</button><button class="btn large primary" type="submit">Add</button></div>
     </form>`;
   }
+  if (sh.kind === 'connectors') return catalogHtml();
   if (sh.kind === 'merge') return mergeHtml();
   if (sh.kind === 'confirm') {
     const item = itemFor(sh.type, sh.id);
@@ -2793,6 +2810,86 @@ function sheetContent() {
   }
   return jobHtml();
 }
+
+// Connector catalog: tick the services to add, then add them all at once.
+const catState = () => ui.cat || (ui.cat = { list: null, gh: false, picked: [], tokens: {}, q: '', category: '' });
+const CATEGORY_NAMES = { 'developer-tools': 'Developer tools', productivity: 'Productivity', 'data-analytics': 'Data and analytics', 'sales-and-marketing': 'Sales and marketing', 'financial-services': 'Finance', communication: 'Communication', creative: 'Creative', legal: 'Legal', 'commerce-shopping': 'Shopping', 'health-life-sciences': 'Health and life sciences', education: 'Education', 'media-entertainment': 'Media', travel: 'Travel', 'consumer-health': 'Personal health', nonprofit: 'Nonprofit', other: 'Other' };
+const addedNames = () => new Set(((S && S.settings.desktopConnectors) || []).map((c) => c.name.toLowerCase()));
+function catNeedsToken(c) { return c.auth === 'token' && !(c.tokenFrom === 'gh' && catState().gh); }
+function catalogRowsHtml() {
+  const c0 = catState();
+  const added = addedNames();
+  return c0.list.map((c) => {
+    const on = c0.picked.includes(c.slug);
+    const have = added.has(c.name.toLowerCase());
+    const note = c.auth === 'token' ? (c.tokenFrom === 'gh' && c0.gh ? 'Uses your GitHub CLI sign-in' : 'Needs an access token') : c.auth === 'none' ? 'No sign-in' : '';
+    const text = `${c.name} ${c.author} ${c.description} ${c.categories.join(' ')}`.toLowerCase();
+    return `<div class="cat-item" data-text="${esc(text)}" data-cats="${esc(c.categories.join(' '))}">
+      <label class="chat-row cat-row${on ? ' picked' : ''}${have ? ' have' : ''}"><input type="checkbox" data-cat-pick value="${esc(c.slug)}"${on || have ? ' checked' : ''}${have ? ' disabled' : ''}><span class="cat-tile" aria-hidden="true">${esc(c.name.trim()[0] || '?')}</span><span class="t"><b>${esc(c.name)}${have ? ' <em>Added</em>' : ''}</b><span>${esc([c.author && c.author !== c.name ? c.author : '', note, c.description].filter(Boolean).join(' · '))}</span></span></label>
+      ${on && catNeedsToken(c) ? `<div class="cat-token"><input class="mono-input" type="password" data-cat-token="${esc(c.slug)}" value="${esc(c0.tokens[c.slug] || '')}" placeholder="${esc(c.tokenLabel || 'Access token')}" aria-label="${esc(`${c.name} ${c.tokenLabel || 'access token'}`)}" spellcheck="false" autocapitalize="off"><p class="hint">${esc(c.tokenHint || '')}</p></div>` : ''}
+    </div>`;
+  }).join('');
+}
+function catalogHtml() {
+  const c0 = catState();
+  let list;
+  if (!c0.list) list = `<div class="chat-empty">${SPINNER}Loading connectors…</div>`;
+  else list = catalogRowsHtml() + '<div class="chat-empty" id="cat-none" hidden>No connector matches. Add any server with Add by Address.</div>';
+  const cats = c0.list ? [...new Set(c0.list.flatMap((c) => c.categories))].sort((a, b) => (CATEGORY_NAMES[a] || a).localeCompare(CATEGORY_NAMES[b] || b)) : [];
+  return `<form data-form="connectors" autocomplete="off">
+    <h2 id="sheet-title">Connectors</h2>
+    <p class="lede">Tick the services Claude should reach, then add them. They show in the desktop app's Connectors, where you sign in to each the first time you use it.</p>
+    <div class="chat-search cat-filters"><div class="fields"><div class="field"><input type="search" data-cat-search value="${esc(c0.q)}" placeholder="Search ${c0.list ? c0.list.length : ''} connectors" aria-label="Search connectors" spellcheck="false"></div></div><div class="fields cat-select"><div class="field"><select data-cat-category aria-label="Category"><option value="">All categories</option>${cats.map((k) => `<option value="${esc(k)}"${k === c0.category ? ' selected' : ''}>${esc(CATEGORY_NAMES[k] || k)}</option>`).join('')}</select></div></div></div>
+    <div class="chat-list cat-list" role="group" aria-label="Connectors">${list}</div>
+    <p class="sheet-error" id="sheet-error" role="alert" hidden></p>
+    <div class="sheet-actions"><button class="btn large" type="button" data-act="add-connector">Add by Address…</button><span class="grow"></span><button class="btn large" type="button" data-act="close-sheet">Cancel</button><button class="btn large primary" type="submit" id="cat-go"${c0.picked.length ? '' : ' disabled'}>${catGoLabel()}</button></div>
+  </form>`;
+}
+function catGoLabel() {
+  const n = catState().picked.length;
+  return n ? `Add ${n} Connector${n === 1 ? '' : 's'}` : 'Add';
+}
+function filterCatalog() {
+  const c0 = catState();
+  const q = c0.q.trim().toLowerCase();
+  let any = false;
+  for (const el of document.querySelectorAll('.cat-item')) {
+    const show = (!q || el.dataset.text.includes(q)) && (!c0.category || el.dataset.cats.split(' ').includes(c0.category));
+    el.hidden = !show;
+    any = any || show;
+  }
+  const none = $('#cat-none');
+  if (none) none.hidden = any;
+}
+document.addEventListener('change', (e) => {
+  if (!ui.sheet || ui.sheet.kind !== 'connectors') return;
+  const c0 = catState();
+  if (e.target.matches('[data-cat-pick]')) {
+    const slug = e.target.value;
+    c0.picked = e.target.checked ? [...c0.picked, slug] : c0.picked.filter((x) => x !== slug);
+    const item = e.target.closest('.cat-item');
+    const c = c0.list.find((x) => x.slug === slug);
+    item.querySelector('.cat-row').classList.toggle('picked', e.target.checked);
+    const tok = item.querySelector('.cat-token');
+    if (e.target.checked && catNeedsToken(c) && !tok) {
+      item.insertAdjacentHTML('beforeend', `<div class="cat-token"><input class="mono-input" type="password" data-cat-token="${esc(c.slug)}" value="${esc(c0.tokens[c.slug] || '')}" placeholder="${esc(c.tokenLabel || 'Access token')}" aria-label="${esc(`${c.name} ${c.tokenLabel || 'access token'}`)}" spellcheck="false" autocapitalize="off"><p class="hint">${esc(c.tokenHint || '')}</p></div>`);
+      item.querySelector('[data-cat-token]').focus();
+    } else if (!e.target.checked && tok) tok.remove();
+    const go = $('#cat-go');
+    if (go) { go.innerHTML = catGoLabel(); go.disabled = !c0.picked.length; }
+  } else if (e.target.matches('[data-cat-category]')) {
+    c0.category = e.target.value;
+    filterCatalog();
+  }
+});
+document.addEventListener('input', (e) => {
+  if (!ui.sheet || ui.sheet.kind !== 'connectors' || !e.target.matches) return;
+  if (e.target.matches('[data-cat-search]')) { catState().q = e.target.value; filterCatalog(); }
+  else if (e.target.matches('[data-cat-token]')) catState().tokens[e.target.dataset.catToken] = e.target.value;
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && e.target.matches && e.target.matches('[data-cat-search]')) e.preventDefault();
+});
 
 // Merge chats: pick chats, pick what they merge into.
 const mergeState = () => ui.merge || (ui.merge = { chats: null, picked: [], target: '', folder: '' });
@@ -2919,7 +3016,7 @@ function focusSheet() {
 function setSheetContent() {
   const panel = $('#sheet .sheet-panel');
   if (!panel) return;
-  panel.className = `sheet-panel${ui.sheet.kind === 'confirm' ? ' narrow' : ui.sheet.kind === 'merge' ? ' wide' : ''}`;
+  panel.className = `sheet-panel${ui.sheet.kind === 'confirm' ? ' narrow' : ['merge', 'connectors'].includes(ui.sheet.kind) ? ' wide' : ''}`;
   panel.innerHTML = sheetContent();
   focusSheet();
   play(panel, [{ opacity: 0.4 }, { opacity: 1 }], { ms: 200, easing: 'ease-out' });
@@ -2931,7 +3028,7 @@ function openSheet(kind, data = {}) {
   ui.sheet = { kind, ...data };
   if (dlg.open) { setSheetContent(); return; }
   sheetReturn = document.activeElement;
-  dlg.innerHTML = `<div class="scrim" data-act="close-sheet"></div><div class="sheet-panel${kind === 'confirm' ? ' narrow' : kind === 'merge' ? ' wide' : ''}">${sheetContent()}</div>`;
+  dlg.innerHTML = `<div class="scrim" data-act="close-sheet"></div><div class="sheet-panel${kind === 'confirm' ? ' narrow' : ['merge', 'connectors'].includes(kind) ? ' wide' : ''}">${sheetContent()}</div>`;
   dlg.showModal();
   focusSheet();
   play($('.scrim', dlg), [{ opacity: 0 }, { opacity: 1 }], { ms: 240, easing: 'ease-out' });
@@ -3025,6 +3122,18 @@ const actions = {
   'add-key': () => { if (ui.view !== 'relay') showView('relay'); openSheet('add-key'); },
   'close-sheet': () => closeSheet(),
   'add-connector': () => openSheet('add-connector'),
+  'browse-connectors': async () => {
+    ui.cat = null;
+    openSheet('connectors');
+    try {
+      const r = await api('GET', '/api/connectors/catalog');
+      Object.assign(catState(), { list: r.connectors, gh: r.gh });
+    } catch (err) {
+      catState().list = [];
+      toast(`Couldn't load the connectors: ${err.message}`, true);
+    }
+    if (ui.sheet && ui.sheet.kind === 'connectors') { setSheetContent(); filterCatalog(); }
+  },
   'remove-connector': async (id) => {
     await api('DELETE', `/api/connectors/${encodeURIComponent(id)}`);
     await refresh();
@@ -3234,10 +3343,53 @@ document.addEventListener('submit', async (event) => {
       toast(r.check.verdict === 'ok' ? 'Key saved, and it works.' : r.check.verdict === 'used-up' ? `Key saved, but it's used up: ${r.check.detail || `HTTP ${r.check.status}`}` : `Key saved. The test said: ${r.check.detail || (r.check.status ? `HTTP ${r.check.status}` : 'no answer')}`);
     } else if (kind === 'add-connector') {
       if (!String(data.name || '').trim()) { sheetError('Give the connector a name, like Linear or Notion.'); return; }
-      const c = await api('POST', '/api/connectors', { name: data.name, url: data.url });
+      submit.innerHTML = `${SPINNER}Checking…`;
+      let c;
+      try {
+        c = await api('POST', '/api/connectors', { name: data.name, url: data.url, token: data.token || undefined });
+      } catch (err) {
+        if (err.data && err.data.needsToken) {
+          const row = $('#f-ctoken-row');
+          if (row) { row.hidden = false; $('#f-ctoken').focus(); }
+          ui.sheet.needsToken = true;
+        }
+        throw err;
+      }
       await closeSheet();
       await refresh();
       await applyConnectors(`Added ${c.name}.`);
+    } else if (kind === 'connectors') {
+      const c0 = catState();
+      if (!c0.picked.length) { sheetError('Tick the connectors to add.'); return; }
+      const missing = c0.list.filter((c) => c0.picked.includes(c.slug) && catNeedsToken(c) && !String(c0.tokens[c.slug] || '').trim());
+      if (missing.length) {
+        sheetError(`${missing[0].name} needs an access token. Paste it under its name.`);
+        const box = document.querySelector(`[data-cat-token="${CSS.escape(missing[0].slug)}"]`);
+        if (box) box.focus();
+        return;
+      }
+      submit.innerHTML = `${SPINNER}Adding…`;
+      const done = [];
+      const failed = [];
+      for (const slug of [...c0.picked]) {
+        const c = c0.list.find((x) => x.slug === slug);
+        try {
+          await api('POST', '/api/connectors', { slug, token: String(c0.tokens[slug] || '').trim() || undefined });
+          done.push(c.name);
+          c0.picked = c0.picked.filter((x) => x !== slug);
+        } catch (err) {
+          failed.push(`${c.name}: ${err.message}`);
+        }
+      }
+      await refresh();
+      if (failed.length) {
+        setSheetContent();
+        filterCatalog();
+        sheetError(`${done.length ? `Added ${done.join(', ')}. ` : ''}Couldn't add ${failed.join(' ')}`);
+      } else {
+        await closeSheet();
+      }
+      if (done.length) await applyConnectors(`Added ${done.length > 3 ? `${done.length} connectors` : done.join(', ')}.`);
     } else if (kind === 'rename') {
       const name = String(data.label || '').trim();
       const id = form.dataset.id;

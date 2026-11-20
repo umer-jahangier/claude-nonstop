@@ -16,6 +16,8 @@ function fill(v) {
     keys: Array.isArray(v.keys) ? v.keys : [],
     // ChatGPT sign-ins, by account id (see openai-auth.js). Claude sign-ins stay in Claude Code's own store.
     accounts: v.accounts && typeof v.accounts === 'object' ? v.accounts : {},
+    // Access tokens for connectors that sign in with one, by connector name in lower case.
+    connectorTokens: v.connectorTokens && typeof v.connectorTokens === 'object' ? v.connectorTokens : {},
     gatewayToken: v.gatewayToken || null,
     uiToken: v.uiToken || null,
   };

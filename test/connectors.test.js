@@ -36,3 +36,27 @@ test('bad connectors are refused without changing the list', async () => {
   assert.equal(r.code, 1);
   assert.deepEqual(config.load().desktopConnectors, []);
 });
+
+test('a token connector: added from the catalog by name, and `connectors headers` prints only the header for the app', async () => {
+  process.env.CLAUDE_NONSTOP_GH_TOKEN = '';
+  try {
+    let r = await runCli(['connectors', 'add', 'github']);
+    assert.equal(r.code, 1);
+    assert.match(r.stderr, /access token.*--token/s);
+    r = await runCli(['connectors', 'add', 'GitHub', '--token', 'github_pat_CLITOKEN0123456789']);
+    assert.equal(r.code, 0, r.stderr);
+    assert.match(r.stdout, /signs in with your token/);
+    r = await runCli(['connectors', 'headers', 'GitHub']);
+    assert.equal(r.code, 0, r.stderr);
+    assert.deepEqual(JSON.parse(r.stdout), { Authorization: 'Bearer github_pat_CLITOKEN0123456789' });
+    r = await runCli(['connectors', 'catalog', 'linear']);
+    assert.match(r.stdout, /Linear/);
+    r = await runCli(['connectors', 'remove', 'github']);
+    assert.equal(r.code, 0, r.stderr);
+    r = await runCli(['connectors', 'headers', 'GitHub']);
+    assert.equal(r.code, 1);
+    assert.equal(r.stdout, '');
+  } finally {
+    delete process.env.CLAUDE_NONSTOP_GH_TOKEN;
+  }
+});

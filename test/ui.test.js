@@ -143,15 +143,59 @@ test('validates timing settings', async () => {
 });
 
 test('adds and removes desktop connectors, and puts them in the app settings', async () => {
-  assert.equal((await apiCall('POST', '/api/connectors', { name: 'Docs', url: 'http://example.com/mcp' })).status, 400);
-  assert.equal((await apiCall('POST', '/api/connectors', { name: 'Docs', url: 'https://example.com/mcp' })).status, 200);
+  assert.equal((await apiCall('POST', '/api/connectors', { name: 'Docs', url: 'http://example.com/mcp', oauth: true })).status, 400);
+  assert.equal((await apiCall('POST', '/api/connectors', { name: 'Docs', url: 'https://example.com/mcp', oauth: true })).status, 200);
   let s = JSON.parse((await apiCall('GET', '/api/state')).body);
-  assert.deepEqual(s.settings.desktopConnectors, [{ name: 'Docs', transport: 'http', url: 'https://example.com/mcp', oauth: true }]);
+  assert.deepEqual(s.settings.desktopConnectors, [{ name: 'Docs', transport: 'http', url: 'https://example.com/mcp', oauth: true, signIn: 'oauth' }]);
   const r = JSON.parse((await apiCall('POST', '/api/desktop')).body);
-  assert.deepEqual(JSON.parse(r.settings.managedMcpServers), s.settings.desktopConnectors);
+  assert.deepEqual(JSON.parse(r.settings.managedMcpServers), [{ name: 'Docs', transport: 'http', url: 'https://example.com/mcp', oauth: true }]);
   assert.equal((await apiCall('DELETE', `/api/connectors/${encodeURIComponent('docs')}`)).status, 200);
   s = JSON.parse((await apiCall('GET', '/api/state')).body);
   assert.deepEqual(s.settings.desktopConnectors, []);
+});
+
+test('the connector catalog adds with one click, and GitHub signs in with a token the app asks claude-nonstop for', async () => {
+  process.env.CLAUDE_NONSTOP_GH_TOKEN = '';
+  try {
+    const cat = JSON.parse((await apiCall('GET', '/api/connectors/catalog')).body);
+    assert.ok(cat.connectors.length > 300);
+    assert.equal(cat.connectors[0].slug, 'github');
+    assert.equal(cat.gh, false);
+    const linear = cat.connectors.find((c) => c.name === 'Linear');
+    assert.equal((await apiCall('POST', '/api/connectors', { slug: linear.slug })).status, 200);
+
+    // No GitHub CLI sign-in and no token: the page is asked for one.
+    let r = await apiCall('POST', '/api/connectors', { slug: 'github' });
+    assert.equal(r.status, 400);
+    assert.equal(JSON.parse(r.body).needsToken, true);
+    r = await apiCall('POST', '/api/connectors', { slug: 'github', token: 'github_pat_TESTTOKEN0123456789' });
+    assert.equal(r.status, 200);
+    const app = JSON.parse(JSON.parse((await apiCall('POST', '/api/desktop')).body).settings.managedMcpServers);
+    const gh = app.find((e) => e.name === 'GitHub');
+    assert.equal(gh.url, 'https://api.githubcopilot.com/mcp/');
+    assert.equal(gh.oauth, undefined, 'GitHub has no app self-registration: no oauth');
+    assert.deepEqual(gh.headersHelperArgs.slice(1), ['connectors', 'headers', 'GitHub']);
+    assert.ok(require('path').isAbsolute(gh.headersHelper));
+    assert.ok(!JSON.stringify(app).includes('TESTTOKEN'), 'the token stays out of the app settings');
+    assert.deepEqual(require('../src/connectorcatalog').headers('github'), { Authorization: 'Bearer github_pat_TESTTOKEN0123456789' });
+    assert.equal(app.find((e) => e.name === 'Linear').oauth, true);
+
+    // With a GitHub CLI sign-in, nothing needs pasting.
+    process.env.CLAUDE_NONSTOP_GH_TOKEN = 'gho_FROMTHEGITHUBCLI0123456';
+    await apiCall('DELETE', '/api/connectors/GitHub');
+    assert.equal((await apiCall('POST', '/api/connectors', { slug: 'github' })).status, 200);
+    assert.deepEqual(require('../src/connectorcatalog').headers('GitHub'), { Authorization: 'Bearer gho_FROMTHEGITHUBCLI0123456' });
+
+    // An entry added before (GitHub as plain OAuth, which can't work) is handed over with a token too.
+    const config = require('../src/config');
+    config.update((c) => (c.desktopConnectors = [{ name: 'Github', transport: 'http', url: 'https://api.githubcopilot.com/mcp/', oauth: true }]));
+    const old = JSON.parse(JSON.parse((await apiCall('POST', '/api/desktop')).body).settings.managedMcpServers)[0];
+    assert.equal(old.oauth, undefined);
+    assert.ok(old.headersHelper);
+    config.update((c) => (c.desktopConnectors = []));
+  } finally {
+    delete process.env.CLAUDE_NONSTOP_GH_TOKEN;
+  }
 });
 
 test('writes the desktop app file with the gateway address and token', async () => {

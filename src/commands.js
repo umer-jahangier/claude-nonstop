@@ -513,42 +513,62 @@ function desktopCommand(args = []) {
 }
 
 // Connectors for the desktop app in third-party mode, where its own Add button is hidden.
-function connectorsCommand(args = []) {
-  ensureHome();
+async function connectorsCommand(args = []) {
   const [sub, ...rest] = args;
-  const list = () => config.load().desktopConnectors || [];
-  if (sub === 'add') {
-    const noAuth = rest.includes('--no-oauth');
-    const [name, url] = rest.filter((a) => a !== '--no-oauth');
-    if (!name || !url) {
-      say('usage: claude-nonstop connectors add <name> <https-url> [--no-oauth]');
-      return 1;
-    }
-    let entry;
+  const cat = require('./connectorcatalog');
+  // Run by the desktop app each time it connects to a connector that signs in with a token:
+  // only the header JSON goes to stdout.
+  if (sub === 'headers') {
     try {
-      entry = desktop.connector(name, url, { oauth: !noAuth });
+      process.stdout.write(`${JSON.stringify(cat.headers(rest.join(' ')))}\n`);
+      return 0;
     } catch (err) {
       say(err.message);
       return 1;
     }
-    config.update((c) => {
-      c.desktopConnectors = [...(c.desktopConnectors || []).filter((e) => e.name.toLowerCase() !== name.toLowerCase()), entry];
-    });
-    out(`Added the connector ${name} (${entry.url}).`);
+  }
+  ensureHome();
+  const list = () => config.load().desktopConnectors || [];
+  if (sub === 'add') {
+    const noAuth = rest.includes('--no-oauth');
+    const oauth = rest.includes('--oauth');
+    const ti = rest.indexOf('--token');
+    const token = ti >= 0 ? rest[ti + 1] : null;
+    const words = rest.filter((a, i) => a !== '--no-oauth' && a !== '--oauth' && i !== ti && !(ti >= 0 && i === ti + 1));
+    const url = words.find((w) => /^https?:\/\//i.test(w));
+    const name = words.filter((w) => w !== url).join(' ');
+    if (!name) {
+      say('usage: claude-nonstop connectors add <catalog name>  |  connectors add <name> <https-url> [--token <token>] [--no-oauth]');
+      return 1;
+    }
+    let entry;
+    try {
+      entry = url ? await cat.add({ name, url, token, noAuth, oauth }) : await cat.add({ slug: name, token });
+    } catch (err) {
+      say(err.code === 'needs-token' ? `${err.message} Add it with --token <token>.` : err.message);
+      return 1;
+    }
+    const how = { oauth: 'you sign in to it in the app', none: 'no sign-in', gh: 'signs in with your GitHub CLI sign-in', token: 'signs in with your token' }[cat.describeAuth(entry, require('./vault').load())] || '';
+    out(`Added the connector ${entry.name} (${entry.url})${how ? `: ${how}` : ''}.`);
   } else if (sub === 'remove') {
     const name = rest.join(' ');
-    if (!list().some((e) => e.name.toLowerCase() === name.toLowerCase())) {
+    if (!cat.remove(name)) {
       say(`there is no connector called ${name || '""'}. \`claude-nonstop connectors\` lists them.`);
       return 1;
     }
-    config.update((c) => {
-      c.desktopConnectors = c.desktopConnectors.filter((e) => e.name.toLowerCase() !== name.toLowerCase());
-    });
     out(`Removed the connector ${name}.`);
+  } else if (sub === 'catalog' || sub === 'search') {
+    const q = rest.join(' ').toLowerCase();
+    const hits = cat.catalog().filter((c) => !q || `${c.name} ${c.author} ${c.description} ${c.categories.join(' ')}`.toLowerCase().includes(q));
+    for (const c of hits.slice(0, q ? 60 : 40)) out(`  ${c.name}${c.auth === 'token' ? '  (access token)' : c.auth === 'none' ? '  (no sign-in)' : ''}  ${c.description}`);
+    out(hits.length ? `${hits.length} connector${hits.length === 1 ? '' : 's'}${hits.length > (q ? 60 : 40) ? ', search to narrow them down' : ''}. Add one with \`claude-nonstop connectors add <name>\`.` : 'No connector matches. Add any server by address: `claude-nonstop connectors add <name> <https-url>`.');
+    return 0;
   } else {
     const all = list();
-    if (!all.length) out('No connectors yet. Add one with `claude-nonstop connectors add <name> <https-url>`.');
-    for (const e of all) out(`  ${e.name}  ${e.url}${e.oauth ? '' : '  (no sign-in)'}`);
+    const v = require('./vault').load();
+    if (!all.length) out('No connectors yet. Browse them with `claude-nonstop connectors catalog [search]`, add one with `claude-nonstop connectors add <name>`.');
+    const label = { oauth: '', none: '  (no sign-in)', gh: '  (GitHub CLI sign-in)', token: '  (access token)', 'token-missing': '  (needs an access token)' };
+    for (const e of all) out(`  ${e.name}  ${e.url}${label[cat.describeAuth(e, v)] || ''}`);
     out('Connectors show in the Claude desktop app when it runs on your API keys. On Claude.ai sign-in, use its own Connectors page.');
     return 0;
   }

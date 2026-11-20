@@ -2,6 +2,12 @@
 
 Every release of claude-nonstop, newest first. Full notes, and the code at each version, are on the [releases page](https://github.com/umer-jahangier/claude-nonstop/releases). The installer and `claude-nonstop update` install the latest release; the npm package is [`@umer-jahangier/claude-nonstop`](https://www.npmjs.com/package/@umer-jahangier/claude-nonstop).
 
+## [1.22.0](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.22.0) · 2026-11-21
+
+- **Browse Connectors…** on the Apps tab (and `claude-nonstop connectors catalog`): search 480 ready-made connectors plus GitHub, tick the ones you want and add them in one go. They show in the desktop app's Connectors, where you sign in to each the first time.
+- GitHub works. It doesn't let apps register their own sign-in, so the app said it needed an OAuth Client ID. It now signs in with your GitHub CLI sign-in, or a token you paste once, which claude-nonstop keeps encrypted and hands to the app only when it connects. A GitHub connector added before is fixed with the next settings update.
+- **Add by Address…** checks how a server signs in and asks for an access token or API key only when it needs one (`connectors add <name> <url> --token <token>` on the command line).
+
 ## [1.21.1](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.21.1) · 2026-11-21
 
 - Bringing cloud sessions here works for an account that's at its usage limit. The import was refused with the limit message, though reading cloud sessions spends none of the account's usage. Chats still skip that account until its limit resets.
