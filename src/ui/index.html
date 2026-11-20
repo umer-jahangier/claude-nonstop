@@ -2523,10 +2523,39 @@ async function pollJob() {
     const ok = ui.jobView.ok;
     if (!(ui.sheet && ui.sheet.kind === 'job')) toast(ok ? 'Signed in. That account is back in the relay.' : "Sign-in didn't finish.", !ok);
     await refreshLogins();
+    // A Claude account that just signed in brings its cloud sessions here by itself.
+    if (ok && ui.job) { const accountId = ui.job.accountId; setTimeout(() => followImport(accountId, true), 1500); }
     if (ok) setTimeout(() => { if (ui.sheet && ui.sheet.kind === 'job' && ui.job && ui.job.id === jobId) closeSheet(); }, 2400);
     return;
   }
   jobTimer = setTimeout(pollJob, 1000);
+}
+
+// Follows an account's cloud-session import: says when it starts and how it ended.
+const importTimers = new Map();
+async function followImport(id, announce) {
+  clearTimeout(importTimers.get(id));
+  const a = S.accounts.find((x) => x.id === id);
+  const name = a ? a.label : 'That account';
+  let v;
+  try {
+    v = await api('GET', `/api/accounts/${id}/import`);
+  } catch {
+    return;
+  }
+  if (v.idle) return;
+  if (announce) toast(`Bringing ${name}'s cloud sessions here. You can keep working; this page says when it's done.`);
+  if (!v.done) {
+    importTimers.set(id, setTimeout(() => followImport(id, false), 2000));
+    return;
+  }
+  if (v.error) return toast(`${name}'s cloud sessions couldn't be read: ${v.error}`, true);
+  const c = v.counts || {};
+  const brought = (c.imported || 0) + (c.updated || 0);
+  const here = (c['already here'] || 0) + (c['up to date'] || 0);
+  const failed = c.failed || 0;
+  const parts = [brought ? `${brought} brought here` : 'nothing new to bring', here ? `${here} already here` : '', failed ? `${failed} couldn't be read` : ''].filter(Boolean);
+  toast(`${name}'s cloud sessions: ${parts.join(', ')}.${brought ? ' Open them with claude --resume, or in the desktop app\'s Code tab.' : ''}`, failed > 0 && !brought);
 }
 
 function startJob(job, accountId) {
@@ -2563,6 +2592,7 @@ function menuItems(type, item) {
   if (type === 'account') {
     items.push({ act: 'check-account', label: 'Check Usage', icon: 'test' });
     items.push({ act: 'login-account', label: 'Sign In Again…', icon: 'signin' });
+    if (item.kind !== 'chatgpt') items.push({ act: 'import-account', label: 'Bring Cloud Sessions Here', icon: 'down' });
   } else {
     items.push({ act: 'test-key', label: 'Test Key', icon: 'test' });
   }
@@ -2921,6 +2951,10 @@ const actions = {
     openSheet('job');
   },
   'job-retry': () => actions['login-account'](ui.job.accountId),
+  'import-account': async (id) => {
+    await api('POST', `/api/accounts/${id}/import`);
+    followImport(id, true);
+  },
   'toggle-account': async (id, el) => {
     const a = S.accounts.find((x) => x.id === id);
     if (el.classList.contains('switch')) el.setAttribute('aria-checked', String(!a.enabled));

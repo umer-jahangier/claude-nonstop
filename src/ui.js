@@ -266,8 +266,12 @@ function startLogin(account, bin) {
     job.ok = code === 0;
     state.forgetAccount(account.id);
     log(`sign-in for "${account.label}" ${job.ok ? 'finished' : `ended with code ${code}`}`);
-    // Find out straight away whether the newly signed-in account has usage left.
-    if (job.ok) checks.account(account, bin);
+    // Find out straight away whether the newly signed-in account has usage left, and bring
+    // its cloud sessions here so nothing it worked on is left behind.
+    if (job.ok) {
+      checks.account(account, bin);
+      if (!accounts.isChatgpt(account)) startImport(account);
+    }
   });
   // A sign-in left open in the browser is abandoned after 15 minutes.
   setTimeout(() => {
@@ -315,6 +319,43 @@ function openBrowser(url) {
   } catch {
     return false;
   }
+}
+
+// ---------------------------------------------------------------- cloud sessions
+
+// One import per account at a time, kept in memory for the page to follow.
+const imports = new Map();
+
+function startImport(account) {
+  const running = imports.get(account.id);
+  if (running && !running.done) return running;
+  const job = { accountId: account.id, done: false, index: 0, total: 0, title: '', counts: {}, error: null, startedAt: Date.now() };
+  imports.set(account.id, job);
+  require('./cloudsessions').importAccount(account, {
+    onProgress: (p) => Object.assign(job, { index: p.index, total: p.total, title: p.title }),
+  }).then((results) => {
+    for (const r of results) job.counts[r.outcome] = (job.counts[r.outcome] || 0) + 1;
+    job.total = results.length;
+    job.failed = results.filter((r) => r.outcome === 'failed').map((r) => ({ title: r.title, why: r.why }));
+  }).catch((err) => {
+    job.error = err.message;
+    log(`imports: ${account.label}: ${err.message}`);
+  }).finally(() => {
+    job.done = true;
+    events.notify('imports', { id: account.id });
+  });
+  return job;
+}
+
+function importView(id) {
+  const job = imports.get(id);
+  return job ? { ...job } : { done: true, idle: true };
+}
+
+function importAccountSessions(id) {
+  const account = findAccount(id);
+  if (accounts.isChatgpt(account)) throw httpError(400, 'Cloud sessions are a Claude feature; a ChatGPT account has none to bring.');
+  return importView(startImport(account).accountId);
 }
 
 function jobView(id) {
@@ -524,6 +565,8 @@ async function route(method, pathname, body, ctx) {
     if (method === 'POST' && !id) return addAccount(body);
     if (method === 'POST' && action === 'login') return loginAccount(id);
     if (method === 'POST' && action === 'check') return checkAccount(id);
+    if (method === 'POST' && action === 'import') return importAccountSessions(id);
+    if (method === 'GET' && action === 'import') return importView(id);
     if (method === 'POST' && action === 'move') return moveLine('account', id, body.direction);
     if (method === 'PATCH' && id) return editAccount(id, body);
     if (method === 'DELETE' && id) return removeAccount(id);

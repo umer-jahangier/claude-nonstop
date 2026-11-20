@@ -336,6 +336,9 @@ async function signIn(account, bin) {
   }
   const check = await accounts.probe(account, bin);
   out(`Signed in to "${account.label}": ${check.ok ? 'it has usage left' : check.reason}`);
+  if (process.stdin.isTTY && (await prompt.confirm(`Bring "${account.label}"'s cloud sessions to this computer, so you can resume them here?`, true))) {
+    await sessionsCommand(['import', account.label]);
+  }
   return 0;
 }
 
@@ -819,6 +822,63 @@ function sshCommand([sub, host] = []) {
   return 0;
 }
 
+// ---------------------------------------------------------------- cloud sessions
+
+// Each Claude account's cloud sessions, and bringing them to this computer (cloudsessions.js).
+async function sessionsCommand([sub, ref] = []) {
+  ensureHome();
+  const cloud = require('./cloudsessions');
+  const all = cloud.importable();
+  const picked = ref ? pickItem(config.load().accounts, ref, 'account') : null;
+  if (picked && accounts.isChatgpt(picked)) {
+    say(`${picked.label} is a ChatGPT account; cloud sessions are a Claude feature.`);
+    return 1;
+  }
+  const chosen = picked ? [picked] : all.filter((a) => a.enabled !== false);
+  if (!sub || sub === 'list') {
+    for (const a of chosen) {
+      try {
+        const list = await cloud.survey(a);
+        const brought = list.filter((s) => s.imported).length;
+        out(`  ${a.label}: ${list.length} cloud session${list.length === 1 ? '' : 's'}${brought ? `, ${brought} brought here` : ''}`);
+        for (const s of list.slice(0, 8)) out(`      ${s.imported ? (s.imported.upToDate ? '✓' : '↻') : '·'} ${s.title}${s.repo ? `  (${s.repo.url})` : ''}`);
+        if (list.length > 8) out(`      … and ${list.length - 8} more`);
+      } catch (err) {
+        out(`  ${a.label}: ${err.message}`);
+      }
+    }
+    out('');
+    out('Bring them here with `claude-nonstop sessions import` (one account: `claude-nonstop sessions import <n>`).');
+    return 0;
+  }
+  if (sub !== 'import') {
+    out('Usage: claude-nonstop sessions [import] [account]');
+    return 1;
+  }
+  let failed = 0;
+  for (const a of chosen) {
+    out(`${a.label}:`);
+    try {
+      const results = await cloud.importAccount(a, { onProgress: (p) => process.stdout.write(`\r  reading ${p.index + 1} of ${p.total}…`.padEnd(40)) });
+      process.stdout.write('\r'.padEnd(42) + '\r');
+      for (const r of results) {
+        if (r.outcome === 'imported' || r.outcome === 'updated') out(`  ${r.outcome === 'updated' ? '↻' : '+'} ${r.title} → ${r.folder}`);
+        else if (r.outcome === 'failed') {
+          failed++;
+          out(`  ! ${r.title}: ${r.why}`);
+        }
+      }
+      const n = (k) => results.filter((r) => r.outcome === k).length;
+      out(`  ${n('imported') + n('updated')} brought here, ${n('already here') + n('up to date')} already here, ${n('empty')} empty${n('failed') ? `, ${n('failed')} failed` : ''}.`);
+    } catch (err) {
+      failed++;
+      out(`  ${err.message}`);
+    }
+  }
+  out('Open them with `claude --resume` in the folder shown, or in the Claude desktop app\'s Code tab.');
+  return failed ? 1 : 0;
+}
+
 module.exports = {
   connect: connectCommand,
   serve,
@@ -832,6 +892,7 @@ module.exports = {
   desktop: desktopCommand,
   connectors: connectorsCommand,
   ssh: sshCommand,
+  sessions: sessionsCommand,
   setup,
   service: serviceCommand,
   shell: shellCommand,

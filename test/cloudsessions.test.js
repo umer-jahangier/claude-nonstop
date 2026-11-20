@@ -1,0 +1,152 @@
+'use strict';
+
+// Bringing an account's Claude Code cloud sessions to this computer, against a stand-in for
+// the sessions API that answers the way Anthropic's does (newest events first, in pages).
+
+const { test, before, after } = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('fs');
+const path = require('path');
+const http = require('http');
+const { spawnSync } = require('child_process');
+const { isolate, signInFakeAccount } = require('./helpers');
+
+const { root } = isolate();
+process.env.CLAUDE_NONSTOP_TRANSCRIPTS_HOME = path.join(root, 'claude');
+process.env.CLAUDE_NONSTOP_IMPORT_DIR = path.join(root, 'imports');
+
+const config = require('../src/config');
+const cloud = require('../src/cloudsessions');
+
+const here = path.join(root, 'existing-project');
+fs.mkdirSync(here, { recursive: true });
+
+// A bare git repository standing in for the session's GitHub repository.
+const bare = path.join(root, 'remote.git');
+spawnSync('git', ['init', '--bare', '-q', '-b', 'main', bare]);
+const work = path.join(root, 'seed');
+spawnSync('git', ['init', '-q', '-b', 'main', work]);
+fs.writeFileSync(path.join(work, 'app.js'), 'console.log(1);\n');
+spawnSync('git', ['-C', work, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-qam', 'x', '--allow-empty']);
+spawnSync('git', ['-C', work, 'add', '.']);
+spawnSync('git', ['-C', work, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-qm', 'app']);
+spawnSync('git', ['-C', work, 'push', '-q', bare, 'main']);
+
+const msg = (seq, type, uuid, content, extra = {}) => ({
+  event_id: `ev-${seq}`,
+  sequence_num: String(seq),
+  event_type: type,
+  created_at: `2026-11-01T00:00:${String(seq).padStart(2, '0')}Z`,
+  payload: { type, uuid, session_id: 'x', parent_tool_use_id: null, message: { role: type, content }, ...extra },
+});
+const init = (seq, cwd) => ({ event_id: `ev-${seq}`, sequence_num: String(seq), event_type: 'system', payload: { type: 'system', subtype: 'init', cwd } });
+
+const sessions = {
+  // Run on another computer, from a git repository, writing one file whole.
+  cse_remote: {
+    meta: { id: 'cse_remote', title: 'ERP build', created_at: '2026-11-01T00:00:00Z', updated_at: 'u1', config: { sources: [{ type: 'git_repository', url: `file://${bare}`, revision: 'main' }] } },
+    events: [
+      init(1, 'D:\\GitHub\\ERP'),
+      msg(2, 'user', 'u-1', 'Build the ERP'),
+      msg(3, 'assistant', 'a-1', [{ type: 'tool_use', id: 't1', name: 'Write', input: { file_path: 'D:\\GitHub\\ERP\\src\\index.js', content: 'export default 1;\n' } }]),
+      { ...msg(4, 'assistant', 'sub-1', 'a subagent step'), payload: { ...msg(4, 'assistant', 'sub-1', 'x').payload, parent_tool_use_id: 't1' } },
+      msg(5, 'user', 'u-2', [{ type: 'tool_result', tool_use_id: 't1', content: 'written' }]),
+      msg(6, 'assistant', 'a-2', [{ type: 'text', text: 'Done.' }]),
+    ],
+  },
+  // Run on this computer, in a folder that still exists, not yet in its transcripts.
+  cse_local: {
+    meta: { id: 'cse_local', title: 'Local work', created_at: '2026-11-01T00:00:00Z', updated_at: 'u1', config: { sources: [] } },
+    events: [init(1, here), msg(2, 'user', 'l-1', 'hello'), msg(3, 'assistant', 'l-2', [{ type: 'text', text: 'hi' }])],
+  },
+  // Already in this computer's own transcripts.
+  cse_known: {
+    meta: { id: 'cse_known', title: 'Known', created_at: '2026-11-01T00:00:00Z', updated_at: 'u1', config: { sources: [] } },
+    events: [init(1, here), msg(2, 'user', 'known-uuid', 'old'), msg(3, 'assistant', 'k-2', [{ type: 'text', text: 'ok' }])],
+  },
+  cse_empty: { meta: { id: 'cse_empty', title: 'Empty', updated_at: 'u1', config: {} }, events: [init(1, here)] },
+};
+
+let server;
+before(async () => {
+  // The known session's transcript, as Claude Code itself wrote it.
+  const dir = path.join(root, 'claude', 'projects', cloud.projectFolderName(here));
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, 'own.jsonl'), `${JSON.stringify({ type: 'user', uuid: 'known-uuid' })}\n`);
+
+  server = http.createServer((req, res) => {
+    const send = (v) => res.writeHead(200, { 'content-type': 'application/json' }).end(JSON.stringify(v));
+    if (req.headers.authorization !== 'Bearer sk-ant-oat-test-ok') return res.writeHead(401).end('{}');
+    const url = new URL(req.url, 'http://x');
+    if (url.pathname === '/api/oauth/profile') return send({ organization: { uuid: 'org-1' } });
+    if (req.headers['x-organization-uuid'] !== 'org-1') return res.writeHead(403).end('{}');
+    if (url.pathname === '/v1/code/sessions') return send({ data: Object.values(sessions).map((s) => s.meta), resume_token: 'r' });
+    const m = /^\/v1\/code\/sessions\/([^/]+)\/events$/.exec(url.pathname);
+    if (m) {
+      // Newest first, two per page.
+      const all = [...sessions[m[1]].events].reverse();
+      const start = Number(url.searchParams.get('cursor') || 0);
+      const page = all.slice(start, start + 2);
+      return send({ data: page, next_cursor: start + 2 < all.length ? String(start + 2) : null });
+    }
+    res.writeHead(404).end('{}');
+  });
+  await new Promise((r) => server.listen(0, '127.0.0.1', r));
+  process.env.CLAUDE_NONSTOP_CLOUD_API = `http://127.0.0.1:${server.address().port}`;
+  const configDir = path.join(root, 'profile');
+  signInFakeAccount(configDir, 'ok');
+  config.update((c) => (c.accounts = [{ id: 'acct-1', label: 'Work', kind: 'profile', configDir, enabled: true }]));
+});
+after(() => server.close());
+
+const account = () => config.load().accounts[0];
+const readLines = (file) => fs.readFileSync(file, 'utf8').trim().split('\n').map((l) => JSON.parse(l));
+
+test("an account's cloud sessions become Claude Code transcripts, code included", async () => {
+  const results = Object.fromEntries((await cloud.importAccount(account())).map((r) => [r.id, r]));
+  assert.equal(results.cse_known.outcome, 'already here');
+  assert.equal(results.cse_empty.outcome, 'empty');
+
+  const remote = results.cse_remote;
+  assert.equal(remote.outcome, 'imported');
+  assert.ok(remote.folder.startsWith(path.join(root, 'imports', 'work')));
+  const lines = readLines(remote.file);
+  const convo = lines.filter((l) => l.type === 'user' || l.type === 'assistant');
+  assert.deepEqual(convo.map((l) => l.uuid), ['u-1', 'a-1', 'u-2', 'a-2'], 'the main thread in order, subagent steps left out');
+  assert.deepEqual(convo.map((l) => l.parentUuid), [null, 'u-1', 'a-1', 'u-2'], 'each message linked to the one before');
+  assert.ok(convo.every((l) => l.sessionId === remote.sessionId && l.cwd === remote.folder));
+  assert.equal(lines.at(-1).customTitle, 'ERP build (from Work)');
+  assert.equal(path.basename(path.dirname(remote.file)), cloud.projectFolderName(remote.folder), 'filed where claude --resume looks for that folder');
+  assert.equal(fs.readFileSync(path.join(remote.folder, 'recovered-files', 'D', 'GitHub', 'ERP', 'src', 'index.js'), 'utf8'), 'export default 1;\n');
+  assert.equal(fs.readFileSync(path.join(remote.folder, 'repo', 'app.js'), 'utf8'), 'console.log(1);\n', 'the repository is cloned');
+  assert.match(fs.readFileSync(path.join(remote.folder, 'SESSION.md'), 'utf8'), /Originally run in: D:\\GitHub\\ERP/);
+
+  const local = results.cse_local;
+  assert.equal(local.folder, here, 'a session whose folder is still here is filed under it');
+  assert.equal(fs.existsSync(path.join(here, 'SESSION.md')), false, 'nothing is added to your own folder');
+});
+
+test('importing again skips what is up to date and refreshes what has grown', async () => {
+  let results = Object.fromEntries((await cloud.importAccount(account())).map((r) => [r.id, r]));
+  assert.equal(results.cse_remote.outcome, 'up to date');
+  const file = results.cse_remote.file;
+
+  sessions.cse_remote.events.push(msg(7, 'user', 'u-3', 'One more thing'));
+  sessions.cse_remote.meta.updated_at = 'u2';
+  results = Object.fromEntries((await cloud.importAccount(account(), { ids: ['cse_remote'] })).map((r) => [r.id, r]));
+  assert.equal(results.cse_remote.outcome, 'updated');
+  assert.equal(results.cse_remote.file, file, 'the same transcript, so resuming keeps its place');
+  assert.equal(readLines(file).filter((l) => l.type === 'user').length, 3);
+});
+
+test('the survey says which sessions are here', async () => {
+  const list = await cloud.survey(account());
+  assert.equal(list.length, 4);
+  assert.deepEqual(list.find((s) => s.id === 'cse_remote').imported.upToDate, true);
+  assert.equal(list.find((s) => s.id === 'cse_known').imported, null);
+});
+
+test('paths from any computer stay inside the import folder', () => {
+  assert.equal(cloud.recoveredPath('C:\\Users\\a\\..\\..\\x.txt'), path.join('C', 'Users', 'a', 'x.txt'));
+  assert.equal(cloud.recoveredPath('/etc/../../passwd'), path.join('etc', 'passwd'));
+});

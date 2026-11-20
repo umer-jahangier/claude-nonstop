@@ -2,6 +2,10 @@
 
 Every release of claude-nonstop, newest first. Full notes, and the code at each version, are on the [releases page](https://github.com/umer-jahangier/claude-nonstop/releases). The installer and `claude-nonstop update` install the latest release; the npm package is [`@umer-jahangier/claude-nonstop`](https://www.npmjs.com/package/@umer-jahangier/claude-nonstop).
 
+## [1.17.0](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.17.0) · 2026-11-20
+
+- Adding or signing in to a Claude account brings its Claude Code cloud sessions to this computer, as sessions `claude --resume` and the desktop app list, with their git repository cloned and the files they wrote rebuilt. Also from an account's menu and `claude-nonstop sessions import`.
+
 ## [1.16.4](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.16.4) · 2026-11-20
 
 - Fixes "SSL certificate verification failed (UNSUPPORTED_CONSTRAINT_TYPE)" in Claude Code and the Claude desktop app after 1.16.3. The local certificate now lists only DNS names: Claude Code runs on Bun, which refuses any certificate that lists an IP address under an authority with IP name constraints. The next `claude-nonstop setup` (run by the update) replaces a 1.16.3 certificate.
