@@ -136,7 +136,12 @@ function transcript(events, { sessionId, cwd, title }) {
     lines.push(line);
     parent = uuid;
   }
-  if (title) lines.push({ type: 'custom-title', customTitle: title, sessionId });
+  // The title goes first as well as last: the Claude desktop app's importer reads it from the
+  // start of the file, `claude --resume` from the end.
+  if (title) {
+    lines.unshift({ type: 'custom-title', customTitle: title, sessionId });
+    lines.push({ type: 'custom-title', customTitle: title, sessionId });
+  }
   return lines;
 }
 
@@ -371,6 +376,29 @@ function trustFolder(folder) {
 const trustNote = (r) => r === 'runs-things'
   ? 'Not marked trusted: this project\'s settings run hooks or MCP servers, so open it with `claude` once and answer the trust question yourself.'
   : null;
+
+// Earlier imports wrote their title only at the end; put it first too.
+function titleFirst() {
+  for (const v of Object.values(readJson(STATE(), {}))) {
+    if (!v.file || !fs.existsSync(v.file)) continue;
+    try {
+      const text = fs.readFileSync(v.file, 'utf8');
+      const first = JSON.parse(text.slice(0, text.indexOf('\n')));
+      if (first.type === 'custom-title') continue;
+      const titles = text.split('\n').filter((l) => l.includes('"custom-title"')).map((l) => {
+        try {
+          return JSON.parse(l);
+        } catch {
+          return null;
+        }
+      }).filter((l) => l && l.type === 'custom-title');
+      const last = titles[titles.length - 1];
+      if (!last) continue;
+      fs.writeFileSync(`${v.file}.tmp`, `${JSON.stringify({ type: 'custom-title', customTitle: last.customTitle, sessionId: last.sessionId })}\n${text}`);
+      fs.renameSync(`${v.file}.tmp`, v.file);
+    } catch {}
+  }
+}
 
 // Trusts every folder earlier imports made (they predate trusting), skipping ones that run things.
 function trustImported() {
@@ -862,6 +890,7 @@ async function shareWithCodex(results) {
 }
 
 const importAny = async (account, options) => {
+  titleFirst();
   trustImported();
   const results = await (accounts.isChatgpt(account) ? importCodexAccount(account, options) : importAccount(account, options));
   try {
@@ -873,4 +902,4 @@ const importAny = async (account, options) => {
   return results;
 };
 
-module.exports = { toCodex, shareWithCodex, openDesktopImport, trustFolder, trustImported, workRoot, repoKey, projectFolder, writeHandoff, survey, importAccount, importCodexAccount, importAny, importable, taskRepo, transcript, writtenFiles, recoveredPath, projectFolderName, originalCwd, STATE, IMPORT_ROOT };
+module.exports = { titleFirst, toCodex, shareWithCodex, openDesktopImport, trustFolder, trustImported, workRoot, repoKey, projectFolder, writeHandoff, survey, importAccount, importCodexAccount, importAny, importable, taskRepo, transcript, writtenFiles, recoveredPath, projectFolderName, originalCwd, STATE, IMPORT_ROOT };

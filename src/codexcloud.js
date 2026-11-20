@@ -191,7 +191,10 @@ function transcript(turns, { sessionId, cwd, title, model = 'codex-cloud' }) {
       }
     }
   }
-  if (title) lines.push({ type: 'custom-title', customTitle: title, sessionId });
+  if (title) {
+    lines.unshift({ type: 'custom-title', customTitle: title, sessionId });
+    lines.push({ type: 'custom-title', customTitle: title, sessionId });
+  }
   return lines;
 }
 
