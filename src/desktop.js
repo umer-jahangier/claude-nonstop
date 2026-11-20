@@ -52,7 +52,7 @@ function settings(cfg, v) {
     // The app re-fetches both by itself.
     allowedPluginMarketplaces: JSON.stringify([OFFICIAL_MARKETPLACE, CONNECTOR_MARKETPLACE]),
     // Connectors added with `claude-nonstop connectors add` show for everyone, always.
-    ...(connectors(cfg).length ? { managedMcpServers: JSON.stringify(connectors(cfg).map(appEntry)) } : {}),
+    ...(connectors(cfg).length ? { managedMcpServers: JSON.stringify(connectors(cfg).map((e) => appEntry(e, cfg))) } : {}),
   };
 }
 
@@ -61,15 +61,17 @@ const CONNECTOR_MARKETPLACE = { source: 'github', repo: 'umer-jahangier/claude-n
 
 const connectors = (cfg) => (Array.isArray(cfg.desktopConnectors) ? cfg.desktopConnectors : []);
 
-// A connector as the app reads it. One that signs in with an access token gets it from
-// claude-nonstop each time the app connects: the app runs `claude-nonstop connectors headers
-// <name>`, which prints the Authorization header, so the token never sits in the app's
-// settings. Servers known to take a token (GitHub's) are handled that way even when they
-// were added as plain OAuth, which they don't support.
-function appEntry(e) {
-  const tokenServer = require('./connectorcatalog').tokenServerFor(e.url);
-  if (e.auth === 'token' || tokenServer) {
-    return { name: e.name, transport: e.transport || 'http', url: e.url, headersHelper: process.execPath, headersHelperArgs: [paths.APP_SCRIPT, 'connectors', 'headers', e.name], headersHelperTtlSec: 300 };
+// A connector as the app reads it. One that signs in with an access token is reached through
+// the gateway (mcpproxy.js), which adds its token and fixes answers the app would reject; the
+// app proves itself with the gateway token, which it gets by running `claude-nonstop
+// connectors headers <name>`, so no token sits in the app's settings. Servers known to take a
+// token (GitHub's) are handled that way even when they were added as plain OAuth, which they
+// don't support.
+function appEntry(e, cfg) {
+  const cat = require('./connectorcatalog');
+  if (cat.isTokenConnector(e)) {
+    const url = cat.viaGateway(e) ? `http://127.0.0.1:${cfg.port}/mcp/${encodeURIComponent(e.name)}` : e.url;
+    return { name: e.name, transport: e.transport || 'http', url, headersHelper: process.execPath, headersHelperArgs: [paths.APP_SCRIPT, 'connectors', 'headers', e.name], headersHelperTtlSec: 300 };
   }
   return { name: e.name, transport: e.transport || 'http', url: e.url, ...(e.oauth ? { oauth: true } : {}) };
 }

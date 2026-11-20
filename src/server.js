@@ -109,7 +109,7 @@ function createServer(ctx, tlsOptions = null) {
       return;
     }
     const url = req.url || '/';
-    if (!secure && ctx.tlsPort && isShortName(req.headers.host) && url !== '/health' && !url.startsWith('/v1/')) {
+    if (!secure && ctx.tlsPort && isShortName(req.headers.host) && url !== '/health' && !url.startsWith('/v1/') && !url.startsWith('/mcp/')) {
       const host = String(req.headers.host).toLowerCase().replace(/:\d+$/, '');
       res.writeHead(308, { location: `https://${host}${ctx.tlsPort === 443 ? '' : `:${ctx.tlsPort}`}${url}` });
       res.end();
@@ -121,7 +121,7 @@ function createServer(ctx, tlsOptions = null) {
       res.end(body);
       return;
     }
-    const handler = url.startsWith('/v1/') ? gateway.handle : ui.handle;
+    const handler = url.startsWith('/v1/') ? gateway.handle : url.startsWith('/mcp/') ? require('./mcpproxy').handle : ui.handle;
     Promise.resolve()
       .then(() => handler(req, res, ctx))
       .catch(fail);

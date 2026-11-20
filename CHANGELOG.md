@@ -2,6 +2,10 @@
 
 Every release of claude-nonstop, newest first. Full notes, and the code at each version, are on the [releases page](https://github.com/umer-jahangier/claude-nonstop/releases). The installer and `claude-nonstop update` install the latest release; the npm package is [`@umer-jahangier/claude-nonstop`](https://www.npmjs.com/package/@umer-jahangier/claude-nonstop).
 
+## [1.22.1](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.22.1) · 2026-11-21
+
+- GitHub's list tools (list_releases, list_tags and others) work in the desktop app. They failed with "Invalid tools/call result … expected record, received array": the app rejects a result whose structured part is a list. Connectors that sign in with a token now reach their server through the gateway, which drops that part (the same data stays in the result's text) and adds the token itself, so the token no longer reaches the app at all.
+
 ## [1.22.0](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.22.0) · 2026-11-21
 
 - **Browse Connectors…** on the Apps tab (and `claude-nonstop connectors catalog`): search 480 ready-made connectors plus GitHub, tick the ones you want and add them in one go. They show in the desktop app's Connectors, where you sign in to each the first time.

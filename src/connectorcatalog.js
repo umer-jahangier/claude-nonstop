@@ -145,13 +145,20 @@ function remove(name) {
   return found;
 }
 
-// What `claude-nonstop connectors headers <name>` prints for the desktop app.
+const isTokenConnector = (entry) => Boolean(entry && (entry.auth === 'token' || tokenServerFor(entry.url)));
+// Streamable-HTTP token connectors go through the gateway (mcpproxy.js); an SSE one, whose
+// stream names its own address to post to, is reached directly.
+const viaGateway = (entry) => isTokenConnector(entry) && (entry.transport || 'http') === 'http';
+
+// What `claude-nonstop connectors headers <name>` prints for the desktop app: the gateway
+// token for a connector reached through the gateway, else the connector's own token.
 function headers(name) {
   const entry = (require('./config').load().desktopConnectors || []).find((e) => sameName(e.name, name));
   if (!entry) throw new Error(`there is no connector called ${name}`);
-  const token = tokenFor(entry, require('./vault').load());
+  const v = require('./vault').loadWithTokens();
+  const token = tokenFor(entry, v);
   if (!token) throw new Error(`${entry.name} has no access token: add it again with one${(entry.tokenFrom || (tokenServerFor(entry.url) || {}).tokenFrom) === 'gh' ? ', or sign in to the GitHub CLI (gh auth login)' : ''}`);
-  return { Authorization: `Bearer ${token}` };
+  return { Authorization: `Bearer ${viaGateway(entry) ? v.gatewayToken : token}` };
 }
 
 // How a saved connector signs in, for listing it.
@@ -163,4 +170,4 @@ function describeAuth(entry, v) {
   return from === 'gh' ? 'gh' : 'token-missing';
 }
 
-module.exports = { catalog, bySlug, tokenServerFor, tokenFor, ghToken, add, remove, headers, describeAuth, TOKEN_SERVERS };
+module.exports = { catalog, bySlug, tokenServerFor, tokenFor, ghToken, add, remove, headers, describeAuth, isTokenConnector, viaGateway, TOKEN_SERVERS };

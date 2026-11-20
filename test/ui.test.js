@@ -154,6 +154,58 @@ test('adds and removes desktop connectors, and puts them in the app settings', a
   assert.deepEqual(s.settings.desktopConnectors, []);
 });
 
+const config0 = () => require('../src/config').load();
+
+test('a token connector goes through the gateway: its token is added, and results the app would reject are fixed', async () => {
+  const http = require('http');
+  const seen = [];
+  const result = { content: [{ type: 'text', text: '[{"name":"v1"}]' }], structuredContent: [{ name: 'v1' }] };
+  const upstream = http.createServer((req, res) => {
+    let body = '';
+    req.on('data', (c) => (body += c));
+    req.on('end', () => {
+      seen.push({ auth: req.headers.authorization, session: req.headers['mcp-session-id'], body });
+      const msg = JSON.parse(body);
+      const answer = JSON.stringify({ jsonrpc: '2.0', id: msg.id, result });
+      if (msg.id === 1) {
+        res.writeHead(200, { 'content-type': 'text/event-stream', 'mcp-session-id': 'sess-1' });
+        res.end(`event: message\ndata: ${answer}\n\n`);
+      } else {
+        res.writeHead(200, { 'content-type': 'application/json' });
+        res.end(answer);
+      }
+    });
+  });
+  await new Promise((r) => upstream.listen(0, '127.0.0.1', r));
+  const config = require('../src/config');
+  config.update((c) => (c.desktopConnectors = [{ name: 'Fake Hub', transport: 'http', url: `http://127.0.0.1:${upstream.address().port}/mcp`, auth: 'token' }]));
+  vault.update((v) => (v.connectorTokens['fake hub'] = 'secret-upstream-token'));
+  try {
+    const url = `${base}/mcp/${encodeURIComponent('Fake Hub')}`;
+    const post = (id, auth, extra = {}) => fetch(url, { method: 'POST', headers: { authorization: auth, 'content-type': 'application/json', accept: 'application/json, text/event-stream', ...extra }, body: JSON.stringify({ jsonrpc: '2.0', id, method: 'tools/call', params: { name: 'list_tags' } }) });
+    assert.equal((await post(1, 'Bearer wrong')).status, 401);
+    const gw = `Bearer ${vault.loadWithTokens().gatewayToken}`;
+    let r = await post(1, gw);
+    assert.equal(r.status, 200);
+    assert.equal(r.headers.get('mcp-session-id'), 'sess-1');
+    const data = (await r.text()).split('\n').find((l) => l.startsWith('data:'));
+    let msg = JSON.parse(data.slice(5));
+    assert.equal(msg.result.structuredContent, undefined, 'an array structuredContent is dropped from a stream');
+    assert.equal(msg.result.content[0].text, '[{"name":"v1"}]');
+    r = await post(2, gw, { 'mcp-session-id': 'sess-1' });
+    msg = await r.json();
+    assert.equal(msg.result.structuredContent, undefined, 'and from a JSON answer');
+    assert.equal(seen[0].auth, 'Bearer secret-upstream-token', 'the connector token is swapped in');
+    assert.equal(seen[1].session, 'sess-1');
+    assert.equal((await fetch(`${base}/mcp/Nope`, { method: 'POST', headers: { authorization: gw } })).status, 404);
+    // An object structuredContent passes untouched.
+    assert.equal(require('../src/mcpproxy').fixJson('{"result":{"structuredContent":{"a":1}}}', 'x'), '{"result":{"structuredContent":{"a":1}}}');
+  } finally {
+    config.update((c) => (c.desktopConnectors = []));
+    upstream.close();
+  }
+});
+
 test('the connector catalog adds with one click, and GitHub signs in with a token the app asks claude-nonstop for', async () => {
   process.env.CLAUDE_NONSTOP_GH_TOKEN = '';
   try {
@@ -172,19 +224,20 @@ test('the connector catalog adds with one click, and GitHub signs in with a toke
     assert.equal(r.status, 200);
     const app = JSON.parse(JSON.parse((await apiCall('POST', '/api/desktop')).body).settings.managedMcpServers);
     const gh = app.find((e) => e.name === 'GitHub');
-    assert.equal(gh.url, 'https://api.githubcopilot.com/mcp/');
+    assert.match(gh.url, /^http:\/\/127\.0\.0\.1:\d+\/mcp\/GitHub$/, 'GitHub is reached through the gateway');
     assert.equal(gh.oauth, undefined, 'GitHub has no app self-registration: no oauth');
     assert.deepEqual(gh.headersHelperArgs.slice(1), ['connectors', 'headers', 'GitHub']);
     assert.ok(require('path').isAbsolute(gh.headersHelper));
     assert.ok(!JSON.stringify(app).includes('TESTTOKEN'), 'the token stays out of the app settings');
-    assert.deepEqual(require('../src/connectorcatalog').headers('github'), { Authorization: 'Bearer github_pat_TESTTOKEN0123456789' });
+    assert.deepEqual(require('../src/connectorcatalog').headers('github'), { Authorization: `Bearer ${vault.loadWithTokens().gatewayToken}` }, 'the app gets the gateway token, not GitHub\'s');
+    assert.equal(require('../src/connectorcatalog').tokenFor(config0().desktopConnectors.find((e) => e.name === 'GitHub'), vault.load()), 'github_pat_TESTTOKEN0123456789');
     assert.equal(app.find((e) => e.name === 'Linear').oauth, true);
 
     // With a GitHub CLI sign-in, nothing needs pasting.
     process.env.CLAUDE_NONSTOP_GH_TOKEN = 'gho_FROMTHEGITHUBCLI0123456';
     await apiCall('DELETE', '/api/connectors/GitHub');
     assert.equal((await apiCall('POST', '/api/connectors', { slug: 'github' })).status, 200);
-    assert.deepEqual(require('../src/connectorcatalog').headers('GitHub'), { Authorization: 'Bearer gho_FROMTHEGITHUBCLI0123456' });
+    assert.equal(require('../src/connectorcatalog').tokenFor(config0().desktopConnectors.find((e) => e.name === 'GitHub'), vault.load()), 'gho_FROMTHEGITHUBCLI0123456');
 
     // An entry added before (GitHub as plain OAuth, which can't work) is handed over with a token too.
     const config = require('../src/config');
