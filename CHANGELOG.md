@@ -2,6 +2,11 @@
 
 Every release of claude-nonstop, newest first. Full notes, and the code at each version, are on the [releases page](https://github.com/umer-jahangier/claude-nonstop/releases). The installer and `claude-nonstop update` install the latest release; the npm package is [`@umer-jahangier/claude-nonstop`](https://www.npmjs.com/package/@umer-jahangier/claude-nonstop).
 
+## [1.18.0](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.18.0) · 2026-11-20
+
+- Sessions and Codex tasks on the same repository, from any account, are merged into one project: one clone, every conversation resumable there, and a handoff note (what each did, what was last asked, where it ended) that new sessions in that folder read automatically. Earlier imports move into their project.
+- **Bring All Cloud Sessions Here** and `claude-nonstop sessions import all` bring every connected account's cloud sessions in one go.
+
 ## [1.17.1](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.17.1) · 2026-11-20
 
 - ChatGPT accounts bring their Codex cloud tasks here too: each task's details and diff, applied to a clone of its repository when the task names one.

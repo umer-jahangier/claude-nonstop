@@ -28,7 +28,7 @@ Accounts and keys:
   claude-nonstop accounts check      check which accounts have usage left
   claude-nonstop accounts remove <n> sign out and remove account n
   claude-nonstop sessions           each account's cloud sessions (Claude) and Codex cloud tasks (ChatGPT)
-  claude-nonstop sessions import [n]   bring them to this computer, so claude --resume finds them
+  claude-nonstop sessions import [n|all]  bring them here, merged by project, so claude --resume finds them
   claude-nonstop connect [codex|cursor]  how to point Codex, Cursor or any OpenAI-compatible tool at the gateway
   claude-nonstop desktop             set the Claude desktop app up to use your keys
   claude-nonstop connectors          list the desktop app's connectors

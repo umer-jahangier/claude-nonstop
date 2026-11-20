@@ -109,7 +109,7 @@ test("an account's cloud sessions become Claude Code transcripts, code included"
 
   const remote = results.cse_remote;
   assert.equal(remote.outcome, 'imported');
-  assert.ok(remote.folder.startsWith(path.join(root, 'imports', 'work')));
+  assert.ok(remote.folder.startsWith(path.join(root, 'imports')), 'a session of a repository goes to that project\'s folder');
   const lines = readLines(remote.file);
   const convo = lines.filter((l) => l.type === 'user' || l.type === 'assistant');
   assert.deepEqual(convo.map((l) => l.uuid), ['u-1', 'a-1', 'u-2', 'a-2'], 'the main thread in order, subagent steps left out');
@@ -117,9 +117,15 @@ test("an account's cloud sessions become Claude Code transcripts, code included"
   assert.ok(convo.every((l) => l.sessionId === remote.sessionId && l.cwd === remote.folder));
   assert.equal(lines.at(-1).customTitle, 'ERP build (from Work)');
   assert.equal(path.basename(path.dirname(remote.file)), cloud.projectFolderName(remote.folder), 'filed where claude --resume looks for that folder');
-  assert.equal(fs.readFileSync(path.join(remote.folder, 'recovered-files', 'D', 'GitHub', 'ERP', 'src', 'index.js'), 'utf8'), 'export default 1;\n');
-  assert.equal(fs.readFileSync(path.join(remote.folder, 'repo', 'app.js'), 'utf8'), 'console.log(1);\n', 'the repository is cloned');
-  assert.match(fs.readFileSync(path.join(remote.folder, 'SESSION.md'), 'utf8'), /Originally run in: D:\\GitHub\\ERP/);
+  const extras = path.join(remote.folder, '.claude-nonstop', 'sessions', 'erp-build-remote');
+  assert.equal(fs.readFileSync(path.join(extras, 'recovered-files', 'D', 'GitHub', 'ERP', 'src', 'index.js'), 'utf8'), 'export default 1;\n');
+  assert.equal(fs.readFileSync(path.join(remote.folder, 'app.js'), 'utf8'), 'console.log(1);\n', 'the repository is cloned as the project folder');
+  const handoff = fs.readFileSync(path.join(remote.folder, '.claude-nonstop', 'HANDOFF.md'), 'utf8');
+  assert.match(handoff, /Claude session: ERP build/);
+  assert.match(handoff, /Build the ERP/);
+  assert.match(handoff, /Done\./);
+  assert.match(fs.readFileSync(path.join(remote.folder, 'CLAUDE.local.md'), 'utf8'), /@\.claude-nonstop\/HANDOFF\.md/, 'new sessions here load the handoff');
+  assert.match(fs.readFileSync(path.join(remote.folder, '.git', 'info', 'exclude'), 'utf8'), /CLAUDE\.local\.md\n\.claude-nonstop\//, 'and none of it is committed');
 
   const local = results.cse_local;
   assert.equal(local.folder, here, 'a session whose folder is still here is filed under it');
@@ -146,12 +152,32 @@ test('the survey says which sessions are here', async () => {
   assert.equal(list.find((s) => s.id === 'cse_known').imported, null);
 });
 
+test('a session with no repository joins the project that worked in the same folder', async () => {
+  sessions.cse_fork = {
+    meta: { id: 'cse_fork', title: 'ERP docs', created_at: '2026-11-02T00:00:00Z', updated_at: 'u1', config: { sources: [] } },
+    events: [
+      msg(1, 'user', 'f-1', 'Write the ERP docs'),
+      msg(2, 'user', 'f-skill', 'Base directory for this skill: C:\\x'),
+      msg(3, 'assistant', 'f-2', [{ type: 'tool_use', id: 't9', name: 'Write', input: { file_path: 'D:\\GitHub\\ERP\\docs\\guide.md', content: '# Guide\n' } }]),
+      msg(4, 'assistant', 'f-3', [{ type: 'text', text: 'Docs written.' }]),
+    ],
+  };
+  const [r] = await cloud.importAccount(account(), { ids: ['cse_fork'] });
+  const remote = JSON.parse(fs.readFileSync(cloud.STATE(), 'utf8')).cse_remote;
+  assert.equal(r.folder, remote.folder, 'filed with the ERP project, where it worked');
+  const handoff = fs.readFileSync(path.join(r.folder, '.claude-nonstop', 'HANDOFF.md'), 'utf8');
+  assert.match(handoff, /Claude session: ERP docs[\s\S]*Write the ERP docs[\s\S]*Docs written\./);
+  assert.doesNotMatch(handoff, /Base directory for this skill/, 'text Claude Code injected is not shown as something you asked');
+  assert.equal((await cloud.importAccount(account(), { ids: ['cse_fork'] }))[0].outcome, 'up to date');
+  delete sessions.cse_fork;
+});
+
 test('paths from any computer stay inside the import folder', () => {
   assert.equal(cloud.recoveredPath('C:\\Users\\a\\..\\..\\x.txt'), path.join('C', 'Users', 'a', 'x.txt'));
   assert.equal(cloud.recoveredPath('/etc/../../passwd'), path.join('etc', 'passwd'));
 });
 
-test("a ChatGPT account's Codex cloud tasks are saved with their diff, applied to a clone of the repository", async () => {
+test("a ChatGPT account's Codex task on the same repository joins that project, merged into its handoff", async () => {
   const { signInFakeChatgpt } = require('./helpers');
   const bin = path.join(root, 'fakebin');
   fs.mkdirSync(bin, { recursive: true });
@@ -175,9 +201,16 @@ esac
   const results = Object.fromEntries((await cloud.importAny(gpt)).map((r) => [r.id, r]));
   const withRepo = results.task_e_1;
   assert.equal(withRepo.outcome, 'imported');
-  assert.equal(fs.readFileSync(path.join(withRepo.folder, 'changes.diff'), 'utf8'), diff);
-  assert.equal(fs.readFileSync(path.join(withRepo.folder, 'repo', 'app.js'), 'utf8'), 'console.log(2);\n', 'the task\'s changes are applied to the clone');
-  assert.match(fs.readFileSync(path.join(withRepo.folder, 'TASK.md'), 'utf8'), /Change the log/);
+  const claudeSession = JSON.parse(fs.readFileSync(cloud.STATE(), 'utf8')).cse_remote;
+  assert.equal(withRepo.folder, claudeSession.folder, 'the Claude session and the Codex task share one project folder');
+  const taskDir = path.join(withRepo.folder, '.claude-nonstop', 'codex', 'change-the-log-sk-e-1');
+  assert.equal(fs.readFileSync(path.join(taskDir, 'changes.diff'), 'utf8'), diff);
+  assert.equal(fs.readFileSync(path.join(withRepo.folder, 'app.js'), 'utf8'), 'console.log(2);\n', 'the task\'s changes are applied to the clean working tree');
+  assert.match(fs.readFileSync(path.join(taskDir, 'TASK.md'), 'utf8'), /Change the log/);
+  const handoff = fs.readFileSync(path.join(withRepo.folder, '.claude-nonstop', 'HANDOFF.md'), 'utf8');
+  assert.match(handoff, /3 cloud sessions on Work, GPT/);
+  assert.match(handoff, /Codex task: Change the log[\s\S]*app\.js/);
+  assert.match(handoff, /Claude session: ERP build/);
   assert.equal(results.task_e_2.outcome, 'imported');
   assert.equal(fs.existsSync(path.join(results.task_e_2.folder, 'changes.diff')), true);
   assert.equal(fs.readdirSync(require('os').tmpdir()).some((n) => n.startsWith('claude-nonstop-codex-') && fs.existsSync(path.join(require('os').tmpdir(), n, 'auth.json'))), false, 'the throwaway sign-in is removed');

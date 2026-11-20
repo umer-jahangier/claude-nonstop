@@ -357,6 +357,13 @@ function importAccountSessions(id) {
   return importView(startImport(account).accountId);
 }
 
+// Brings every switched-on account's cloud sessions (and Codex tasks) here at once.
+function importAllSessions() {
+  const list = require('./cloudsessions').importable().filter((a) => a.enabled !== false);
+  for (const a of list) startImport(a);
+  return { accounts: list.map((a) => a.id) };
+}
+
 function jobView(id) {
   const job = jobs.get(id);
   if (!job) throw httpError(404, 'That sign-in is no longer running.');
@@ -570,6 +577,7 @@ async function route(method, pathname, body, ctx) {
     if (method === 'PATCH' && id) return editAccount(id, body);
     if (method === 'DELETE' && id) return removeAccount(id);
   }
+  if (area === 'imports' && method === 'POST' && !id) return importAllSessions();
   if (area === 'jobs' && id) {
     if (method === 'GET') return jobView(id);
     if (method === 'POST' && action === 'input') return jobInput(id, body.text);

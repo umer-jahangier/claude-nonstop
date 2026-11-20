@@ -178,9 +178,20 @@ function cloneRepo(source, dir) {
     return r.status === 0 ? { ok: true } : { ok: false, why: (r.stderr || '').trim().split('\n').pop() };
   }
   fs.mkdirSync(path.dirname(dir), { recursive: true });
-  const args = ['clone', '--quiet', ...(source.revision ? ['--branch', source.revision] : []), source.url, dir];
+  // A project folder can already hold imported notes; clone beside it and move the clone in.
+  const occupied = fs.existsSync(dir) && fs.readdirSync(dir).length > 0;
+  const target = occupied ? `${dir}.clone-${process.pid}` : dir;
+  const args = ['clone', '--quiet', ...(source.revision ? ['--branch', source.revision] : []), source.url, target];
   const r = spawnSync('git', args, { encoding: 'utf8', env: { ...process.env, GIT_TERMINAL_PROMPT: '0' }, timeout: 600000 });
-  return r.status === 0 ? { ok: true } : { ok: false, why: (r.stderr || '').trim().split('\n').pop() || `git exited with ${r.status}` };
+  if (r.status !== 0) {
+    if (occupied) fs.rmSync(target, { recursive: true, force: true });
+    return { ok: false, why: (r.stderr || '').trim().split('\n').pop() || `git exited with ${r.status}` };
+  }
+  if (occupied) {
+    for (const name of fs.readdirSync(target)) if (!fs.existsSync(path.join(dir, name))) fs.renameSync(path.join(target, name), path.join(dir, name));
+    fs.rmSync(target, { recursive: true, force: true });
+  }
+  return { ok: true };
 }
 
 // ---------------------------------------------------------------- public
@@ -204,7 +215,9 @@ async function survey(account) {
 // Imports one account's sessions (all, or those with `ids`). Reports per session.
 async function importAccount(account, { ids = null, onProgress = () => {} } = {}) {
   const cloud = await connect(account);
-  const sessions = (await listSessions(cloud)).filter((s) => !ids || ids.includes(s.id));
+  // Sessions that name their repository first, so the ones that don't can join its project.
+  const hasRepo = (s) => (((s.config && s.config.sources) || []).some((x) => x && x.type === 'git_repository') ? 0 : 1);
+  const sessions = (await listSessions(cloud)).filter((s) => !ids || ids.includes(s.id)).sort((a, b) => hasRepo(a) - hasRepo(b));
   const results = [];
   for (const [i, s] of sessions.entries()) {
     onProgress({ index: i, total: sessions.length, title: s.title });
@@ -221,7 +234,13 @@ async function importAccount(account, { ids = null, onProgress = () => {} } = {}
 async function importOne(cloud, account, s) {
   const state = readJson(STATE(), {});
   const before = state[s.id];
-  if (before && before.updatedAt === s.updated_at && fs.existsSync(before.file)) return { id: s.id, title: s.title, outcome: 'up to date', file: before.file, folder: before.folder };
+  const sharedRepo = ((s.config && s.config.sources) || []).find((x) => x && x.type === 'git_repository' && x.url);
+  // Up to date only if it's also where it belongs now: an import from before projects were
+  // merged (no recorded work folder), or one whose project has since been found, comes again.
+  if (before && before.updatedAt === s.updated_at && fs.existsSync(before.file) && 'root' in before) {
+    const want = before.local ? before.folder : targetFolder({ repo: sharedRepo, root: before.root, account, s, before });
+    if (path.resolve(want) === path.resolve(before.folder)) return { id: s.id, title: s.title, outcome: 'up to date', file: before.file, folder: before.folder };
+  }
   const events = await sessionEvents(cloud, s.id);
   const original = originalCwd(events);
   if (!before && alreadyLocal(original, events)) return { id: s.id, title: s.title, outcome: 'already here', folder: original };
@@ -230,37 +249,48 @@ async function importOne(cloud, account, s) {
 
   const title = s.title || s.id;
   const repo = ((s.config && s.config.sources) || []).find((x) => x && x.type === 'git_repository' && x.url);
-  const local = original && fs.existsSync(original) && fs.statSync(original).isDirectory();
-  const folder = local ? original : path.join(IMPORT_ROOT(), slug(account.label), `${slug(title)}-${s.id.slice(-6).toLowerCase()}`);
+  const local = !!(original && fs.existsSync(original) && fs.statSync(original).isDirectory());
+  // Sessions of the same project, from any account, share one folder (and one clone), so
+  // `claude --resume` there lists them all and the handoff note covers them all.
+  const root = workRoot(events, original);
+  const folder = local ? original : targetFolder({ repo, root, account, s, before });
+  const grouped = !local && !!(repo || root);
   fs.mkdirSync(folder, { recursive: true });
 
   const notes = [];
   if (!local) {
+    const extras = grouped ? path.join(folder, '.claude-nonstop', 'sessions', `${slug(title)}-${slug(s.id.slice(-6))}`) : folder;
     if (repo) {
-      const r = cloneRepo(repo, path.join(folder, 'repo'));
-      notes.push(r.ok ? `Repository ${repo.url} cloned into repo/ at ${repo.revision || 'its default branch'}.` : `Repository ${repo.url} couldn't be cloned (${r.why}); clone it into repo/ yourself.`);
+      const r = cloneRepo(repo, folder);
+      notes.push(r.ok ? `Repository ${repo.url} is cloned here${repo.revision ? `; this session worked on branch ${repo.revision}` : ''}.` : `Repository ${repo.url} couldn't be cloned (${r.why}); clone it here yourself.`);
     }
     const files = writtenFiles(events);
     for (const [orig, content] of files) {
-      const dest = path.join(folder, 'recovered-files', recoveredPath(orig));
+      const dest = path.join(extras, 'recovered-files', recoveredPath(orig));
       fs.mkdirSync(path.dirname(dest), { recursive: true });
       fs.writeFileSync(dest, content);
     }
-    if (files.size) notes.push(`${files.size} file(s) the session wrote whole are rebuilt in recovered-files/, at their last written version. Edits made with other tools aren't applied.`);
-    fs.writeFileSync(path.join(folder, 'SESSION.md'), [
-      `# ${title}`,
-      '',
-      `Imported by claude-nonstop from ${account.label}'s cloud session ${s.id}.`,
-      `Originally run in: ${original || 'unknown folder'}`,
-      `Started ${s.created_at}, last active ${s.last_event_at || s.updated_at}.`,
-      '',
-      ...notes.map((n) => `- ${n}`),
-      '',
-      'Resume the conversation here with `claude --resume`.',
-      '',
-    ].join('\n'));
+    if (files.size) notes.push(`${files.size} file(s) the session wrote whole are rebuilt in ${path.relative(folder, path.join(extras, 'recovered-files')) || 'recovered-files'}/, at their last written version.`);
+    if (root) notes.push(`It worked in ${root} on the computer it ran on.`);
+    if (!grouped) {
+      fs.writeFileSync(path.join(folder, 'SESSION.md'), [
+        `# ${title}`,
+        '',
+        `Imported by claude-nonstop from ${account.label}'s cloud session ${s.id}.`,
+        `Originally run in: ${original || 'unknown folder'}`,
+        `Started ${s.created_at}, last active ${s.last_event_at || s.updated_at}.`,
+        '',
+        ...notes.map((n) => `- ${n}`),
+        '',
+        'Resume the conversation here with `claude --resume`.',
+        '',
+      ].join('\n'));
+    }
   }
 
+  // An earlier import into a different folder (the layout before projects were shared)
+  // moves here; the old folder and anything in it are left alone.
+  if (before && before.file && path.resolve(before.folder) !== path.resolve(folder)) fs.rmSync(before.file, { force: true });
   const sessionId = before ? before.sessionId : crypto.randomUUID();
   const dir = path.join(projectsDir(), projectFolderName(folder));
   fs.mkdirSync(dir, { recursive: true });
@@ -270,10 +300,151 @@ async function importOne(cloud, account, s) {
   fs.renameSync(`${file}.tmp`, file);
 
   const next = readJson(STATE(), {});
-  next[s.id] = { account: account.id, sessionId, file, folder, updatedAt: s.updated_at, at: new Date().toISOString() };
+  next[s.id] = {
+    account: account.id, sessionId, file, folder, updatedAt: s.updated_at, at: new Date().toISOString(),
+    kind: 'claude', local, root, rootKey: root ? rootKey(root) : null, title, accountLabel: account.label, branch: repo && repo.revision, repo: repo && repo.url,
+    lastActive: s.last_event_at || s.updated_at, ...recap(events), notes,
+  };
   writeJson(STATE(), next);
+  if (grouped) writeHandoff(folder);
+  if (before && before.folder && path.resolve(before.folder) !== path.resolve(folder)) writeHandoff(before.folder);
   return { id: s.id, title, outcome: before ? 'updated' : 'imported', file, folder, sessionId, messages: lines.length - 1, notes };
 }
+
+// ---------------------------------------------------------------- shared projects and handoff
+
+// host/owner/name for a repository URL, however it was written.
+function repoKey(url) {
+  const u = String(url).trim().replace(/\.git$/, '').replace(/\/+$/, '');
+  const m = u.match(/^(?:[a-z]+:\/\/)?(?:[^@/]+@)?([^/:]+)[/:](.+)$/i);
+  return (m ? `${m[1]}/${m[2]}` : u).toLowerCase();
+}
+
+function projectFolder(url) {
+  const parts = repoKey(url).split('/').filter(Boolean);
+  const name = parts.length >= 3 ? `${parts[parts.length - 2]}-${parts[parts.length - 1]}` : parts[parts.length - 1];
+  return path.join(IMPORT_ROOT(), slug(name));
+}
+
+const textOf = (message) => {
+  const c = message && message.content;
+  if (typeof c === 'string') return c;
+  return Array.isArray(c) ? c.filter((b) => b && b.type === 'text' && typeof b.text === 'string').map((b) => b.text).join('\n') : '';
+};
+const clip = (t, n) => (t.length > n ? `${t.slice(0, n).trimEnd()}…` : t);
+
+// What the session was last asked and where it ended, for the handoff note.
+function recap(events) {
+  const asks = [];
+  let ended = '';
+  for (const e of events) {
+    const p = e.payload || {};
+    if (p.parent_tool_use_id || !p.message) continue;
+    const t = textOf(p.message).trim();
+    if (!t) continue;
+    if (e.event_type === 'user' && !p.isMeta && !t.startsWith('<') && !/^(Base directory for this skill|Caveat: |This session is being continued)/.test(t)) asks.push(clip(t, 500));
+    if (e.event_type === 'assistant') ended = clip(t, 2000);
+  }
+  return { firstAsk: asks[0] || '', lastAsks: asks.slice(-3), ended };
+}
+
+// Where a session belongs: its repository's project; else the project that worked in the
+// same folder on the computer it ran on, or a project named after that folder; else its own.
+function targetFolder({ repo, root, account, s, before }) {
+  if (repo) return projectFolder(repo.url);
+  if (root) {
+    const key = rootKey(root);
+    const base = key.split('/').pop();
+    const known = Object.values(readJson(STATE(), {})).filter((v) => v.repo);
+    const match = known.find((v) => v.rootKey === key) || known.find((v) => repoKey(v.repo).split('/').pop() === base);
+    return match ? projectFolder(match.repo) : path.join(IMPORT_ROOT(), slug(root.split(/[\\/]+/).filter(Boolean).pop()));
+  }
+  if (before && before.folder && !before.local) return before.folder;
+  return path.join(IMPORT_ROOT(), slug(account.label), `${slug(s.title || s.id)}-${slug(s.id.slice(-6))}`);
+}
+
+const rootKey = (root) => String(root).replace(/\\/g, '/').replace(/^([A-Za-z]):/, '$1').replace(/\/+$/, '').toLowerCase();
+const BROAD = new Set(['documents', 'desktop', 'downloads', 'onedrive', 'source', 'repos', 'projects', 'code', 'dev', 'src', 'work']);
+const NOT_WORK = /[\\/](appdata|\.claude|\.codex|\.config|tmp|temp|var[\\/]folders|library)[\\/]/i;
+
+// The folder the session worked in on the computer it ran on: its recorded starting folder,
+// unless that's just a home folder, else the folder most of its file edits were under.
+function workRoot(events, original) {
+  const specific = (p) => {
+    const parts = String(p).split(/[\\/]+/).filter(Boolean);
+    const drive = /^[A-Za-z]:?$/.test(parts[0]) ? 1 : 0;
+    // Past a home folder (or, outside one, past the first folder that holds projects).
+    let i = /^(users|home)$/i.test(parts[drive] || '') ? drive + 2 : drive + 1;
+    while (parts[i] && BROAD.has(parts[i].toLowerCase())) i++;
+    return parts.length > i ? { parts, depth: i + 1 } : null;
+  };
+  if (original && specific(original) && !NOT_WORK.test(`${original}/`)) return String(original).replace(/[\\/]+$/, '');
+  const counts = new Map();
+  for (const e of events) {
+    const p = e.payload || {};
+    if (e.event_type !== 'assistant' || !p.message || !Array.isArray(p.message.content)) continue;
+    for (const b of p.message.content) {
+      const f = b && b.type === 'tool_use' && b.input && (b.input.file_path || b.input.notebook_path);
+      if (typeof f !== 'string' || NOT_WORK.test(f)) continue;
+      const sp = specific(f);
+      if (!sp || sp.parts.length <= sp.depth) continue;
+      const sep = f.includes('\\') ? '\\' : '/';
+      const lead = /^[A-Za-z]:/.test(f) ? `${sp.parts[0]}${sp.parts[0].endsWith(':') ? '' : ':'}` : '';
+      const head = /^[A-Za-z]:/.test(f) ? [lead, ...sp.parts.slice(1, sp.depth)] : sp.parts.slice(0, sp.depth);
+      const r = (f.startsWith('/') ? '/' : '') + head.join(sep);
+      counts.set(r, (counts.get(r) || 0) + 1);
+    }
+  }
+  const best = [...counts.entries()].sort((a, b) => b[1] - a[1])[0];
+  return best ? best[0] : null;
+}
+
+// .claude-nonstop/HANDOFF.md: every imported session and Codex task of this project, newest
+// first, loaded into new Claude Code sessions here through CLAUDE.local.md. Neither file is
+// committed: both go in the clone's .git/info/exclude.
+function writeHandoff(folder) {
+  const all = Object.entries(readJson(STATE(), {})).map(([id, v]) => ({ id, ...v })).filter((v) => v.folder && path.resolve(v.folder) === path.resolve(folder));
+  if (!all.length) {
+    fs.rmSync(path.join(folder, '.claude-nonstop', 'HANDOFF.md'), { force: true });
+    return;
+  }
+  all.sort((a, b) => String(b.lastActive || b.updatedAt || '').localeCompare(String(a.lastActive || a.updatedAt || '')));
+  const accountsUsed = [...new Set(all.map((v) => v.accountLabel).filter(Boolean))];
+  const out = [
+    '# Handoff: earlier work on this project',
+    '',
+    `This project was worked on in ${all.length} cloud session${all.length === 1 ? '' : 's'}${accountsUsed.length ? ` on ${accountsUsed.join(', ')}` : ''} before it was brought to this computer by claude-nonstop. Read this before continuing, so nothing done there is redone or lost. Newest first.`,
+    '',
+    'Each Claude session\'s full conversation can be reopened with `claude --resume` in this folder.',
+    '',
+  ];
+  for (const v of all) {
+    out.push(`## ${v.kind === 'codex' ? 'Codex task' : 'Claude session'}: ${v.title || v.id}`, '');
+    out.push(`- Account: ${v.accountLabel || 'unknown'}; last active ${v.lastActive || v.updatedAt || 'unknown'}${v.branch ? `; branch \`${v.branch}\`` : ''}`);
+    for (const n of v.notes || []) out.push(`- ${n}`);
+    if (v.firstAsk) out.push('', '**Started with:**', '', quote(v.firstAsk));
+    const later = (v.lastAsks || []).filter((a) => a !== v.firstAsk);
+    if (later.length) out.push('', '**Last asked:**', '', ...later.map(quote));
+    if (v.ended) out.push('', '**Where it ended:**', '', quote(v.ended));
+    out.push('');
+  }
+  const hand = path.join(folder, '.claude-nonstop', 'HANDOFF.md');
+  fs.mkdirSync(path.dirname(hand), { recursive: true });
+  fs.writeFileSync(hand, out.join('\n'));
+  const local = path.join(folder, 'CLAUDE.local.md');
+  const line = '@.claude-nonstop/HANDOFF.md';
+  const existing = fs.existsSync(local) ? fs.readFileSync(local, 'utf8') : '';
+  if (!existing.includes(line)) fs.writeFileSync(local, `${existing}${existing && !existing.endsWith('\n') ? '\n' : ''}${line}\n`);
+  const exclude = path.join(folder, '.git', 'info', 'exclude');
+  if (fs.existsSync(path.join(folder, '.git'))) {
+    fs.mkdirSync(path.dirname(exclude), { recursive: true });
+    const ex = fs.existsSync(exclude) ? fs.readFileSync(exclude, 'utf8') : '';
+    const add = ['CLAUDE.local.md', '.claude-nonstop/'].filter((x) => !ex.split('\n').includes(x));
+    if (add.length) fs.appendFileSync(exclude, `${ex && !ex.endsWith('\n') ? '\n' : ''}${add.join('\n')}\n`);
+  }
+}
+const diffFiles = (diff) => [...new Set([...diff.matchAll(/^\+\+\+ b\/(.+)$/gm)].map((m) => m[1]))].slice(0, 50);
+const quote = (t) => t.split('\n').map((l) => `> ${l}`).join('\n');
 
 // ---------------------------------------------------------------- Codex cloud tasks
 
@@ -356,29 +527,37 @@ async function importCodexAccount(account, { ids = null, onProgress = () => {} }
         const updated = String(pick(t, ['updated_at', 'updatedAt', 'created_at']) || '');
         const state = readJson(STATE(), {});
         const before = state[`codex:${id}`];
-        if (before && before.updatedAt === updated && fs.existsSync(before.folder)) {
+        const taskRepoUrl = taskRepo(t);
+        const moved = before && taskRepoUrl && path.resolve(before.folder) !== path.resolve(projectFolder(taskRepoUrl));
+        if (before && !moved && before.updatedAt === updated && fs.existsSync(before.folder)) {
           results.push({ id, title, outcome: 'up to date', folder: before.folder });
           continue;
         }
-        const folder = before ? before.folder : path.join(IMPORT_ROOT(), slug(account.label), `codex-${slug(title)}-${id.slice(-6).toLowerCase()}`);
-        fs.mkdirSync(folder, { recursive: true });
+        const repo = taskRepoUrl;
+        const folder = repo ? projectFolder(repo) : before ? before.folder : path.join(IMPORT_ROOT(), slug(account.label), `codex-${slug(title)}-${slug(id.slice(-6))}`);
+        const taskDir = repo ? path.join(folder, '.claude-nonstop', 'codex', `${slug(title)}-${slug(id.slice(-6))}`) : folder;
+        fs.mkdirSync(taskDir, { recursive: true });
         let diff = '';
         try {
           diff = codexCloud(bin, home, ['diff', id]);
         } catch (err) {
           diff = '';
         }
-        if (diff.trim()) fs.writeFileSync(path.join(folder, 'changes.diff'), diff);
+        const diffFile = path.join(taskDir, 'changes.diff');
+        if (diff.trim()) fs.writeFileSync(diffFile, diff);
         const notes = [];
-        const repo = taskRepo(t);
-        if (repo && diff.trim()) {
-          const r = cloneRepo({ url: repo }, path.join(folder, 'repo'));
-          if (r.ok) {
-            const applied = spawnSync('git', ['-C', path.join(folder, 'repo'), 'apply', '--3way', path.join(folder, 'changes.diff')], { encoding: 'utf8' });
-            notes.push(applied.status === 0 ? `The task's changes are applied to a clone of ${repo} in repo/ (not committed).` : `Cloned ${repo} into repo/, but its changes didn't apply cleanly (${(applied.stderr || '').trim().split('\n').pop()}); they're in changes.diff.`);
-          } else notes.push(`${repo} couldn't be cloned (${r.why}); the changes are in changes.diff.`);
+        const rel = path.relative(folder, diffFile);
+        if (repo) {
+          const r = cloneRepo({ url: repo }, folder);
+          if (!r.ok) notes.push(`${repo} couldn't be cloned (${r.why}); the task's changes are in ${rel}.`);
+          else if (diff.trim()) {
+            // Applied only to a clean working tree, so no other session's changes are mixed in.
+            const dirty = spawnSync('git', ['-C', folder, 'status', '--porcelain', '--untracked-files=no'], { encoding: 'utf8' }).stdout.trim();
+            const applied = dirty ? null : spawnSync('git', ['-C', folder, 'apply', '--3way', diffFile], { encoding: 'utf8' });
+            notes.push(applied && applied.status === 0 ? `This task's changes are applied to the working tree here (not committed); they're also in ${rel}.` : `This task's changes are in ${rel}${applied ? `; they didn't apply cleanly (${(applied.stderr || '').trim().split('\n').pop()})` : ' (not applied: the working tree already had changes)'}. Apply with \`git apply --3way ${rel}\`.`);
+          }
         } else if (diff.trim()) notes.push('The changes are in changes.diff; apply them in your copy of the repository with `git apply changes.diff`.');
-        fs.writeFileSync(path.join(folder, 'TASK.md'), [
+        fs.writeFileSync(path.join(taskDir, 'TASK.md'), [
           `# ${title}`,
           '',
           `Imported by claude-nonstop from ${account.label}'s Codex cloud task ${id}.`,
@@ -394,9 +573,15 @@ async function importCodexAccount(account, { ids = null, onProgress = () => {} }
           '```',
           '',
         ].join('\n'));
+        const prompt = pick(t, ['prompt', 'input', 'task.prompt']);
         const next = readJson(STATE(), {});
-        next[`codex:${id}`] = { account: account.id, folder, updatedAt: updated, at: new Date().toISOString() };
+        next[`codex:${id}`] = {
+          account: account.id, folder, updatedAt: updated, at: new Date().toISOString(),
+          kind: 'codex', title, accountLabel: account.label, repo, lastActive: updated,
+          firstAsk: typeof prompt === 'string' ? clip(prompt, 600) : title, lastAsks: [], ended: diff.trim() ? `Changed files:\n${diffFiles(diff).join('\n')}` : '', notes,
+        };
         writeJson(STATE(), next);
+        if (repo) writeHandoff(folder);
         results.push({ id, title, outcome: before ? 'updated' : 'imported', folder, notes });
       } catch (err) {
         results.push({ id, title, outcome: 'failed', why: err.message });
@@ -416,4 +601,4 @@ const importable = (cfg = config.load()) => cfg.accounts.slice();
 // Imports any account: a Claude account's sessions or a ChatGPT account's Codex tasks.
 const importAny = (account, options) => (accounts.isChatgpt(account) ? importCodexAccount(account, options) : importAccount(account, options));
 
-module.exports = { survey, importAccount, importCodexAccount, importAny, importable, taskRepo, transcript, writtenFiles, recoveredPath, projectFolderName, originalCwd, STATE, IMPORT_ROOT };
+module.exports = { workRoot, repoKey, projectFolder, writeHandoff, survey, importAccount, importCodexAccount, importAny, importable, taskRepo, transcript, writtenFiles, recoveredPath, projectFolderName, originalCwd, STATE, IMPORT_ROOT };

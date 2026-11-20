@@ -1199,7 +1199,8 @@ function renderLists(rel) {
   const liveId = rel.live ? lineKey(rel.live) : null;
   // Not while a line is being dragged: the rows under the pointer would be replaced.
   if (drag) return;
-  $('#lines').innerHTML = orderedLines().map((l) => rowHtml(l.type, l.item, liveId)).join('') + addRowHtml('account') + addRowHtml('key');
+  $('#lines').innerHTML = orderedLines().map((l) => rowHtml(l.type, l.item, liveId)).join('') + addRowHtml('account') + addRowHtml('key')
+    + (S.accounts.length ? `<li class="row add"><button class="add-btn" type="button" data-act="import-all" data-fk="import-all"><span class="tile">${icon('down')}</span>Bring All Cloud Sessions Here…</button></li>` : '');
   const checkAll = $('#check-all');
   checkAll.hidden = S.keys.length < 2;
   checkAll.disabled = busy.has('all-keys');
@@ -2951,6 +2952,12 @@ const actions = {
     openSheet('job');
   },
   'job-retry': () => actions['login-account'](ui.job.accountId),
+  'import-all': async () => {
+    const r = await api('POST', '/api/imports');
+    if (!r.accounts.length) return toast('No switched-on accounts to bring sessions from.', true);
+    toast(`Bringing cloud sessions from ${r.accounts.length} account${r.accounts.length === 1 ? '' : 's'} here. You can keep working; each one reports when it's done.`);
+    for (const id of r.accounts) followImport(id, false);
+  },
   'import-account': async (id) => {
     await api('POST', `/api/accounts/${id}/import`);
     followImport(id, true);

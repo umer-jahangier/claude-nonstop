@@ -829,7 +829,7 @@ async function sessionsCommand([sub, ref] = []) {
   ensureHome();
   const cloud = require('./cloudsessions');
   const all = cloud.importable();
-  const picked = ref ? pickItem(config.load().accounts, ref, 'account') : null;
+  const picked = ref && !['all', '--all'].includes(ref) ? pickItem(config.load().accounts, ref, 'account') : null;
   const chosen = picked ? [picked] : all.filter((a) => a.enabled !== false);
   if (!sub || sub === 'list') {
     for (const a of chosen) {
@@ -856,6 +856,7 @@ async function sessionsCommand([sub, ref] = []) {
     return 1;
   }
   let failed = 0;
+  const total = { brought: 0, here: 0 };
   for (const a of chosen) {
     out(`${a.label}:`);
     try {
@@ -869,12 +870,15 @@ async function sessionsCommand([sub, ref] = []) {
         }
       }
       const n = (k) => results.filter((r) => r.outcome === k).length;
+      total.brought += n('imported') + n('updated');
+      total.here += n('already here') + n('up to date');
       out(`  ${n('imported') + n('updated')} brought here, ${n('already here') + n('up to date')} already here, ${n('empty')} empty${n('failed') ? `, ${n('failed')} failed` : ''}.`);
     } catch (err) {
       failed++;
       out(`  ${err.message}`);
     }
   }
+  if (chosen.length > 1) out(`All accounts: ${total.brought} brought here, ${total.here} already here${failed ? `, ${failed} problem${failed === 1 ? '' : 's'} above` : ''}.`);
   out('Open them with `claude --resume` in the folder shown, or in the Claude desktop app\'s Code tab.');
   return failed ? 1 : 0;
 }
