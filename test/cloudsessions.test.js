@@ -172,6 +172,24 @@ test('a session with no repository joins the project that worked in the same fol
   delete sessions.cse_fork;
 });
 
+test('imported folders are trusted for Claude Code, except ones whose settings run things', () => {
+  const trust = () => JSON.parse(fs.readFileSync(path.join(root, 'claude', '.claude.json'), 'utf8')).projects;
+  const remote = JSON.parse(fs.readFileSync(cloud.STATE(), 'utf8')).cse_remote;
+  assert.equal(trust()[path.resolve(remote.folder)].hasTrustDialogAccepted, true, 'so the desktop app offers its sessions');
+  assert.equal(trust()[here], undefined, 'your own folders are left as they are');
+  const risky = path.join(root, 'imports', 'risky');
+  fs.mkdirSync(path.join(risky, '.claude'), { recursive: true });
+  fs.writeFileSync(path.join(risky, '.claude', 'settings.json'), JSON.stringify({ hooks: { Stop: [] } }));
+  assert.equal(cloud.trustFolder(risky), 'runs-things');
+  assert.equal(trust()[risky], undefined);
+  fs.writeFileSync(path.join(root, 'claude', '.claude.json'), JSON.stringify({ theme: 'dark', projects: { '/x': { allowedTools: ['a'] } } }));
+  assert.equal(cloud.trustFolder(remote.folder), 'trusted');
+  const after = JSON.parse(fs.readFileSync(path.join(root, 'claude', '.claude.json'), 'utf8'));
+  assert.equal(after.theme, 'dark', 'everything else in the file is kept');
+  assert.deepEqual(after.projects['/x'], { allowedTools: ['a'] });
+  assert.equal(cloud.trustFolder(remote.folder), 'already');
+});
+
 test('paths from any computer stay inside the import folder', () => {
   assert.equal(cloud.recoveredPath('C:\\Users\\a\\..\\..\\x.txt'), path.join('C', 'Users', 'a', 'x.txt'));
   assert.equal(cloud.recoveredPath('/etc/../../passwd'), path.join('etc', 'passwd'));

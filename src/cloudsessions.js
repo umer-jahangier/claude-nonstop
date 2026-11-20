@@ -33,6 +33,9 @@ const STATE = () => path.join(paths.HOME, 'imports.json');
 const IMPORT_ROOT = () => process.env.CLAUDE_NONSTOP_IMPORT_DIR || path.join(os.homedir(), 'Claude Imports');
 const claudeHome = () => process.env.CLAUDE_NONSTOP_TRANSCRIPTS_HOME || process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), '.claude');
 const projectsDir = () => path.join(claudeHome(), 'projects');
+// Claude Code's own state file, where a folder's trust is kept (the Claude desktop app reads it too).
+const stateFile = () => process.env.CLAUDE_NONSTOP_TRANSCRIPTS_HOME ? path.join(process.env.CLAUDE_NONSTOP_TRANSCRIPTS_HOME, '.claude.json')
+  : process.env.CLAUDE_CONFIG_DIR ? path.join(process.env.CLAUDE_CONFIG_DIR, '.claude.json') : path.join(os.homedir(), '.claude.json');
 
 // Claude Code files a session under its folder's path with every other character a dash.
 const projectFolderName = (cwd) => String(cwd).replace(/[^a-zA-Z0-9]/g, '-');
@@ -299,6 +302,10 @@ async function importOne(cloud, account, s) {
   fs.writeFileSync(`${file}.tmp`, lines.map((l) => JSON.stringify(l)).join('\n') + '\n');
   fs.renameSync(`${file}.tmp`, file);
 
+  if (!local) {
+    const note = trustNote(trustFolder(folder));
+    if (note) notes.push(note);
+  }
   const next = readJson(STATE(), {});
   next[s.id] = {
     account: account.id, sessionId, file, folder, updatedAt: s.updated_at, at: new Date().toISOString(),
@@ -309,6 +316,70 @@ async function importOne(cloud, account, s) {
   if (grouped) writeHandoff(folder);
   if (before && before.folder && path.resolve(before.folder) !== path.resolve(folder)) writeHandoff(before.folder);
   return { id: s.id, title, outcome: before ? 'updated' : 'imported', file, folder, sessionId, messages: lines.length - 1, notes };
+}
+
+// ---------------------------------------------------------------- trust
+
+// Whether a folder's own project settings would run something when trusted: hooks, MCP servers
+// or an .mcp.json. Those folders are left for you to trust yourself, the first time you open them.
+function runsThings(folder) {
+  if (fs.existsSync(path.join(folder, '.mcp.json'))) return true;
+  for (const f of ['settings.json', 'settings.local.json']) {
+    try {
+      const j = JSON.parse(fs.readFileSync(path.join(folder, '.claude', f), 'utf8'));
+      if (j && (j.hooks || j.mcpServers || j.enabledMcpjsonServers || j.apiKeyHelper || j.statusLine)) return true;
+    } catch {}
+  }
+  return false;
+}
+
+// Marks a folder the import made as trusted for Claude Code, so `claude` opens it without the
+// trust question and the Claude desktop app offers its sessions (Help > Troubleshooting > Import
+// Claude Code CLI Sessions, or the Code tab's import banner). Returns 'trusted', 'already',
+// 'runs-things' (left to you) or 'unwritable'.
+function trustFolder(folder) {
+  if (runsThings(folder)) return 'runs-things';
+  const file = stateFile();
+  let real = file;
+  try {
+    real = fs.realpathSync(file);
+  } catch {}
+  let j = {};
+  try {
+    j = JSON.parse(fs.readFileSync(real, 'utf8'));
+  } catch (err) {
+    if (err.code !== 'ENOENT') return 'unwritable';
+  }
+  const key = path.resolve(folder);
+  const projects = j.projects && typeof j.projects === 'object' ? j.projects : {};
+  if (projects[key] && projects[key].hasTrustDialogAccepted === true) return 'already';
+  // Read and written back at once, keeping every other field, so a running Claude Code's own
+  // writes aren't lost.
+  try {
+    const fresh = fs.existsSync(real) ? JSON.parse(fs.readFileSync(real, 'utf8')) : {};
+    fresh.projects = fresh.projects && typeof fresh.projects === 'object' ? fresh.projects : {};
+    fresh.projects[key] = { ...(fresh.projects[key] || {}), hasTrustDialogAccepted: true };
+    const tmp = `${real}.claude-nonstop-${process.pid}.tmp`;
+    fs.writeFileSync(tmp, JSON.stringify(fresh, null, 2), { mode: fs.existsSync(real) ? fs.statSync(real).mode & 0o777 : 0o600 });
+    fs.renameSync(tmp, real);
+    return 'trusted';
+  } catch {
+    return 'unwritable';
+  }
+}
+
+const trustNote = (r) => r === 'runs-things'
+  ? 'Not marked trusted: this project\'s settings run hooks or MCP servers, so open it with `claude` once and answer the trust question yourself.'
+  : null;
+
+// Trusts every folder earlier imports made (they predate trusting), skipping ones that run things.
+function trustImported() {
+  const done = {};
+  for (const v of Object.values(readJson(STATE(), {}))) {
+    if (!v.folder || v.local || !path.resolve(v.folder).startsWith(path.resolve(IMPORT_ROOT())) || done[v.folder] || !fs.existsSync(v.folder)) continue;
+    done[v.folder] = trustFolder(v.folder);
+  }
+  return done;
 }
 
 // ---------------------------------------------------------------- shared projects and handoff
@@ -573,6 +644,8 @@ async function importCodexAccount(account, { ids = null, onProgress = () => {} }
           '```',
           '',
         ].join('\n'));
+        const trusted = trustNote(trustFolder(folder));
+        if (trusted) notes.push(trusted);
         const prompt = pick(t, ['prompt', 'input', 'task.prompt']);
         const next = readJson(STATE(), {});
         next[`codex:${id}`] = {
@@ -599,6 +672,113 @@ async function importCodexAccount(account, { ids = null, onProgress = () => {} }
 const importable = (cfg = config.load()) => cfg.accounts.slice();
 
 // Imports any account: a Claude account's sessions or a ChatGPT account's Codex tasks.
-const importAny = (account, options) => (accounts.isChatgpt(account) ? importCodexAccount(account, options) : importAccount(account, options));
+// ---------------------------------------------------------------- into Codex and the desktop app
 
-module.exports = { workRoot, repoKey, projectFolder, writeHandoff, survey, importAccount, importCodexAccount, importAny, importable, taskRepo, transcript, writtenFiles, recoveredPath, projectFolderName, originalCwd, STATE, IMPORT_ROOT };
+// Hands imported Claude Code chats to Codex's own importer (its app-server's
+// externalAgentConfig/import, what "Import from Claude Code" uses), so they're Codex threads too:
+// in the Codex app and `codex resume`. Codex keeps a ledger, so a chat it has is updated, not doubled.
+function toCodex(sessions, { timeoutMs = 300000 } = {}) {
+  const bin = findCodex();
+  if (!bin || !sessions.length) return Promise.resolve({ ok: !!bin, imported: [], failed: [] });
+  if (process.env.NODE_TEST_CONTEXT && !process.env.CLAUDE_NONSTOP_TEST_CODEX) return Promise.resolve({ ok: false, imported: [], failed: [] });
+  return new Promise((resolve) => {
+    const { spawn } = require('child_process');
+    const p = spawn(bin, ['app-server'], { stdio: ['pipe', 'pipe', 'ignore'] });
+    let buf = '';
+    let settled = false;
+    const finish = (r) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      try {
+        p.kill();
+      } catch {}
+      resolve(r);
+    };
+    const timer = setTimeout(() => finish({ ok: false, imported: [], failed: [], why: 'Codex took too long' }), timeoutMs);
+    const send = (o) => {
+      try {
+        p.stdin.write(`${JSON.stringify(o)}\n`);
+      } catch {}
+    };
+    p.on('error', () => finish({ ok: false, imported: [], failed: [], why: "Codex couldn't be started" }));
+    p.on('exit', () => finish({ ok: false, imported: [], failed: [], why: 'Codex stopped' }));
+    p.stdout.on('data', (d) => {
+      buf += d;
+      let i;
+      while ((i = buf.indexOf('\n')) >= 0) {
+        const line = buf.slice(0, i);
+        buf = buf.slice(i + 1);
+        let m;
+        try {
+          m = JSON.parse(line);
+        } catch {
+          continue;
+        }
+        if (m.id === 1) {
+          send({ method: 'initialized' });
+          send({ id: 2, method: 'externalAgentConfig/import', params: {
+            source: 'claude-nonstop',
+            migrationItems: [{ itemType: 'SESSIONS', description: 'Cloud sessions brought here by claude-nonstop', cwd: null, details: { sessions: sessions.map((x) => ({ cwd: x.cwd, path: x.path, title: x.title })) } }],
+          } });
+        } else if (m.id === 2 && m.error) finish({ ok: false, imported: [], failed: [], why: m.error.message });
+        else if (m.method === 'externalAgentConfig/import/completed') {
+          const r = (m.params.itemTypeResults || []).find((x) => x.itemType === 'SESSIONS') || { successes: [], failures: [] };
+          finish({ ok: true, imported: r.successes.map((x) => ({ path: x.source, thread: x.target })), failed: r.failures.map((x) => ({ path: x.source, why: x.message })) });
+        }
+      }
+    });
+    send({ id: 1, method: 'initialize', params: { clientInfo: { name: 'claude-nonstop', version: require('../package.json').version } } });
+  });
+}
+
+// Opens the Claude desktop app's Import page, where one click adds the chats to its sidebar.
+// The app adds sessions only through its own importer, which asks first.
+function openDesktopImport() {
+  const url = 'claude://claude.ai/settings/import';
+  if (process.platform === 'darwin') {
+    if (!fs.existsSync('/Applications/Claude.app') && !fs.existsSync(path.join(os.homedir(), 'Applications', 'Claude.app'))) return false;
+    return spawnSync('open', [url]).status === 0;
+  }
+  if (process.platform === 'win32') return spawnSync('cmd', ['/c', 'start', '', url], { windowsHide: true }).status === 0;
+  return false;
+}
+
+// After an import: newly brought or updated chats go to Codex too, and are noted there.
+async function shareWithCodex(results) {
+  if (config.load().importIntoCodex === false) return null;
+  const fresh = results.filter((r) => (r.outcome === 'imported' || r.outcome === 'updated') && r.file);
+  const state = readJson(STATE(), {});
+  // Also any earlier import Codex doesn't have yet.
+  const missing = Object.entries(state).filter(([, v]) => v.kind === 'claude' && v.file && fs.existsSync(v.file) && !v.codexThread)
+    .map(([id, v]) => ({ id, file: v.file, folder: v.folder, title: v.title, accountLabel: v.accountLabel }));
+  const all = new Map();
+  for (const r of fresh) all.set(r.file, { id: r.id, file: r.file, folder: r.folder, title: r.title, accountLabel: (state[r.id] || {}).accountLabel });
+  for (const m of missing) if (!all.has(m.file)) all.set(m.file, m);
+  if (!all.size) return null;
+  const list = [...all.values()];
+  const r = await toCodex(list.map((x) => ({ cwd: x.folder, path: x.file, title: x.accountLabel ? `${x.title} (from ${x.accountLabel})` : x.title })));
+  if (!r.ok) return r;
+  const next = readJson(STATE(), {});
+  for (const done of r.imported) {
+    const item = list.find((x) => path.resolve(x.file) === path.resolve(done.path));
+    if (item && next[item.id]) next[item.id].codexThread = done.thread;
+  }
+  writeJson(STATE(), next);
+  log(`imports: ${r.imported.length} chat(s) handed to Codex${r.failed.length ? `, ${r.failed.length} not` : ''}`);
+  return r;
+}
+
+const importAny = async (account, options) => {
+  trustImported();
+  const results = await (accounts.isChatgpt(account) ? importCodexAccount(account, options) : importAccount(account, options));
+  try {
+    const codex = await shareWithCodex(results);
+    if (codex && codex.ok) results.codex = { imported: codex.imported.length, failed: codex.failed.length };
+  } catch (err) {
+    log(`imports: handing chats to Codex failed: ${err.message}`);
+  }
+  return results;
+};
+
+module.exports = { toCodex, shareWithCodex, openDesktopImport, trustFolder, trustImported, workRoot, repoKey, projectFolder, writeHandoff, survey, importAccount, importCodexAccount, importAny, importable, taskRepo, transcript, writtenFiles, recoveredPath, projectFolderName, originalCwd, STATE, IMPORT_ROOT };

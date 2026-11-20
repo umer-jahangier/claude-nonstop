@@ -2,6 +2,12 @@
 
 Every release of claude-nonstop, newest first. Full notes, and the code at each version, are on the [releases page](https://github.com/umer-jahangier/claude-nonstop/releases). The installer and `claude-nonstop update` install the latest release; the npm package is [`@umer-jahangier/claude-nonstop`](https://www.npmjs.com/package/@umer-jahangier/claude-nonstop).
 
+## [1.19.0](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.19.0) · 2026-11-20
+
+- Imported cloud sessions become Codex threads too, through Codex's own importer: continue any of them in the Codex app or `codex resume` as well as in Claude Code. Earlier imports are handed over on the next import.
+- The folders an import makes are trusted for Claude Code, so the Claude desktop app accepts their sessions; after an import its Import page opens (Cowork & Code adds them to the sidebar). Folders whose project settings run hooks or MCP servers are left for you to trust.
+- Clearer import messages: "All 60 of SXL's cloud sessions are already on this computer" rather than what read like none, and an account with no Codex cloud tasks says so.
+
 ## [1.18.1](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.18.1) · 2026-11-20
 
 - Imported sessions are opened with `claude --resume` in a terminal; the messages no longer say the desktop app's Code tab lists them (it keeps its own list).

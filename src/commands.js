@@ -857,6 +857,7 @@ async function sessionsCommand([sub, ref] = []) {
   }
   let failed = 0;
   const total = { brought: 0, here: 0 };
+  const chosenResults = [];
   for (const a of chosen) {
     out(`${a.label}:`);
     try {
@@ -869,17 +870,23 @@ async function sessionsCommand([sub, ref] = []) {
           out(`  ! ${r.title}: ${r.why}`);
         }
       }
+      chosenResults.push(results);
       const n = (k) => results.filter((r) => r.outcome === k).length;
       total.brought += n('imported') + n('updated');
       total.here += n('already here') + n('up to date');
-      out(`  ${n('imported') + n('updated')} brought here, ${n('already here') + n('up to date')} already here, ${n('empty')} empty${n('failed') ? `, ${n('failed')} failed` : ''}.`);
+      if (!results.length) out(`  no ${accounts.isChatgpt(a) ? 'Codex cloud tasks' : 'cloud sessions'} on this account.`);
+      else out(`  ${n('imported') + n('updated')} brought here, ${n('already here') + n('up to date')} already here, ${n('empty')} empty${n('failed') ? `, ${n('failed')} failed` : ''}.`);
     } catch (err) {
       failed++;
       out(`  ${err.message}`);
     }
   }
   if (chosen.length > 1) out(`All accounts: ${total.brought} brought here, ${total.here} already here${failed ? `, ${failed} problem${failed === 1 ? '' : 's'} above` : ''}.`);
-  out('Open them with `claude --resume` in the folder shown (in a terminal; the desktop app keeps its own session list).');
+  out('Open them with `claude --resume` in the folder shown.');
+  const codex = chosenResults.reduce((n, r) => n + ((r.codex && r.codex.imported) || 0), 0);
+  if (codex) out(`Codex has them too: ${codex} chat${codex === 1 ? '' : 's'} added to Codex (open with \`codex resume\`, or in the Codex app).`);
+  if (total.brought && process.stdout.isTTY && require('./cloudsessions').openDesktopImport()) out('Opened the Claude desktop app\'s Import page: choose Cowork & Code there to add them to its sidebar.');
+  else out('In the Claude desktop app: Settings > Import & export > Cowork & Code adds them to its sidebar.');
   return failed ? 1 : 0;
 }
 

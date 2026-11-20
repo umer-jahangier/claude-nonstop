@@ -337,15 +337,23 @@ function startImport(account) {
     for (const r of results) job.counts[r.outcome] = (job.counts[r.outcome] || 0) + 1;
     job.total = results.length;
     job.failed = results.filter((r) => r.outcome === 'failed').map((r) => ({ title: r.title, why: r.why }));
+    job.codex = results.codex || null;
+    if ((job.counts.imported || 0) + (job.counts.updated || 0) > 0) desktopImportWanted = true;
   }).catch((err) => {
     job.error = err.message;
     log(`imports: ${account.label}: ${err.message}`);
   }).finally(() => {
     job.done = true;
     events.notify('imports', { id: account.id });
+    // Once every running import is done, open the desktop app's Import page (one click there).
+    if (desktopImportWanted && [...imports.values()].every((j) => j.done)) {
+      desktopImportWanted = false;
+      if (config.load().openDesktopImport !== false) setTimeout(() => require('./cloudsessions').openDesktopImport(), 1500);
+    }
   });
   return job;
 }
+let desktopImportWanted = false;
 
 function importView(id) {
   const job = imports.get(id);
