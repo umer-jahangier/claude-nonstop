@@ -6,7 +6,7 @@
 // computers, with its whole conversation. Claude Code reads that list itself (it's how
 // `claude --teleport` and Remote Control work); claude-nonstop reads it the same way, with
 // the account's own sign-in, and writes each session as an ordinary Claude Code transcript
-// under ~/.claude/projects, where `claude --resume` (and the desktop app's Code tab) list it.
+// under ~/.claude/projects, where `claude --resume` lists it.
 //
 // Where a session's code is:
 //   - its folder still exists here: the session is filed under that folder;

@@ -2556,7 +2556,7 @@ async function followImport(id, announce) {
   const here = (c['already here'] || 0) + (c['up to date'] || 0);
   const failed = c.failed || 0;
   const parts = [brought ? `${brought} brought here` : 'nothing new to bring', here ? `${here} already here` : '', failed ? `${failed} couldn't be read` : ''].filter(Boolean);
-  toast(`${name}'s cloud sessions: ${parts.join(', ')}.${brought ? ' Open them with claude --resume, or in the desktop app\'s Code tab.' : ''}`, failed > 0 && !brought);
+  toast(`${name}'s cloud sessions: ${parts.join(', ')}.${brought ? ' Open them with claude --resume in a terminal, in the folder each went to.' : ''}`, failed > 0 && !brought);
 }
 
 function startJob(job, accountId) {

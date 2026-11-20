@@ -2,6 +2,10 @@
 
 Every release of claude-nonstop, newest first. Full notes, and the code at each version, are on the [releases page](https://github.com/umer-jahangier/claude-nonstop/releases). The installer and `claude-nonstop update` install the latest release; the npm package is [`@umer-jahangier/claude-nonstop`](https://www.npmjs.com/package/@umer-jahangier/claude-nonstop).
 
+## [1.18.1](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.18.1) · 2026-11-20
+
+- Imported sessions are opened with `claude --resume` in a terminal; the messages no longer say the desktop app's Code tab lists them (it keeps its own list).
+
 ## [1.18.0](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.18.0) · 2026-11-20
 
 - Sessions and Codex tasks on the same repository, from any account, are merged into one project: one clone, every conversation resumable there, and a handoff note (what each did, what was last asked, where it ended) that new sessions in that folder read automatically. Earlier imports move into their project.

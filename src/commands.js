@@ -879,7 +879,7 @@ async function sessionsCommand([sub, ref] = []) {
     }
   }
   if (chosen.length > 1) out(`All accounts: ${total.brought} brought here, ${total.here} already here${failed ? `, ${failed} problem${failed === 1 ? '' : 's'} above` : ''}.`);
-  out('Open them with `claude --resume` in the folder shown, or in the Claude desktop app\'s Code tab.');
+  out('Open them with `claude --resume` in the folder shown (in a terminal; the desktop app keeps its own session list).');
   return failed ? 1 : 0;
 }
 
