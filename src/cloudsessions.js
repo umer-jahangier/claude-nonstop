@@ -45,7 +45,7 @@ const slug = (s) => String(s || 'session').toLowerCase().replace(/[^a-z0-9]+/g, 
 
 async function connect(account) {
   const cfg = config.load();
-  const { token, why } = await require('./gateway').claudeToken(account, cfg);
+  const { token, why } = await require('./gateway').claudeToken(account, cfg, { evenIfLimited: true });
   if (!token) throw new Error(`${account.label}: ${why}`);
   const base = { authorization: `Bearer ${token}`, 'anthropic-version': '2023-06-01', 'anthropic-beta': 'oauth-2025-04-20,ccr-byoc-2025-07-29' };
   const profile = await request(`${API()}/api/oauth/profile`, { headers: base });
@@ -63,6 +63,7 @@ async function connect(account) {
         await new Promise((done) => setTimeout(done, 1000 * 2 ** attempt));
         continue;
       }
+      if (r.status === 429) throw new Error(`${account.label}: Anthropic is turning away reads of this account's cloud sessions for now (HTTP 429). Nothing was lost; try again in a few minutes`);
       throw new Error(`${account.label}: ${p.split('?')[0]} answered HTTP ${r.status}`);
     }
   };

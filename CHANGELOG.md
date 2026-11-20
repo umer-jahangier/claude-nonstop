@@ -2,6 +2,10 @@
 
 Every release of claude-nonstop, newest first. Full notes, and the code at each version, are on the [releases page](https://github.com/umer-jahangier/claude-nonstop/releases). The installer and `claude-nonstop update` install the latest release; the npm package is [`@umer-jahangier/claude-nonstop`](https://www.npmjs.com/package/@umer-jahangier/claude-nonstop).
 
+## [1.21.1](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.21.1) · 2026-11-21
+
+- Bringing cloud sessions here works for an account that's at its usage limit. The import was refused with the limit message, though reading cloud sessions spends none of the account's usage. Chats still skip that account until its limit resets.
+
 ## [1.21.0](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.21.0) · 2026-11-20
 
 - **Merge Chats…** (and `claude-nonstop sessions chats` / `sessions merge`): pick Claude Code chats from any account or Codex, and what they merge into, one of them to continue or a new chat in a folder. The result is one chat: that conversation as it was, plus a condensed record of what each other chat asked and did. It shows in `claude --resume`, Codex and the desktop app's import; the originals stay as they are.

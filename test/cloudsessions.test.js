@@ -132,6 +132,20 @@ test("an account's cloud sessions become Claude Code transcripts, code included"
   assert.equal(fs.existsSync(path.join(here, 'SESSION.md')), false, 'nothing is added to your own folder');
 });
 
+test("an account at its usage limit still brings its cloud sessions here: reading them spends none of it", async () => {
+  const state = require('../src/state');
+  state.recordAccount('acct-1', { ok: false, reason: "You've hit your usage limit" });
+  try {
+    const gateway = require('../src/gateway');
+    assert.equal((await gateway.claudeToken(account(), config.load())).token, null, 'chats still skip the limited account');
+    const results = await cloud.importAccount(account(), { ids: ['cse_remote'] });
+    assert.equal(results.length, 1);
+    assert.ok(['imported', 'updated', 'up to date'].includes(results[0].outcome), results[0].outcome);
+  } finally {
+    state.recordAccount('acct-1', { ok: true, reason: '' });
+  }
+});
+
 test('importing again skips what is up to date and refreshes what has grown', async () => {
   let results = Object.fromEntries((await cloud.importAccount(account())).map((r) => [r.id, r]));
   assert.equal(results.cse_remote.outcome, 'up to date');

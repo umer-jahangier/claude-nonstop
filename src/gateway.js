@@ -380,15 +380,17 @@ const limitedRecently = (account, cfg) => {
 // Code under an account (a server, say), its token would stay expired and the account would
 // be passed over for good, so the gateway runs Claude Code's quick usage check under that
 // account, which renews the token the normal way, and reads it again.
-async function claudeToken(account, cfg) {
-  const limited = limitedRecently(account, cfg);
+// evenIfLimited: for work that spends none of the account's usage (reading its cloud
+// sessions, say), an account at its limit still hands out its token.
+async function claudeToken(account, cfg, { evenIfLimited = false } = {}) {
+  const limited = !evenIfLimited && limitedRecently(account, cfg);
   if (limited) return { token: null, why: limited };
   let creds = usage.readCredentials(account);
   if (!creds) return { token: null, why: 'no sign-in token found' };
   if (!fresh(creds)) {
     log(`gateway: ${account.label}: sign-in token expired, renewing it`);
     await require('./checks').account(account);
-    const nowLimited = limitedRecently(account, cfg);
+    const nowLimited = !evenIfLimited && limitedRecently(account, cfg);
     if (nowLimited) return { token: null, why: nowLimited };
     creds = usage.readCredentials(account);
     if (!fresh(creds)) return { token: null, why: 'sign-in token expired and could not be renewed (sign in to this account again)' };
