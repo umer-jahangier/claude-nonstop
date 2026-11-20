@@ -372,6 +372,17 @@ function importAllSessions() {
   return { accounts: list.map((a) => a.id) };
 }
 
+// Merges the chats picked in the page into one new chat, then hands it to Codex and opens the
+// desktop app's Import page so it can be added there too.
+async function mergeChatsNow(body) {
+  const merge = require('./merge');
+  const m = merge.mergeChats({ target: body.target || null, sources: Array.isArray(body.sources) ? body.sources : [], folder: body.folder || null, title: body.title || null });
+  const codex = await merge.shareMerged(m);
+  if (config.load().openDesktopImport !== false) setTimeout(() => require('./cloudsessions').openDesktopImport(), 800);
+  log(`merge: ${m.sources.length} chat(s) into "${m.title}" in ${m.folder}`);
+  return { title: m.title, folder: m.folder, sessionId: m.sessionId, codex };
+}
+
 function jobView(id) {
   const job = jobs.get(id);
   if (!job) throw httpError(404, 'That sign-in is no longer running.');
@@ -586,6 +597,8 @@ async function route(method, pathname, body, ctx) {
     if (method === 'DELETE' && id) return removeAccount(id);
   }
   if (area === 'imports' && method === 'POST' && !id) return importAllSessions();
+  if (area === 'chats' && method === 'GET' && !id) return { chats: require('./merge').listChats() };
+  if (area === 'merge' && method === 'POST' && !id) return mergeChatsNow(body);
   if (area === 'jobs' && id) {
     if (method === 'GET') return jobView(id);
     if (method === 'POST' && action === 'input') return jobInput(id, body.text);

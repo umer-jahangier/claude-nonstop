@@ -674,6 +674,22 @@ main { position: relative; z-index: 1; }
   .toolbar { background: var(--ground); -webkit-backdrop-filter: none; backdrop-filter: none; }
   .menu, .toast { background: var(--group); -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
+/* Merge chats */
+.sheet-panel.wide { width: min(640px, calc(100% - 32px)); }
+.chat-search { margin-bottom: 10px; }
+.chat-list { max-height: min(48vh, 440px); overflow: auto; background: var(--sheet-group); border-radius: 10px; overscroll-behavior: contain; }
+.chat-group-h { position: sticky; top: 0; z-index: 1; padding: 9px 14px 5px; background: var(--sheet-group); font-size: 0.75rem; font-weight: 600; color: var(--label-2); letter-spacing: -0.003em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chat-row { position: relative; display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 7px 14px; cursor: pointer; }
+.chat-row + .chat-row::before { content: ""; position: absolute; top: 0; left: 40px; right: 0; height: var(--hair); background: var(--sep); }
+.chat-row input { flex: none; width: 16px; height: 16px; margin: 0; }
+.chat-row .t { flex: 1; min-width: 0; }
+.chat-row .t b { display: block; font-weight: 500; letter-spacing: -0.012em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chat-row .t span { display: block; font-size: 0.75rem; color: var(--label-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chat-row.picked { background: var(--accent-tint); }
+.chat-empty { padding: 18px 14px; font-size: 0.875rem; color: var(--label-2); }
+.merge-into { margin-top: 12px; }
+.field select { flex: 1; min-width: 0; height: 44px; padding: 0; border: 0; background: transparent; color: var(--label); font: inherit; letter-spacing: -0.012em; }
+.field select:focus-visible { outline: none; }
 </style>
 </head>
 <body>
@@ -1200,7 +1216,8 @@ function renderLists(rel) {
   // Not while a line is being dragged: the rows under the pointer would be replaced.
   if (drag) return;
   $('#lines').innerHTML = orderedLines().map((l) => rowHtml(l.type, l.item, liveId)).join('') + addRowHtml('account') + addRowHtml('key')
-    + (S.accounts.length ? `<li class="row add"><button class="add-btn" type="button" data-act="import-all" data-fk="import-all"><span class="tile">${icon('down')}</span>Bring All Cloud Sessions Here…</button></li>` : '');
+    + (S.accounts.length ? `<li class="row add"><button class="add-btn" type="button" data-act="import-all" data-fk="import-all"><span class="tile">${icon('down')}</span>Bring All Cloud Sessions Here…</button></li>` : '')
+    + `<li class="row add"><button class="add-btn" type="button" data-act="merge-chats" data-fk="merge-chats"><span class="tile">${icon('plus-circle')}</span>Merge Chats…</button></li>`;
   const checkAll = $('#check-all');
   checkAll.hidden = S.keys.length < 2;
   checkAll.disabled = busy.has('all-keys');
@@ -2766,6 +2783,7 @@ function sheetContent() {
       <div class="sheet-actions"><button class="btn large" type="button" data-act="close-sheet">Cancel</button><button class="btn large primary" type="submit">Add</button></div>
     </form>`;
   }
+  if (sh.kind === 'merge') return mergeHtml();
   if (sh.kind === 'confirm') {
     const item = itemFor(sh.type, sh.id);
     const name = esc(item ? item.label : 'this line');
@@ -2775,6 +2793,99 @@ function sheetContent() {
   }
   return jobHtml();
 }
+
+// Merge chats: pick chats, pick what they merge into.
+const mergeState = () => ui.merge || (ui.merge = { chats: null, picked: [], target: '', folder: '' });
+const shortFolder = (f) => String(f || '').replace(/^\/Users\/[^/]+/, '~');
+function mergeHtml() {
+  const m = mergeState();
+  let list;
+  if (!m.chats) list = `<div class="chat-empty">${SPINNER}Finding your chats…</div>`;
+  else if (!m.chats.length) list = '<div class="chat-empty">No Claude Code chats on this computer yet.</div>';
+  else {
+    const groups = new Map();
+    for (const c of m.chats) {
+      const k = c.folder || '(unknown folder)';
+      if (!groups.has(k)) groups.set(k, []);
+      groups.get(k).push(c);
+    }
+    list = [...groups.entries()].map(([folder, chats]) => `<div class="chat-group" data-folder="${esc(folder.toLowerCase())}"><div class="chat-group-h" title="${esc(folder)}">${esc(shortFolder(folder))}</div>${chats.map((c) => {
+      const on = m.picked.includes(c.id);
+      const when = new Date(c.updatedAt);
+      return `<label class="chat-row${on ? ' picked' : ''}" data-text="${esc(`${c.title} ${c.source} ${folder}`.toLowerCase())}"><input type="checkbox" data-merge-pick value="${esc(c.id)}"${on ? ' checked' : ''}><span class="t"><b>${esc(c.title)}</b><span>${esc(c.source)} · ${esc(when.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: when.getFullYear() === new Date().getFullYear() ? undefined : 'numeric' }))}</span></span></label>`;
+    }).join('')}</div>`).join('');
+  }
+  return `<form data-form="merge" autocomplete="off">
+    <h2 id="sheet-title">Merge chats</h2>
+    <p class="lede">Tick the chats to bring together, from any account or Codex, then choose what they merge into. You get one new chat: that conversation as it was, plus what each other chat asked and did, condensed. The originals stay as they are.</p>
+    <div class="fields chat-search"><div class="field"><input type="search" data-merge-search placeholder="Search by title, folder or account" aria-label="Search chats" spellcheck="false"></div></div>
+    <div class="chat-list" role="group" aria-label="Chats">${list}</div>
+    <div id="merge-into">${mergeIntoHtml()}</div>
+    <p class="sheet-error" id="sheet-error" role="alert" hidden></p>
+    <div class="sheet-actions"><button class="btn large" type="button" data-act="close-sheet">Cancel</button><button class="btn large primary" type="submit" id="merge-go"${m.picked.length < 2 ? ' disabled' : ''}>${mergeGoLabel()}</button></div>
+  </form>`;
+}
+function mergeGoLabel() {
+  const n = mergeState().picked.length;
+  return n < 2 ? 'Merge' : `Merge ${n} Chats`;
+}
+function mergeIntoHtml() {
+  const m = mergeState();
+  const picked = (m.chats || []).filter((c) => m.picked.includes(c.id));
+  if (picked.length < 2) return `<p class="hint">Tick at least two chats.</p>`;
+  if (m.target && !m.picked.includes(m.target)) m.target = '';
+  const folders = [...new Set(picked.map((c) => c.folder).filter(Boolean))];
+  if (!folders.includes(m.folder)) m.folder = folders[0] || '';
+  return `<div class="fields merge-into">
+    <div class="field"><label for="f-target">Into</label><select id="f-target" name="target" data-merge-target>
+      <option value=""${m.target ? '' : ' selected'}>A new chat</option>
+      ${picked.map((c) => `<option value="${esc(c.id)}"${m.target === c.id ? ' selected' : ''}>Continue “${esc(c.title.slice(0, 70))}”</option>`).join('')}
+    </select></div>
+    ${m.target ? '' : `<div class="field"><label for="f-folder">Folder</label><select id="f-folder" name="folder" data-merge-folder>${folders.map((f) => `<option value="${esc(f)}"${f === m.folder ? ' selected' : ''}>${esc(shortFolder(f))}</option>`).join('')}</select></div>`}
+    <div class="field"><label for="f-mtitle">Name</label><input id="f-mtitle" name="title" maxlength="120" placeholder="${esc(m.target ? `${(picked.find((c) => c.id === m.target) || {}).title || 'Chat'} + ${picked.length - 1} merged` : `Merged: ${picked.length} chats`)}" spellcheck="false"></div>
+  </div>
+  <p class="hint">${m.target ? 'The chosen chat continues in the new one, with the others added.' : 'The new chat opens in that folder.'} It shows in claude --resume there and in Codex, and the desktop app's Import page opens so you can add it.</p>`;
+}
+function updateMergeInto() {
+  const box = $('#merge-into');
+  if (box) box.innerHTML = mergeIntoHtml();
+  const go = $('#merge-go');
+  if (go) {
+    go.innerHTML = mergeGoLabel();
+    go.disabled = mergeState().picked.length < 2;
+  }
+}
+document.addEventListener('change', (e) => {
+  if (!ui.sheet || ui.sheet.kind !== 'merge') return;
+  const m = mergeState();
+  if (e.target.matches('[data-merge-pick]')) {
+    const id = e.target.value;
+    m.picked = e.target.checked ? [...m.picked, id] : m.picked.filter((x) => x !== id);
+    e.target.closest('.chat-row').classList.toggle('picked', e.target.checked);
+    updateMergeInto();
+  } else if (e.target.matches('[data-merge-target]')) {
+    m.target = e.target.value;
+    updateMergeInto();
+  } else if (e.target.matches('[data-merge-folder]')) {
+    m.folder = e.target.value;
+  }
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && e.target.matches && e.target.matches('[data-merge-search]')) e.preventDefault();
+});
+document.addEventListener('input', (e) => {
+  if (!e.target.matches || !e.target.matches('[data-merge-search]')) return;
+  const q = e.target.value.trim().toLowerCase();
+  for (const g of document.querySelectorAll('.chat-group')) {
+    let any = false;
+    for (const r of g.querySelectorAll('.chat-row')) {
+      const show = !q || r.dataset.text.includes(q) || g.dataset.folder.includes(q);
+      r.hidden = !show;
+      any = any || show;
+    }
+    g.hidden = !any;
+  }
+});
 
 function jobHtml() {
   const account = S && ui.job && S.accounts.find((a) => a.id === ui.job.accountId);
@@ -2808,7 +2919,7 @@ function focusSheet() {
 function setSheetContent() {
   const panel = $('#sheet .sheet-panel');
   if (!panel) return;
-  panel.className = `sheet-panel${ui.sheet.kind === 'confirm' ? ' narrow' : ''}`;
+  panel.className = `sheet-panel${ui.sheet.kind === 'confirm' ? ' narrow' : ui.sheet.kind === 'merge' ? ' wide' : ''}`;
   panel.innerHTML = sheetContent();
   focusSheet();
   play(panel, [{ opacity: 0.4 }, { opacity: 1 }], { ms: 200, easing: 'ease-out' });
@@ -2820,7 +2931,7 @@ function openSheet(kind, data = {}) {
   ui.sheet = { kind, ...data };
   if (dlg.open) { setSheetContent(); return; }
   sheetReturn = document.activeElement;
-  dlg.innerHTML = `<div class="scrim" data-act="close-sheet"></div><div class="sheet-panel${kind === 'confirm' ? ' narrow' : ''}">${sheetContent()}</div>`;
+  dlg.innerHTML = `<div class="scrim" data-act="close-sheet"></div><div class="sheet-panel${kind === 'confirm' ? ' narrow' : kind === 'merge' ? ' wide' : ''}">${sheetContent()}</div>`;
   dlg.showModal();
   focusSheet();
   play($('.scrim', dlg), [{ opacity: 0 }, { opacity: 1 }], { ms: 240, easing: 'ease-out' });
@@ -2957,6 +3068,18 @@ const actions = {
     openSheet('job');
   },
   'job-retry': () => actions['login-account'](ui.job.accountId),
+  'merge-chats': async () => {
+    ui.merge = { chats: null, picked: [], target: '', folder: '' };
+    openSheet('merge');
+    try {
+      const r = await api('GET', '/api/chats');
+      ui.merge.chats = r.chats;
+    } catch (err) {
+      ui.merge.chats = [];
+      toast(`Couldn't list your chats: ${err.message}`, true);
+    }
+    if (ui.sheet && ui.sheet.kind === 'merge') setSheetContent();
+  },
   'import-all': async () => {
     const r = await api('POST', '/api/imports');
     if (!r.accounts.length) return toast('No switched-on accounts to bring sessions from.', true);
@@ -3125,6 +3248,13 @@ document.addEventListener('submit', async (event) => {
       await refresh();
       const more = $(`.more[data-id="${CSS.escape(id)}"]`);
       if (more && (!document.activeElement || document.activeElement === document.body)) more.focus({ preventScroll: true });
+    } else if (kind === 'merge') {
+      const m = mergeState();
+      if (m.picked.length < 2) { sheetError('Tick at least two chats.'); return; }
+      submit.innerHTML = `${SPINNER}Merging…`;
+      const r = await api('POST', '/api/merge', { target: m.target || null, sources: m.picked, folder: m.target ? null : (data.folder || m.folder), title: String(data.title || '').trim() || null });
+      await closeSheet();
+      toast(`Merged into “${r.title}”. Open it with claude --resume in ${shortFolder(r.folder)}${r.codex ? ', or in Codex' : ''}; in the desktop app, add it from the Import page that just opened (Cowork & Code).`);
     } else if (kind === 'job-input') {
       await api('POST', `/api/jobs/${ui.job.id}/input`, { text: data.text });
       form.reset();

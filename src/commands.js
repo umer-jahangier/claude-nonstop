@@ -825,8 +825,10 @@ function sshCommand([sub, host] = []) {
 // ---------------------------------------------------------------- cloud sessions
 
 // Each Claude account's cloud sessions, and bringing them to this computer (cloudsessions.js).
-async function sessionsCommand([sub, ref] = []) {
+async function sessionsCommand([sub, ...rest] = []) {
   ensureHome();
+  if (sub === 'chats' || sub === 'merge') return chatsCommand(sub, rest);
+  const ref = rest[0];
   const cloud = require('./cloudsessions');
   const all = cloud.importable();
   const picked = ref && !['all', '--all'].includes(ref) ? pickItem(config.load().accounts, ref, 'account') : null;
@@ -888,6 +890,61 @@ async function sessionsCommand([sub, ref] = []) {
   if (total.brought && process.stdout.isTTY && require('./cloudsessions').openDesktopImport()) out('Opened the Claude desktop app\'s Import page: choose Cowork & Code there to add them to its sidebar.');
   else out('In the Claude desktop app: Settings > Import & export > Cowork & Code adds them to its sidebar.');
   return failed ? 1 : 0;
+}
+
+// `sessions chats [search]` lists the chats on this computer, numbered;
+// `sessions merge <into> <chat> <chat>…` merges them: <into> is a chat's number (or id) to continue,
+// or `new` for a new chat (in the first chat's folder, or --folder <path>); --title <name> names it.
+async function chatsCommand(sub, args) {
+  const merge = require('./merge');
+  const opt = (name) => {
+    const i = args.indexOf(name);
+    if (i < 0) return undefined;
+    const v = args[i + 1];
+    args.splice(i, 2);
+    return v;
+  };
+  const folder = opt('--folder');
+  const title = opt('--title');
+  const chats = merge.listChats();
+  if (sub === 'chats') {
+    const q = args.join(' ').toLowerCase();
+    let shown = 0;
+    chats.forEach((c, i) => {
+      if (q && !`${c.title} ${c.folder} ${c.source}`.toLowerCase().includes(q)) return;
+      if (shown++ >= 200) return;
+      out(`  ${String(i + 1).padStart(3)}  ${c.title.slice(0, 70)}  (${c.source}, ${c.updatedAt.slice(0, 10)})`);
+      out(`       ${c.folder}`);
+    });
+    if (!shown) out('  No chats match.');
+    out('');
+    out('Merge with `claude-nonstop sessions merge <into> <chat> <chat>…`: <into> is a chat number to continue, or `new`.');
+    return 0;
+  }
+  const pick = (ref) => {
+    if (/^\d+$/.test(ref) && chats[Number(ref) - 1]) return chats[Number(ref) - 1].id;
+    const c = chats.find((x) => x.id === ref || x.id.endsWith(`/${ref}.jsonl`));
+    if (!c) throw new Error(`no chat "${ref}" (see claude-nonstop sessions chats)`);
+    return c.id;
+  };
+  const [into, ...from] = args;
+  if (!into || !from.length) {
+    out('Usage: claude-nonstop sessions merge <into|new> <chat> <chat>… [--folder <path>] [--title <name>]');
+    return 1;
+  }
+  try {
+    const target = into === 'new' ? null : pick(into);
+    const sources = from.map(pick);
+    const m = merge.mergeChats({ target, sources: target ? sources : sources, folder, title });
+    const codex = await merge.shareMerged(m);
+    out(`Merged ${m.sources.length + (target ? 1 : 0)} chats into "${m.title}".`);
+    out(`  Open it with \`claude --resume\` in ${m.folder}${codex ? ', or in Codex (codex resume)' : ''}.`);
+    if (process.stdout.isTTY && require('./cloudsessions').openDesktopImport()) out("  Opened the Claude desktop app's Import page: Cowork & Code adds it there.");
+    return 0;
+  } catch (err) {
+    say(err.message);
+    return 1;
+  }
 }
 
 module.exports = {

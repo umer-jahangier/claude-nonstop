@@ -1,6 +1,6 @@
 {
   "name": "@umer-jahangier/claude-nonstop",
-  "version": "1.20.1",
+  "version": "1.21.0",
   "description": "Keep Claude Code, Codex and the Claude desktop app working through usage limits: when a subscription hits its session or weekly limit, claude-nonstop moves to your next account, then to your API keys, one by one.",
   "author": {
     "name": "Muhammad Umer (Umer Jahangier)",
