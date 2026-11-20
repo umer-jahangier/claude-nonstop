@@ -275,7 +275,145 @@ async function importOne(cloud, account, s) {
   return { id: s.id, title, outcome: before ? 'updated' : 'imported', file, folder, sessionId, messages: lines.length - 1, notes };
 }
 
-// The Claude accounts whose cloud sessions can be read (signed in, not ChatGPT).
-const importable = (cfg = config.load()) => cfg.accounts.filter((a) => !accounts.isChatgpt(a));
+// ---------------------------------------------------------------- Codex cloud tasks
 
-module.exports = { survey, importAccount, importable, transcript, writtenFiles, recoveredPath, projectFolderName, originalCwd, STATE, IMPORT_ROOT };
+// A ChatGPT account's Codex cloud tasks (chatgpt.com/codex), read through Codex's own
+// `codex cloud` with the account's sign-in in a private, throwaway CODEX_HOME. Each task is
+// saved as TASK.md and its whole diff (changes.diff); when the task names a git repository,
+// the repository is cloned and the diff applied there. Codex's local sessions already live
+// in ~/.codex, shared by every account. OpenAI sign-ins rotate their refresh token, so one
+// Codex renews here is written back to the vault.
+
+const findCodex = () => {
+  const r = spawnSync(process.platform === 'win32' ? 'where' : 'which', ['codex'], { encoding: 'utf8' });
+  return r.status === 0 ? r.stdout.trim().split('\n')[0] : null;
+};
+
+async function codexHomeFor(account) {
+  const openaiAuth = require('./openai-auth');
+  const creds = await openaiAuth.current(account.id);
+  if (!creds) throw new Error(`${account.label}: not signed in`);
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'claude-nonstop-codex-'));
+  fs.chmodSync(home, 0o700);
+  fs.writeFileSync(path.join(home, 'auth.json'), JSON.stringify({ OPENAI_API_KEY: null, tokens: { id_token: creds.idToken, access_token: creds.accessToken, refresh_token: creds.refreshToken, account_id: creds.accountId }, last_refresh: new Date().toISOString() }), { mode: 0o600 });
+  const done = () => {
+    try {
+      const t = JSON.parse(fs.readFileSync(path.join(home, 'auth.json'), 'utf8')).tokens;
+      if (t && t.refresh_token && t.refresh_token !== creds.refreshToken) {
+        openaiAuth.store(account.id, openaiAuth.credentials({ access_token: t.access_token, refresh_token: t.refresh_token, id_token: t.id_token, account_id: t.account_id }));
+      }
+    } catch {}
+    fs.rmSync(home, { recursive: true, force: true });
+  };
+  return { home, done };
+}
+
+function codexCloud(bin, home, args) {
+  const r = spawnSync(bin, ['cloud', ...args], { encoding: 'utf8', env: { ...process.env, CODEX_HOME: home }, input: '', timeout: 120000, maxBuffer: 256 * 1024 * 1024 });
+  if (r.status !== 0) throw new Error((r.stderr || r.stdout || `codex exited with ${r.status}`).trim().split('\n').pop());
+  return r.stdout;
+}
+
+// A field of a task, wherever this version of Codex put it.
+const pick = (o, names) => {
+  for (const n of names) {
+    const v = n.split('.').reduce((x, k) => (x && typeof x === 'object' ? x[k] : undefined), o);
+    if (v !== undefined && v !== null && v !== '') return v;
+  }
+  return undefined;
+};
+const taskRepo = (t) => {
+  const v = pick(t, ['repo_url', 'repository_url', 'repo', 'repository', 'environment.repo_url', 'environment.repository', 'environment_label', 'environment.label']);
+  if (typeof v !== 'string') return null;
+  if (/^(https?:\/\/|git@|file:)/.test(v)) return v;
+  return /^[\w.-]+\/[\w.-]+$/.test(v) ? `https://github.com/${v}` : null;
+};
+
+async function listCodexTasks(bin, home) {
+  const tasks = [];
+  let cursor = null;
+  for (let page = 0; page < 500; page++) {
+    const j = JSON.parse(codexCloud(bin, home, ['list', '--json', '--limit', '20', ...(cursor ? ['--cursor', cursor] : [])]));
+    tasks.push(...(j.tasks || []));
+    if (!j.cursor || j.cursor === cursor || !(j.tasks || []).length) break;
+    cursor = j.cursor;
+  }
+  return tasks;
+}
+
+async function importCodexAccount(account, { ids = null, onProgress = () => {} } = {}) {
+  const bin = findCodex();
+  if (!bin) throw new Error(`${account.label}: Codex isn't installed, and its cloud tasks are read through it (install Codex, then try again)`);
+  const { home, done } = await codexHomeFor(account);
+  const results = [];
+  try {
+    const tasks = (await listCodexTasks(bin, home)).filter((t) => !ids || ids.includes(String(pick(t, ['id', 'task_id']))));
+    for (const [i, t] of tasks.entries()) {
+      const id = String(pick(t, ['id', 'task_id']));
+      const title = String(pick(t, ['title', 'name', 'prompt']) || id).split('\n')[0].slice(0, 120);
+      onProgress({ index: i, total: tasks.length, title });
+      try {
+        const updated = String(pick(t, ['updated_at', 'updatedAt', 'created_at']) || '');
+        const state = readJson(STATE(), {});
+        const before = state[`codex:${id}`];
+        if (before && before.updatedAt === updated && fs.existsSync(before.folder)) {
+          results.push({ id, title, outcome: 'up to date', folder: before.folder });
+          continue;
+        }
+        const folder = before ? before.folder : path.join(IMPORT_ROOT(), slug(account.label), `codex-${slug(title)}-${id.slice(-6).toLowerCase()}`);
+        fs.mkdirSync(folder, { recursive: true });
+        let diff = '';
+        try {
+          diff = codexCloud(bin, home, ['diff', id]);
+        } catch (err) {
+          diff = '';
+        }
+        if (diff.trim()) fs.writeFileSync(path.join(folder, 'changes.diff'), diff);
+        const notes = [];
+        const repo = taskRepo(t);
+        if (repo && diff.trim()) {
+          const r = cloneRepo({ url: repo }, path.join(folder, 'repo'));
+          if (r.ok) {
+            const applied = spawnSync('git', ['-C', path.join(folder, 'repo'), 'apply', '--3way', path.join(folder, 'changes.diff')], { encoding: 'utf8' });
+            notes.push(applied.status === 0 ? `The task's changes are applied to a clone of ${repo} in repo/ (not committed).` : `Cloned ${repo} into repo/, but its changes didn't apply cleanly (${(applied.stderr || '').trim().split('\n').pop()}); they're in changes.diff.`);
+          } else notes.push(`${repo} couldn't be cloned (${r.why}); the changes are in changes.diff.`);
+        } else if (diff.trim()) notes.push('The changes are in changes.diff; apply them in your copy of the repository with `git apply changes.diff`.');
+        fs.writeFileSync(path.join(folder, 'TASK.md'), [
+          `# ${title}`,
+          '',
+          `Imported by claude-nonstop from ${account.label}'s Codex cloud task ${id}.`,
+          `Status: ${pick(t, ['status', 'state']) || 'unknown'}${repo ? `, repository ${repo}` : ''}.`,
+          pick(t, ['url', 'task_url']) ? `Open it online: ${pick(t, ['url', 'task_url'])}` : '',
+          '',
+          ...notes.map((n) => `- ${n}`),
+          '',
+          '## Task as Codex reported it',
+          '',
+          '```json',
+          JSON.stringify(t, null, 2),
+          '```',
+          '',
+        ].join('\n'));
+        const next = readJson(STATE(), {});
+        next[`codex:${id}`] = { account: account.id, folder, updatedAt: updated, at: new Date().toISOString() };
+        writeJson(STATE(), next);
+        results.push({ id, title, outcome: before ? 'updated' : 'imported', folder, notes });
+      } catch (err) {
+        results.push({ id, title, outcome: 'failed', why: err.message });
+      }
+    }
+  } finally {
+    done();
+  }
+  log(`imports: ${account.label}: ${results.filter((r) => r.outcome === 'imported' || r.outcome === 'updated').length} of ${results.length} Codex cloud tasks brought here`);
+  return results;
+}
+
+// Every connected account whose cloud work can be brought here: Claude accounts' sessions,
+// ChatGPT accounts' Codex tasks.
+const importable = (cfg = config.load()) => cfg.accounts.slice();
+
+// Imports any account: a Claude account's sessions or a ChatGPT account's Codex tasks.
+const importAny = (account, options) => (accounts.isChatgpt(account) ? importCodexAccount(account, options) : importAccount(account, options));
+
+module.exports = { survey, importAccount, importCodexAccount, importAny, importable, taskRepo, transcript, writtenFiles, recoveredPath, projectFolderName, originalCwd, STATE, IMPORT_ROOT };

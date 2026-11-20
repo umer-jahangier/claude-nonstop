@@ -150,3 +150,37 @@ test('paths from any computer stay inside the import folder', () => {
   assert.equal(cloud.recoveredPath('C:\\Users\\a\\..\\..\\x.txt'), path.join('C', 'Users', 'a', 'x.txt'));
   assert.equal(cloud.recoveredPath('/etc/../../passwd'), path.join('etc', 'passwd'));
 });
+
+test("a ChatGPT account's Codex cloud tasks are saved with their diff, applied to a clone of the repository", async () => {
+  const { signInFakeChatgpt } = require('./helpers');
+  const bin = path.join(root, 'fakebin');
+  fs.mkdirSync(bin, { recursive: true });
+  const diff = 'diff --git a/app.js b/app.js\n--- a/app.js\n+++ b/app.js\n@@ -1 +1 @@\n-console.log(1);\n+console.log(2);\n';
+  fs.writeFileSync(path.join(root, 'task.diff'), diff);
+  const tasks = { tasks: [{ id: 'task_e_1', title: 'Change the log', status: 'ready', repo_url: `file://${bare}`, updated_at: 't1' }, { id: 'task_e_2', title: 'No repo', status: 'ready', updated_at: 't1' }], cursor: null };
+  fs.writeFileSync(path.join(root, 'tasks.json'), JSON.stringify(tasks));
+  // A stand-in for `codex cloud`: it needs the ChatGPT sign-in in CODEX_HOME.
+  fs.writeFileSync(path.join(bin, 'codex'), `#!/bin/sh
+grep -q oat-test-ok "$CODEX_HOME/auth.json" || { echo "not signed in" >&2; exit 1; }
+case "$2" in
+  list) cat "${root}/tasks.json" ;;
+  diff) cat "${root}/task.diff" ;;
+esac
+`, { mode: 0o755 });
+  process.env.PATH = `${bin}${path.delimiter}${process.env.PATH}`;
+  config.update((c) => c.accounts.push({ id: 'gpt-1', label: 'GPT', kind: 'chatgpt', provider: 'openai', enabled: true }));
+  signInFakeChatgpt('gpt-1', 'ok');
+  const gpt = config.load().accounts.find((a) => a.id === 'gpt-1');
+
+  const results = Object.fromEntries((await cloud.importAny(gpt)).map((r) => [r.id, r]));
+  const withRepo = results.task_e_1;
+  assert.equal(withRepo.outcome, 'imported');
+  assert.equal(fs.readFileSync(path.join(withRepo.folder, 'changes.diff'), 'utf8'), diff);
+  assert.equal(fs.readFileSync(path.join(withRepo.folder, 'repo', 'app.js'), 'utf8'), 'console.log(2);\n', 'the task\'s changes are applied to the clone');
+  assert.match(fs.readFileSync(path.join(withRepo.folder, 'TASK.md'), 'utf8'), /Change the log/);
+  assert.equal(results.task_e_2.outcome, 'imported');
+  assert.equal(fs.existsSync(path.join(results.task_e_2.folder, 'changes.diff')), true);
+  assert.equal(fs.readdirSync(require('os').tmpdir()).some((n) => n.startsWith('claude-nonstop-codex-') && fs.existsSync(path.join(require('os').tmpdir(), n, 'auth.json'))), false, 'the throwaway sign-in is removed');
+
+  assert.equal((await cloud.importAny(gpt)).every((r) => r.outcome === 'up to date'), true);
+});

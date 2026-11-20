@@ -2592,7 +2592,7 @@ function menuItems(type, item) {
   if (type === 'account') {
     items.push({ act: 'check-account', label: 'Check Usage', icon: 'test' });
     items.push({ act: 'login-account', label: 'Sign In Again…', icon: 'signin' });
-    if (item.kind !== 'chatgpt') items.push({ act: 'import-account', label: 'Bring Cloud Sessions Here', icon: 'down' });
+    items.push({ act: 'import-account', label: item.kind === 'chatgpt' ? 'Bring Codex Cloud Tasks Here' : 'Bring Cloud Sessions Here', icon: 'down' });
   } else {
     items.push({ act: 'test-key', label: 'Test Key', icon: 'test' });
   }

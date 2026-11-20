@@ -270,7 +270,7 @@ function startLogin(account, bin) {
     // its cloud sessions here so nothing it worked on is left behind.
     if (job.ok) {
       checks.account(account, bin);
-      if (!accounts.isChatgpt(account)) startImport(account);
+      startImport(account);
     }
   });
   // A sign-in left open in the browser is abandoned after 15 minutes.
@@ -331,7 +331,7 @@ function startImport(account) {
   if (running && !running.done) return running;
   const job = { accountId: account.id, done: false, index: 0, total: 0, title: '', counts: {}, error: null, startedAt: Date.now() };
   imports.set(account.id, job);
-  require('./cloudsessions').importAccount(account, {
+  require('./cloudsessions').importAny(account, {
     onProgress: (p) => Object.assign(job, { index: p.index, total: p.total, title: p.title }),
   }).then((results) => {
     for (const r of results) job.counts[r.outcome] = (job.counts[r.outcome] || 0) + 1;
@@ -354,7 +354,6 @@ function importView(id) {
 
 function importAccountSessions(id) {
   const account = findAccount(id);
-  if (accounts.isChatgpt(account)) throw httpError(400, 'Cloud sessions are a Claude feature; a ChatGPT account has none to bring.');
   return importView(startImport(account).accountId);
 }
 

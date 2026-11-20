@@ -830,13 +830,13 @@ async function sessionsCommand([sub, ref] = []) {
   const cloud = require('./cloudsessions');
   const all = cloud.importable();
   const picked = ref ? pickItem(config.load().accounts, ref, 'account') : null;
-  if (picked && accounts.isChatgpt(picked)) {
-    say(`${picked.label} is a ChatGPT account; cloud sessions are a Claude feature.`);
-    return 1;
-  }
   const chosen = picked ? [picked] : all.filter((a) => a.enabled !== false);
   if (!sub || sub === 'list') {
     for (const a of chosen) {
+      if (accounts.isChatgpt(a)) {
+        out(`  ${a.label}: ChatGPT account; \`sessions import\` brings its Codex cloud tasks here`);
+        continue;
+      }
       try {
         const list = await cloud.survey(a);
         const brought = list.filter((s) => s.imported).length;
@@ -859,7 +859,7 @@ async function sessionsCommand([sub, ref] = []) {
   for (const a of chosen) {
     out(`${a.label}:`);
     try {
-      const results = await cloud.importAccount(a, { onProgress: (p) => process.stdout.write(`\r  reading ${p.index + 1} of ${p.total}…`.padEnd(40)) });
+      const results = await cloud.importAny(a, { onProgress: (p) => process.stdout.write(`\r  reading ${p.index + 1} of ${p.total}…`.padEnd(40)) });
       process.stdout.write('\r'.padEnd(42) + '\r');
       for (const r of results) {
         if (r.outcome === 'imported' || r.outcome === 'updated') out(`  ${r.outcome === 'updated' ? '↻' : '+'} ${r.title} → ${r.folder}`);

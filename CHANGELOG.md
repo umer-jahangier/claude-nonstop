@@ -2,6 +2,10 @@
 
 Every release of claude-nonstop, newest first. Full notes, and the code at each version, are on the [releases page](https://github.com/umer-jahangier/claude-nonstop/releases). The installer and `claude-nonstop update` install the latest release; the npm package is [`@umer-jahangier/claude-nonstop`](https://www.npmjs.com/package/@umer-jahangier/claude-nonstop).
 
+## [1.17.1](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.17.1) · 2026-11-20
+
+- ChatGPT accounts bring their Codex cloud tasks here too: each task's details and diff, applied to a clone of its repository when the task names one.
+
 ## [1.17.0](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.17.0) · 2026-11-20
 
 - Adding or signing in to a Claude account brings its Claude Code cloud sessions to this computer, as sessions `claude --resume` and the desktop app list, with their git repository cloned and the files they wrote rebuilt. Also from an account's menu and `claude-nonstop sessions import`.
