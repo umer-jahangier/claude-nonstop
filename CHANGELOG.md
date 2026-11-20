@@ -2,6 +2,10 @@
 
 Every release of claude-nonstop, newest first. Full notes, and the code at each version, are on the [releases page](https://github.com/umer-jahangier/claude-nonstop/releases). The installer and `claude-nonstop update` install the latest release; the npm package is [`@umer-jahangier/claude-nonstop`](https://www.npmjs.com/package/@umer-jahangier/claude-nonstop).
 
+## [1.20.0](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.20.0) · 2026-11-20
+
+- ChatGPT accounts bring their Codex Cloud threads, the Codex work at chatgpt.com/local/… and in the Codex app's cloud workspaces: each conversation (messages, commands with their output, app actions) becomes a chat that Claude Code, the Claude desktop app's import and your local Codex all continue, and the cloud workspace's files are copied into its project folder. Credential and tool folders (.aws, .codex, .git…) are never copied.
+
 ## [1.19.0](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.19.0) · 2026-11-20
 
 - Imported cloud sessions become Codex threads too, through Codex's own importer: continue any of them in the Codex app or `codex resume` as well as in Claude Code. Earlier imports are handed over on the next import.

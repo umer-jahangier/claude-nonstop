@@ -235,3 +235,25 @@ esac
 
   assert.equal((await cloud.importAny(gpt)).every((r) => r.outcome === 'up to date'), true);
 });
+
+test('a Codex Cloud thread becomes a Claude Code transcript: messages, commands and app actions in order', () => {
+  const cc = require('../src/codexcloud');
+  const turns = [{ items: [
+    { type: 'userMessage', content: [{ type: 'text', text: 'make a test project' }], startedAtMs: 1 },
+    { type: 'reasoning', summary: [], startedAtMs: 2 },
+    { type: 'commandExecution', id: 'e1', command: 'python3 app.py', commandActions: [{ command: 'python3 app.py' }], aggregatedOutput: 'Total quantity: 42\n', exitCode: 0, cwd: '/workspace', startedAtMs: 3, completedAtMs: 4 },
+    { type: 'mcpToolCall', id: 'e2', server: 'codex_apps', tool: 'sites.create_site', arguments: { slug: 's' }, status: 'completed', result: { content: [{ type: 'text', text: 'Action completed' }] }, startedAtMs: 5 },
+    { type: 'agentMessage', text: 'Marker CODEX-1', startedAtMs: 6 },
+  ] }];
+  const lines = cc.transcript(turns, { sessionId: 's1', cwd: '/p', title: 'T' });
+  const convo = lines.filter((l) => l.type === 'user' || l.type === 'assistant');
+  assert.deepEqual(convo.map((l) => l.type), ['user', 'assistant', 'user', 'assistant', 'user', 'assistant']);
+  assert.equal(convo[0].message.content, 'make a test project');
+  assert.equal(convo[1].message.content[0].name, 'Bash');
+  assert.equal(convo[2].message.content[0].tool_use_id, convo[1].message.content[0].id, 'each result answers its call');
+  assert.match(convo[2].message.content[0].content, /Total quantity: 42/);
+  assert.equal(convo[3].message.content[0].name, 'mcp__codex_apps__sites_create_site');
+  assert.equal(convo.at(-1).message.content[0].text, 'Marker CODEX-1');
+  assert.deepEqual(convo.map((l) => l.parentUuid).slice(1), convo.map((l) => l.uuid).slice(0, -1), 'one linked chain');
+  assert.ok(cc.SKIP_TOP.has('.aws') && cc.SKIP_TOP.has('.codex'), 'credential and tool folders are never copied');
+});

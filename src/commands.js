@@ -874,7 +874,7 @@ async function sessionsCommand([sub, ref] = []) {
       const n = (k) => results.filter((r) => r.outcome === k).length;
       total.brought += n('imported') + n('updated');
       total.here += n('already here') + n('up to date');
-      if (!results.length) out(`  no ${accounts.isChatgpt(a) ? 'Codex cloud tasks' : 'cloud sessions'} on this account.`);
+      if (!results.length) out(`  no ${accounts.isChatgpt(a) ? 'Codex cloud threads or tasks' : 'cloud sessions'} on this account.`);
       else out(`  ${n('imported') + n('updated')} brought here, ${n('already here') + n('up to date')} already here, ${n('empty')} empty${n('failed') ? `, ${n('failed')} failed` : ''}.`);
     } catch (err) {
       failed++;

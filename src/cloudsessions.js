@@ -490,7 +490,7 @@ function writeHandoff(folder) {
     '',
   ];
   for (const v of all) {
-    out.push(`## ${v.kind === 'codex' ? 'Codex task' : 'Claude session'}: ${v.title || v.id}`, '');
+    out.push(`## ${v.kind === 'codex' ? 'Codex task' : v.kind === 'codex-cloud' ? 'Codex Cloud thread' : 'Claude session'}: ${v.title || v.id}`, '');
     out.push(`- Account: ${v.accountLabel || 'unknown'}; last active ${v.lastActive || v.updatedAt || 'unknown'}${v.branch ? `; branch \`${v.branch}\`` : ''}`);
     for (const n of v.notes || []) out.push(`- ${n}`);
     if (v.firstAsk) out.push('', '**Started with:**', '', quote(v.firstAsk));
@@ -583,9 +583,101 @@ async function listCodexTasks(bin, home) {
   return tasks;
 }
 
-async function importCodexAccount(account, { ids = null, onProgress = () => {} } = {}) {
+// A ChatGPT account's cloud work: its Codex Cloud threads (chatgpt.com/local/..., the Codex
+// app's cloud workspaces) and its Codex cloud tasks (chatgpt.com/codex, read through `codex cloud`).
+async function importCodexAccount(account, options = {}) {
+  const results = [];
+  let threadsError = null;
+  try {
+    results.push(...await importCodexCloudThreads(account, options));
+  } catch (err) {
+    threadsError = err;
+    log(`imports: ${account.label}: Codex Cloud threads: ${err.message}`);
+  }
+  if (findCodex()) results.push(...await importCodexTasks(account, options));
+  else if (threadsError) throw threadsError;
+  return results;
+}
+
+async function importCodexCloudThreads(account, { onProgress = () => {} } = {}) {
+  if (process.env.NODE_TEST_CONTEXT && !process.env.CLAUDE_NONSTOP_CODEX_CLOUD_WS) return [];
+  const cc = require('./codexcloud');
+  const openaiAuth = require('./openai-auth');
+  const creds = await openaiAuth.current(account.id);
+  if (!creds) throw new Error(`${account.label}: not signed in`);
+  const rpc = await cc.connect(creds.accessToken);
+  const results = [];
+  try {
+    const threads = (await cc.listThreads(rpc)).filter((t) => !t.ephemeral && !t.parentThreadId);
+    for (const [i, t] of threads.entries()) {
+      const title = String(t.name || t.preview || t.id).split('\n')[0].slice(0, 120);
+      onProgress({ index: i, total: threads.length, title });
+      try {
+        results.push(await importCodexCloudThread(rpc, cc, account, t, title));
+      } catch (err) {
+        results.push({ id: t.id, title, outcome: 'failed', why: err.message });
+      }
+    }
+  } finally {
+    rpc.close();
+  }
+  log(`imports: ${account.label}: ${results.filter((r) => r.outcome === 'imported' || r.outcome === 'updated').length} of ${results.length} Codex Cloud threads brought here`);
+  return results;
+}
+
+async function importCodexCloudThread(rpc, cc, account, t, title) {
+  const key = `codexcloud:${t.id}`;
+  const before = readJson(STATE(), {})[key];
+  const updated = String(t.updatedAt || '');
+  if (before && before.updatedAt === updated && fs.existsSync(before.file)) return { id: t.id, title, outcome: 'up to date', file: before.file, folder: before.folder };
+  const turns = await cc.threadTurns(rpc, t.id);
+  if (!turns.some((x) => (x.items || []).some((it) => it.type === 'userMessage' || it.type === 'agentMessage'))) return { id: t.id, title, outcome: 'empty' };
+  const repo = t.gitInfo && (t.gitInfo.originUrl || t.gitInfo.repositoryUrl);
+  const folder = before ? before.folder : repo ? projectFolder(repo) : path.join(IMPORT_ROOT(), slug(account.label), `codex-${slug(title)}-${slug(t.id.slice(-6))}`);
+  fs.mkdirSync(folder, { recursive: true });
+  const notes = [];
+  if (repo) {
+    const r = cloneRepo({ url: repo, revision: t.gitInfo.branch }, folder);
+    notes.push(r.ok ? `Repository ${repo} is cloned here.` : `Repository ${repo} couldn't be cloned (${r.why}).`);
+  }
+  // The thread's cloud workspace, copied in: what Codex made there, as it is now.
+  for (const env of t.environments || []) {
+    const roots = env.runtimeWorkspaceRoots && env.runtimeWorkspaceRoots.length ? env.runtimeWorkspaceRoots : [env.cwd].filter(Boolean);
+    for (const root of roots) {
+      const into = repo ? path.join(folder, '.claude-nonstop', 'workspace') : folder;
+      const copied = await cc.copyTree(rpc, env.environmentId, root, into);
+      notes.push(copied.files ? `${copied.files} file(s) from its cloud workspace ${root} are copied ${repo ? 'into .claude-nonstop/workspace/' : 'here'}.` : `Its cloud workspace ${root} had no files to copy.`);
+      if (copied.skipped.length) notes.push(`Not copied: ${copied.skipped.slice(0, 10).join('; ')}${copied.skipped.length > 10 ? `; and ${copied.skipped.length - 10} more` : ''}.`);
+    }
+  }
+  const sessionId = before ? before.sessionId : crypto.randomUUID();
+  const dir = path.join(projectsDir(), projectFolderName(folder));
+  fs.mkdirSync(dir, { recursive: true });
+  const file = path.join(dir, `${sessionId}.jsonl`);
+  const lines = cc.transcript(turns, { sessionId, cwd: folder, title: `${title} (from ${account.label}, Codex Cloud)`, model: t.model || 'codex-cloud' });
+  fs.writeFileSync(`${file}.tmp`, lines.map((l) => JSON.stringify(l)).join('\n') + '\n');
+  fs.renameSync(`${file}.tmp`, file);
+  const note = trustNote(trustFolder(folder));
+  if (note) notes.push(note);
+  const asks = [];
+  let ended = '';
+  for (const turn of turns) for (const it of turn.items || []) {
+    if (it.type === 'userMessage') asks.push(clip((it.content || []).map((c) => c.text || '').join('\n').trim(), 500));
+    if (it.type === 'agentMessage' && it.text) ended = clip(it.text, 2000);
+  }
+  const next = readJson(STATE(), {});
+  next[key] = {
+    account: account.id, sessionId, file, folder, updatedAt: updated, at: new Date().toISOString(),
+    kind: 'codex-cloud', title, accountLabel: account.label, repo: repo || null, lastActive: new Date((t.updatedAt || 0) * 1000).toISOString(),
+    firstAsk: asks[0] || '', lastAsks: asks.slice(-3), ended, notes, url: `https://chatgpt.com/local/${t.id}`,
+  };
+  writeJson(STATE(), next);
+  writeHandoff(folder);
+  return { id: t.id, title, outcome: before ? 'updated' : 'imported', file, folder, sessionId, notes };
+}
+
+async function importCodexTasks(account, { ids = null, onProgress = () => {} } = {}) {
   const bin = findCodex();
-  if (!bin) throw new Error(`${account.label}: Codex isn't installed, and its cloud tasks are read through it (install Codex, then try again)`);
   const { home, done } = await codexHomeFor(account);
   const results = [];
   try {
@@ -750,7 +842,7 @@ async function shareWithCodex(results) {
   const fresh = results.filter((r) => (r.outcome === 'imported' || r.outcome === 'updated') && r.file);
   const state = readJson(STATE(), {});
   // Also any earlier import Codex doesn't have yet.
-  const missing = Object.entries(state).filter(([, v]) => v.kind === 'claude' && v.file && fs.existsSync(v.file) && !v.codexThread)
+  const missing = Object.entries(state).filter(([, v]) => (v.kind === 'claude' || v.kind === 'codex-cloud') && v.file && fs.existsSync(v.file) && !v.codexThread)
     .map(([id, v]) => ({ id, file: v.file, folder: v.folder, title: v.title, accountLabel: v.accountLabel }));
   const all = new Map();
   for (const r of fresh) all.set(r.file, { id: r.id, file: r.file, folder: r.folder, title: r.title, accountLabel: (state[r.id] || {}).accountLabel });

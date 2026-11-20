@@ -2555,7 +2555,7 @@ async function followImport(id, announce) {
   const brought = (c.imported || 0) + (c.updated || 0);
   const here = (c['already here'] || 0) + (c['up to date'] || 0);
   const failed = c.failed || 0;
-  const what = a && a.kind === 'chatgpt' ? 'Codex cloud tasks' : 'cloud sessions';
+  const what = a && a.kind === 'chatgpt' ? 'Codex cloud threads and tasks' : 'cloud sessions';
   const codexNote = v.codex && v.codex.imported ? ` Codex has them too (${v.codex.imported} in codex resume and the Codex app).` : '';
   const where = ` Open them with claude --resume in their folder under Claude Imports.${codexNote} In the Claude desktop app, Settings > Import & export > Cowork & Code adds them to its sidebar.`;
   if (!brought && !here && !failed) return toast(`${name} has no ${what}${(c.empty || 0) ? ` with messages in them` : ''}.`);
@@ -2598,7 +2598,7 @@ function menuItems(type, item) {
   if (type === 'account') {
     items.push({ act: 'check-account', label: 'Check Usage', icon: 'test' });
     items.push({ act: 'login-account', label: 'Sign In Again…', icon: 'signin' });
-    items.push({ act: 'import-account', label: item.kind === 'chatgpt' ? 'Bring Codex Cloud Tasks Here' : 'Bring Cloud Sessions Here', icon: 'down' });
+    items.push({ act: 'import-account', label: item.kind === 'chatgpt' ? 'Bring Codex Cloud Work Here' : 'Bring Cloud Sessions Here', icon: 'down' });
   } else {
     items.push({ act: 'test-key', label: 'Test Key', icon: 'test' });
   }
