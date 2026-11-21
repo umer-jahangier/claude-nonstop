@@ -70,8 +70,9 @@ const connectors = (cfg) => (Array.isArray(cfg.desktopConnectors) ? cfg.desktopC
 function appEntry(e, cfg) {
   const cat = require('./connectorcatalog');
   if (cat.isTokenConnector(e)) {
-    const url = cat.viaGateway(e) ? `http://127.0.0.1:${cfg.port}/mcp/${encodeURIComponent(e.name)}` : e.url;
-    return { name: e.name, transport: e.transport || 'http', url, headersHelper: process.execPath, headersHelperArgs: [paths.APP_SCRIPT, 'connectors', 'headers', e.name], headersHelperTtlSec: 300 };
+    const via = cat.viaGateway(e);
+    const url = via ? `http://127.0.0.1:${cfg.port}/mcp/${encodeURIComponent(e.name)}` : e.url;
+    return { name: e.name, transport: e.transport || 'http', url, headersHelper: process.execPath, headersHelperArgs: [paths.APP_SCRIPT, 'connectors', 'headers', ...(via ? ['--via-gateway'] : []), e.name], headersHelperTtlSec: 300 };
   }
   return { name: e.name, transport: e.transport || 'http', url: e.url, ...(e.oauth ? { oauth: true } : {}) };
 }

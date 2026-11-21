@@ -226,10 +226,11 @@ test('the connector catalog adds with one click, and GitHub signs in with a toke
     const gh = app.find((e) => e.name === 'GitHub');
     assert.match(gh.url, /^http:\/\/127\.0\.0\.1:\d+\/mcp\/GitHub$/, 'GitHub is reached through the gateway');
     assert.equal(gh.oauth, undefined, 'GitHub has no app self-registration: no oauth');
-    assert.deepEqual(gh.headersHelperArgs.slice(1), ['connectors', 'headers', 'GitHub']);
+    assert.deepEqual(gh.headersHelperArgs.slice(1), ['connectors', 'headers', '--via-gateway', 'GitHub']);
     assert.ok(require('path').isAbsolute(gh.headersHelper));
     assert.ok(!JSON.stringify(app).includes('TESTTOKEN'), 'the token stays out of the app settings');
-    assert.deepEqual(require('../src/connectorcatalog').headers('github'), { Authorization: `Bearer ${vault.loadWithTokens().gatewayToken}` }, 'the app gets the gateway token, not GitHub\'s');
+    assert.deepEqual(require('../src/connectorcatalog').headers('github', { viaGateway: true }), { Authorization: `Bearer ${vault.loadWithTokens().gatewayToken}` }, 'the app gets the gateway token, not GitHub\'s');
+    assert.deepEqual(require('../src/connectorcatalog').headers('github'), { Authorization: 'Bearer github_pat_TESTTOKEN0123456789' }, 'an older profile pointing at GitHub itself still gets GitHub\'s token');
     assert.equal(require('../src/connectorcatalog').tokenFor(config0().desktopConnectors.find((e) => e.name === 'GitHub'), vault.load()), 'github_pat_TESTTOKEN0123456789');
     assert.equal(app.find((e) => e.name === 'Linear').oauth, true);
 

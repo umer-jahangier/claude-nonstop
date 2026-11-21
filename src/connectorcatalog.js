@@ -152,13 +152,15 @@ const viaGateway = (entry) => isTokenConnector(entry) && (entry.transport || 'ht
 
 // What `claude-nonstop connectors headers <name>` prints for the desktop app: the gateway
 // token for a connector reached through the gateway, else the connector's own token.
-function headers(name) {
+// viaGateway: the app's entry points at the gateway (its helper passes --via-gateway). An
+// entry from an older profile that still points at the server itself gets the server's token.
+function headers(name, { viaGateway: throughGateway = false } = {}) {
   const entry = (require('./config').load().desktopConnectors || []).find((e) => sameName(e.name, name));
   if (!entry) throw new Error(`there is no connector called ${name}`);
   const v = require('./vault').loadWithTokens();
   const token = tokenFor(entry, v);
   if (!token) throw new Error(`${entry.name} has no access token: add it again with one${(entry.tokenFrom || (tokenServerFor(entry.url) || {}).tokenFrom) === 'gh' ? ', or sign in to the GitHub CLI (gh auth login)' : ''}`);
-  return { Authorization: `Bearer ${viaGateway(entry) ? v.gatewayToken : token}` };
+  return { Authorization: `Bearer ${throughGateway && viaGateway(entry) ? v.gatewayToken : token}` };
 }
 
 // How a saved connector signs in, for listing it.

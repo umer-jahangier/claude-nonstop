@@ -520,7 +520,7 @@ async function connectorsCommand(args = []) {
   // only the header JSON goes to stdout.
   if (sub === 'headers') {
     try {
-      process.stdout.write(`${JSON.stringify(cat.headers(rest.join(' ')))}\n`);
+      process.stdout.write(`${JSON.stringify(cat.headers(rest.filter((w) => w !== '--via-gateway').join(' '), { viaGateway: rest.includes('--via-gateway') }))}\n`);
       return 0;
     } catch (err) {
       say(err.message);

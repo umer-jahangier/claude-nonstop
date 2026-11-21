@@ -46,9 +46,11 @@ test('a token connector: added from the catalog by name, and `connectors headers
     r = await runCli(['connectors', 'add', 'GitHub', '--token', 'github_pat_CLITOKEN0123456789']);
     assert.equal(r.code, 0, r.stderr);
     assert.match(r.stdout, /signs in with your token/);
-    r = await runCli(['connectors', 'headers', 'GitHub']);
+    r = await runCli(['connectors', 'headers', '--via-gateway', 'GitHub']);
     assert.equal(r.code, 0, r.stderr);
     assert.deepEqual(JSON.parse(r.stdout), { Authorization: `Bearer ${require('../src/vault').loadWithTokens().gatewayToken}` });
+    r = await runCli(['connectors', 'headers', 'GitHub']);
+    assert.deepEqual(JSON.parse(r.stdout), { Authorization: 'Bearer github_pat_CLITOKEN0123456789' });
     r = await runCli(['connectors', 'catalog', 'linear']);
     assert.match(r.stdout, /Linear/);
     r = await runCli(['connectors', 'remove', 'github']);
