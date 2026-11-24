@@ -240,3 +240,20 @@ test('a split multi-byte character in a stream comes out whole', () => {
   const out = [...parse(bytes.subarray(0, cut)), ...parse(bytes.subarray(cut))];
   assert.equal(JSON.parse(out[0].data).t, 'a—b');
 });
+
+test("a Google account Code Assist won't serve gets Google's own reason, not a vague one", async () => {
+  const googleAuth = require('../src/google-auth');
+  const srv = http.createServer((req, res) => {
+    res.writeHead(200, { 'content-type': 'application/json' });
+    res.end(JSON.stringify({ allowedTiers: [{ id: 'standard-tier', name: 'Gemini Code Assist', userDefinedCloudaicompanionProject: true, isDefault: true }], ineligibleTiers: [{ reasonCode: 'UNSUPPORTED_CLIENT', reasonMessage: 'This client is no longer supported.', tierId: 'free-tier', tierName: 'Gemini Code Assist for individuals' }] }));
+  });
+  await new Promise((r) => srv.listen(0, '127.0.0.1', r));
+  const before = process.env.CLAUDE_NONSTOP_CODE_ASSIST;
+  process.env.CLAUDE_NONSTOP_CODE_ASSIST = `http://127.0.0.1:${srv.address().port}/v1internal`;
+  try {
+    await assert.rejects(googleAuth.setUp('gem-x', { accessToken: 't' }), /no longer supported.*own Google Cloud project.*Gemini API key/s);
+  } finally {
+    process.env.CLAUDE_NONSTOP_CODE_ASSIST = before;
+    srv.close();
+  }
+});

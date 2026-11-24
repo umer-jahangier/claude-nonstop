@@ -2,6 +2,10 @@
 
 Every release of claude-nonstop, newest first. Full notes, and the code at each version, are on the [releases page](https://github.com/umer-jahangier/claude-nonstop/releases). The installer and `claude-nonstop update` install the latest release; the npm package is [`@umer-jahangier/claude-nonstop`](https://www.npmjs.com/package/@umer-jahangier/claude-nonstop).
 
+## [1.23.1](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.23.1) · 2026-11-25
+
+- Signing in a Gemini account that Google won't serve through Code Assist now says why, in Google's words, and points to a Gemini API key. Google no longer serves the free "Gemini Code Assist for individuals" tier to Gemini CLI's client, and the paid tier needs your own Google Cloud project with a Code Assist licence; Gemini API keys are unaffected.
+
 ## [1.23.0](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.23.0) · 2026-11-25
 
 - **Gemini.** Add a Gemini account (Google sign-in, the way Gemini CLI signs in; Gemini Code Assist under the account's own plan) or a Gemini API key (`AIza…`), and any tool runs on it like any other line: Claude Code, Codex, Cursor and the desktop app, tool calls included. `accounts add "Name" --gemini`, or pick **Gemini** under **Add Account…**. A line not given the chosen model (a preview, or one whose quota is used up) gets the next Gemini model it serves.

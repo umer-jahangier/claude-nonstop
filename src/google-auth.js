@@ -163,6 +163,13 @@ async function setUp(accountId, creds) {
   let tier = (load.paidTier && load.paidTier.name) || (load.currentTier && load.currentTier.name) || null;
   if (!projectId) {
     const t = (load.allowedTiers || []).find((x) => x.isDefault) || { id: 'free-tier' };
+    // Google says why a tier is closed to this account (the free tier is no longer served to
+    // Gemini CLI's client, say); a tier that needs the account's own Cloud project and a Code
+    // Assist licence can't be set up from here.
+    const closed = (load.ineligibleTiers || []).map((x) => `${x.tierName || x.tierId}: ${x.reasonMessage || x.reasonCode}`);
+    if (t.userDefinedCloudaicompanionProject || (t.id === 'free-tier' && closed.length)) {
+      throw new Error(`Google won't serve Gemini to this account through Code Assist. ${closed.length ? `${closed.join(' ')} ` : ''}${t.userDefinedCloudaicompanionProject ? `The tier it offers (${t.name || t.id}) needs your own Google Cloud project with a Code Assist licence. ` : ''}Add a Gemini API key instead (free from aistudio.google.com/apikey).`);
+    }
     tier = t.name || tier;
     let op = await codeAssistCall('onboardUser', creds.accessToken, { tierId: t.id, metadata: META });
     for (let i = 0; !op.done && op.name && i < 12; i++) {
