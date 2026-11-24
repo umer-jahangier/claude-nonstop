@@ -61,7 +61,7 @@ echo OK
 }
 
 function runOnHost(host, script) {
-  const r = spawnSync('ssh', ['-o', 'BatchMode=yes', '-o', 'ConnectTimeout=15', '--', host, 'sh -s'], { input: script, encoding: 'utf8', timeout: 60000 });
+  const r = spawnSync('ssh', ['-o', 'BatchMode=yes', '-o', 'ConnectTimeout=15', '--', host, 'sh -s'], { input: script, encoding: 'utf8', timeout: 60000, windowsHide: true });
   const output = `${r.stdout || ''}${r.stderr || ''}`.trim();
   if (r.error) return { ok: false, why: r.error.message };
   if (/NEEDS_ROOT/.test(output)) return { ok: false, why: 'the SSH user there is not root and has no password-free sudo, so /etc/hosts and the trust store can\'t be changed' };
@@ -106,7 +106,7 @@ function open(host, port) {
     '-o', 'ControlMaster=no', '-o', 'ControlPath=none',
     '-R', `127.0.0.1:${port}:127.0.0.1:${port}`,
     '--', host,
-  ], { stdio: ['ignore', 'ignore', 'pipe'] });
+  ], { stdio: ['ignore', 'ignore', 'pipe'], windowsHide: true });
   t.child = child;
   let err = '';
   child.stderr.on('data', (d) => { err = `${err}${d}`.slice(-2000); });

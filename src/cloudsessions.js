@@ -173,17 +173,29 @@ function alreadyLocal(cwd, events) {
   if (!first || !cwd) return false;
   const dir = path.join(projectsDir(), projectFolderName(cwd));
   if (!fs.existsSync(dir)) return false;
-  const r = spawnSync('grep', ['-rlF', '--include=*.jsonl', first.payload.uuid, dir], { encoding: 'utf8' });
-  if (r.status === 0 && r.stdout.trim()) {
-    const imported = Object.values(readJson(STATE(), {})).map((s) => s.file);
-    return r.stdout.trim().split('\n').some((f) => !imported.includes(f));
+  // Read here rather than with grep, which Windows doesn't have.
+  const imported = new Set(Object.values(readJson(STATE(), {})).map((s) => s.file));
+  for (const name of fs.readdirSync(dir)) {
+    if (!name.endsWith('.jsonl')) continue;
+    const f = path.join(dir, name);
+    if (imported.has(f)) continue;
+    try {
+      if (fs.readFileSync(f, 'utf8').includes(first.payload.uuid)) return true;
+    } catch {}
   }
   return false;
 }
 
+// Git run in the background: never a console window on Windows, never a prompt or a sign-in
+// window (Git Credential Manager), so a repository it can't reach just fails and is noted.
+function git(args, extra = {}) {
+  const env = { ...process.env, GIT_TERMINAL_PROMPT: '0', GCM_INTERACTIVE: 'never', GIT_CONFIG_COUNT: '1', GIT_CONFIG_KEY_0: 'credential.interactive', GIT_CONFIG_VALUE_0: 'false' };
+  return spawnSync('git', args, { encoding: 'utf8', env, windowsHide: true, ...extra });
+}
+
 function cloneRepo(source, dir) {
   if (fs.existsSync(path.join(dir, '.git'))) {
-    const r = spawnSync('git', ['-C', dir, 'fetch', '--all', '--quiet'], { encoding: 'utf8', env: { ...process.env, GIT_TERMINAL_PROMPT: '0' }, timeout: 600000 });
+    const r = git(['-C', dir, 'fetch', '--all', '--quiet'], { timeout: 600000 });
     return r.status === 0 ? { ok: true } : { ok: false, why: (r.stderr || '').trim().split('\n').pop() };
   }
   fs.mkdirSync(path.dirname(dir), { recursive: true });
@@ -191,7 +203,7 @@ function cloneRepo(source, dir) {
   const occupied = fs.existsSync(dir) && fs.readdirSync(dir).length > 0;
   const target = occupied ? `${dir}.clone-${process.pid}` : dir;
   const args = ['clone', '--quiet', ...(source.revision ? ['--branch', source.revision] : []), source.url, target];
-  const r = spawnSync('git', args, { encoding: 'utf8', env: { ...process.env, GIT_TERMINAL_PROMPT: '0' }, timeout: 600000 });
+  const r = git(args, { timeout: 600000 });
   if (r.status !== 0) {
     if (occupied) fs.rmSync(target, { recursive: true, force: true });
     return { ok: false, why: (r.stderr || '').trim().split('\n').pop() || `git exited with ${r.status}` };
@@ -556,7 +568,7 @@ const quote = (t) => t.split('\n').map((l) => `> ${l}`).join('\n');
 // Codex renews here is written back to the vault.
 
 const findCodex = () => {
-  const r = spawnSync(process.platform === 'win32' ? 'where' : 'which', ['codex'], { encoding: 'utf8' });
+  const r = spawnSync(process.platform === 'win32' ? 'where' : 'which', ['codex'], { encoding: 'utf8', windowsHide: true });
   return r.status === 0 ? r.stdout.trim().split('\n')[0] : null;
 };
 
@@ -580,7 +592,8 @@ async function codexHomeFor(account) {
 }
 
 function codexCloud(bin, home, args) {
-  const r = spawnSync(bin, ['cloud', ...args], { encoding: 'utf8', env: { ...process.env, CODEX_HOME: home }, input: '', timeout: 120000, maxBuffer: 256 * 1024 * 1024 });
+  // Run in its own folder: `codex cloud` leaves an error.log wherever it runs.
+  const r = spawnSync(bin, ['cloud', ...args], { encoding: 'utf8', cwd: home, env: { ...process.env, CODEX_HOME: home }, input: '', timeout: 120000, maxBuffer: 256 * 1024 * 1024, windowsHide: true });
   if (r.status !== 0) throw new Error((r.stderr || r.stdout || `codex exited with ${r.status}`).trim().split('\n').pop());
   return r.stdout;
 }
@@ -744,8 +757,8 @@ async function importCodexTasks(account, { ids = null, onProgress = () => {} } =
           if (!r.ok) notes.push(`${repo} couldn't be cloned (${r.why}); the task's changes are in ${rel}.`);
           else if (diff.trim()) {
             // Applied only to a clean working tree, so no other session's changes are mixed in.
-            const dirty = spawnSync('git', ['-C', folder, 'status', '--porcelain', '--untracked-files=no'], { encoding: 'utf8' }).stdout.trim();
-            const applied = dirty ? null : spawnSync('git', ['-C', folder, 'apply', '--3way', diffFile], { encoding: 'utf8' });
+            const dirty = String(git(['-C', folder, 'status', '--porcelain', '--untracked-files=no']).stdout || '').trim();
+            const applied = dirty ? null : git(['-C', folder, 'apply', '--3way', diffFile]);
             notes.push(applied && applied.status === 0 ? `This task's changes are applied to the working tree here (not committed); they're also in ${rel}.` : `This task's changes are in ${rel}${applied ? `; they didn't apply cleanly (${(applied.stderr || '').trim().split('\n').pop()})` : ' (not applied: the working tree already had changes)'}. Apply with \`git apply --3way ${rel}\`.`);
           }
         } else if (diff.trim()) notes.push('The changes are in changes.diff; apply them in your copy of the repository with `git apply changes.diff`.');
@@ -805,7 +818,7 @@ function toCodex(sessions, { timeoutMs = 300000 } = {}) {
   if (process.env.NODE_TEST_CONTEXT && !process.env.CLAUDE_NONSTOP_TEST_CODEX) return Promise.resolve({ ok: false, imported: [], failed: [] });
   return new Promise((resolve) => {
     const { spawn } = require('child_process');
-    const p = spawn(bin, ['app-server'], { stdio: ['pipe', 'pipe', 'ignore'] });
+    const p = spawn(bin, ['app-server'], { stdio: ['pipe', 'pipe', 'ignore'], windowsHide: true });
     let buf = '';
     let settled = false;
     const finish = (r) => {

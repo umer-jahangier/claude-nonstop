@@ -146,8 +146,16 @@ NoDisplay=true
   installed: () => fs.existsSync(systemdUnit) || fs.existsSync(autostartFile),
 };
 
+// Windows runs a Run entry as typed, and node.exe is a console program: started directly it
+// opens a console window at every login. A tiny VBScript starts it with no window instead.
+const winLauncher = () => path.join(paths.HOME, 'start-gateway.vbs');
+const vbs = (s) => String(s).replace(/"/g, '""');
 const windows = {
-  command: () => `"${process.execPath}" "${paths.APP_SCRIPT}" serve --background`,
+  command() {
+    const line = `"${process.execPath}" "${paths.APP_SCRIPT}" serve --background`;
+    fs.writeFileSync(winLauncher(), `CreateObject("WScript.Shell").Run "${vbs(line)}", 0, False\r\n`);
+    return `wscript.exe //B //Nologo "${winLauncher()}"`;
+  },
   install() {
     const r = run('reg', ['add', RUN_KEY, '/v', 'claude-nonstop', '/t', 'REG_SZ', '/d', this.command(), '/f']);
     if (!r.ok) throw new Error(`could not add the startup entry: ${r.out}`);
@@ -156,6 +164,7 @@ const windows = {
   },
   uninstall() {
     run('reg', ['delete', RUN_KEY, '/v', 'claude-nonstop', '/f']);
+    fs.rmSync(winLauncher(), { force: true });
   },
   installed: () => run('reg', ['query', RUN_KEY, '/v', 'claude-nonstop']).ok,
 };

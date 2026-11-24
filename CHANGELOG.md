@@ -2,6 +2,12 @@
 
 Every release of claude-nonstop, newest first. Full notes, and the code at each version, are on the [releases page](https://github.com/umer-jahangier/claude-nonstop/releases). The installer and `claude-nonstop update` install the latest release; the npm package is [`@umer-jahangier/claude-nonstop`](https://www.npmjs.com/package/@umer-jahangier/claude-nonstop).
 
+## [1.23.2](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.23.2) · 2026-11-25
+
+- **Windows: no more Git windows.** Bringing cloud sessions here ran `git` (and `codex`) from the background gateway without hiding them, so every clone, fetch and check opened a console window, and Git's credential manager could pop up a sign-in window for a private repository. They now run hidden and never prompt; a repository Git can't reach is noted instead. The gateway itself starts at login with no console window, and the SSH tunnels run hidden too.
+- **Installing without admin rights.** On Windows, when the administrator prompt is declined (or the account isn't an administrator), the Claude desktop app's settings now go in the per-user policy key, which the app reads too, so it can still run on the gateway. The web page works without admin rights at http://claude-nonstop.localhost (with the gateway's port when port 80 is taken).
+- On Windows, sessions already on this computer are recognised when importing (the check used `grep`, which Windows doesn't have), and `codex cloud` no longer leaves an `error.log` in the folder it ran from.
+
 ## [1.23.1](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.23.1) · 2026-11-25
 
 - Signing in a Gemini account that Google won't serve through Code Assist now says why, in Google's words, and points to a Gemini API key. Google no longer serves the free "Gemini Code Assist for individuals" tier to Gemini CLI's client, and the paid tier needs your own Google Cloud project with a Code Assist licence; Gemini API keys are unaffected.

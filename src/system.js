@@ -87,7 +87,10 @@ function apply({ hosts = true, desktopSettings = null } = {}) {
   if (node) sh.push(`setcap cap_net_bind_service=+ep ${elevate.shQuote(node)} || true`);
   if (desktopSettings) managedStep(desktop.managedChange(desktopSettings), sh, ps, cleanups);
   const ran = runAll(sh, ps, cleanups);
-  return { ran, hosts: hostsfile.mapped(), desktop: Boolean(desktopSettings) && desktop.applied(desktopSettings, { fresh: true }) };
+  let desktopDone = Boolean(desktopSettings) && desktop.applied(desktopSettings, { fresh: true });
+  // Admin rights declined (or not available) on Windows: the per-user policy key instead.
+  if (desktopSettings && !desktopDone && process.platform === 'win32') desktopDone = desktop.userPolicy(desktopSettings);
+  return { ran, hosts: hostsfile.mapped(), desktop: desktopDone };
 }
 
 // Takes our hosts-file lines and the desktop app's managed settings back out.

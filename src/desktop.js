@@ -22,6 +22,9 @@ const { psQuote, shQuote } = require('./elevate');
 const DOMAIN = 'com.anthropic.claudefordesktop';
 const LINUX_FILE = '/etc/claude-desktop/managed-settings.json';
 const WIN_KEY = 'HKLM\\SOFTWARE\\Policies\\Claude';
+// Read by the app too, while the machine key is empty: the fallback when the admin prompt is
+// declined. Windows may keep users from writing under Policies; then the manual steps apply.
+const WIN_USER_KEY = 'HKCU\\SOFTWARE\\Policies\\Claude';
 const PROFILE = path.join(paths.HOME, 'claude-nonstop-desktop.mobileconfig');
 
 function settings(cfg, v) {
@@ -150,14 +153,18 @@ function current() {
       return null;
     }
     if (process.platform === 'win32') {
-      const r = spawnSync('reg.exe', ['query', WIN_KEY], { encoding: 'utf8', windowsHide: true });
-      if (r.status !== 0) return null;
-      const out = {};
-      for (const line of r.stdout.split(/\r?\n/)) {
-        const m = line.match(/^\s+(\S+)\s+REG_SZ\s+(.*)$/);
-        if (m) out[m[1]] = m[2].trim();
+      // The app reads the per-user key only while the machine key holds nothing.
+      for (const key of [WIN_KEY, WIN_USER_KEY]) {
+        const r = spawnSync('reg.exe', ['query', key], { encoding: 'utf8', windowsHide: true });
+        if (r.status !== 0) continue;
+        const out = {};
+        for (const line of r.stdout.split(/\r?\n/)) {
+          const m = line.match(/^\s+(\S+)\s+REG_SZ\s+(.*)$/);
+          if (m) out[m[1]] = m[2].trim();
+        }
+        if (Object.keys(out).length) return out;
       }
-      return out;
+      return null;
     }
     return JSON.parse(fs.readFileSync(LINUX_FILE, 'utf8'));
   } catch {
@@ -195,9 +202,23 @@ function managedChange(want) {
   };
 }
 
+// Windows without admin rights: the same settings in the per-user policy key, which the app
+// reads while the machine key holds nothing. Returns whether they're in place afterwards.
+function userPolicy(want) {
+  if (managedOff() || process.platform !== 'win32' || !appInstalled()) return false;
+  for (const [k, value] of Object.entries(want)) {
+    const r = spawnSync('reg.exe', ['add', WIN_USER_KEY, '/v', k, '/t', 'REG_SZ', '/d', String(value), '/f'], { encoding: 'utf8', windowsHide: true });
+    if (r.status !== 0) return false;
+  }
+  for (const k of MANAGED_KEYS.filter((n) => !(n in want))) spawnSync('reg.exe', ['delete', WIN_USER_KEY, '/v', k, '/f'], { windowsHide: true });
+  return applied(want, { fresh: true });
+}
+
 function managedRemoval() {
   if (process.platform === 'darwin' || !current()) return null;
   if (process.platform === 'win32') {
+    // The per-user copy needs no admin rights to remove.
+    for (const n of MANAGED_KEYS) spawnSync('reg.exe', ['delete', WIN_USER_KEY, '/v', n, '/f'], { windowsHide: true });
     const key = 'HKLM:\\SOFTWARE\\Policies\\Claude';
     return { ps: MANAGED_KEYS.map((n) => `Remove-ItemProperty -Path ${psQuote(key)} -Name ${psQuote(n)} -ErrorAction SilentlyContinue`).join('; ') };
   }
@@ -282,4 +303,4 @@ function reveal(file = paths.DESKTOP_CONFIG) {
   return { ok: true };
 }
 
-module.exports = { settings, connector, appEntry, write, status, reveal, STEPS, appInstalled, appRunning, applied, managedChange, managedRemoval, macProfile, PROFILE };
+module.exports = { settings, connector, appEntry, userPolicy, write, status, reveal, STEPS, appInstalled, appRunning, applied, managedChange, managedRemoval, macProfile, PROFILE };
