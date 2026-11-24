@@ -123,12 +123,13 @@ async function firstLine(cfg, bin, mode) {
 
 // The environment (and settings) that run Claude Code on a line, or null if it can't be used.
 async function prepareLine(line, cfg, first) {
-  if (line.kind === 'account' && accounts.isChatgpt(line.account)) {
-    // A ChatGPT account has no Claude Code sign-in of its own: the session goes through
-    // the gateway, which sends its requests out on that account as Codex.
+  if (line.kind === 'account' && accounts.notClaude(line.account)) {
+    // A ChatGPT or Gemini account has no Claude Code sign-in of its own: the session goes
+    // through the gateway, which sends its requests out on that account (as Codex, or to
+    // Gemini Code Assist).
     const { account } = line;
     if (!(await gatewayRunning(cfg))) {
-      say(`the gateway isn't running, which a session on ${account.label} (ChatGPT) needs. Start it with \`claude-nonstop service install\`.`);
+      say(`the gateway isn't running, which a session on ${account.label} (${accounts.serviceName(account)}) needs. Start it with \`claude-nonstop service install\`.`);
       return null;
     }
     const v = vault.loadWithTokens();
@@ -138,15 +139,17 @@ async function prepareLine(line, cfg, first) {
     env.ANTHROPIC_AUTH_TOKEN = v.gatewayToken;
     const header = `${LINE_HEADER}: account:${account.id}`;
     env.ANTHROPIC_CUSTOM_HEADERS = env.ANTHROPIC_CUSTOM_HEADERS ? `${env.ANTHROPIC_CUSTOM_HEADERS}\n${header}` : header;
-    if (first) say(`using ${account.label} (ChatGPT) through the local gateway, answering as ${cfg.models.openai}`);
-    log(`launch: ${account.label} (ChatGPT) through the gateway`);
+    if (first) say(`using ${account.label} (${accounts.serviceName(account)}) through the local gateway, answering as ${(cfg.models && cfg.models[account.provider]) || require('./providers').byId(account.provider).defaultModel}`);
+    log(`launch: ${account.label} (${accounts.serviceName(account)}) through the gateway`);
     state.setCurrent(account.label);
+    state.setInUse(`account:${account.id}`);
     return { env };
   }
   if (line.kind === 'account') {
     const { account } = line;
     log(`launch: ${account.label}`);
     state.setCurrent(account.label);
+    state.setInUse(`account:${account.id}`);
     if (account.kind === 'profile') accounts.syncSharedFiles(account.configDir);
     return { env: accounts.env(account) };
   }
@@ -171,17 +174,24 @@ async function prepareLine(line, cfg, first) {
     if (first) say(`using API key${group.length > 1 ? 's' : ''} ${keyNames(group)} through the local gateway${group.length > 1 ? ' (it switches between them mid-session)' : ''}`);
     log(`launch: API keys ${keyNames(group)} through the gateway`);
     state.setCurrent(`API key: ${group[0].label}`);
+    state.setInUse(`key:${group[0].id}`);
     return { env };
   }
-  const entry = await keys.pick(group, cfg);
+  // Without the gateway Claude Code gets the key itself, and it takes only Claude keys.
+  const claudeKeys = group.filter((k) => (k.provider || 'anthropic') === 'anthropic');
+  if (!claudeKeys.length) {
+    say(`${keyNames(group)} ${group.length > 1 ? 'are' : 'is'} not a Claude key, so ${group.length > 1 ? 'they' : 'it'} work${group.length > 1 ? '' : 's'} only through the gateway, which isn't running. Start it with \`claude-nonstop service install\`.`);
+    return null;
+  }
+  const entry = await keys.pick(claudeKeys, cfg);
   if (!entry) {
-    say(`API key${group.length > 1 ? 's' : ''} ${keyNames(group)} ${group.length > 1 ? 'are' : 'is'} used up right now. Top one up or add another with \`claude-nonstop ui\`.`);
+    say(`API key${claudeKeys.length > 1 ? 's' : ''} ${keyNames(claudeKeys)} ${claudeKeys.length > 1 ? 'are' : 'is'} used up right now. Top one up or add another with \`claude-nonstop ui\`.`);
     return null;
   }
   if (first) say(`using API key "${entry.label}"`);
   log(`launch: API key "${entry.label}" through the key helper`);
   env.CLAUDE_CODE_API_KEY_HELPER_TTL_MS = String(cfg.helperTtlMs);
-  env.CLAUDE_NONSTOP_KEYS = group.map((k) => k.id).join(',');
+  env.CLAUDE_NONSTOP_KEYS = claudeKeys.map((k) => k.id).join(',');
   return { env, settings: { apiKeyHelper: helperCommand() } };
 }
 

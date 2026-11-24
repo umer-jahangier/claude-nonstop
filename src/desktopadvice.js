@@ -32,7 +32,7 @@ function advice(cfg = config.load(), s = state.load(), now = Date.now()) {
   const account = accountFor(cfg);
   const check = account && s.accounts[account.id];
   if (!check) return null;
-  const onKeys = Boolean(s.desktop && now - s.desktop.at < ON_KEYS_MS);
+  const onKeys = Boolean(s.desktop && s.desktop.kind !== 'account' && now - s.desktop.at < ON_KEYS_MS);
   if (!check.ok && accounts.isLimitReason(check.reason)) {
     // Already on API keys: there's nothing to switch. If those run out too, the page says so.
     if (onKeys) return null;

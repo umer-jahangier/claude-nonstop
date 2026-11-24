@@ -13,11 +13,16 @@ function load() {
     accounts: s.accounts || {},
     current: s.current || null,
     currentAt: s.currentAt || null,
+    // The line requests last actually went out on ({ line: 'account:<id>' | 'key:<id>', at }),
+    // from sessions or the desktop app: where the page's cable is plugged in.
+    inUse: s.inUse || null,
     desktop: s.desktop || null,
     desktopAdvice: s.desktopAdvice || null,
     desktopLimitedAt: s.desktopLimitedAt || null,
     usage: s.usage || {},
     chatgptModels: s.chatgptModels || {},
+    // Each provider's model list as its API last gave it (models.js): { list: [[id, name]], at }.
+    models: s.models || {},
   };
 }
 
@@ -40,6 +45,7 @@ const forgetAccount = (id) =>
 // How much of an account's plan is used (see usage.js).
 const recordUsage = (id, usage) => update((s) => (s.usage[id] = usage));
 // The model names a ChatGPT account's backend listed last (see chatgpt-models.js).
+const recordModels = (provider, list) => update((s) => (s.models[provider] = { list, at: Date.now() }));
 const recordChatgptModels = (id, slugs) => update((s) => (s.chatgptModels[id] = { slugs, at: Date.now() }));
 
 function isCoolingDown(id, minutes) {
@@ -56,10 +62,18 @@ function setCurrent(label) {
   });
 }
 
+// Records the line requests just went out on. Written when it changes, or once a minute while
+// it stays the same, so the page can tell a line in use now from one used a while ago.
+function setInUse(line) {
+  const now = load().inUse;
+  if (now && now.line === line && Date.now() - now.at < 60000) return;
+  update((s) => (s.inUse = { line, at: Date.now() }));
+}
+
 // The key the desktop app's requests last went out on, and when. Kept apart from `current`:
 // the desktop app runs only on API keys, whatever line terminal sessions are on.
-function setDesktop(label) {
-  update((s) => (s.desktop = { label, at: Date.now() }));
+function setDesktop(label, kind = 'key') {
+  update((s) => (s.desktop = { label, kind, at: Date.now() }));
 }
 
 const setDesktopAdvice = (advice) => update((s) => (s.desktopAdvice = advice));
@@ -73,4 +87,4 @@ function clearCooldowns() {
   });
 }
 
-module.exports = { load, recordKey, recordAccount, recordUsage, recordChatgptModels, forgetKey, forgetAccount, isCoolingDown, setCurrent, setDesktop, setDesktopAdvice, setDesktopLimited, clearCooldowns };
+module.exports = { load, setInUse, recordModels, recordKey, recordAccount, recordUsage, recordChatgptModels, forgetKey, forgetAccount, isCoolingDown, setCurrent, setDesktop, setDesktopAdvice, setDesktopLimited, clearCooldowns };

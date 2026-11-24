@@ -15,8 +15,10 @@ const ir = require('./ir');
 const messages = require('./messages');
 const chat = require('./chat');
 const responses = require('./responses');
+const gemini = require('./gemini');
 
-const FORMATS = { messages, chat, responses };
+// gemini is a wire only: requests go out in it, no client sends it.
+const FORMATS = { messages, chat, responses, gemini };
 
 function detect(req) {
   const path = String(req.url || '').split('?')[0];

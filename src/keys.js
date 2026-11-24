@@ -22,6 +22,10 @@ const errorMessage = (body, provider = providers.anthropic) => provider.errorMes
 // on it (gateway.js): plain API, no client identity, so credit that covers only API use
 // (promotional credit, say) works too. An OpenAI key is checked against the free model list.
 async function probe(key, cfg, provider = providers.providerForKey(key) || providers.anthropic) {
+  if (provider.id === 'gemini') {
+    // Listing models is free and fails the same way a request would on a bad key.
+    return request(`${providers.gemini.upstream(cfg)}/models?pageSize=1`, { headers: { 'x-goog-api-key': key, accept: 'application/json' }, timeoutMs: 20000 });
+  }
   if (provider.id === 'openai') {
     return request(`${providers.openai.upstream(cfg)}/models`, {
       headers: { authorization: `Bearer ${key}`, accept: 'application/json' },
@@ -59,6 +63,7 @@ async function pick(entries, cfg) {
     const result = await check(entry, cfg);
     if (result.verdict !== 'used-up') {
       state.setCurrent(`API key: ${entry.label}`);
+      state.setInUse(`key:${entry.id}`);
       return entry;
     }
     log(`key "${entry.label}" is used up (HTTP ${result.status}${result.detail ? `: ${result.detail}` : ''}), trying the next one`);
@@ -75,7 +80,8 @@ function newEntry(key, label, position) {
 function problemWith(key) {
   if (/^sk-ant-/.test(key)) return providers.anthropic.keyProblem(key);
   if (/^sk-/.test(key)) return providers.openai.keyProblem(key);
-  return "that doesn't look like an API key: Claude keys start with sk-ant-api, OpenAI keys with sk-.";
+  if (/^AIza/.test(key)) return providers.gemini.keyProblem(key);
+  return "that doesn't look like an API key: Claude keys start with sk-ant-api, OpenAI keys with sk-, Gemini keys with AIza.";
 }
 
 module.exports = { API_VERSION, fingerprint, mask, looksLikeKey, problemWith, errorMessage, probe, check, pick, newEntry };

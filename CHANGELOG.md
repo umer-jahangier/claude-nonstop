@@ -2,6 +2,14 @@
 
 Every release of claude-nonstop, newest first. Full notes, and the code at each version, are on the [releases page](https://github.com/umer-jahangier/claude-nonstop/releases). The installer and `claude-nonstop update` install the latest release; the npm package is [`@umer-jahangier/claude-nonstop`](https://www.npmjs.com/package/@umer-jahangier/claude-nonstop).
 
+## [1.23.0](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.23.0) · 2026-11-25
+
+- **Gemini.** Add a Gemini account (Google sign-in, the way Gemini CLI signs in; Gemini Code Assist under the account's own plan) or a Gemini API key (`AIza…`), and any tool runs on it like any other line: Claude Code, Codex, Cursor and the desktop app, tool calls included. `accounts add "Name" --gemini`, or pick **Gemini** under **Add Account…**. A line not given the chosen model (a preview, or one whose quota is used up) gets the next Gemini model it serves.
+- **The cable follows the line actually in use.** When an account hits its limit and the gateway moves on, the page's cable now moves with it; it used to stay on the first line the page thought was ready.
+- **OpenAI API keys** of every current shape are taken (`sk-proj-…`, `sk-svcacct-…`, keys with dots). Without the gateway running, a terminal session no longer hands a non-Claude key to Claude Code.
+- **Model lists are current.** The Settings pickers and `/v1/models` list what each service offers now, read with your keys and sign-ins (Claude Fable 5.2 and the GPT-6 family included), plus a Gemini picker. In dark mode the open dropdown list no longer shows white text on white.
+- Fixes from a full review of the gateway: a conversation that moved to another provider and back to Claude or OpenAI no longer fails on the other provider's reasoning; a service that can't be reached moves on to the next line instead of ending the request; text split across network packets in translated answers keeps characters like — and emoji whole; a sign-in is renewed even after a model retry; a subscription account the desktop app runs on no longer counts as "on API keys"; ChatGPT usage is written once a minute, not after every answer; ChatGPT accounts are no longer passed to Claude's sign-in renewal.
+
 ## [1.22.2](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.22.2) · 2026-11-21
 
 - GitHub keeps working in the desktop app until its updated settings are approved: 1.22.1 gave an app still on the earlier settings the gateway's key instead of GitHub's token, so GitHub answered "Authorization header is badly formatted".

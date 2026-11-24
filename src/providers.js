@@ -9,6 +9,9 @@
 //   openai     ChatGPT subscription sign-ins (Codex's own OAuth, see openai-auth.js) and
 //              OpenAI API keys. Speaks the Responses API; a sign-in is taken only at the
 //              Codex backend, as Codex.
+//   gemini     Google accounts signed in the way Gemini CLI does (google-auth.js), sent to
+//              Gemini Code Assist, and Gemini API keys, sent to the Gemini API. Both speak
+//              Gemini's generateContent (translate/gemini.js).
 
 const crypto = require('crypto');
 const os = require('os');
@@ -46,7 +49,7 @@ const anthropic = {
   keysUrl: 'https://platform.claude.com/settings/keys',
   billingUrl: 'https://platform.claude.com/settings/billing',
   models: [
-    ['claude-fable-5-1', 'Claude Fable 5.1'],
+    ['claude-fable-5-2', 'Claude Fable 5.2'],
     ['claude-opus-5-5', 'Claude Opus 5.5'],
     ['claude-sonnet-5-5', 'Claude Sonnet 5.5'],
     ['claude-haiku-5-5', 'Claude Haiku 5.5'],
@@ -90,14 +93,19 @@ const openai = {
   billingUrl: 'https://platform.openai.com/settings/organization/billing/overview',
   apiUrl: 'https://api.openai.com/v1',
   chatgptUrl: 'https://chatgpt.com/backend-api/codex',
+  // Shown until an OpenAI key or ChatGPT sign-in lists what it actually serves (models.js).
   models: [
+    ['gpt-6.1-sol', 'GPT-6.1 Sol'],
+    ['gpt-6.1-terra', 'GPT-6.1 Terra'],
+    ['gpt-6-astra', 'GPT-6 Astra'],
+    ['gpt-6-sol', 'GPT-6 Sol'],
+    ['gpt-6-luna', 'GPT-6 Luna'],
+    ['gpt-5.6-sol', 'GPT-5.6 Sol'],
     ['gpt-5.5', 'GPT-5.5'],
-    ['gpt-5.4', 'GPT-5.4'],
     ['gpt-5.4-mini', 'GPT-5.4 mini'],
-    ['gpt-5.3-codex', 'GPT-5.3 Codex'],
-    ['gpt-5.2', 'GPT-5.2'],
   ],
-  looksLikeKey: (key) => /^sk-[A-Za-z0-9_-]{20,}$/.test(key) && !/^sk-ant-/.test(key),
+  // sk-, sk-proj-, sk-svcacct- and sk-admin- keys; some carry dots.
+  looksLikeKey: (key) => /^sk-[A-Za-z0-9_.-]{20,}$/.test(key) && !/^sk-ant-/.test(key),
   keyProblem(key) {
     if (/^sk-ant-/.test(key)) return "that's a Claude key; add it as an Anthropic key.";
     if (!openai.looksLikeKey(key)) return "that doesn't look like an OpenAI API key (they start with sk-).";
@@ -150,7 +158,67 @@ const openai = {
   isLimit: (status, body, headers) => status === 429 && (/usage_limit|rate_limit|limit/i.test(String(body)) || Boolean(headers['x-codex-rate-limit-reached-type'])),
 };
 
-const PROVIDERS = { anthropic, openai };
+const gemini = {
+  id: 'gemini',
+  name: 'Google',
+  accountName: 'Gemini account',
+  keyName: 'Gemini API key',
+  wire: 'gemini',
+  defaultModel: 'gemini-3.1-pro-preview',
+  // Tried in turn when a line refuses the model it was sent (a preview not open to it, say).
+  fallbackModels: ['gemini-3-pro-preview', 'gemini-2.5-pro', 'gemini-2.5-flash'],
+  probeModel: 'gemini-2.5-flash',
+  keysUrl: 'https://aistudio.google.com/apikey',
+  billingUrl: 'https://aistudio.google.com/usage',
+  apiUrl: 'https://generativelanguage.googleapis.com/v1beta',
+  models: [
+    ['gemini-3.1-pro-preview', 'Gemini 3.1 Pro (preview)'],
+    ['gemini-3-pro-preview', 'Gemini 3 Pro (preview)'],
+    ['gemini-3.5-flash', 'Gemini 3.5 Flash'],
+    ['gemini-3-flash-preview', 'Gemini 3 Flash (preview)'],
+    ['gemini-3.1-flash-lite', 'Gemini 3.1 Flash-Lite'],
+    ['gemini-2.5-pro', 'Gemini 2.5 Pro'],
+    ['gemini-2.5-flash', 'Gemini 2.5 Flash'],
+  ],
+  looksLikeKey: (key) => /^AIza[A-Za-z0-9_-]{30,}$/.test(key),
+  keyProblem(key) {
+    if (!gemini.looksLikeKey(key)) return "that doesn't look like a Gemini API key (they start with AIza).";
+    return null;
+  },
+  upstream: (cfg) => process.env.CLAUDE_NONSTOP_GEMINI_UPSTREAM || cfg.geminiUpstream || gemini.apiUrl,
+  keyTarget: (cfg, path) => `${gemini.upstream(cfg)}${path}`,
+  keyHeaders: (key) => ({ 'x-goog-api-key': key }),
+  classify(status, body) {
+    const b = String(body);
+    if (status >= 200 && status < 300) return 'ok';
+    if (status === 401 || status === 403) return 'used-up';
+    if (status === 400) return /API_KEY_INVALID|API key not valid|API key expired/i.test(b) ? 'used-up' : 'keep';
+    // A daily quota or a model the key's tier gets none of; a per-minute limit passes.
+    if (status === 429) return gemini.isQuota(b) ? 'used-up' : 'keep';
+    return 'keep';
+  },
+  errorMessage(body) {
+    try {
+      let j = JSON.parse(body);
+      if (Array.isArray(j)) j = j[0];
+      return (j && j.error && j.error.message) || '';
+    } catch {
+      return '';
+    }
+  },
+  // Whether a 429 means a quota is used up (for the day, the plan, or a model the tier gets
+  // none of), rather than a per-minute limit or no capacity just now, which pass in seconds.
+  isQuota: (body) => {
+    const b = String(body);
+    if (/per ?minute|PerMinute|no capacity available|try again (later|in a few)/i.test(b)) return false;
+    return /per ?day|PerDay|limit: 0|exhausted your capacity|quota will reset|billing|exceeded your current quota/i.test(b);
+  },
+  isLimit: (status, body) => status === 429 && gemini.isQuota(body),
+  // Whether a refusal means the line doesn't serve that model (so another one is tried).
+  isModelRefusal: (status, body) => (status === 400 || status === 403 || status === 404) && /model|not found|not supported|NOT_FOUND|preview/i.test(String(body)) && !/API key/i.test(String(body)),
+};
+
+const PROVIDERS = { anthropic, openai, gemini };
 
 const byId = (id) => PROVIDERS[id] || anthropic;
 
@@ -158,6 +226,7 @@ const byId = (id) => PROVIDERS[id] || anthropic;
 function providerForKey(key) {
   if (anthropic.looksLikeKey(key)) return anthropic;
   if (openai.looksLikeKey(key)) return openai;
+  if (gemini.looksLikeKey(key)) return gemini;
   return null;
 }
 
@@ -165,4 +234,4 @@ function providerForKey(key) {
 // were two.
 const of = (item) => byId(item && item.provider);
 
-module.exports = { anthropic, openai, PROVIDERS, byId, of, providerForKey, CODEX_VERSION, codexUserAgent };
+module.exports = { anthropic, openai, gemini, PROVIDERS, byId, of, providerForKey, CODEX_VERSION, codexUserAgent };

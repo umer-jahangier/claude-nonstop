@@ -19,11 +19,12 @@ Accounts and keys:
   claude-nonstop pause <n>           keep account or key n but stop using it
   claude-nonstop resume <n>          use it again
   claude-nonstop keys                check every API key
-  claude-nonstop keys add [label]    save a Claude or OpenAI key (typed hidden, or piped on stdin)
+  claude-nonstop keys add [label]    save a Claude, OpenAI or Gemini key (typed hidden, or piped on stdin)
   claude-nonstop keys remove <n>     forget key number n
   claude-nonstop accounts            list subscription accounts
   claude-nonstop accounts add [label]   add a Claude account and sign in to it
   claude-nonstop accounts add [label] --chatgpt   add a ChatGPT account (--import-codex takes Codex's sign-in)
+  claude-nonstop accounts add [label] --gemini    add a Gemini account (Google sign-in; --import-gemini takes Gemini CLI's)
   claude-nonstop accounts login <n>  sign in again
   claude-nonstop accounts check      check which accounts have usage left
   claude-nonstop accounts remove <n> sign out and remove account n

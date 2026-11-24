@@ -86,7 +86,7 @@ test('removal of a configuration we never touched changes nothing', () => {
 test('the web UI reports Codex and sets it up with one request', async () => {
   fs.rmSync(process.env.CODEX_HOME, { recursive: true, force: true });
   fs.mkdirSync(process.env.CODEX_HOME, { recursive: true }); // Codex's folder counts as installed
-  config.update((c) => (c.models = { anthropic: 'claude-sonnet-5-5', openai: 'gpt-5.5' }));
+  config.update((c) => (c.models = { anthropic: 'claude-sonnet-5-5', openai: 'gpt-5.5', gemini: 'gemini-3.1-pro-preview' }));
   const ui = require('../src/ui');
   const ctx = require('../src/server').createContext();
   let snap = await ui.route('GET', '/api/state', {}, ctx);
@@ -95,15 +95,16 @@ test('the web UI reports Codex and sets it up with one request', async () => {
   assert.equal(r.wired, true);
   snap = await ui.route('GET', '/api/state', {}, ctx);
   assert.equal(snap.codex.wired, true);
-  assert.deepEqual(snap.settings.models, { anthropic: 'claude-sonnet-5-5', openai: 'gpt-5.5' });
+  assert.deepEqual(snap.settings.models, { anthropic: 'claude-sonnet-5-5', openai: 'gpt-5.5', gemini: 'gemini-3.1-pro-preview' });
   // The dropdowns offer each service's names, plus what a ChatGPT account's backend listed.
   assert.ok(snap.settings.modelChoices.anthropic.some(([id]) => id === 'claude-opus-5-5'));
-  assert.ok(snap.settings.modelChoices.openai.some(([id, , group]) => id === 'gpt-5.5' && group === 'OpenAI API'));
+  assert.ok(snap.settings.modelChoices.openai.some(([id, , group]) => id === 'gpt-5.5' && group === 'OpenAI'));
   config.update((c) => c.accounts.push({ id: 'gpt-test', label: 'Work', kind: 'chatgpt', provider: 'openai', enabled: true }));
-  require('../src/state').recordChatgptModels('gpt-test', ['gpt-6.1-sol', 'gpt-5.5']);
+  require('../src/state').recordChatgptModels('gpt-test', ['gpt-7-nova', 'gpt-5.5']);
   snap = await ui.route('GET', '/api/state', {}, ctx);
-  const sol = snap.settings.modelChoices.openai.find(([id]) => id === 'gpt-6.1-sol');
-  assert.deepEqual(sol, ['gpt-6.1-sol', 'gpt-6.1-sol', 'ChatGPT: Work']);
+  const sol = snap.settings.modelChoices.openai.find(([id]) => id === 'gpt-7-nova');
+  assert.deepEqual(sol, ['gpt-7-nova', 'gpt-7-nova', 'ChatGPT: Work']);
+  assert.ok(snap.settings.modelChoices.gemini.some(([id]) => id === 'gemini-2.5-pro'));
   assert.equal(snap.settings.modelChoices.openai.filter(([id]) => id === 'gpt-5.5').length, 1, 'no duplicates');
   config.update((c) => (c.accounts = c.accounts.filter((a) => a.id !== 'gpt-test')));
   // Changing the default OpenAI model updates what Codex asks for.

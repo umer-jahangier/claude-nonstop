@@ -33,8 +33,8 @@ function once(id, work) {
 
 // The probe also renews the account's sign-in token, so its usage is read right after.
 const account = (a, bin = claude.findClaude()) =>
-  accounts.isChatgpt(a)
-    ? once(a.id, () => accounts.probeChatgpt(a))
+  accounts.notClaude(a)
+    ? once(a.id, () => accounts.probe(a))
     : bin
       ? once(a.id, async () => {
           const r = await accounts.probe(a, bin);

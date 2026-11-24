@@ -284,14 +284,20 @@ main { max-width: 1080px; margin: 0 auto; padding: 12px 20px 72px 44px; }
 .list > .row:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
 .row-text { flex: 1; min-width: 0; display: grid; gap: 1px; }
 .badge { display: inline-block; margin-left: 0.4em; padding: 0 0.45em; border-radius: 999px; font-size: 0.6875rem; line-height: 1.5; font-weight: 600; letter-spacing: 0.02em; vertical-align: 0.1em; color: var(--muted, #888); border: 1px solid currentColor; opacity: 0.8; }
-.field .service-pick { flex: 1; display: flex; gap: 8px; padding: 7px 0; }
-.field .service-pick label { flex: 1; width: auto; display: flex; align-items: center; gap: 8px; min-height: 30px; padding: 0 10px; border-radius: 7px; background: var(--fill); color: var(--label); cursor: pointer; white-space: nowrap; }
+.field .service-pick { flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 7px 0; }
+.field .service-pick label { min-width: 0; width: auto; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 0; min-height: 40px; padding: 4px 10px 4px 30px; position: relative; line-height: 1.2; border-radius: 7px; background: var(--fill); color: var(--label); cursor: pointer; white-space: nowrap; }
 .field .service-pick label:has(input:checked) { box-shadow: inset 0 0 0 2px var(--focus); }
 .field .service-pick label .hint { margin: 0; font-size: 0.75rem; }
+.field .service-pick label input { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); }
 .field input[type="radio"], .field input[type="checkbox"] { flex: none; width: auto; height: auto; margin: 0; accent-color: var(--focus); }
 .field label.check { width: auto; flex: 1; display: flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer; }
 .model-input { flex: none; width: 190px; height: 30px; padding: 0 8px; border: 0; border-radius: 7px; background: var(--fill); color: var(--label); font-family: var(--mono); font-size: 0.8125rem; letter-spacing: 0; text-align: right; }
 .model-input:focus-visible { outline-offset: 0; }
+/* A select's open list takes the select's text colour but not always a matching background,
+   which left white text on a white list in dark mode. Both are set for every list here. */
+select option, select optgroup { background-color: #ffffff; color: #1d1d1f; }
+:root[data-theme="dark"] select option, :root[data-theme="dark"] select optgroup { background-color: #2c2c2e; color: #f5f5f7; }
+select optgroup { font-weight: 600; }
 select.model-input { text-align: left; cursor: pointer; appearance: none; -webkit-appearance: none; padding-right: 26px; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%23888' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>"); background-repeat: no-repeat; background-position: right 9px center; }
 .row-title { font-size: 0.9375rem; line-height: 1.33; font-weight: 500; letter-spacing: -0.015em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row-sub { font-size: 0.8125rem; line-height: 1.33; color: var(--label-2); letter-spacing: -0.003em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -811,7 +817,7 @@ main { position: relative; z-index: 1; }
   <section id="view-desktop" role="tabpanel" aria-labelledby="tab-desktop" hidden>
     <div class="view">
       <h1 class="view-title">Apps</h1>
-      <p class="view-lede">Every app that reaches this gateway runs on your whole order: Claude and ChatGPT accounts, then API keys. Claude Code in the terminal is set up by <code>claude-nonstop setup</code>; the apps here each take one step.</p>
+      <p class="view-lede">Every app that reaches this gateway runs on your whole order: Claude, ChatGPT and Gemini accounts, and API keys. Claude Code in the terminal is set up by <code>claude-nonstop setup</code>; the apps here each take one step.</p>
       <div class="group-head"><h2>Claude desktop app</h2></div>
       <div class="group desk-card" id="desktop-auto" aria-live="polite"></div>
       <p class="group-foot">On its sign-in screen, the third-party option runs the app through this gateway; its Claude.ai sign-in stays one click away.</p>
@@ -867,11 +873,15 @@ main { position: relative; z-index: 1; }
           <select class="model-input" id="model-anthropic" name="anthropic"></select>
         </label>
         <label class="row field-row" for="model-openai">
-          <span class="row-text"><span class="row-title">On an OpenAI line</span><span class="row-sub">When a tool asks for a Claude model (Claude Code, the desktop app) and a ChatGPT account or OpenAI key answers</span></span>
+          <span class="row-text"><span class="row-title">On an OpenAI line</span><span class="row-sub">When a tool asks for a Claude or Gemini model and a ChatGPT account or OpenAI key answers</span></span>
           <select class="model-input" id="model-openai" name="openai"></select>
         </label>
+        <label class="row field-row" for="model-gemini">
+          <span class="row-text"><span class="row-title">On a Gemini line</span><span class="row-sub">When a tool asks for a Claude or GPT model and a Gemini account or key answers</span></span>
+          <select class="model-input" id="model-gemini" name="gemini"></select>
+        </label>
       </form>
-      <p class="group-foot">A request for a model from the line's own service keeps that model: Claude Code on a Claude account uses the model picked in Claude Code, Codex on a ChatGPT account the one picked in Codex. The OpenAI list grows with the names each ChatGPT account's backend lists. These also set what Codex is told to use.</p>
+      <p class="group-foot">A request for a model from the line's own service keeps that model: Claude Code on a Claude account uses the model picked in Claude Code, Codex on a ChatGPT account the one picked in Codex. Each list is read from the service's own model list with your keys and sign-ins, so new models appear as they're released. If a Gemini line isn't given the model picked here (a preview, say), the gateway falls back to the next Gemini model it serves. These also set what Codex is told to use.</p>
       <div class="group-head"><h2>Claude desktop app</h2></div>
       <ul class="group list flat" id="desktop-prefs"></ul>
       <p class="group-foot">In third-party mode the desktop app keeps its Code sessions to a short list of sites unless told otherwise. claude-nonstop lets them reach any site, like a normal install. Turn Strict sandbox on to keep the restriction. Changing it updates the app's settings: on a Mac, approve the updated profile in System Settings, then reopen the app.</p>
@@ -1098,13 +1108,17 @@ function relayOrder() {
 // The key the desktop app's requests go out on: the first usable key in your order.
 const desktopKey = () => relayOrder().find((l) => l.type === 'key' && l.st.ready) || null;
 // Whether the desktop app has been running on API keys lately (the gateway served it).
-const desktopOnKeys = () => Boolean(S.desktopKey && Date.now() - S.desktopKey.at < 30 * 60000);
+const desktopOnKeys = () => Boolean(S.desktopKey && S.desktopKey.kind !== 'account' && Date.now() - S.desktopKey.at < 30 * 60000);
 
-// The line Claude Code sessions run on: the first usable line in your priority order (the
-// pinned one first), which is where every new session starts, in Automatic mode too.
+// The line in use: where requests last actually went out (from sessions or the desktop app),
+// while that was recent and the line can still take them. The gateway moves on by itself when
+// a line hits its limit, so this follows it there. Otherwise the first usable line in your
+// order (the pinned one first), which is where the next request goes.
+const IN_USE_FRESH = 30 * 60000;
 function liveAndNext() {
   const order = relayOrder();
-  const live = order.findIndex((l) => l.st.ready);
+  const used = S.inUse && Date.now() - S.inUse.at < IN_USE_FRESH ? order.findIndex((l) => lineKey(l) === S.inUse.line && l.st.ready) : -1;
+  const live = used >= 0 ? used : order.findIndex((l) => l.st.ready);
   const liveLine = live >= 0 ? order[live] : null;
   const next = order.slice(live + 1).find((l) => l.st.ready && (!liveLine || lineKey(l) !== lineKey(liveLine))) || null;
   const first = order.find((l) => l.st.ready) || null;
@@ -1193,7 +1207,7 @@ function rowHtml(type, item, liveId) {
   const r = readoutFor(type, item);
   const title = ui.renaming === item.id
     ? `<form class="rename" data-form="rename" data-type="${type}" data-id="${id}"><input class="rename-input row-title" name="label" value="${esc(ui.renameValue)}" maxlength="60" aria-label="New name for ${label}" autocomplete="off" spellcheck="false" data-fk="rename-input"></form>`
-    : `<span class="row-title">${label}${item.provider === 'openai' ? `<span class="badge">${type === 'account' ? 'ChatGPT' : 'OpenAI'}</span>` : ''}</span>`;
+    : `<span class="row-title">${label}${item.provider === 'openai' ? `<span class="badge">${type === 'account' ? 'ChatGPT' : 'OpenAI'}</span>` : item.provider === 'gemini' ? '<span class="badge">Gemini</span>' : ''}</span>`;
   let state;
   let word;
   if (busy.has(item.id) || checking.has(item.id) || signingIn) {
@@ -1333,6 +1347,7 @@ function renderSettings() {
   const choices = S.settings.modelChoices || { anthropic: [], openai: [] };
   renderModelChoices($('#model-anthropic'), choices.anthropic, S.settings.models.anthropic);
   renderModelChoices($('#model-openai'), choices.openai, S.settings.models.openai);
+  renderModelChoices($('#model-gemini'), choices.gemini || [], S.settings.models.gemini);
   const facts = [
     ['Plain claude command', S.shell.installed ? 'On' : 'Off', S.shell.installed ? 'Runs through claude-nonstop, so sessions move on when a limit hits.' : 'Runs Claude Code directly. Turn it on with <code>claude-nonstop shell install</code>.'],
     ['Starts at login', S.service.installed ? 'On' : 'Off', S.service.installed ? 'The gateway starts when you log in and installs updates by itself.' : 'The gateway stops when you restart. Keep it on with <code>claude-nonstop service install</code>.'],
@@ -2419,7 +2434,7 @@ function feedText(e) {
   };
   switch (e.type) {
     case 'request': return { tone: e.status >= 400 ? 'warn' : 'pulse', html: `<b>${esc(e.label)}</b> served ${e.count > 1 ? `<span class="num">${e.count}</span> requests` : 'a request'}${e.status >= 400 ? ` (HTTP ${e.status})` : ''}` };
-    case 'switch': return { tone: 'warn', html: `<b>${esc(e.label)}</b> ran out${e.detail ? `: ${esc(trimEnd(e.detail))}` : ''}. Moved to the next key.` };
+    case 'switch': return { tone: 'warn', html: `<b>${esc(e.label)}</b> ${e.accountId ? 'is unavailable' : 'ran out'}${e.detail ? `: ${esc(trimEnd(e.detail))}` : ''}. Moved to the next line.` };
     case 'exhausted': return { tone: 'dead', html: '<b>Every API key is used up.</b> Top one up or add another.' };
     case 'current': return { tone: 'energy', html: `New session on <b>${esc(String(e.label).replace(/^API key: /, ''))}</b>` };
     case 'pin': return { tone: 'energy', html: e.pinType ? `Cable plugged into <b>${esc(byId(e.id))}</b>` : 'Back to <b>automatic</b>' };
@@ -2469,7 +2484,7 @@ function connectEvents() {
       if (e.checking) { checking.add(e.id); render(); } else scheduleRefresh();
       return;
     }
-    if (e.type === 'desktop-advice' || e.type === 'usage') { scheduleRefresh(); return; }
+    if (e.type === 'desktop-advice' || e.type === 'usage' || e.type === 'in-use') { scheduleRefresh(); return; }
     addFeed(e);
     if (e.backlog) return;
     if (e.type === 'request') {
@@ -2482,7 +2497,7 @@ function connectEvents() {
       logo.pulse();
     } else {
       scheduleRefresh();
-      if (e.type === 'switch') toast(`${e.label} ran out, so the gateway moved to the next key.`);
+      if (e.type === 'switch') toast(`${e.label} ${e.accountId ? 'reached its limit' : 'ran out'}, so the gateway moved to the next line.`);
       if (e.type === 'exhausted') toast('Every API key is used up. Top one up or add another.', true);
     }
   };
@@ -2765,8 +2780,10 @@ function sheetContent() {
         <div class="field"><label>Service</label><div class="service-pick" role="radiogroup">
           <label><input type="radio" name="service" value="claude" checked> Claude <span class="hint">(Anthropic)</span></label>
           <label><input type="radio" name="service" value="chatgpt"> ChatGPT <span class="hint">(OpenAI)</span></label>
+          <label><input type="radio" name="service" value="gemini"> Gemini <span class="hint">(Google)</span></label>
         </div></div>
-        ${codex ? `<div class="field"><label class="check"><input type="checkbox" name="importCodex" value="1">Use the sign-in Codex already has on this computer</label></div>` : ''}
+        ${codex ? `<div class="field"><label class="check"><input type="checkbox" name="importCodex" value="1">ChatGPT: use the sign-in Codex already has on this computer</label></div>` : ''}
+        ${S.settings && S.settings.geminiCliFound ? `<div class="field"><label class="check"><input type="checkbox" name="importGemini" value="1">Gemini: use the sign-in Gemini CLI already has on this computer</label></div>` : ''}
       </div>
       <p class="sheet-error" id="sheet-error" role="alert" hidden></p>
       <div class="sheet-actions"><button class="btn large" type="button" data-act="close-sheet">Cancel</button><button class="btn large primary" type="submit">Add and Sign In</button></div>
@@ -2775,10 +2792,10 @@ function sheetContent() {
   if (sh.kind === 'add-key') {
     return `<form data-form="add-key" autocomplete="off">
       <h2 id="sheet-title">Add an API key</h2>
-      <p class="lede">A Claude key (<code>sk-ant-api…</code>) or an OpenAI key (<code>sk-…</code>); it's told apart by how it looks and tested as soon as you save it. <a href="${KEYS_URL}" target="_blank" rel="noopener noreferrer">Get a Claude key</a> · <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">Get an OpenAI key</a></p>
+      <p class="lede">A Claude key (<code>sk-ant-api…</code>), an OpenAI key (<code>sk-…</code> or <code>sk-proj-…</code>) or a Gemini key (<code>AIza…</code>); it's told apart by how it looks and tested as soon as you save it. Get one: <a href="${KEYS_URL}" target="_blank" rel="noopener noreferrer">Claude</a> · <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">OpenAI</a> · <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">Gemini</a></p>
       <div class="fields">
         <div class="field"><label for="f-label">Name</label><input id="f-label" name="label" maxlength="60" placeholder="Personal, Team…" autofocus spellcheck="false"></div>
-        <div class="field"><label for="f-key">Key</label><input id="f-key" class="mono-input" name="key" type="password" placeholder="sk-ant-api03-… or sk-…" spellcheck="false" autocapitalize="off" autocomplete="off"></div>
+        <div class="field"><label for="f-key">Key</label><input id="f-key" class="mono-input" name="key" type="password" placeholder="sk-ant-api03-…, sk-proj-… or AIza…" spellcheck="false" autocapitalize="off" autocomplete="off"></div>
       </div>
       <p class="hint">Encrypted on this computer, with the encryption key kept in ${esc(S.keystore || 'your system keychain')}. It's only ever sent to the service it belongs to.</p>
       <p class="sheet-error" id="sheet-error" role="alert" hidden></p>
@@ -3325,17 +3342,17 @@ document.addEventListener('submit', async (event) => {
     if (kind === 'add-account') {
       if (!String(data.label || '').trim()) { sheetError('Give the account a name, like Work or Personal.'); return; }
       submit.innerHTML = `${SPINNER}Adding…`;
-      const r = await api('POST', '/api/accounts', { label: data.label, service: data.service || 'claude', importCodex: Boolean(data.importCodex) });
+      const r = await api('POST', '/api/accounts', { label: data.label, service: data.service || 'claude', importCodex: Boolean(data.importCodex) && data.service === 'chatgpt', importGemini: Boolean(data.importGemini) && data.service === 'gemini' });
       await refresh();
       if (r.imported) {
         await closeSheet();
-        toast(`Added with Codex's sign-in${r.email ? ` (${r.email})` : ''}.`);
+        toast(`Added with ${data.service === 'gemini' ? "Gemini CLI's" : "Codex's"} sign-in${r.email ? ` (${r.email})` : ''}.`);
         return;
       }
       startJob(r.job, r.id);
       openSheet('job');
     } else if (kind === 'add-key') {
-      if (!String(data.key || '').trim()) { sheetError('Paste the API key. Claude keys start with sk-ant-api, OpenAI keys with sk-.'); return; }
+      if (!String(data.key || '').trim()) { sheetError('Paste the API key. Claude keys start with sk-ant-api, OpenAI keys with sk-, Gemini keys with AIza.'); return; }
       submit.innerHTML = `${SPINNER}Testing…`;
       const r = await api('POST', '/api/keys', { label: data.label, key: data.key });
       await closeSheet();
@@ -3416,7 +3433,7 @@ document.addEventListener('submit', async (event) => {
       await refresh();
       toast('Saved.');
     } else if (kind === 'models-form') {
-      await api('PATCH', '/api/settings', { models: { anthropic: String(data.anthropic || '').trim(), openai: String(data.openai || '').trim() } });
+      await api('PATCH', '/api/settings', { models: { anthropic: String(data.anthropic || '').trim(), openai: String(data.openai || '').trim(), gemini: String(data.gemini || '').trim() || undefined } });
       await refresh();
       toast('Saved.');
     }

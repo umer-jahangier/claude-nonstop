@@ -180,6 +180,10 @@ The gateway speaks three formats: Anthropic's Messages API (`/v1/messages`, Clau
 
 **ChatGPT accounts.** `claude-nonstop accounts add "Work" --chatgpt`, or **Add Account…** on the web page and pick **ChatGPT**. OpenAI's own sign-in page opens, the way Codex signs in; the sign-in lands in claude-nonstop's encrypted vault and renews itself. Already signed in to Codex on this computer? Add `--import-codex` (or tick the box on the page) to take that sign-in over instead. Requests on a ChatGPT account go to the Codex backend as Codex, which is the only way OpenAI takes a subscription sign-in. Usage comes back with every answer and shows on the account's line like a Claude account's. The Codex backend serves only the models on its own list for the account (GPT-6 names at the time of writing, which it may change at any point): claude-nonstop asks each account for that list and sends the model a tool asked for when it's there, otherwise the account's first choice, so a tool asking for an older or a Claude name still gets an answer. `/v1/models` lists them.
 
+**Gemini accounts and keys.** `claude-nonstop accounts add "Work" --gemini`, or **Add Account…** on the page and pick **Gemini**: Google's own sign-in page opens, the way Gemini CLI signs in, and requests on that account go to Gemini Code Assist under the account's own plan (the free tier, Google AI Pro or Ultra, or a Code Assist licence). Signed in to Gemini CLI already, with its sign-in saved in `~/.gemini/oauth_creds.json`? Add `--import-gemini` (or tick the box on the page). Gemini API keys (`AIza…`) are added like any other key. Any tool's request goes out on a Gemini line, translated: Claude Code, Codex, Cursor and the desktop app work on Gemini as on any other line, tool calls included. A request for a Claude or GPT model gets the **On a Gemini line** default from Settings; if a line isn't given that model (a preview, say), the gateway tries the next Gemini model it serves. An account's usage is read from Code Assist's own quota readout.
+
+**Model lists stay current.** The default-model pickers in Settings, and the gateway's `/v1/models`, list what each service's own model list offers now, read with your keys and sign-ins every few hours: Anthropic's models (through a Claude account or key), OpenAI's (through a key) and each ChatGPT account's backend, and Gemini's (through a key, or the models a Google account has a quota for).
+
 **OpenAI API keys.** Paste one where you'd paste a Claude key; it's told apart by how it looks (`sk-…` rather than `sk-ant-api…`). Keys next to each other in the order still work as one team, even across services.
 
 **Codex.** When Codex (the `codex` command or the Codex app) is on this computer, `claude-nonstop setup` points it at the gateway by writing a `claude-nonstop` model provider into `~/.codex/config.toml` and selecting it; `claude-nonstop connect codex` does the same on its own, and `claude-nonstop uninstall` puts Codex's earlier model settings back. Codex then needs no OpenAI sign-in: run `codex` as usual and its requests go out on whichever line is next, a Claude account included. The lines it writes:
@@ -215,11 +219,12 @@ requires_openai_auth = false
 | `claude-nonstop move <n> up\|down` | Move account or key n (its number in `status`) one place |
 | `claude-nonstop pause <n>` / `resume <n>` | Stop using account or key n without removing it, or use it again |
 | `claude-nonstop keys` | Test every API key |
-| `claude-nonstop keys add [name]` | Save a Claude or OpenAI key (typed hidden, or piped on stdin) |
+| `claude-nonstop keys add [name]` | Save a Claude, OpenAI or Gemini key (typed hidden, or piped on stdin) |
 | `claude-nonstop keys remove <n>` | Remove key number n |
 | `claude-nonstop accounts` | List accounts and who each one is signed in as |
 | `claude-nonstop accounts add [name]` | Add a Claude account and sign in to it |
 | `claude-nonstop accounts add [name] --chatgpt` | Add a ChatGPT account and sign in to it (`--import-codex` takes Codex's existing sign-in) |
+| `claude-nonstop accounts add [name] --gemini` | Add a Gemini account and sign in with Google (`--import-gemini` takes Gemini CLI's saved sign-in) |
 | `claude-nonstop connect [codex\|cursor]` | Point Codex at the gateway (done by setup too), and show how to point Cursor or any OpenAI-compatible tool at it |
 | `claude-nonstop accounts login <n>` | Sign in to account n again |
 | `claude-nonstop accounts check` | Check which accounts have usage left |

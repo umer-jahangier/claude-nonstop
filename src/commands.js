@@ -187,7 +187,7 @@ function describeLine(cfg, s, l, i) {
   const paused = relay.isPaused(cfg, l.type, l.item) ? ' (paused)' : '';
   const p = providers.of(l.item);
   const what = l.type === 'account'
-    ? `${l.item.label} (${accounts.isChatgpt(l.item) ? 'ChatGPT account' : 'Claude account'})${paused}: ${describeAccountCheck(s.accounts[l.item.id], s.usage[l.item.id])}`
+    ? `${l.item.label} (${accounts.serviceName(l.item)} account)${paused}: ${describeAccountCheck(s.accounts[l.item.id], s.usage[l.item.id])}`
     : `${l.item.label} (${p.name} API key ${keys.mask(l.item.key)})${paused}: ${describeKeyCheck(s.keys[l.item.id])}`;
   return `${i + 1}. ${what}`;
 }
@@ -297,12 +297,12 @@ async function listAccounts() {
   const s = state.load();
   out('Subscription accounts, tried in this order:');
   for (const [i, a] of cfg.accounts.entries()) {
-    const login = bin || accounts.isChatgpt(a) ? await accounts.status(a, bin) : { loggedIn: null, error: 'Claude Code was not found' };
+    const login = bin || accounts.notClaude(a) ? await accounts.status(a, bin) : { loggedIn: null, error: 'Claude Code was not found' };
     const who = login.loggedIn ? `signed in${login.email ? ` as ${login.email}` : ''}${login.plan ? ` (${login.plan})` : ''}` : login.loggedIn === false ? 'not signed in' : `sign-in not checked (${login.error})`;
-    out(`  ${i + 1}. ${a.label} (${accounts.isChatgpt(a) ? 'ChatGPT' : 'Claude'})${a.enabled === false ? ' (off)' : ''}: ${who}; ${describeAccountCheck(s.accounts[a.id], s.usage[a.id])}`);
+    out(`  ${i + 1}. ${a.label} (${accounts.serviceName(a)})${a.enabled === false ? ' (off)' : ''}: ${who}; ${describeAccountCheck(s.accounts[a.id], s.usage[a.id])}`);
   }
   out('');
-  out('Add one with `claude-nonstop accounts add "Work"` (a Claude account) or `claude-nonstop accounts add "Work" --chatgpt`, or in `claude-nonstop ui`.');
+  out('Add one with `claude-nonstop accounts add "Work"` (a Claude account), `claude-nonstop accounts add "Work" --chatgpt` or `--gemini`, or in `claude-nonstop ui`.');
   return 0;
 }
 
@@ -325,8 +325,28 @@ async function signInChatgpt(account) {
   return 0;
 }
 
+// Signs in to a Google account for Gemini: Google's own page, caught by google-auth.js.
+async function signInGemini(account) {
+  const login = await require('./google-auth').startLogin(account.id);
+  out(`Sign in to "${account.label}" with Google in the browser window that opens.`);
+  if (!openBrowser(login.url)) out(`Open this address in a browser:\n  ${login.url}`);
+  else out(`No window? Open this address:\n  ${login.url}`);
+  let creds;
+  try {
+    creds = await login.done;
+  } catch (err) {
+    say(`sign-in didn't finish: ${err.message}. Try again with \`claude-nonstop accounts login ${account.label}\`.`);
+    return 1;
+  }
+  state.forgetAccount(account.id);
+  const check = await accounts.probeGemini(account);
+  out(`Signed in to "${account.label}"${creds.email ? ` as ${creds.email}` : ''}${creds.tier ? ` (${creds.tier})` : ''}: ${check.ok ? 'it has usage left' : check.reason}`);
+  return 0;
+}
+
 async function signIn(account, bin) {
   if (accounts.isChatgpt(account)) return signInChatgpt(account);
+  if (accounts.isGemini(account)) return signInGemini(account);
   out(`Sign in to "${account.label}" in the browser window that opens (Anthropic's own sign-in page).`);
   const code = await claude.runInteractive(bin, accounts.LOGIN_ARGS, accounts.env(account));
   state.forgetAccount(account.id);
@@ -348,6 +368,24 @@ async function accountsCommand([sub, ...rest] = []) {
   if (sub === 'add') {
     const flags = new Set(rest.filter((a) => a.startsWith('--')));
     const label = rest.filter((a) => !a.startsWith('--')).join(' ').trim().slice(0, 60) || `Account ${cfg.accounts.length + 1}`;
+    if (flags.has('--gemini') || flags.has('--google') || flags.has('--import-gemini')) {
+      const account = accounts.createGemini(label);
+      config.update((c) => c.accounts.push(account));
+      log(`added Gemini account "${account.label}"`);
+      if (flags.has('--import-gemini')) {
+        try {
+          const creds = require('./google-auth').importGeminiCli(account.id);
+          const check = await accounts.probeGemini(account);
+          out(`Added "${account.label}" with Gemini CLI's sign-in${creds.email ? ` (${creds.email})` : ''}: ${check.ok ? 'it has usage left' : check.reason}`);
+          return 0;
+        } catch (err) {
+          config.update((c) => (c.accounts = c.accounts.filter((a) => a.id !== account.id)));
+          say(err.message);
+          return 1;
+        }
+      }
+      return signInGemini(account);
+    }
     if (flags.has('--chatgpt') || flags.has('--openai') || flags.has('--codex') || flags.has('--import-codex')) {
       const account = accounts.createChatgpt(label);
       config.update((c) => c.accounts.push(account));
@@ -374,10 +412,10 @@ async function accountsCommand([sub, ...rest] = []) {
   }
   if (sub === 'login') {
     const account = pickItem(cfg.accounts, rest[0] || '1', 'account');
-    return signIn(account, accounts.isChatgpt(account) ? null : requireClaude());
+    return signIn(account, accounts.notClaude(account) ? null : requireClaude());
   }
   if (sub === 'check') {
-    const bin = cfg.accounts.some((a) => a.enabled !== false && !accounts.isChatgpt(a)) ? requireClaude() : claude.findClaude();
+    const bin = cfg.accounts.some((a) => a.enabled !== false && !accounts.notClaude(a)) ? requireClaude() : claude.findClaude();
     for (const a of cfg.accounts.filter((x) => x.enabled !== false)) {
       const r = await accounts.probe(a, bin);
       out(`  ${a.label}: ${r.ok ? 'has usage left' : r.reason}`);
@@ -394,7 +432,7 @@ async function accountsCommand([sub, ...rest] = []) {
   }
   if (sub === 'remove' || sub === 'rm') {
     const account = pickItem(cfg.accounts, rest[0], 'account');
-    if (account.kind !== 'profile' && !accounts.isChatgpt(account)) {
+    if (account.kind !== 'profile' && !accounts.notClaude(account)) {
       say('the main account is your normal Claude Code login. Turn it off with `claude-nonstop accounts off 1` instead.');
       return 1;
     }

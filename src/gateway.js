@@ -32,6 +32,7 @@ const accounts = require('./accounts');
 const usage = require('./usage');
 const openaiAuth = require('./openai-auth');
 const chatgptModels = require('./chatgpt-models');
+const googleAuth = require('./google-auth');
 const { log } = require('./files');
 
 // What a Claude subscription sign-in needs to be accepted: Claude Code's identity and betas.
@@ -225,7 +226,50 @@ function chatgptHeaders(creds, length) {
   return { ...providers.openai.accountHeaders(creds), 'content-type': 'application/json', 'accept-encoding': 'identity', 'content-length': String(length) };
 }
 
+// Headers for a request to Gemini: an API key, or a Google sign-in going to Code Assist as
+// Gemini CLI does.
+function geminiHeaders({ key, token }, length) {
+  return {
+    ...(key ? { 'x-goog-api-key': key } : { authorization: `Bearer ${token}`, 'user-agent': googleAuth.userAgent() }),
+    'content-type': 'application/json',
+    accept: 'text/event-stream',
+    'accept-encoding': 'identity',
+    'content-length': String(length),
+  };
+}
+
 // --------------------------------------------------------------- bodies
+
+// Reasoning another provider produced comes back to the client as a thinking block with no
+// signature (Anthropic format) or a reasoning item with no encrypted content (Responses).
+// The client keeps it in its history; sent back to Claude or OpenAI as it is, the request is
+// refused (an invalid signature, an unknown item). Such blocks are dropped on the way out.
+function withoutForeignReasoning(body, format) {
+  const text = body.toString('utf8');
+  if (format === 'messages' ? !/"type"\s*:\s*"thinking"/.test(text) : !/"type"\s*:\s*"reasoning"/.test(text)) return body;
+  let j;
+  try {
+    j = JSON.parse(text);
+  } catch {
+    return body;
+  }
+  let changed = false;
+  if (format === 'messages') {
+    for (const m of Array.isArray(j.messages) ? j.messages : []) {
+      if (!Array.isArray(m.content)) continue;
+      const kept = m.content.filter((p) => !(p && p.type === 'thinking' && !p.signature));
+      if (kept.length !== m.content.length) {
+        changed = true;
+        m.content = kept.length ? kept : [{ type: 'text', text: '(continued)' }];
+      }
+    }
+  } else if (Array.isArray(j.input)) {
+    const kept = j.input.filter((i) => !(i && i.type === 'reasoning' && !i.encrypted_content));
+    changed = kept.length !== j.input.length;
+    j.input = kept;
+  }
+  return changed ? Buffer.from(JSON.stringify(j)) : body;
+}
 
 function parseJson(body) {
   try {
@@ -406,12 +450,24 @@ async function claudeToken(account, cfg, { evenIfLimited = false } = {}) {
 // sign-in lifetime (a few a day). ChatGPT sign-ins renew themselves (openai-auth.js).
 async function renewExpiring(cfg) {
   for (const account of cfg.accounts) {
-    if (accounts.isChatgpt(account)) continue;
+    if ((account.provider || 'anthropic') !== 'anthropic') continue;
     const creds = usage.readCredentials(account);
     if (creds && creds.expiresAt && creds.expiresAt < Date.now() + 10 * 60000) {
       log(`gateway: ${account.label}: sign-in token expires soon, renewing it`);
       await require('./checks').account(account);
     }
+  }
+}
+
+// A Google account the gateway can use right now: its sign-in and Code Assist project.
+async function geminiCredentials(account, cfg) {
+  const recent = state.load().accounts[account.id];
+  if (recent && !recent.ok && accounts.isLimitReason(recent.reason) && Date.now() - recent.at < cfg.accountRecheckMinutes * 60000) return { creds: null, why: recent.reason };
+  try {
+    const creds = await googleAuth.current(account.id);
+    return creds ? { creds, why: '' } : { creds: null, why: 'not signed in' };
+  } catch (err) {
+    return { creds: null, why: `sign-in could not be renewed: ${err.message}` };
   }
 }
 
@@ -427,22 +483,6 @@ async function chatgptCredentials(account, cfg) {
     return { creds, why: '' };
   } catch (err) {
     return { creds: null, why: `sign-in could not be renewed: ${err.message}` };
-  }
-}
-
-// Keeps every Claude.ai sign-in alive: one about to expire is renewed through Claude Code's
-// one-word usage check, so a request never waits for it and no account needs signing in
-// again. Paused accounts and accounts at their limit are kept alive too: Claude Code renews
-// the sign-in before it asks, even when the answer is a limit. Nothing is spent on a
-// sign-in that still has time left, so each account costs about one tiny request per
-// sign-in lifetime (a few a day).
-async function renewExpiring(cfg) {
-  for (const account of cfg.accounts) {
-    const creds = usage.readCredentials(account);
-    if (creds && creds.expiresAt && creds.expiresAt < Date.now() + 10 * 60000) {
-      log(`gateway: ${account.label}: sign-in token expires soon, renewing it`);
-      await require('./checks').account(account);
-    }
   }
 }
 
@@ -613,12 +653,15 @@ function sendModels(req, res, cfg, allKeys) {
   const ids = used.size ? [...used] : ['anthropic'];
   const first = active.length ? providers.of(active[0].item).id : 'anthropic';
   const models = [];
-  for (const id of [first, ...['anthropic', 'openai'].filter((x) => x !== first)]) if (ids.includes(id)) models.push(...providers.byId(id).models.map(([m, name]) => [m, name, id]));
-  // What each ChatGPT sign-in's backend listed last.
-  const seen = new Set(models.map((m) => m[0]));
-  for (const a of cfg.accounts) {
-    if (a.kind !== 'chatgpt' || a.enabled === false) continue;
-    for (const m of chatgptModels.known(a.id) || []) if (!seen.has(m.slug) && seen.add(m.slug)) models.push([m.slug, m.name, 'openai']);
+  const seen = new Set();
+  const add = (id, name, provider) => {
+    if (!seen.has(id) && seen.add(id)) models.push([id, name, provider]);
+  };
+  for (const id of [first, ...Object.keys(providers.PROVIDERS).filter((x) => x !== first)]) {
+    if (!ids.includes(id)) continue;
+    for (const [m, name] of require('./models').list(id)) add(m, name, id);
+    // What each ChatGPT sign-in's backend listed last.
+    if (id === 'openai') for (const a of cfg.accounts) if (a.kind === 'chatgpt' && a.enabled !== false) for (const m of chatgptModels.known(a.id) || []) add(m.slug, m.name, 'openai');
   }
   sendJson(res, 200, translate.modelList(speaksOpenAI(req) ? 'openai' : 'messages', models));
 }
@@ -722,7 +765,10 @@ async function handle(req, res, ctx) {
     const model = modelFor(requested, provider, cfg);
     const sameFormat = inbound === wire && model === requested;
     const chatgpt = line.kind === 'account' && provider.id === 'openai';
-    const upstreamStream = chatgpt ? true : clientStream;
+    const gemini = provider.id === 'gemini';
+    // The Codex backend and Gemini are always asked for a stream; it's read back whole for a
+    // client that wanted a whole answer.
+    const upstreamStream = chatgpt || gemini ? true : clientStream;
     const label = item.label;
 
     // ---- what goes out, and where
@@ -731,6 +777,15 @@ async function handle(req, res, ctx) {
     let headers;
     let creds = null;
     let chatgptModel = model;
+    let geminiModel = model;
+    let geminiAuth = null;
+    const geminiFallbacks = [...providers.gemini.fallbackModels];
+    // A Gemini body for a model: plain for the Gemini API, wrapped for Code Assist.
+    const geminiBody = (m) => {
+      const req = translate.writeRequest('gemini', parsed, { model: m });
+      return Buffer.from(JSON.stringify(geminiAuth.token ? { model: m, project: geminiAuth.project, user_prompt_id: crypto.randomUUID(), request: { ...req, session_id: geminiAuth.session } } : req));
+    };
+    const geminiUrl = (m) => (geminiAuth.token ? `${googleAuth.codeAssist()}:streamGenerateContent?alt=sse` : `${providers.gemini.upstream(cfg)}/models/${encodeURIComponent(m)}:streamGenerateContent?alt=sse`);
     // Whatever format it came in, a request to the Codex backend is shaped the same way.
     const chatgptBody = (m) => asResponsesBody(inbound === 'responses' ? json : translate.writeRequest('responses', { ...parsed, stream: true }, { model: m, store: false, stream: true, includeEncrypted: true }), m, { chatgpt: true });
     if (line.kind === 'account' && provider.id === 'anthropic') {
@@ -739,10 +794,21 @@ async function handle(req, res, ctx) {
         log(`gateway: ${label}: ${why}; trying the next line`);
         continue;
       }
-      const messagesBody = sameFormat ? body : Buffer.from(JSON.stringify(translate.writeRequest('messages', parsed, { model })));
+      const messagesBody = sameFormat ? withoutForeignReasoning(body, 'messages') : Buffer.from(JSON.stringify(translate.writeRequest('messages', parsed, { model })));
       outBody = client === 'claude' ? asClaudeCodeBody(messagesBody) : asSignInBody(messagesBody);
       url = `${cfg.upstream}/v1/messages`;
       headers = claudeAccountHeaders(req.headers, sameFormat, t, outBody.length, { asClaudeCode: client === 'claude' });
+    } else if (line.kind === 'account' && gemini) {
+      const r = await geminiCredentials(item, cfg);
+      if (!r.creds) {
+        log(`gateway: ${label}: ${r.why}; trying the next line`);
+        continue;
+      }
+      creds = r.creds;
+      geminiAuth = { token: creds.accessToken, project: creds.projectId, session: crypto.createHash('sha256').update(`${item.id}:${String(req.headers['x-claude-code-session-id'] || req.headers.session_id || '')}`).digest('hex').slice(0, 32) };
+      outBody = geminiBody(geminiModel);
+      url = geminiUrl(geminiModel);
+      headers = geminiHeaders(geminiAuth, outBody.length);
     } else if (chatgpt) {
       const r = await chatgptCredentials(item, cfg);
       if (!r.creds) {
@@ -761,13 +827,18 @@ async function handle(req, res, ctx) {
         continue;
       }
       attempted++;
-      if (provider.id === 'anthropic') {
-        outBody = asPlainApiBody(sameFormat ? body : Buffer.from(JSON.stringify(translate.writeRequest('messages', parsed, { model }))));
+      if (gemini) {
+        geminiAuth = { key: item.key };
+        outBody = geminiBody(geminiModel);
+        url = geminiUrl(geminiModel);
+        headers = geminiHeaders(geminiAuth, outBody.length);
+      } else if (provider.id === 'anthropic') {
+        outBody = asPlainApiBody(sameFormat ? withoutForeignReasoning(body, 'messages') : Buffer.from(JSON.stringify(translate.writeRequest('messages', parsed, { model }))));
         url = `${cfg.upstream}/v1/messages`;
         headers = claudeKeyHeaders(req.headers, sameFormat, item.key, outBody.length);
       } else {
         // A Responses request for the model it named goes to OpenAI exactly as it came.
-        outBody = inbound === 'responses' ? (sameFormat ? body : asResponsesBody(json, model, { chatgpt: false })) : Buffer.from(JSON.stringify(translate.writeRequest('responses', parsed, { model, store: false })));
+        outBody = inbound === 'responses' ? (sameFormat ? withoutForeignReasoning(body, 'responses') : asResponsesBody(json, model, { chatgpt: false })) : Buffer.from(JSON.stringify(translate.writeRequest('responses', parsed, { model, store: false })));
         url = `${providers.openai.upstream(cfg)}/responses`;
         headers = openaiKeyHeaders(req.headers, sameFormat, item.key, outBody.length);
       }
@@ -778,15 +849,93 @@ async function handle(req, res, ctx) {
     // ---- send it, once more after renewing a ChatGPT sign-in that was refused
     let upRes;
     let upstream;
+    let refreshed = false;
     for (let attempt = 0; ; attempt++) {
       const r = await forward(url, 'POST', outBody, headers);
       if (r.error) {
-        log(`gateway: upstream connection failed: ${r.error.message}`);
-        fail(502, 'api_error', `claude-nonstop gateway could not reach ${new URL(url).origin}: ${r.error.message}`);
-        return;
+        // This service can't be reached right now; another line may be on another one.
+        log(`gateway: ${label}: couldn't reach ${new URL(url).origin} (${r.error.message}); trying the next line`);
+        lastError = `couldn't reach ${new URL(url).origin}: ${r.error.message}`;
+        upRes = null;
+        break;
       }
       upRes = r.res;
       upstream = r.upstream;
+      if (gemini && [400, 403, 404, 429].includes(upRes.statusCode)) {
+        // A model this line isn't given (a preview, say), or one whose quota is used up while
+        // others' may not be: the next Gemini model.
+        const text = (await readBody(upRes, MAX_ERROR_BODY).catch(() => Buffer.alloc(0))).toString('utf8');
+        let next = null;
+        const quota429 = upRes.statusCode === 429 && providers.gemini.isQuota(text);
+        if (providers.gemini.isModelRefusal(upRes.statusCode, text) || quota429) while (geminiFallbacks.length && (next = geminiFallbacks.shift()) === geminiModel) next = null;
+        if (next) {
+          log(`gateway: ${label}: Gemini doesn't serve ${geminiModel} here (${providers.gemini.errorMessage(text) || `HTTP ${upRes.statusCode}`}); sending ${next} instead`);
+          geminiModel = next;
+          outBody = geminiBody(geminiModel);
+          url = geminiUrl(geminiModel);
+          headers = geminiHeaders(geminiAuth, outBody.length);
+          continue;
+        }
+        if (line.kind === 'key' && provider.classify(upRes.statusCode, text) === 'used-up') {
+          const detail = providers.gemini.errorMessage(text);
+          lastError = detail;
+          state.recordKey(item.id, { verdict: 'used-up', status: upRes.statusCode, detail });
+          log(`gateway: API key "${label}" unavailable (HTTP ${upRes.statusCode}); trying next key`);
+          events.emit('switch', { keyId: item.id, label, status: upRes.statusCode, detail });
+          upRes = null;
+          break;
+        }
+        upstream.destroy();
+        const detail = providers.gemini.errorMessage(text) || `HTTP ${upRes.statusCode}`;
+        if (upRes.statusCode === 429) {
+          if (line.kind === 'account' && quota429) {
+            state.recordAccount(item.id, { ok: false, reason: `usage limit reached: ${detail}` });
+            log(`gateway: ${label} unavailable (HTTP 429: ${detail}); trying the next line`);
+            events.emit('switch', { accountId: item.id, label, status: 429, detail });
+          } else if (line.kind === 'account') {
+            // A per-minute limit or no capacity just now: this account sits out a few seconds.
+            const wait = Math.min(60, Math.max(5, Number(upRes.headers['retry-after']) || 10));
+            busyUntil.set(item.id, Date.now() + wait * 1000);
+            busy = Math.max(busy, wait);
+            log(`gateway: ${label}: rate limited for a few seconds (${detail}); trying the next line`);
+          } else {
+            lastError = detail;
+            if (quota429) {
+              state.recordKey(item.id, { verdict: 'used-up', status: 429, detail });
+              events.emit('switch', { keyId: item.id, label, status: 429, detail });
+            }
+            log(`gateway: API key "${label}" unavailable (HTTP 429: ${detail}); trying next key`);
+          }
+          upRes = null;
+          break;
+        }
+        if (line.kind === 'account' && upRes.statusCode === 403) {
+          // The account can't use Code Assist (its project or licence): the next line.
+          state.recordAccount(item.id, { ok: false, reason: `sign-in refused: ${detail}` });
+          log(`gateway: ${label} unavailable (HTTP 403: ${detail}); trying the next line`);
+          events.emit('switch', { accountId: item.id, label, status: 403, detail });
+          upRes = null;
+          break;
+        }
+        fail(upRes.statusCode, upRes.statusCode === 400 ? 'invalid_request_error' : 'api_error', `${label}: ${detail}`);
+        return;
+      }
+      if (gemini && line.kind === 'account' && upRes.statusCode === 401 && !refreshed) {
+        refreshed = true;
+        upstream.destroy();
+        try {
+          creds = await googleAuth.refresh(item.id);
+          geminiAuth.token = creds.accessToken;
+          headers = geminiHeaders(geminiAuth, outBody.length);
+          continue;
+        } catch (err) {
+          state.recordAccount(item.id, { ok: false, reason: `sign-in refused: ${err.message}` });
+          log(`gateway: ${label}: Google sign-in refused and could not be renewed (${err.message}); trying the next line`);
+          events.emit('switch', { accountId: item.id, label, status: 401, detail: err.message });
+          upRes = null;
+          break;
+        }
+      }
       if (chatgpt && upRes.statusCode === 400 && attempt === 0) {
         // The backend's model list may have changed since it was last asked: ask again,
         // and send the request once more with a model it lists now.
@@ -806,7 +955,8 @@ async function handle(req, res, ctx) {
         fail(400, 'invalid_request_error', `${label}: ${provider.errorMessage(text) || text || 'HTTP 400'}`);
         return;
       }
-      if (chatgpt && upRes.statusCode === 401 && attempt === 0) {
+      if (chatgpt && upRes.statusCode === 401 && !refreshed) {
+        refreshed = true;
         upstream.destroy();
         try {
           creds = await openaiAuth.refresh(item.id);
@@ -833,6 +983,7 @@ async function handle(req, res, ctx) {
       // A usage limit says so; any other 429 is a passing refusal, so the account isn't set aside for it.
       const limited = status === 429 && (provider.id === 'openai'
         ? providers.openai.isLimit(status, text, upRes.headers)
+        : gemini ? providers.gemini.isLimit(status, text)
         : accounts.isLimitReason(detail) || /rejected/i.test(String(upRes.headers['anthropic-ratelimit-unified-status'] || '')));
       // "would exceed your account's rate limit" is a short burst refusal, not the plan
       // running out: that account is only skipped for this request and the next few seconds.
@@ -925,9 +1076,15 @@ async function handle(req, res, ctx) {
 
 // Codex's rate-limit headers come with every answer from the Codex backend; they're this
 // account's usage readout.
+const usageWritten = new Map(); // account id -> { key, at }
 function recordChatgptUsage(account, headers) {
   const u = providers.openai.usageFromHeaders(headers);
   if (!u) return;
+  // Written when it changes, or once a minute: not on every answer.
+  const key = JSON.stringify(u);
+  const last = usageWritten.get(account.id);
+  if (last && last.key === key && Date.now() - last.at < 60000) return;
+  usageWritten.set(account.id, { key, at: Date.now() });
   state.recordUsage(account.id, { ...u, at: Date.now() });
   events.notify('usage', { id: account.id });
 }
@@ -961,8 +1118,8 @@ async function rawAnthropic(req, res, ctx, body, desktop) {
     }
     const { res: upRes, upstream, error } = await forward(`${cfg.upstream}${req.url}`, req.method, outBody, headers);
     if (error) {
-      if (!res.destroyed && !res.headersSent) sendError(res, 502, 'api_error', `claude-nonstop gateway could not reach ${cfg.upstream}: ${error.message}`);
-      return;
+      log(`gateway: ${item.label}: couldn't reach ${cfg.upstream} (${error.message}); trying the next line`);
+      continue;
     }
     if (upRes.statusCode === 401 || upRes.statusCode === 403 || (upRes.statusCode === 429 && line.kind === 'account')) {
       upstream.destroy();

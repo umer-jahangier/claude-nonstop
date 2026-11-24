@@ -4,10 +4,12 @@
 // records, and a writer that prints them. Every provider streams answers this way.
 
 // Feed chunks in; get complete records out. A record is complete at a blank line.
+// A character split between two network chunks is decoded whole, not as two broken halves.
 function parser() {
   let buffer = '';
+  const decoder = new (require('string_decoder').StringDecoder)('utf8');
   return (chunk) => {
-    buffer += chunk.toString('utf8');
+    buffer += typeof chunk === 'string' ? chunk : decoder.write(chunk);
     const out = [];
     let at;
     while ((at = buffer.search(/\r?\n\r?\n/)) >= 0) {

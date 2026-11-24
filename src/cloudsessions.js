@@ -790,7 +790,8 @@ async function importCodexTasks(account, { ids = null, onProgress = () => {} } =
 
 // Every connected account whose cloud work can be brought here: Claude accounts' sessions,
 // ChatGPT accounts' Codex tasks.
-const importable = (cfg = config.load()) => cfg.accounts.slice();
+// Gemini accounts keep no cloud sessions to bring.
+const importable = (cfg = config.load()) => cfg.accounts.filter((a) => a.kind !== 'gemini');
 
 // Imports any account: a Claude account's sessions or a ChatGPT account's Codex tasks.
 // ---------------------------------------------------------------- into Codex and the desktop app

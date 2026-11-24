@@ -134,6 +134,7 @@ function family(model) {
   const m = String(model || '').toLowerCase();
   if (/^claude/.test(m)) return 'anthropic';
   if (/^(gpt|o[1-9]|codex|chatgpt|text-|davinci)/.test(m)) return 'openai';
+  if (/^(gemini|gemma|models\/gemini)/.test(m)) return 'gemini';
   return null;
 }
 

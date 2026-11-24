@@ -19,7 +19,7 @@ const DEFAULTS = {
   desktopAccount: 'default', // the account the desktop app signs in to with Claude.ai
   desktopAlerts: true, // say when to switch the desktop app between that account and API keys
   // The model a line answers with when the request asked for one from the other service.
-  models: { anthropic: 'claude-sonnet-5-5', openai: 'gpt-5.5' },
+  models: { anthropic: 'claude-sonnet-5-5', openai: 'gpt-5.5', gemini: 'gemini-3.1-pro-preview' },
   modelAliases: {}, // requested model name -> the one to use, applied before the family check
   // The desktop app's SSH sessions reach the gateway through a reverse tunnel: on each host
   // named here, the server's 127.0.0.1:sshTunnelPort leads back to this computer's (ssh.js).

@@ -95,6 +95,54 @@ function createProfile(label) {
 }
 
 const isChatgpt = (account) => account && account.kind === 'chatgpt';
+const isGemini = (account) => account && account.kind === 'gemini';
+// An account with no Claude Code sign-in: its requests go through the gateway.
+const notClaude = (account) => isChatgpt(account) || isGemini(account);
+const serviceName = (account) => (isChatgpt(account) ? 'ChatGPT' : isGemini(account) ? 'Gemini' : 'Claude');
+
+// A Gemini account: a Google sign-in in the vault (google-auth.js), used through Code Assist.
+function createGemini(label) {
+  ensureHome();
+  return { id: `gem-${crypto.randomBytes(4).toString('hex')}`, label, kind: 'gemini', provider: 'gemini', enabled: true };
+}
+
+// Does a Gemini account have usage left? Code Assist's quota readout says, per model, without
+// spending any; a tiny request answers when the readout isn't available.
+async function probeGemini(account, cfg = require('./config').load()) {
+  const googleAuth = require('./google-auth');
+  const providers = require('./providers');
+  const record = (result) => {
+    state.recordAccount(account.id, result);
+    return result;
+  };
+  let creds;
+  try {
+    creds = await googleAuth.current(account.id);
+  } catch (err) {
+    return record({ ok: false, reason: `sign-in could not be renewed: ${err.message}` });
+  }
+  if (!creds) return record({ ok: false, reason: 'not signed in' });
+  let buckets = null;
+  try {
+    buckets = await googleAuth.quota(creds);
+  } catch {}
+  if (buckets && Object.keys(buckets).length) {
+    const wanted = (cfg.models && cfg.models.gemini) || providers.gemini.defaultModel;
+    const pick = buckets[wanted] ? wanted : Object.keys(buckets).find((m) => /pro/.test(m)) || Object.keys(buckets)[0];
+    const b = buckets[pick];
+    state.recordUsage(account.id, { session: { pct: b.pct, resetsAt: b.resetsAt }, model: pick, at: Date.now() });
+    const left = Object.values(buckets).some((x) => x.pct < 100);
+    return record(left ? { ok: true, reason: '' } : { ok: false, reason: `usage limit reached: every Gemini model is at its quota${b.resetsAt ? ` until ${new Date(b.resetsAt).toLocaleString()}` : ''}` });
+  }
+  const { request } = require('./http');
+  const body = JSON.stringify({ model: providers.gemini.probeModel, project: creds.projectId, request: { contents: [{ role: 'user', parts: [{ text: 'Reply with OK' }] }], generationConfig: { maxOutputTokens: 8 } } });
+  const r = await request(`${googleAuth.codeAssist()}:generateContent`, { method: 'POST', headers: { authorization: `Bearer ${creds.accessToken}`, 'content-type': 'application/json', 'user-agent': googleAuth.userAgent(), 'content-length': Buffer.byteLength(body) }, body, timeoutMs: 60000 });
+  const detail = providers.gemini.errorMessage(r.body) || (r.status ? `HTTP ${r.status}` : r.body);
+  if (r.status >= 200 && r.status < 300) return record({ ok: true, reason: '' });
+  if (r.status === 429) return record({ ok: false, reason: `usage limit reached: ${detail}` });
+  if (r.status === 401 || r.status === 403) return record({ ok: false, reason: `sign-in refused: ${detail}` });
+  return record({ ok: false, reason: detail });
+}
 
 // A ChatGPT account: no config folder, its sign-in is in the vault (openai-auth.js).
 function createChatgpt(label) {
@@ -194,6 +242,7 @@ function parseJsonOutput(stdout) {
 // conversation behind for `claude -c` to pick up.
 async function probe(account, bin) {
   if (isChatgpt(account)) return probeChatgpt(account);
+  if (isGemini(account)) return probeGemini(account);
   ensureHome();
   // User settings may point Claude Code at the gateway, and on a root server they may
   // force bypass-permissions. A probe has to reach this account's own sign-in.
@@ -222,6 +271,10 @@ function findEmail(value) {
 }
 
 async function status(account, bin) {
+  if (isGemini(account)) {
+    const creds = require('./google-auth').stored(account.id);
+    return { loggedIn: Boolean(creds), email: creds ? creds.email : null, method: 'google', plan: creds ? creds.tier : null };
+  }
   if (isChatgpt(account)) {
     const creds = require('./openai-auth').stored(account.id);
     return { loggedIn: Boolean(creds), email: creds ? creds.email : null, method: 'chatgpt', plan: creds ? creds.plan : null };
@@ -245,8 +298,8 @@ function logout(account, bin) {
 // Deletes an extra account: signs it out (which revokes its login), removes the links to
 // your shared history without touching what they point at, then removes its folder.
 async function remove(account, bin) {
-  if (isChatgpt(account)) {
-    require('./openai-auth').forget(account.id);
+  if (notClaude(account)) {
+    require(isGemini(account) ? './google-auth' : './openai-auth').forget(account.id);
     state.forgetAccount(account.id);
     return;
   }
@@ -275,6 +328,11 @@ module.exports = {
   createChatgpt,
   isChatgpt,
   probeChatgpt,
+  createGemini,
+  isGemini,
+  probeGemini,
+  notClaude,
+  serviceName,
   syncSharedFiles,
   env,
   probe,

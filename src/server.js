@@ -66,17 +66,19 @@ function createContext() {
     // never shows as the line your sessions are on.
     // The desktop app's requests went out on one of your subscription accounts.
     noteAccountInUse(account, { desktop = true } = {}) {
+      state.setInUse(`account:${account.id}`);
       const who = desktop ? 'desktop' : 'sessions';
       const changed = keyInUse[who] !== `account:${account.id}`;
       if (desktop && (changed || Date.now() - desktopNotedAt > 60000)) {
-        state.setDesktop(`${account.label} (subscription)`);
+        state.setDesktop(`${account.label} (subscription)`, 'account');
         desktopNotedAt = Date.now();
       }
       if (!changed) return;
       keyInUse[who] = `account:${account.id}`;
-      log(`gateway: the desktop app is using ${account.label} (subscription)`);
+      log(`gateway: ${desktop ? 'the desktop app is' : 'sessions are'} using ${account.label} (subscription)`);
     },
     noteKeyInUse(entry, { desktop = false } = {}) {
+      state.setInUse(`key:${entry.id}`);
       const who = desktop ? 'desktop' : 'sessions';
       const changed = keyInUse[who] !== entry.id;
       // The desktop app's "last used" also says it's on API keys right now (see
@@ -242,10 +244,16 @@ async function serve({ port } = {}) {
   // Sessions are started by the CLI in other processes; they record the line they chose in
   // state.json, which is watched here so the web UI hears about every new session live.
   let lastCurrent = state.load().current;
+  let lastInUse = (state.load().inUse || {}).line;
   fs.watchFile(paths.STATE, { interval: 1500 }, () => {
-    const now = state.load().current;
+    const s = state.load();
+    const now = s.current;
     if (now && now !== lastCurrent) events.emit('current', { label: now });
     lastCurrent = now;
+    // The line requests go out on moved: the page moves its cable there.
+    const inUse = (s.inUse || {}).line;
+    if (inUse && inUse !== lastInUse) events.emit('in-use', { line: inUse });
+    lastInUse = inUse;
   });
 
   // Find out where every account and key stands. The gateway starts at login, so give the
@@ -261,6 +269,10 @@ async function serve({ port } = {}) {
     const renew = () => require('./gateway').renewExpiring(config.load()).catch((err) => log(`gateway: renewing sign-ins failed: ${err.message}`));
     setTimeout(renew, 8000).unref();
     setInterval(renew, 5 * 60000).unref();
+    // Each provider's model list, read from its API with your own keys and sign-ins.
+    const readModels = () => require('./models').refresh().catch((err) => log(`models: ${err.message}`));
+    setTimeout(readModels, 20000).unref();
+    setInterval(readModels, 60 * 60000).unref();
   }
 
   const stop = (code = 0) => {

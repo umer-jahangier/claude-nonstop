@@ -96,7 +96,7 @@ function describe(u, now = Date.now()) {
 async function refresh(account, cfg = config.load()) {
   // A ChatGPT account's usage comes with every answer from the Codex backend (gateway.js)
   // and with each check; there's nothing to ask between them.
-  if (account.kind === 'chatgpt') return state.load().usage[account.id] || null;
+  if (account.kind === 'chatgpt' || account.kind === 'gemini') return state.load().usage[account.id] || null;
   const before = state.load().usage[account.id] || null;
   const keep = (error) => {
     const next = before && before.session ? { ...before, error } : { error, at: Date.now() };
@@ -133,7 +133,7 @@ async function refresh(account, cfg = config.load()) {
 function refreshAll({ freshMs = 0 } = {}) {
   const cfg = config.load();
   const s = state.load();
-  const due = cfg.accounts.filter((a) => a.kind !== 'chatgpt' && a.enabled !== false && !(s.usage[a.id] && s.usage[a.id].at && Date.now() - s.usage[a.id].at < freshMs));
+  const due = cfg.accounts.filter((a) => a.kind !== 'chatgpt' && a.kind !== 'gemini' && a.enabled !== false && !(s.usage[a.id] && s.usage[a.id].at && Date.now() - s.usage[a.id].at < freshMs));
   return Promise.all(due.map((a) => refresh(a, cfg).catch((err) => log(`usage: ${a.label}: ${err.message}`))));
 }
 

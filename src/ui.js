@@ -106,14 +106,15 @@ function findAccount(id) {
 // What the Default models dropdowns offer: each service's own names, plus whatever each
 // ChatGPT account's backend listed last (those are the only names it takes).
 function modelChoices(cfg, s) {
-  const openai = providers.openai.models.map(([id, name]) => [id, name, 'OpenAI API']);
+  const models = require('./models');
+  const openai = models.list('openai').map(([id, name]) => [id, name, 'OpenAI']);
   const seen = new Set(openai.map((m) => m[0]));
   for (const a of cfg.accounts) {
     if (a.kind !== 'chatgpt') continue;
     const listed = (s.chatgptModels || {})[a.id];
     for (const slug of (listed && listed.slugs) || []) if (!seen.has(slug) && seen.add(slug)) openai.push([slug, slug, `ChatGPT: ${a.label}`]);
   }
-  return { anthropic: providers.anthropic.models.map(([id, name]) => [id, name, 'Claude']), openai };
+  return { anthropic: models.list('anthropic').map(([id, name]) => [id, name, 'Claude']), openai, gemini: models.list('gemini').map(([id, name]) => [id, name, 'Gemini']) };
 }
 
 function snapshot(ctx) {
@@ -126,6 +127,7 @@ function snapshot(ctx) {
     gatewayUrl: `http://127.0.0.1:${cfg.port}`,
     current: s.current,
     currentAt: s.currentAt,
+    inUse: s.inUse,
     desktopKey: s.desktop,
     desktopAdvice: s.desktopAdvice && { ...s.desktopAdvice, text: require('./desktopadvice').message(s.desktopAdvice) },
     claudeFound: Boolean(claude.findClaude()),
@@ -152,7 +154,7 @@ function snapshot(ctx) {
     // Your relay order, accounts and keys mixed, as "account:<id>" / "key:<id>".
     order: relay.lines(cfg, v.keys).map((l) => relay.lineId(l.type, l.item.id)),
     pinned: cfg.pinned || null,
-    settings: { cooldownMinutes: cfg.cooldownMinutes, accountRecheckMinutes: cfg.accountRecheckMinutes, models: cfg.models, modelChoices: modelChoices(cfg, s), codexAuthFound: Boolean(openaiAuth.readCodexAuth()), desktopStrictSandbox: Boolean(cfg.desktopStrictSandbox), desktopConnectors: (cfg.desktopConnectors || []).map((e) => ({ ...e, signIn: require('./connectorcatalog').describeAuth(e, v) })), desktopAccount: cfg.desktopAccount || 'default', desktopAlerts: cfg.desktopAlerts !== false },
+    settings: { cooldownMinutes: cfg.cooldownMinutes, accountRecheckMinutes: cfg.accountRecheckMinutes, models: cfg.models, modelChoices: modelChoices(cfg, s), codexAuthFound: Boolean(openaiAuth.readCodexAuth()), geminiCliFound: Boolean(require('./google-auth').readGeminiCli()), desktopStrictSandbox: Boolean(cfg.desktopStrictSandbox), desktopConnectors: (cfg.desktopConnectors || []).map((e) => ({ ...e, signIn: require('./connectorcatalog').describeAuth(e, v) })), desktopAccount: cfg.desktopAccount || 'default', desktopAlerts: cfg.desktopAlerts !== false },
     traffic: events.stats(),
     shell: shell.status(),
     service: service.status(),
@@ -175,7 +177,10 @@ async function addKey(body) {
     return created;
   });
   log(`added API key "${entry.label}"`);
-  return { id: entry.id, check: await checks.key(entry) };
+  const check = await checks.key(entry);
+  // A new key may read a provider's model list the others couldn't.
+  if (check && check.verdict !== 'used-up') require('./models').refresh({ force: true }).catch(() => {});
+  return { id: entry.id, check };
 }
 
 async function checkKey(id) {
@@ -307,6 +312,33 @@ function startChatgptLogin(account) {
   return job;
 }
 
+// Signs in to a Google account for Gemini: Google's own page, caught by google-auth.js.
+function startGeminiLogin(account) {
+  const id = crypto.randomBytes(8).toString('hex');
+  const job = { id, accountId: account.id, output: '', done: false, ok: false, child: null, chatgpt: true };
+  jobs.set(id, job);
+  require('./google-auth').startLogin(account.id).then((login) => {
+    job.output = `Sign in with Google in the browser window that opened.\n${login.url}\n`;
+    job.cancel = login.cancel;
+    openBrowser(login.url);
+    return login.done;
+  }).then((creds) => {
+    job.done = true;
+    job.ok = true;
+    job.output += `\nSigned in${creds.email ? ` as ${creds.email}` : ''}${creds.tier ? ` (${creds.tier})` : ''}.\n`;
+    state.forgetAccount(account.id);
+    log(`sign-in for "${account.label}" finished`);
+    checks.account(account, null);
+    require('./models').refresh({ force: true }).catch(() => {});
+  }).catch((err) => {
+    job.done = true;
+    job.ok = false;
+    job.output += `\n${err.message}\n`;
+    log(`sign-in for "${account.label}" failed: ${err.message}`);
+  });
+  return job;
+}
+
 function openBrowser(url) {
   const opts = { detached: true, stdio: 'ignore', windowsHide: true };
   if (process.platform === 'linux' && !process.env.DISPLAY && !process.env.WAYLAND_DISPLAY) return false;
@@ -400,6 +432,22 @@ function jobInput(id, text) {
 function addAccount(body) {
   const cfg = config.load();
   const label = clean(body.label) || `Account ${cfg.accounts.length + 1}`;
+  if (body.service === 'gemini' || body.service === 'google') {
+    const account = accounts.createGemini(label);
+    config.update((c) => c.accounts.push(account));
+    log(`added Gemini account "${account.label}"`);
+    if (body.importGemini) {
+      try {
+        const creds = require('./google-auth').importGeminiCli(account.id);
+        checks.account(account, null);
+        return { id: account.id, imported: true, email: creds.email };
+      } catch (err) {
+        config.update((c) => (c.accounts = c.accounts.filter((a) => a.id !== account.id)));
+        throw httpError(400, `${err.message[0].toUpperCase()}${err.message.slice(1)}`);
+      }
+    }
+    return { id: account.id, job: startGeminiLogin(account).id };
+  }
   if (body.service === 'chatgpt' || body.service === 'openai') {
     const account = accounts.createChatgpt(label);
     config.update((c) => c.accounts.push(account));
@@ -426,19 +474,20 @@ function addAccount(body) {
 function loginAccount(id) {
   const account = findAccount(id);
   if (accounts.isChatgpt(account)) return { job: startChatgptLogin(account).id };
+  if (accounts.isGemini(account)) return { job: startGeminiLogin(account).id };
   return { job: startLogin(account, requireClaude()).id };
 }
 
 async function accountStatuses() {
   const bin = claude.findClaude();
-  const list = config.load().accounts.filter((a) => bin || accounts.isChatgpt(a));
+  const list = config.load().accounts.filter((a) => bin || accounts.notClaude(a));
   const results = await Promise.all(list.map((a) => accounts.status(a, bin)));
   return Object.fromEntries(list.map((a, i) => [a.id, results[i]]));
 }
 
 function checkAccount(id) {
   const account = findAccount(id);
-  return checks.account(account, accounts.isChatgpt(account) ? null : requireClaude());
+  return checks.account(account, accounts.notClaude(account) ? null : requireClaude());
 }
 
 // The page asks for this whenever it opens; anything with a clear answer from the last
@@ -461,7 +510,7 @@ function editAccount(id, body) {
 
 async function removeAccount(id) {
   const account = findAccount(id);
-  if (account.kind !== 'profile' && !accounts.isChatgpt(account)) throw httpError(400, 'The main account is your normal Claude Code login. Turn it off instead.');
+  if (account.kind !== 'profile' && !accounts.notClaude(account)) throw httpError(400, 'The main account is your normal Claude Code login. Turn it off instead.');
   await accounts.remove(account, claude.findClaude());
   config.update((c) => {
     c.accounts = c.accounts.filter((a) => a.id !== id);
@@ -510,7 +559,7 @@ function editSettings(body) {
       c[name] = n;
     }
     if (body.models && typeof body.models === 'object') {
-      for (const id of ['anthropic', 'openai']) {
+      for (const id of ['anthropic', 'openai', 'gemini']) {
         if (typeof body.models[id] !== 'string') continue;
         const model = body.models[id].trim();
         if (!model || model.length > 80 || !/^[\w.:/-]+$/.test(model)) throw httpError(400, 'Give a model name, like claude-sonnet-5-5 or gpt-5.5.');
