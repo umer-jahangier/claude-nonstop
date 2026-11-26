@@ -1262,7 +1262,7 @@ function renderDesktop() {
     <div class="row"><span class="k">Auth scheme</span><span class="v">Bearer</span></div>`;
   $('#desktop-file').textContent = desktopInfo ? `The same values are saved in ${desktopInfo.file}` : '';
   const signInNote = { oauth: ' · you sign in to it in Claude', none: ' · no sign-in', gh: ' · your GitHub CLI sign-in', token: ' · your access token', 'token-missing': ' · needs an access token', connected: ' · connected', 'needs-sign-in': ' · not connected yet' };
-  $('#desktop-connectors').innerHTML = S.settings.desktopConnectors.map((c) => `<li class="row"><span class="row-text"><span class="row-title">${esc(c.name)}${c.signIn === 'needs-sign-in' ? ' <span class="badge warn">Sign in needed</span>' : ''}</span><span class="row-sub mono">${esc(c.url)}${signInNote[c.signIn] || ''}</span></span><span class="acts">${c.signIn === 'needs-sign-in' || c.signIn === 'connected' ? `<button class="btn" type="button" data-act="connect-connector" data-id="${esc(c.name)}" data-fk="connect-connector-${esc(c.name)}">${c.signIn === 'connected' ? 'Sign In Again' : 'Connect'}</button>` : ''}<button class="btn" type="button" data-act="test-connector" data-id="${esc(c.name)}" data-fk="test-connector-${esc(c.name)}">Test</button><button class="icon-btn" type="button" data-act="remove-connector" data-id="${esc(c.name)}" data-fk="remove-connector-${esc(c.name)}" aria-label="Remove the ${esc(c.name)} connector" title="Remove">${icon('trash')}</button></span></li>`).join('')
+  $('#desktop-connectors').innerHTML = S.settings.desktopConnectors.map((c) => `<li class="row"><span class="row-text"><span class="row-title">${esc(c.name)}${c.signIn === 'needs-sign-in' ? ' <span class="badge warn">Sign in needed</span>' : ''}</span><span class="row-sub mono">${esc(c.url)}${signInNote[c.signIn] || ''}</span></span><span class="acts">${c.signIn === 'needs-sign-in' ? `<button class="btn" type="button" data-act="connect-connector" data-id="${esc(c.name)}" data-fk="connect-connector-${esc(c.name)}">Connect</button>` : ''}${['connected', 'token', 'gh', 'token-missing'].includes(c.signIn) ? `<button class="btn" type="button" data-act="change-connector" data-id="${esc(c.name)}" data-fk="change-connector-${esc(c.name)}">Change Account…</button>` : ''}<button class="btn" type="button" data-act="test-connector" data-id="${esc(c.name)}" data-fk="test-connector-${esc(c.name)}">Test</button><button class="icon-btn" type="button" data-act="remove-connector" data-id="${esc(c.name)}" data-fk="remove-connector-${esc(c.name)}" aria-label="Remove the ${esc(c.name)} connector" title="Remove">${icon('trash')}</button></span></li>`).join('')
     + `<li class="row add"><button class="add-btn" type="button" data-act="browse-connectors" data-fk="browse-connectors"><span class="tile">${icon('plus-circle')}</span>Browse Connectors…</button></li>`
     + `<li class="row add"><button class="add-btn" type="button" data-act="add-connector" data-fk="add-connector"><span class="tile">${icon('plus-circle')}</span>Add by Address…</button></li>`;
   renderDesktopCard();
@@ -1323,12 +1323,12 @@ function renderDesktopCard() {
 
 // Opens a connector's sign-in page in the browser (the gateway opens it); the gateway says
 // when it's done, and then the connector is tested.
-async function connectorConnect(name, client) {
+async function connectorConnect(name, client, switchAccount = false) {
   try {
-    await api('POST', `/api/connectors/${encodeURIComponent(name)}/connect`, client ? { client } : {});
+    await api('POST', `/api/connectors/${encodeURIComponent(name)}/connect`, { ...(client ? { client } : {}), ...(switchAccount ? { switchAccount: true } : {}) });
     ui.connecting = ui.connecting || new Set();
     ui.connecting.add(name.toLowerCase());
-    toast(`Sign in to ${name} in the browser tab that opened. It connects as soon as you're back.`);
+    toast(switchAccount ? `Sign in to ${name} with the other account in the browser tab that opened. If it signs you straight in as before, sign out on ${name}'s site first, then try again.` : `Sign in to ${name} in the browser tab that opened. It connects as soon as you're back.`);
   } catch (err) {
     toast(`${name}: ${err.message}`, true);
     if (err.data && err.data.need === 'app-sign-in') { await refresh(); await applyConnectors(`${name} goes to the Claude app to sign in.`); }
@@ -2844,6 +2844,18 @@ function sheetContent() {
     </form>`;
   }
   if (sh.kind === 'connectors') return catalogHtml();
+  if (sh.kind === 'connector-token') {
+    return `<form data-form="connector-token" autocomplete="off">
+      <h2 id="sheet-title">Change ${esc(sh.name)}'s account</h2>
+      <p class="lede">Paste the access token of the account to use instead${/n8n/i.test(sh.name) ? ', and its server address if it\'s another n8n instance (n8n → Settings → MCP Access)' : ''}. The connector keeps its name, so it stays in Claude as it is; only the account behind it changes.</p>
+      <div class="fields">
+        <div class="field"><label for="f-tkurl">Address</label><input id="f-tkurl" class="mono-input" name="url" type="url" value="${esc(sh.url || '')}" spellcheck="false" autocapitalize="off"></div>
+        <div class="field"><label for="f-tk">Token</label><input id="f-tk" class="mono-input" name="token" type="password" placeholder="New access token or API key" autofocus spellcheck="false" autocapitalize="off"></div>
+      </div>
+      <p class="sheet-error" id="sheet-error" role="alert" hidden></p>
+      <div class="sheet-actions"><button class="btn large" type="button" data-act="close-sheet">Cancel</button><button class="btn large primary" type="submit">Save and Test</button></div>
+    </form>`;
+  }
   if (sh.kind === 'merge') return mergeHtml();
   if (sh.kind === 'confirm') {
     const item = itemFor(sh.type, sh.id);
@@ -2887,7 +2899,7 @@ function catalogRowsHtml() {
   const added = addedNames();
   return c0.list.map((c) => {
     const on = c0.picked.includes(c.slug);
-    const have = added.has(c.name.toLowerCase());
+    const have = !c.multi && added.has(c.name.toLowerCase());
     const note = c.auth === 'token' ? (c.tokenFrom === 'gh' && c0.gh ? 'Uses your GitHub CLI sign-in' : c.askUrl ? 'Your server address and a token' : 'Needs an access token') : c.auth === 'none' ? 'No sign-in' : c.auth === 'oauth-client' ? (catNeedsClient(c) ? 'Sign in with your own OAuth app' : 'Sign in with your OAuth app') : 'Sign in with your account';
     const text = `${c.name} ${c.slug} ${c.author} ${c.description} ${c.categories.join(' ')} ${(c.url || '').replace(/^https?:\/\//, '')} ${c.slug === 'highlevel' ? 'ghl gohighlevel leadconnector crm' : ''}`.toLowerCase();
     return `<div class="cat-item" data-text="${esc(text)}" data-cats="${esc(c.categories.join(' '))}">
@@ -3196,6 +3208,16 @@ const actions = {
   'close-sheet': () => closeSheet(),
   'add-connector': () => openSheet('add-connector'),
   'connect-connector': (id) => connectorConnect(id),
+  'change-connector': (id) => {
+    const c = S.settings.desktopConnectors.find((x) => x.name === id);
+    if (!c) return;
+    if (c.signIn === 'connected') {
+      // A browser sign-in: start one afresh; Google offers its account chooser.
+      connectorConnect(id, null, true);
+      return;
+    }
+    openSheet('connector-token', { name: id, url: c.url });
+  },
   'test-connector': async (id, el) => {
     const was = el.innerHTML;
     el.disabled = true;
@@ -3453,6 +3475,17 @@ document.addEventListener('submit', async (event) => {
       await refresh();
       if (c.auth === 'oauth') await connectorConnect(c.name);
       await applyConnectors(`Added ${c.name}.${c.auth === 'oauth' ? ' Sign in to it in the browser tab that opened.' : ''}`);
+    } else if (kind === 'connector-token') {
+      if (!String(data.token || '').trim()) { sheetError('Paste the new access token.'); return; }
+      const name = ui.sheet.name;
+      submit.innerHTML = `${SPINNER}Testing…`;
+      await api('POST', `/api/connectors/${encodeURIComponent(name)}/token`, { token: data.token, url: data.url });
+      const t = await api('POST', `/api/connectors/${encodeURIComponent(name)}/test`);
+      if (!t.ok) { sheetError(`Saved, but ${name} didn't answer with that account: ${t.why}.`); await refresh(); return; }
+      await closeSheet();
+      await refresh();
+      // The app reaches it through the gateway at the same address, so it needs no new settings.
+      toast(`${name} now uses the new account: ${t.tools} tool${t.tools === 1 ? '' : 's'} ready in Claude.`);
     } else if (kind === 'connectors') {
       const c0 = catState();
       if (!c0.picked.length) { sheetError('Tick the connectors to add.'); return; }

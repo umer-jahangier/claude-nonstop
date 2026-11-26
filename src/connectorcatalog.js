@@ -27,7 +27,7 @@ const FEATURED = [
   { slug: 'google-drive', name: 'Google Drive', description: 'Find, read and create files in Drive (Google\'s official server)', author: 'Google', url: 'https://drivemcp.googleapis.com/mcp/v1', auth: 'oauth-client', clientIssuer: 'https://accounts.google.com/', clientHelp: GOOGLE_HELP, clientUrl: 'https://console.cloud.google.com/auth/clients', categories: ['productivity'] },
   { slug: 'google-calendar', name: 'Google Calendar', description: 'Events, availability and scheduling (Google\'s official server)', author: 'Google', url: 'https://calendarmcp.googleapis.com/mcp/v1', auth: 'oauth-client', clientIssuer: 'https://accounts.google.com/', clientHelp: GOOGLE_HELP, clientUrl: 'https://console.cloud.google.com/auth/clients', categories: ['productivity'] },
   { slug: 'slack', name: 'Slack', description: 'Search and read channels, send messages, canvases (Slack\'s official server)', author: 'Slack', url: 'https://mcp.slack.com/mcp', auth: 'oauth-client', clientIssuer: 'https://mcp.slack.com', clientHelp: 'At api.slack.com/apps create an app for your workspace. Under OAuth & Permissions add the redirect URL shown below and the user scopes you want (search:read.public, channels:history, chat:write…), then copy the client ID and secret from Basic Information.', clientUrl: 'https://api.slack.com/apps', categories: ['communication'] },
-  { slug: 'n8n', name: 'n8n', description: 'Run and manage your n8n workflows', author: 'n8n', url: null, askUrl: true, urlLabel: 'MCP server URL', urlHint: 'In n8n: Settings → MCP Access (instance-level MCP). Copy the server URL, like https://your-n8n.example.com/mcp-server/http', auth: 'token', tokenLabel: 'n8n MCP access token', tokenHint: 'From the same n8n page: create or copy the MCP access token.', categories: ['productivity', 'developer-tools'] },
+  { slug: 'n8n', name: 'n8n', multi: true, description: 'Run and manage your n8n workflows', author: 'n8n', url: null, askUrl: true, urlLabel: 'MCP server URL', urlHint: 'In n8n: Settings → MCP Access (instance-level MCP). Copy the server URL, like https://your-n8n.example.com/mcp-server/http', auth: 'token', tokenLabel: 'n8n MCP access token', tokenHint: 'From the same n8n page: create or copy the MCP access token.', categories: ['productivity', 'developer-tools'] },
   { slug: 'highlevel', name: 'HighLevel', description: 'GoHighLevel (GHL): contacts, conversations, calendars, opportunities and more in your GHL account', author: 'HighLevel', url: 'https://services.leadconnectorhq.com/mcp/', auth: 'oauth', categories: ['sales-and-marketing'] },
   { slug: 'vercel', name: 'Vercel', description: 'Projects, deployments, logs and docs', author: 'Vercel', url: 'https://mcp.vercel.com/', auth: 'oauth', categories: ['developer-tools'] },
   { slug: 'cloudflare', name: 'Cloudflare', description: 'The whole Cloudflare API: DNS, Workers, R2, Zero Trust and more', author: 'Cloudflare', url: 'https://mcp.cloudflare.com/mcp', auth: 'oauth', categories: ['developer-tools'] },
@@ -51,7 +51,7 @@ function catalog() {
     seen.add(k);
     if (c.url) seen.add(c.url);
     const { slug, name, description = '', author = '', url, auth, categories = [] } = c;
-    out.push({ slug, name, description, author, url, transport: c.transport || 'http', auth, categories, featured: FEATURED.includes(c), ...Object.fromEntries(['tokenFrom', 'tokenLabel', 'tokenHint', 'askUrl', 'urlLabel', 'urlHint', 'clientIssuer', 'clientHelp', 'clientUrl'].filter((x) => c[x] !== undefined).map((x) => [x, c[x]])) });
+    out.push({ slug, name, description, author, url, transport: c.transport || 'http', auth, categories, featured: FEATURED.includes(c), ...Object.fromEntries(['multi', 'tokenFrom', 'tokenLabel', 'tokenHint', 'askUrl', 'urlLabel', 'urlHint', 'clientIssuer', 'clientHelp', 'clientUrl'].filter((x) => c[x] !== undefined).map((x) => [x, c[x]])) });
   }
   return out;
 }
@@ -124,7 +124,7 @@ function saveEntry(entry, token) {
 // sign-in is worked out by asking it. Returns the saved entry; one that signs in with
 // OAuth then needs connect(). Throws with code 'needs-token' or 'needs-client' (and what
 // to ask for) when something has to be entered first.
-async function add({ slug, name, url, token, client, noAuth = false, oauth = false } = {}) {
+async function add({ slug, name, url, token, client, noAuth = false, oauth = false, label } = {}) {
   const desktop = require('./desktop');
   const mcpauth = require('./mcpauth');
   token = String(token || '').trim() || null;
@@ -134,8 +134,16 @@ async function add({ slug, name, url, token, client, noAuth = false, oauth = fal
     if (!c) throw new Error(`there's no connector called ${slug} in the catalog`);
     const address = c.askUrl ? String(url || '').trim() : c.url;
     if (c.askUrl && !address) throw fail(`${c.name} runs on your own server: enter its ${c.urlLabel || 'address'}. ${c.urlHint || ''}`.trim(), 'needs-url');
+    // A service you may have several of (n8n instances, say): each gets its own name.
+    let as = c.name;
+    if (c.multi) {
+      const list = require('./config').load().desktopConnectors || [];
+      as = String(label || '').trim() || c.name;
+      const taken = (n) => list.some((e) => sameName(e.name, n) && e.url !== address);
+      for (let i = 2; taken(as); i++) as = `${String(label || '').trim() || c.name} ${i}`;
+    }
     if (c.auth === 'token') {
-      const entry = desktop.connector(c.name, address, { token: true, tokenFrom: c.tokenFrom, transport: c.transport });
+      const entry = desktop.connector(as, address, { token: true, tokenFrom: c.tokenFrom, transport: c.transport });
       if (!token && !tokenFor(entry, null)) throw fail(`${c.name} signs in with an access token. ${c.tokenHint || 'Paste one to add it.'}`, 'needs-token');
       return saveEntry(entry, token);
     }
@@ -178,14 +186,14 @@ async function add({ slug, name, url, token, client, noAuth = false, oauth = fal
 
 // Starts the sign-in for a saved OAuth connector: the address to open in the browser, and a
 // promise that settles when you're back.
-async function connect(name, { client } = {}) {
+async function connect(name, { client, switchAccount = false } = {}) {
   const entry = (require('./config').load().desktopConnectors || []).find((e) => sameName(e.name, name));
   if (!entry) throw new Error(`there is no connector called ${name}`);
   if (authOf(entry) !== 'oauth') throw new Error(`${entry.name} doesn't sign in with a browser`);
   const c = client && client.id ? { id: String(client.id).trim(), secret: String(client.secret || '').trim() || null } : null;
   const known = bySlug(entry.name);
   try {
-    return await require('./mcpauth').start({ ...entry, scopes: known && known.scopes }, { client: c });
+    return await require('./mcpauth').start({ ...entry, scopes: known && known.scopes }, { client: c, fresh: switchAccount });
   } catch (err) {
     // A service that registers only apps it has approved (Figma, say): the Claude app, which
     // it may know, signs in to it itself instead.
@@ -198,6 +206,20 @@ async function connect(name, { client } = {}) {
     }
     throw err;
   }
+}
+
+// Puts another account on a token connector: a new token, and for a self-hosted service
+// (n8n) a new address too. The connector keeps its name, so Claude sees no change but the account.
+function replaceToken(name, { token, url } = {}) {
+  const config = require('./config');
+  const entry = (config.load().desktopConnectors || []).find((e) => sameName(e.name, name));
+  if (!entry) throw new Error(`there is no connector called ${name}`);
+  if (authOf(entry) !== 'token') throw new Error(`${entry.name} signs in with a browser: use Change Account to sign in as someone else`);
+  token = String(token || '').trim();
+  if (!token) throw new Error('paste the new access token');
+  const next = { ...entry };
+  if (url && String(url).trim() !== entry.url) next.url = require('./desktop').connector(entry.name, String(url).trim(), { token: true, transport: entry.transport }).url;
+  return saveEntry(next, token);
 }
 
 function remove(name) {
@@ -259,4 +281,4 @@ async function test(name) {
   return r;
 }
 
-module.exports = { catalog, bySlug, tokenServerFor, tokenFor, ghToken, add, connect, remove, headers, describeAuth, authOf, upstreamAuth, test, isTokenConnector, viaGateway, TOKEN_SERVERS, FEATURED };
+module.exports = { catalog, bySlug, tokenServerFor, tokenFor, ghToken, add, connect, replaceToken, remove, headers, describeAuth, authOf, upstreamAuth, test, isTokenConnector, viaGateway, TOKEN_SERVERS, FEATURED };

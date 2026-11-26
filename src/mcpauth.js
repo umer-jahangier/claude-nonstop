@@ -117,12 +117,12 @@ async function register(meta, redirect) {
 
 // Starts a sign-in for a saved connector: returns the address to open in the browser.
 // `client` is an OAuth app you registered, for a service without self-registration.
-async function start(entry, { client = null } = {}) {
+async function start(entry, { client = null, fresh = false } = {}) {
   const meta = await discover(entry.url);
   if (!meta) throw new Error(`${entry.name} doesn't publish how to sign in to it. Add it with an access token instead`);
   const redirect = redirectUri();
   let use = client || clientFor(meta.issuer);
-  const before = saved(entry.name);
+  const before = fresh ? null : saved(entry.name);
   if (!use && before && before.client && before.client.registered && before.client.redirect === redirect && before.issuer === meta.issuer) use = before.client;
   if (!use) {
     if (!meta.registrationEndpoint) {
@@ -151,7 +151,7 @@ async function start(entry, { client = null } = {}) {
     ...(scope ? { scope } : {}),
   };
   // Google gives a refresh token only when asked for offline access.
-  if (/accounts\.google\.com/.test(meta.issuer)) Object.assign(params, { access_type: 'offline', prompt: 'consent' });
+  if (/accounts\.google\.com/.test(meta.issuer)) Object.assign(params, { access_type: 'offline', prompt: 'select_account consent' });
   for (const [k, v] of Object.entries(params)) auth.searchParams.set(k, v);
   let settle;
   const done = new Promise((resolve, reject) => (settle = { resolve, reject }));

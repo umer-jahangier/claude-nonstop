@@ -2,6 +2,12 @@
 
 Every release of claude-nonstop, newest first. Full notes, and the code at each version, are on the [releases page](https://github.com/umer-jahangier/claude-nonstop/releases). The installer and `claude-nonstop update` install the latest release; the npm package is [`@umer-jahangier/claude-nonstop`](https://www.npmjs.com/package/@umer-jahangier/claude-nonstop).
 
+## [1.24.1](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.24.1) · 2026-11-27
+
+- **Change Account…** on every connected connector: paste another account's token (and, for n8n, another instance's address), or sign in again as someone else (Google shows its account chooser). The connector keeps its name, so nothing changes in Claude but the account, and no new settings need approving.
+- Several n8n instances side by side: adding n8n again names it "n8n 2" (or the name you give it) instead of replacing the first.
+- Windows: the Claude app's connector list is written to the per-user policy key through PowerShell, which keeps the list's quotes and paths intact.
+
 ## [1.24.0](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.24.0) · 2026-11-26
 
 - **Connectors connect for real.** claude-nonstop now signs in to each connector itself (the service's own page in your browser, then back to the gateway) and the Claude app reaches it through the gateway, which adds and renews the sign-in. Each connector in the list has **Connect**, **Sign In Again** and **Test** (which asks it for its tools, the way Claude will). Before, the app was left to sign in on its own and often couldn't.

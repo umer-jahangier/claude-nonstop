@@ -210,10 +210,12 @@ function managedChange(want) {
 // reads while the machine key holds nothing. Returns whether they're in place afterwards.
 function userPolicy(want) {
   if (managedOff() || process.platform !== 'win32' || !appInstalled()) return false;
-  for (const [k, value] of Object.entries(want)) {
-    const r = spawnSync('reg.exe', ['add', WIN_USER_KEY, '/v', k, '/t', 'REG_SZ', '/d', String(value), '/f'], { encoding: 'utf8', windowsHide: true });
-    if (r.status !== 0) return false;
-  }
+  // Through PowerShell rather than reg.exe: the connector list is JSON full of quotes and
+  // Windows paths, which reg.exe's command line mangles.
+  const key = 'HKCU:\\SOFTWARE\\Policies\\Claude';
+  const script = [`$ErrorActionPreference = 'Stop'`, `New-Item -Path ${psQuote(key)} -Force | Out-Null`, ...Object.entries(want).map(([k, value]) => `New-ItemProperty -Path ${psQuote(key)} -Name ${psQuote(k)} -Value ${psQuote(String(value))} -PropertyType String -Force | Out-Null`)].join('; ');
+  const r = spawnSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-EncodedCommand', Buffer.from(script, 'utf16le').toString('base64')], { encoding: 'utf8', windowsHide: true, timeout: 60000 });
+  if (r.status !== 0) return false;
   for (const k of MANAGED_KEYS.filter((n) => !(n in want))) spawnSync('reg.exe', ['delete', WIN_USER_KEY, '/v', k, '/f'], { windowsHide: true });
   return applied(want, { fresh: true });
 }

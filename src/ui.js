@@ -592,7 +592,7 @@ const sentence = (m) => `${m[0].toUpperCase()}${m.slice(1)}${/[.!?]$/.test(m) ? 
 
 async function addConnector(body) {
   try {
-    return await require('./connectorcatalog').add({ slug: body.slug, name: body.name, url: body.url, token: body.token, client: body.client, noAuth: body.oauth === false, oauth: body.oauth === true });
+    return await require('./connectorcatalog').add({ slug: body.slug, name: body.name, url: body.url, token: body.token, client: body.client, label: body.label, noAuth: body.oauth === false, oauth: body.oauth === true });
   } catch (err) {
     const e = httpError(400, sentence(err.message));
     if (err.code === 'needs-token') e.needsToken = true;
@@ -606,7 +606,7 @@ async function connectConnector(name, body) {
   const cat = require('./connectorcatalog');
   let login;
   try {
-    login = await cat.connect(name, { client: body.client });
+    login = await cat.connect(name, { client: body.client, switchAccount: Boolean(body.switchAccount) });
   } catch (err) {
     const e = httpError(400, sentence(err.message));
     if (err.code) e.details = { need: err.code, redirect: err.redirect };
@@ -692,6 +692,13 @@ async function route(method, pathname, body, ctx) {
   if (area === 'connectors' && method === 'POST' && !id) return addConnector(body);
   if (area === 'connectors' && method === 'POST' && id && action === 'connect') return connectConnector(decodeURIComponent(id), body);
   if (area === 'connectors' && method === 'POST' && id && action === 'test') return testConnector(decodeURIComponent(id));
+  if (area === 'connectors' && method === 'POST' && id && action === 'token') {
+    try {
+      return require('./connectorcatalog').replaceToken(decodeURIComponent(id), body);
+    } catch (err) {
+      throw httpError(400, sentence(err.message));
+    }
+  }
   if (area === 'connectors' && method === 'DELETE' && id) return removeConnector(decodeURIComponent(id));
   if (area === 'settings' && method === 'PATCH') return editSettings(body);
   if (area === 'pin' && method === 'PUT') return setPin(body);

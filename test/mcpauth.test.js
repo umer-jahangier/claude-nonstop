@@ -131,3 +131,19 @@ test('a service that needs your own OAuth app says so, with the redirect URL to 
   assert.ok(cat.catalog().some((c) => c.slug === 'highlevel' && c.auth === 'oauth'));
   config.update((c) => (c.desktopConnectors = []));
 });
+
+test("a token connector's account is replaced in place, and a second n8n gets its own name", async () => {
+  const cat = require('../src/connectorcatalog');
+  await cat.add({ slug: 'n8n', url: 'https://one.app.n8n.cloud/mcp-server/http', token: 'tok-one' });
+  const second = await cat.add({ slug: 'n8n', url: 'https://two.app.n8n.cloud/mcp-server/http', token: 'tok-two' });
+  assert.equal(second.name, 'n8n 2');
+  const work = await cat.add({ slug: 'n8n', url: 'https://three.app.n8n.cloud/mcp-server/http', token: 'tok-3', label: 'n8n Work' });
+  assert.equal(work.name, 'n8n Work');
+  cat.replaceToken('n8n', { token: 'tok-new', url: 'https://four.app.n8n.cloud/mcp-server/http' });
+  const e = config.load().desktopConnectors.find((x) => x.name === 'n8n');
+  assert.equal(e.url, 'https://four.app.n8n.cloud/mcp-server/http');
+  assert.equal(cat.tokenFor(e, vault.load()), 'tok-new');
+  assert.equal(config.load().desktopConnectors.length, 3);
+  assert.throws(() => cat.replaceToken('n8n', { token: '' }), /new access token/);
+  config.update((c) => (c.desktopConnectors = []));
+});
