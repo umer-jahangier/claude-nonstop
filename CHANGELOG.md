@@ -2,7 +2,11 @@
 
 Every release of claude-nonstop, newest first. Full notes, and the code at each version, are on the [releases page](https://github.com/umer-jahangier/claude-nonstop/releases). The installer and `claude-nonstop update` install the latest release; the npm package is [`@umer-jahangier/claude-nonstop`](https://www.npmjs.com/package/@umer-jahangier/claude-nonstop).
 
-## [1.24.2](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.24.2) · 2026-11-27
+## [1.24.3](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.24.3) · 2026-11-27
+
+- **Windows: connectors reach the Claude app.** Today's Windows app installs as a Store-style package, under %LOCALAPPDATA%\Packages, which claude-nonstop didn't recognise, so it thought the app wasn't installed: adding a connector never asked for approval and never updated the app's settings. The package is recognised now, and on Windows the settings are written either way (they're only registry values). The page says when the update was declined or failed, and reminds you to quit Claude fully, tray icon included, before opening it again.
+
+(https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.24.2) · 2026-11-27
 
 - An account whose organization turned Claude Code off for subscription seats ("Your organization has disabled Claude subscription access for Claude Code"), or whose sign-in is no longer accepted, now shows **Not usable** instead of In use. The gateway and new terminal sessions skip it, and it's checked again every few minutes, so it comes back by itself once access is turned on.
 

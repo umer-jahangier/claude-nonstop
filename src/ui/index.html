@@ -1347,10 +1347,13 @@ async function connectorConnected(name) {
 
 // Hands a changed connector list to the desktop app, the same way the Strict sandbox switch does.
 async function applyConnectors(done) {
-  if (!S.desktop.installed) { toast(`${done} It applies when the desktop app is set up.`); return; }
+  // Windows settings are registry values, written whether or not the app was found.
+  if (!S.desktop.installed && S.platform !== 'win32') { toast(`${done} It applies when the desktop app is set up.`); return; }
   toast(`${done} Updating the desktop app's settings. Approve the change if asked, then reopen the app.`);
-  await api('POST', '/api/desktop/auto');
+  const r = await api('POST', '/api/desktop/auto');
   await refresh();
+  if (r && r.ok === false) toast(`${done} The desktop app's settings weren't updated (the approval was declined or failed). Click Set Up Automatically on the Apps tab to try again.`, true);
+  else if (S.platform === 'win32') toast(`${done} The desktop app's settings are updated. Quit Claude fully (also from the tray icon) and open it again.`);
 }
 
 function renderModelChoices(select, choices, value) {

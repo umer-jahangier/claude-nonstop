@@ -510,7 +510,9 @@ function setUpDesktop(quiet) {
   const want = desktop.settings(cfg, v);
   const tell = quiet ? () => {} : out;
   if (process.env.CLAUDE_NONSTOP_DESKTOP_MANAGED === '0') return 'manual';
-  if (!desktop.appInstalled()) {
+  // On Windows the settings are only registry values, so they're written even when the app
+  // isn't found (a package installed somewhere unexpected), and it picks them up when it starts.
+  if (!desktop.appInstalled() && process.platform !== 'win32') {
     tell("- The Claude desktop app isn't installed. Run `claude-nonstop desktop` after installing it (claude.com/download).");
     return 'missing';
   }

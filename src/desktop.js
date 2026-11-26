@@ -123,7 +123,16 @@ function appInstalled() {
   const candidates = process.platform === 'darwin'
     ? ['/Applications/Claude.app', path.join(home, 'Applications', 'Claude.app')]
     : process.platform === 'win32'
-      ? [path.join(process.env.LOCALAPPDATA || '', 'AnthropicClaude'), path.join(process.env.APPDATA || '', 'Claude'), path.join(process.env.LOCALAPPDATA || '', 'Claude-3p')]
+      ? [
+          // Today's Windows app is a Store-style (MSIX) package: it lives under Packages, and
+          // its data folders are virtualised there, invisible at %APPDATA%\Claude from outside.
+          path.join(process.env.LOCALAPPDATA || '', 'Packages', 'Claude_pzs8sxrjxfjjc'),
+          path.join(process.env.LOCALAPPDATA || '', 'Packages', 'AnthropicPBC.Claude_fnn82j28hfe8t'),
+          // The older installer (Squirrel) and its data folders.
+          path.join(process.env.LOCALAPPDATA || '', 'AnthropicClaude'),
+          path.join(process.env.APPDATA || '', 'Claude'),
+          path.join(process.env.LOCALAPPDATA || '', 'Claude-3p'),
+        ]
       : ['/usr/bin/claude-desktop', '/opt/Claude', path.join(home, '.config', 'Claude')];
   return candidates.some((p) => p && fs.existsSync(p));
 }
@@ -193,7 +202,7 @@ function applied(want, { fresh = false } = {}) {
 // What system.js should do in its admin prompt to put the settings in place (Windows and
 // Linux), or null when they're already there, the app isn't installed, or it's macOS.
 function managedChange(want) {
-  if (managedOff() || process.platform === 'darwin' || !appInstalled() || applied(want, { fresh: true })) return null;
+  if (managedOff() || process.platform === 'darwin' || (process.platform !== 'win32' && !appInstalled()) || applied(want, { fresh: true })) return null;
   if (process.platform === 'win32') {
     const key = 'HKLM:\\SOFTWARE\\Policies\\Claude';
     const values = Object.entries(want).map(([k, value]) => `New-ItemProperty -Path ${psQuote(key)} -Name ${psQuote(k)} -Value ${psQuote(value)} -PropertyType String -Force | Out-Null`);
@@ -209,7 +218,7 @@ function managedChange(want) {
 // Windows without admin rights: the same settings in the per-user policy key, which the app
 // reads while the machine key holds nothing. Returns whether they're in place afterwards.
 function userPolicy(want) {
-  if (managedOff() || process.platform !== 'win32' || !appInstalled()) return false;
+  if (managedOff() || process.platform !== 'win32') return false;
   // Through PowerShell rather than reg.exe: the connector list is JSON full of quotes and
   // Windows paths, which reg.exe's command line mangles.
   const key = 'HKCU:\\SOFTWARE\\Policies\\Claude';
