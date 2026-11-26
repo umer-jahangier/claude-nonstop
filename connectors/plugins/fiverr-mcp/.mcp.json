@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "fiverr-mcp": {
+      "type": "http",
+      "url": "https://mcp.fiverr.com/mcp"
+    }
+  }
+}

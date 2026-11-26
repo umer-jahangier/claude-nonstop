@@ -1,6 +1,6 @@
 {
   "name": "plotly-cloud",
-  "version": "2026.10.25",
+  "version": "2026.11.26",
   "description": "Plotly Cloud: Build and deploy Plotly Dash apps to Plotly Cloud from a conversation with Claude.",
   "author": {
     "name": "Plotly"

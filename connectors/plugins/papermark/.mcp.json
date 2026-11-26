@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "papermark": {
+      "type": "http",
+      "url": "https://mcp.papermark.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

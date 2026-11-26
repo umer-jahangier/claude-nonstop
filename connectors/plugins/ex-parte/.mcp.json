@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "ex-parte": {
+      "type": "http",
+      "url": "https://mcp.exparte.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

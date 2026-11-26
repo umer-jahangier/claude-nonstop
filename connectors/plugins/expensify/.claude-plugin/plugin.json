@@ -1,0 +1,11 @@
+{
+  "name": "expensify",
+  "version": "2026.11.26",
+  "description": "Expensify: Search and analyze your Expensify data",
+  "author": {
+    "name": "Expensify, Inc."
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

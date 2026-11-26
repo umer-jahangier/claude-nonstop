@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "sisense-mcp": {
+      "type": "http",
+      "url": "https://mcp.sisense.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

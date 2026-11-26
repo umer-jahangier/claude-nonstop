@@ -1,0 +1,11 @@
+{
+  "name": "udemy-business",
+  "version": "2026.11.26",
+  "description": "Udemy Business: Search and explore skill-building resources",
+  "author": {
+    "name": "Udemy, Inc."
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

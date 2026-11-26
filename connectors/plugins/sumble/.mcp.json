@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "sumble": {
+      "type": "http",
+      "url": "https://mcp.sumble.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

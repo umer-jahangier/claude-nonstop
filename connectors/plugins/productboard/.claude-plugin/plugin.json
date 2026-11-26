@@ -1,0 +1,11 @@
+{
+  "name": "productboard",
+  "version": "2026.11.26",
+  "description": "Productboard: Analyze customer feedback, develop your product roadmap, and automate product ops with Claude.",
+  "author": {
+    "name": "Productboard"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "general-translation": {
+      "type": "http",
+      "url": "https://api.gtx.dev/mcp/claude-connector",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

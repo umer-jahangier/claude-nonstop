@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "anrok": {
+      "type": "http",
+      "url": "https://mcp.anrok.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

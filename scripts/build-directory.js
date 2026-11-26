@@ -43,7 +43,7 @@ async function pool(items, n, work) {
   const html = await (await fetch(PAGE)).text();
   const remote = entries(html).filter((o) => o.type === 'remote' && /^https:\/\//.test(o.serverUrl || ''));
   let done = 0;
-  const results = await pool(remote, 24, async (o) => {
+  const results = await pool(remote, Number(process.env.CHECK_POOL) || 6, async (o) => {
     const transport = /\/sse\/?$/.test(o.serverUrl) ? 'sse' : 'http';
     const { auth } = carriesCredential(o.serverUrl) ? { auth: 'credential-in-url' } : await check(o.serverUrl, transport);
     if (++done % 50 === 0) process.stderr.write(`${done}/${remote.length}\n`);

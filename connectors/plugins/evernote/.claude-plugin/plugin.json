@@ -1,0 +1,14 @@
+{
+  "name": "evernote",
+  "version": "2026.11.26",
+  "description": "Evernote: Connect Evernote to search, edit, and organize your notes, create new ones, and bring your knowledge into every conversation.",
+  "author": {
+    "name": "Evernote"
+  },
+  "keywords": [
+    "communication",
+    "creative",
+    "education",
+    "productivity"
+  ]
+}

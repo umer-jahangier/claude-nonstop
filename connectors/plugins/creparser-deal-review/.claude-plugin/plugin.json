@@ -1,0 +1,13 @@
+{
+  "name": "creparser-deal-review",
+  "version": "2026.11.26",
+  "description": "CREparser Deal Review: Cited reviews of rent rolls, T12s, OMs, loans and leases",
+  "author": {
+    "name": "Superdocs"
+  },
+  "keywords": [
+    "financial-services",
+    "legal",
+    "productivity"
+  ]
+}

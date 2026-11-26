@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "lightbringer": {
-      "type": "http",
-      "url": "https://mcp.lightbringer.com/mcp"
-    }
-  }
-}

@@ -1,6 +1,6 @@
 {
   "name": "lukka-predmar",
-  "version": "2026.10.25",
+  "version": "2026.11.26",
   "description": "Lukka Prediction Markets Data MCP: Prediction market intelligence across several venues, including Kalshi and Polymarket: market discovery, classification, pricing, open interest and volume.",
   "author": {
     "name": "Lukka Inc"

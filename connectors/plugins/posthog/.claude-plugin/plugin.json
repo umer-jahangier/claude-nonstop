@@ -1,6 +1,6 @@
 {
   "name": "posthog",
-  "version": "2026.10.25",
+  "version": "2026.11.26",
   "description": "PostHog: Query, analyze, and manage your PostHog insights",
   "author": {
     "name": "PostHog"

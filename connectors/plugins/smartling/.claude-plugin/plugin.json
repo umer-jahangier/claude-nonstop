@@ -1,0 +1,13 @@
+{
+  "name": "smartling",
+  "version": "2026.11.26",
+  "description": "Smartling: Translate content and manage Smartling projects, jobs, and quality issues directly from your AI assistant.",
+  "author": {
+    "name": "Smartling, Inc."
+  },
+  "keywords": [
+    "creative",
+    "developer-tools",
+    "productivity"
+  ]
+}

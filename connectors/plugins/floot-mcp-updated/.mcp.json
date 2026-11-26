@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "floot-mcp-updated": {
+      "type": "http",
+      "url": "https://mcp.floot.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

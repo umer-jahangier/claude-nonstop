@@ -1,0 +1,13 @@
+{
+  "name": "reply-io-mcp-for-claude",
+  "version": "2026.11.26",
+  "description": "Reply.io MCP for Claude: Run your Reply.io outreach from Claude: build sequences, manage contacts, approve Jason AI SDR drafts, and track performance.",
+  "author": {
+    "name": "Reply.io"
+  },
+  "keywords": [
+    "communication",
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

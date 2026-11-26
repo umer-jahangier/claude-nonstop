@@ -1,0 +1,12 @@
+{
+  "name": "geekbot",
+  "version": "2026.11.26",
+  "description": "Geekbot: Run standups and polls",
+  "author": {
+    "name": "Geekbot"
+  },
+  "keywords": [
+    "communication",
+    "productivity"
+  ]
+}

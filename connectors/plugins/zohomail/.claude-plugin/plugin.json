@@ -1,0 +1,12 @@
+{
+  "name": "zohomail",
+  "version": "2026.11.26",
+  "description": "Zoho Mail: Zoho Mail MCP Server lets AI assistants access and manage emails using natural language.",
+  "author": {
+    "name": "Zoho Corporation"
+  },
+  "keywords": [
+    "communication",
+    "productivity"
+  ]
+}

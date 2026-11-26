@@ -1,0 +1,12 @@
+{
+  "name": "zohoinvoice",
+  "version": "2026.11.26",
+  "description": "Zoho Invoice: Zoho Invoice MCP Server lets AI assistants manage invoices, payments, and billing data using natural language.",
+  "author": {
+    "name": "Zoho Corporation"
+  },
+  "keywords": [
+    "financial-services",
+    "productivity"
+  ]
+}

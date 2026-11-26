@@ -1,12 +1,14 @@
 {
   "name": "windsor-ai",
-  "version": "2026.10.25",
-  "description": "Windsor.ai: Connect Meta Ads, Google Ads, TikTok Ads, LinkedIn Ads + 320 more",
+  "version": "2026.11.26",
+  "description": "Windsor.ai: Instagram, Meta Ads, Google Ads, Google Analytics, Google Search Console, Google Business Profile, YouTube, TikTok, LinkedIn & 350+ sources. Report on them and manage ads and posts.",
   "author": {
     "name": "Windsor.ai"
   },
   "keywords": [
     "data-analytics",
+    "media-entertainment",
+    "productivity",
     "sales-and-marketing"
   ]
 }

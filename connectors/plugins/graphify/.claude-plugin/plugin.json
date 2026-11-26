@@ -1,0 +1,11 @@
+{
+  "name": "graphify",
+  "version": "2026.11.26",
+  "description": "Graphify: Explore your codebase's structure, trace dependencies, assess change impact, and recall repository knowledge from Graphify inside Claude.",
+  "author": {
+    "name": "Graphify Labs Inc"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

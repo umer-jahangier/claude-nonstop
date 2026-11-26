@@ -1,0 +1,11 @@
+{
+  "name": "felt-maps",
+  "version": "2026.11.26",
+  "description": "Felt Maps: Map and analyze your geospatial data",
+  "author": {
+    "name": "Felt Maps"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

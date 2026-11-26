@@ -1,0 +1,13 @@
+{
+  "name": "zip",
+  "version": "2026.11.26",
+  "description": "Zip: Look up purchase requests, approvals, vendors, purchase orders and invoices in Zip, the AI for Procurement platform, directly from Claude.",
+  "author": {
+    "name": "Zip"
+  },
+  "keywords": [
+    "communication",
+    "financial-services",
+    "productivity"
+  ]
+}

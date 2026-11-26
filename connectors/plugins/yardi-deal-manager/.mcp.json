@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "yardi-deal-manager": {
+      "type": "http",
+      "url": "https://dmmcp.virtuoso.ai/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

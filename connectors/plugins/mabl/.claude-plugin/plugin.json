@@ -1,0 +1,11 @@
+{
+  "name": "mabl",
+  "version": "2026.11.26",
+  "description": "mabl: Author, run, edit, and analyze end-to-end tests",
+  "author": {
+    "name": "mabl"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

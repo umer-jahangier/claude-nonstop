@@ -1,0 +1,12 @@
+{
+  "name": "civic-iq",
+  "version": "2026.11.26",
+  "description": "Civic IQ: Sales intelligence for selling to US state and local government: open RFPs, pre-RFP meeting signals, agency contacts and vendor spend.",
+  "author": {
+    "name": "Civic IQ Inc."
+  },
+  "keywords": [
+    "data-analytics",
+    "sales-and-marketing"
+  ]
+}

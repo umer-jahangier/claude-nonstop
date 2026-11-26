@@ -1,0 +1,11 @@
+{
+  "name": "legora",
+  "version": "2026.11.26",
+  "description": "Legora: Ask legal questions and get grounded answers with citations.",
+  "author": {
+    "name": "Legora"
+  },
+  "keywords": [
+    "legal"
+  ]
+}

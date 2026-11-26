@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "connector-claude-motion-to-mirage": {
+      "type": "http",
+      "url": "https://mcp.mirage.app/claude-motion",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

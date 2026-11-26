@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "scriptivox": {
+      "type": "http",
+      "url": "https://platform.scriptivox.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

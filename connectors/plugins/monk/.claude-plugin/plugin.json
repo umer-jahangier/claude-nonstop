@@ -1,0 +1,12 @@
+{
+  "name": "monk",
+  "version": "2026.11.26",
+  "description": "Monk: MCP Server for interacting with Monk Finance Platform",
+  "author": {
+    "name": "Monk"
+  },
+  "keywords": [
+    "data-analytics",
+    "financial-services"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "zohoinvoice": {
+      "type": "http",
+      "url": "https://invoice.zohomcp.com/mcp/message",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "melon",
+  "version": "2026.11.26",
+  "description": "Melon: Browse music charts & your personalized music picks",
+  "author": {
+    "name": "Kakao Entertainment"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

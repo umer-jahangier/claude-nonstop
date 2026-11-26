@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "light": {
+      "type": "http",
+      "url": "https://api.light.inc/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

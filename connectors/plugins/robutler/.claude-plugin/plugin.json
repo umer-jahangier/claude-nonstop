@@ -1,0 +1,12 @@
+{
+  "name": "robutler",
+  "version": "2026.11.26",
+  "description": "Robutler: Build, remix, and run apps with agents, together",
+  "author": {
+    "name": "Robutler"
+  },
+  "keywords": [
+    "developer-tools",
+    "productivity"
+  ]
+}

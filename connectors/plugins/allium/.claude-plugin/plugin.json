@@ -1,0 +1,12 @@
+{
+  "name": "allium",
+  "version": "2026.11.26",
+  "description": "Allium: Query and analyze blockchain data with Allium",
+  "author": {
+    "name": "Allium Labs"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "clear-street-studio",
+  "version": "2026.11.26",
+  "description": "Clear Street Studio: Query your Clear Street Studio portfolio in Claude: holdings, positions, orders, trades, and P&L and more.",
+  "author": {
+    "name": "Clear Street Technologies LLC"
+  },
+  "keywords": [
+    "data-analytics",
+    "financial-services"
+  ]
+}

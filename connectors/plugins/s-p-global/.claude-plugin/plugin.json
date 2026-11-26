@@ -1,6 +1,6 @@
 {
   "name": "s-p-global",
-  "version": "2026.10.25",
+  "version": "2026.11.26",
   "description": "S&P - Deterministic Retrieval: Deterministic access to S&P Global data",
   "author": {
     "name": "S&P Global"

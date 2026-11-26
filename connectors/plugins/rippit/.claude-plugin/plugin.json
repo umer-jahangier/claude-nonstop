@@ -1,7 +1,7 @@
 {
   "name": "rippit",
-  "version": "2026.10.25",
-  "description": "Rippit: Run dynamic AI analysis on 100% of conversations",
+  "version": "2026.11.26",
+  "description": "Rippit: Load, store and run bulk AI analysis on large datasets, with every row read.",
   "author": {
     "name": "rippit"
   },

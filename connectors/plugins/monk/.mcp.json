@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "monk": {
+      "type": "http",
+      "url": "https://app.monk.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

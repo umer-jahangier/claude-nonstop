@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "robutler": {
+      "type": "http",
+      "url": "https://robutler.ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

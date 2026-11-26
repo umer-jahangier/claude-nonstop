@@ -1,7 +1,7 @@
 {
   "name": "calendly",
-  "version": "2026.10.25",
-  "description": "Calendly: Manage event types, availability, and bookings.",
+  "version": "2026.11.26",
+  "description": "Calendly: Manage scheduling and access meeting recaps",
   "author": {
     "name": "Calendly"
   },

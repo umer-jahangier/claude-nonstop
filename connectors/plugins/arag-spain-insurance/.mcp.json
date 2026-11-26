@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "arag-spain-insurance": {
+      "type": "http",
+      "url": "https://arag.mcp-platform.infinitewatch.ai/mcp"
+    }
+  }
+}

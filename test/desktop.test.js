@@ -47,8 +47,15 @@ test('connectors reach the desktop app as managed MCP servers, and only when the
   assert.equal('managedMcpServers' in desktop.settings({ port: 43117, desktopConnectors: [] }, v), false);
   const entry = desktop.connector('Linear', 'https://mcp.linear.app/mcp');
   assert.deepEqual(entry, { name: 'Linear', transport: 'http', url: 'https://mcp.linear.app/mcp', oauth: true });
+  // A connector that signs in is reached through the gateway, which holds its sign-in.
   const s = desktop.settings({ port: 43117, desktopConnectors: [entry] }, v);
-  assert.deepEqual(JSON.parse(s.managedMcpServers), [entry]);
+  const [app] = JSON.parse(s.managedMcpServers);
+  assert.equal(app.url, 'http://127.0.0.1:43117/mcp/Linear');
+  assert.equal(app.oauth, undefined);
+  assert.deepEqual(app.headersHelperArgs.slice(1), ['connectors', 'headers', '--via-gateway', 'Linear']);
+  // An SSE one the gateway can't carry is signed in to by the app.
+  const sse = { name: 'Old', transport: 'sse', url: 'https://x.example/sse', oauth: true };
+  assert.deepEqual(JSON.parse(desktop.settings({ port: 43117, desktopConnectors: [sse] }, v).managedMcpServers), [sse]);
 });
 
 test('a connector needs an https URL and a plain name', () => {

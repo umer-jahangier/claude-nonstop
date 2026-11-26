@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "pursuit": {
+      "type": "http",
+      "url": "https://api.pursuit.us/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

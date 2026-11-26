@@ -1,0 +1,11 @@
+{
+  "name": "datahub",
+  "version": "2026.11.26",
+  "description": "DataHub: Connect AI agents to enterprise data & context",
+  "author": {
+    "name": "Acryl Data, Inc."
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

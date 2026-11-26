@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "usertesting": {
+      "type": "http",
+      "url": "https://ai.usertesting.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

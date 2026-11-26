@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "subframe": {
+      "type": "http",
+      "url": "https://mcp.subframe.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "controlplane",
-  "version": "2026.10.25",
+  "version": "2026.11.26",
   "description": "Control Plane: Deploy, scale, and debug cloud apps from one platform",
   "author": {
     "name": "Control Plane Corporation"

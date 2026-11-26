@@ -1,6 +1,6 @@
 {
   "name": "signnow",
-  "version": "2026.10.25",
+  "version": "2026.11.26",
   "description": "SignNow: Automate eSignature workflows directly from Claude",
   "author": {
     "name": "airSlate Inc"

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "sandstone": {
+      "type": "http",
+      "url": "https://api.sandstone.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

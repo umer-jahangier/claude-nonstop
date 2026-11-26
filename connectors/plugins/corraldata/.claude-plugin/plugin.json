@@ -1,0 +1,12 @@
+{
+  "name": "corraldata",
+  "version": "2026.11.26",
+  "description": "CorralData: Connect Claude to CorralData so it can query your data, build dashboards, and manage boards and data apps without leaving the conversation.",
+  "author": {
+    "name": "CorralData"
+  },
+  "keywords": [
+    "data-analytics",
+    "health-life-sciences"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "weinc-domain-for-anything",
+  "version": "2026.11.26",
+  "description": "Domain for Anything by WeInc: Point a domain you own at anything: your Notion page, Linktree, Shopify store, booking page, Google Doc or a page made in Claude. Secure https, one DNS change, right from chat.",
+  "author": {
+    "name": "WeInc"
+  },
+  "keywords": [
+    "commerce-shopping",
+    "developer-tools",
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

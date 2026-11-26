@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "substrate-claim-status": {
+      "type": "http",
+      "url": "https://mcp.substrateai.com/claim-status",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

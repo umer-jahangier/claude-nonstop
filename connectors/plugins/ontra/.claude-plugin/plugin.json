@@ -1,0 +1,11 @@
+{
+  "name": "ontra",
+  "version": "2026.11.26",
+  "description": "Ontra: Query your Ontra data directly from any AI tool",
+  "author": {
+    "name": "Ontra"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

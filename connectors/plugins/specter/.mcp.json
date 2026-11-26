@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "specter": {
+      "type": "http",
+      "url": "https://mcp.tryspecter.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

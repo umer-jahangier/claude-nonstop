@@ -1,0 +1,13 @@
+{
+  "name": "abacum-ai",
+  "version": "2026.11.26",
+  "description": "Abacum: Your FP&A data, one question away",
+  "author": {
+    "name": "Abacum"
+  },
+  "keywords": [
+    "data-analytics",
+    "financial-services",
+    "productivity"
+  ]
+}

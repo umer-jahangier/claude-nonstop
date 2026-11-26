@@ -1,0 +1,11 @@
+{
+  "name": "voltn",
+  "version": "2026.11.26",
+  "description": "Voltn: Search, read, organize and share your Voltn files from Claude, with each user's own permissions and a full audit trail.",
+  "author": {
+    "name": "NetExplorer SAS"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

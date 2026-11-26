@@ -1,0 +1,12 @@
+{
+  "name": "wispr-flow",
+  "version": "2026.11.26",
+  "description": "Wispr Flow: Your meetings, notes, and tasks from Wispr Flow — now native context for Claude.",
+  "author": {
+    "name": "Wispr Flow"
+  },
+  "keywords": [
+    "communication",
+    "productivity"
+  ]
+}

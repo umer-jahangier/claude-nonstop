@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "felt-maps": {
+      "type": "http",
+      "url": "https://felt.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

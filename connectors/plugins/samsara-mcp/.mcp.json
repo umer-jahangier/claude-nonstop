@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "samsara-mcp": {
+      "type": "http",
+      "url": "https://mcp.samsara.com/v2/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

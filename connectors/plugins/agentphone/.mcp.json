@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "agentphone": {
+      "type": "http",
+      "url": "https://mcp.agentphone.ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

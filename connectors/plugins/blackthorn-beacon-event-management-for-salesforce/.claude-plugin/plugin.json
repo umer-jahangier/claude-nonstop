@@ -1,0 +1,12 @@
+{
+  "name": "blackthorn-beacon-event-management-for-salesforce",
+  "version": "2026.11.26",
+  "description": "Blackthorn Forge MCP for Native Salesforce Event Management: Blackthorn's MCP server for Salesforce events: create, query, and report on events, attendees, tickets, sessions, forms, and email campaigns, over 100 available tools, live against your org.",
+  "author": {
+    "name": "Blackthorn.io"
+  },
+  "keywords": [
+    "education",
+    "nonprofit"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "scribemcp",
+  "version": "2026.11.26",
+  "description": "Scribe MCP: Search Scribe documents, workflows, and insights.",
+  "author": {
+    "name": "Scribe"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

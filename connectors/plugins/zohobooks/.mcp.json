@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "zohobooks": {
+      "type": "http",
+      "url": "https://books.zohomcp.com/mcp/message",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

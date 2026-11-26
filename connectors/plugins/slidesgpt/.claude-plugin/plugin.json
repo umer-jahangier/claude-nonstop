@@ -1,0 +1,11 @@
+{
+  "name": "slidesgpt",
+  "version": "2026.11.26",
+  "description": "SlidesGPT: Make presentations and slides, export to PowerPoint",
+  "author": {
+    "name": "Lightstone GmbH"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

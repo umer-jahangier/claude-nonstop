@@ -1,13 +1,15 @@
 {
   "name": "rockhopper",
-  "version": "2026.10.25",
-  "description": "Rockhopper: Spreadsheet audit and observability for finance teams working with AI agents.",
+  "version": "2026.11.26",
+  "description": "Rockhopper: The audit trail and governance layer for every file your team and your AI touch.",
   "author": {
     "name": "Rockhopper Inc."
   },
   "keywords": [
     "data-analytics",
     "financial-services",
+    "health-life-sciences",
+    "legal",
     "productivity"
   ]
 }

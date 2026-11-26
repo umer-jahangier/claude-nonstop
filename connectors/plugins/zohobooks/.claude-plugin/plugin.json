@@ -1,0 +1,12 @@
+{
+  "name": "zohobooks",
+  "version": "2026.11.26",
+  "description": "Zoho Books: Zoho Books MCP Server lets AI assistants access and manage accounting data using natural language.",
+  "author": {
+    "name": "Zoho Corporation"
+  },
+  "keywords": [
+    "financial-services",
+    "productivity"
+  ]
+}

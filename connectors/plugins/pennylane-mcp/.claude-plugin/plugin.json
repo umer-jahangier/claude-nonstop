@@ -1,0 +1,11 @@
+{
+  "name": "pennylane-mcp",
+  "version": "2026.11.26",
+  "description": "Pennylane: Ask Claude about your Pennylane data: invoices, bank transactions, ledger, financial statements and VAT, read-only.",
+  "author": {
+    "name": "Pennylane"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

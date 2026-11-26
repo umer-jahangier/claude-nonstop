@@ -1,0 +1,12 @@
+{
+  "name": "zohocrm",
+  "version": "2026.11.26",
+  "description": "Zoho CRM: Zoho CRM MCP Server lets AI assistants access and manage CRM data using natural language.",
+  "author": {
+    "name": "Zoho Corporation"
+  },
+  "keywords": [
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

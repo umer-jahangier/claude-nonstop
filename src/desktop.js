@@ -72,8 +72,10 @@ const connectors = (cfg) => (Array.isArray(cfg.desktopConnectors) ? cfg.desktopC
 // don't support.
 function appEntry(e, cfg) {
   const cat = require('./connectorcatalog');
-  if (cat.isTokenConnector(e)) {
+  if (cat.authOf(e) !== 'none') {
     const via = cat.viaGateway(e);
+    // An OAuth connector the gateway can't carry (SSE) is signed in to by the app itself.
+    if (!via && cat.authOf(e) === 'oauth') return { name: e.name, transport: e.transport || 'http', url: e.url, oauth: true };
     const url = via ? `http://127.0.0.1:${cfg.port}/mcp/${encodeURIComponent(e.name)}` : e.url;
     return { name: e.name, transport: e.transport || 'http', url, headersHelper: process.execPath, headersHelperArgs: [paths.APP_SCRIPT, 'connectors', 'headers', ...(via ? ['--via-gateway'] : []), e.name], headersHelperTtlSec: 300 };
   }
@@ -90,7 +92,9 @@ function connector(name, url, { oauth = true, token = false, tokenFrom = null, t
   } catch {
     throw new Error(`${url} isn't a URL`);
   }
-  if (parsed.protocol !== 'https:') throw new Error('the desktop app only connects to https:// servers');
+  // A server reached through the gateway with a token may be plain http (a self-hosted n8n
+  // on this network, say); the app itself only ever talks to the gateway then.
+  if (parsed.protocol !== 'https:' && !(token && parsed.protocol === 'http:')) throw new Error('the desktop app only connects to https:// servers');
   if (transport !== 'http' && transport !== 'sse') throw new Error('a connector speaks http or sse');
   if (token) return { name, transport, url: parsed.href, auth: 'token', ...(tokenFrom ? { tokenFrom } : {}) };
   return { name, transport, url: parsed.href, ...(oauth ? { oauth: true } : {}) };

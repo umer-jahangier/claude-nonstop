@@ -1,0 +1,13 @@
+{
+  "name": "duvo-mcp",
+  "version": "2026.11.26",
+  "description": "Duvo: Create, monitor, and manage your Duvo automations",
+  "author": {
+    "name": "Duvo"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools",
+    "productivity"
+  ]
+}

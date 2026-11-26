@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "synthesize-bio": {
+      "type": "http",
+      "url": "https://app.synthesize.bio/api/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

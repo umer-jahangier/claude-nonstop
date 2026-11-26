@@ -1,0 +1,11 @@
+{
+  "name": "affinity",
+  "version": "2026.11.26",
+  "description": "Affinity: Search, update, and prep deals without switching tabs.",
+  "author": {
+    "name": "Affinity"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

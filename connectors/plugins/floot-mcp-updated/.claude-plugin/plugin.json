@@ -1,0 +1,12 @@
+{
+  "name": "floot-mcp-updated",
+  "version": "2026.11.26",
+  "description": "Floot: Build and host websites and mobile apps using your own Claude subscription.",
+  "author": {
+    "name": "Floot"
+  },
+  "keywords": [
+    "creative",
+    "developer-tools"
+  ]
+}

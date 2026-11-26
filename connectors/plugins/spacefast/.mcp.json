@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "spacefast": {
+      "type": "http",
+      "url": "https://mcp.spacefast.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

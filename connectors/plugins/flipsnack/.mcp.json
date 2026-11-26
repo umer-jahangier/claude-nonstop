@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "flipsnack": {
+      "type": "http",
+      "url": "https://mcp.flipsnack.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

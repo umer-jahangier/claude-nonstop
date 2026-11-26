@@ -1,0 +1,11 @@
+{
+  "name": "circleci",
+  "version": "2026.11.26",
+  "description": "CircleCI: Manage CI/CD pipelines, debug failed builds, and optimize test suites directly from Claude - no terminal required.",
+  "author": {
+    "name": "CircleCI Engineering"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

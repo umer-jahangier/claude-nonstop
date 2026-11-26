@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "mabl": {
+      "type": "http",
+      "url": "https://mcp.mabl.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

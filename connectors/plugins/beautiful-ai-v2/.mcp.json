@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "beautiful-ai-v2": {
+      "type": "http",
+      "url": "https://agent-mcp-696419881849.us-central1.run.app/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

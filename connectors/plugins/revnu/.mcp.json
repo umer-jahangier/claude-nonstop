@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "revnu": {
+      "type": "http",
+      "url": "https://mcp.revnu.com/lite",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

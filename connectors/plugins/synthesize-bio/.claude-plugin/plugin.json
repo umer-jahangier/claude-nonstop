@@ -1,0 +1,11 @@
+{
+  "name": "synthesize-bio",
+  "version": "2026.11.26",
+  "description": "Synthesize Bio: Generate gene expression from a virtual human",
+  "author": {
+    "name": "Synthesize Bio"
+  },
+  "keywords": [
+    "health-life-sciences"
+  ]
+}

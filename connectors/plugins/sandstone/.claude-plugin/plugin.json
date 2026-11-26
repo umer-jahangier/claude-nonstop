@@ -1,0 +1,12 @@
+{
+  "name": "sandstone",
+  "version": "2026.11.26",
+  "description": "Sandstone: Find and manage legal requests",
+  "author": {
+    "name": "Sandstone"
+  },
+  "keywords": [
+    "legal",
+    "productivity"
+  ]
+}

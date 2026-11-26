@@ -2,6 +2,14 @@
 
 Every release of claude-nonstop, newest first. Full notes, and the code at each version, are on the [releases page](https://github.com/umer-jahangier/claude-nonstop/releases). The installer and `claude-nonstop update` install the latest release; the npm package is [`@umer-jahangier/claude-nonstop`](https://www.npmjs.com/package/@umer-jahangier/claude-nonstop).
 
+## [1.24.0](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.24.0) · 2026-11-26
+
+- **Connectors connect for real.** claude-nonstop now signs in to each connector itself (the service's own page in your browser, then back to the gateway) and the Claude app reaches it through the gateway, which adds and renews the sign-in. Each connector in the list has **Connect**, **Sign In Again** and **Test** (which asks it for its tools, the way Claude will). Before, the app was left to sign in on its own and often couldn't.
+- **The most used services are at the top of Browse Connectors**: GitHub, Gmail, Google Drive, Google Calendar (Google's official servers), Slack, n8n (your own instance), HighLevel (GHL), Vercel, Cloudflare (API, Workers Bindings, Observability), Notion and HubSpot. Gmail, Drive, Calendar, Slack and HubSpot don't let apps register themselves, so they take an OAuth app you register once (the page says how, and shows the redirect URL); one Google app serves all three Google ones.
+- The catalog grew from 488 to 595 connectors (Anthropic's directory, re-checked today), and search matches every word you type, the service's maker and its address (try "ghl").
+- Add by Address works out how a server signs in and asks for a token or an OAuth app only when it needs one. A self-hosted server reached with a token (n8n on http://localhost, say) works too.
+- A service that only lets apps it approved sign in (Figma) is handed to the Claude app to sign in itself.
+
 ## [1.23.2](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.23.2) · 2026-11-25
 
 - **Windows: no more Git windows.** Bringing cloud sessions here ran `git` (and `codex`) from the background gateway without hiding them, so every clone, fetch and check opened a console window, and Git's credential manager could pop up a sign-in window for a private repository. They now run hidden and never prompt; a repository Git can't reach is noted instead. The gateway itself starts at login with no console window, and the SSH tunnels run hidden too.

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "cora": {
+      "type": "http",
+      "url": "https://mcp.cora.ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

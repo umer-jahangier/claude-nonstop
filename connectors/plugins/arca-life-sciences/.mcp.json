@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "arca-life-sciences": {
+      "type": "http",
+      "url": "https://app.arca.inc/api/public/mcp"
+    }
+  }
+}

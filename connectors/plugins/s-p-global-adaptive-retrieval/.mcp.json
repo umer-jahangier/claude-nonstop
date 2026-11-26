@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "s-p-global-adaptive-retrieval": {
+      "type": "http",
+      "url": "https://grounding.kensho.com/integrations/v2/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

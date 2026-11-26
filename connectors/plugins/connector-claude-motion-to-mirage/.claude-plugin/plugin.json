@@ -1,0 +1,11 @@
+{
+  "name": "connector-claude-motion-to-mirage",
+  "version": "2026.11.26",
+  "description": "Claude Motion to Mirage: Import a Claude Motion video into Mirage",
+  "author": {
+    "name": "Mirage"
+  },
+  "keywords": [
+    "creative"
+  ]
+}

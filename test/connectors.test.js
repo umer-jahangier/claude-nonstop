@@ -16,7 +16,7 @@ test('connectors can be added, listed, replaced and removed from the command lin
   assert.equal(r.code, 0, r.stderr);
   r = await runCli(['connectors', 'add', 'linear', 'https://mcp.linear.app/sse', '--no-oauth']);
   assert.equal(r.code, 0, r.stderr);
-  assert.deepEqual(config.load().desktopConnectors, [{ name: 'linear', transport: 'http', url: 'https://mcp.linear.app/sse' }]);
+  assert.deepEqual(config.load().desktopConnectors, [{ name: 'linear', transport: 'sse', url: 'https://mcp.linear.app/sse' }]);
 
   r = await runCli(['connectors']);
   assert.match(r.stdout, /linear {2}https:\/\/mcp\.linear\.app\/sse {2}\(no sign-in\)/);

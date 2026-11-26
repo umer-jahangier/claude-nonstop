@@ -111,7 +111,7 @@ function createServer(ctx, tlsOptions = null) {
       return;
     }
     const url = req.url || '/';
-    if (!secure && ctx.tlsPort && isShortName(req.headers.host) && url !== '/health' && !url.startsWith('/v1/') && !url.startsWith('/mcp/')) {
+    if (!secure && ctx.tlsPort && isShortName(req.headers.host) && url !== '/health' && !url.startsWith('/v1/') && !url.startsWith('/mcp/') && !url.startsWith('/oauth/')) {
       const host = String(req.headers.host).toLowerCase().replace(/:\d+$/, '');
       res.writeHead(308, { location: `https://${host}${ctx.tlsPort === 443 ? '' : `:${ctx.tlsPort}`}${url}` });
       res.end();
@@ -121,6 +121,16 @@ function createServer(ctx, tlsOptions = null) {
       const body = JSON.stringify({ name: 'claude-nonstop', version: pkg.version, pid: process.pid });
       res.writeHead(200, { 'content-type': 'application/json', 'content-length': Buffer.byteLength(body) });
       res.end(body);
+      return;
+    }
+    if (url.startsWith('/oauth/callback')) {
+      // A connector's sign-in coming back from the service (mcpauth.js); the state checks it.
+      require('./mcpauth').callback(new URL(url, 'http://x').searchParams).then((r) => {
+        const esc = (t) => String(t).replace(/[<>&"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
+        const html = `<!doctype html><meta charset="utf-8"><title>${r.ok ? 'Connected' : 'Not connected'}</title><body style="font:16px/1.5 -apple-system,system-ui,sans-serif;max-width:34em;margin:4em auto;padding:0 1em"><h1 style="font-size:1.4em">${r.ok ? `${esc(r.name)} is connected` : "The sign-in didn't finish"}</h1><p>${r.ok ? 'You can close this tab: claude-nonstop takes it from here, and the connector works in Claude.' : esc(r.message || '')}</p></body>`;
+        res.writeHead(r.ok ? 200 : 400, { 'content-type': 'text/html; charset=utf-8', 'content-length': Buffer.byteLength(html) });
+        res.end(html);
+      }).catch(fail);
       return;
     }
     const handler = url.startsWith('/v1/') ? gateway.handle : url.startsWith('/mcp/') ? require('./mcpproxy').handle : ui.handle;

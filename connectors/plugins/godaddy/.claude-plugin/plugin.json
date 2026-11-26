@@ -1,0 +1,11 @@
+{
+  "name": "godaddy",
+  "version": "2026.11.26",
+  "description": "GoDaddy: Search domains and check availability",
+  "author": {
+    "name": "GoDaddy"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

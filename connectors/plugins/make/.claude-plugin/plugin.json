@@ -1,11 +1,14 @@
 {
   "name": "make",
-  "version": "2026.10.25",
-  "description": "Make: Run Make scenarios and manage your Make account",
+  "version": "2026.11.26",
+  "description": "Make: Build Make automations and AI Agents from Claude",
   "author": {
     "name": "Make"
   },
   "keywords": [
-    "productivity"
+    "data-analytics",
+    "developer-tools",
+    "productivity",
+    "sales-and-marketing"
   ]
 }

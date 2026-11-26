@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "productboard": {
+      "type": "http",
+      "url": "https://mcp.productboard.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

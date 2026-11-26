@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "evernote": {
+      "type": "http",
+      "url": "https://mcp.evernote.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

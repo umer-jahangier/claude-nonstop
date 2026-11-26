@@ -1,0 +1,12 @@
+{
+  "name": "fibery",
+  "version": "2026.11.26",
+  "description": "Fibery: Build your modular workspace with Claude: describe any process, from roadmaps and CRM to hiring and OKRs, and get it set up in Fibery, a work platform for orgs run by nerds",
+  "author": {
+    "name": "Fibery"
+  },
+  "keywords": [
+    "data-analytics",
+    "productivity"
+  ]
+}

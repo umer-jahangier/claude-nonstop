@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "nos": {
+      "type": "http",
+      "url": "https://mcp-app.nos.nl/mcp"
+    }
+  }
+}

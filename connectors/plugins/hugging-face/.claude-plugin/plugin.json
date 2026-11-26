@@ -1,0 +1,11 @@
+{
+  "name": "hugging-face",
+  "version": "2026.11.26",
+  "description": "Hugging Face: Access the Hugging Face Hub and thousands of Gradio Apps",
+  "author": {
+    "name": "Hugging Face"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

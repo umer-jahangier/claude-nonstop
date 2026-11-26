@@ -1,0 +1,14 @@
+{
+  "name": "openalex",
+  "version": "2026.11.26",
+  "description": "OpenAlex: Search 250M+ research papers, citations and authors",
+  "author": {
+    "name": "OurResearch"
+  },
+  "keywords": [
+    "data-analytics",
+    "education",
+    "health-life-sciences",
+    "productivity"
+  ]
+}

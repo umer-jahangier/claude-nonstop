@@ -1,0 +1,13 @@
+{
+  "name": "wonder",
+  "version": "2026.11.26",
+  "description": "Wonder: Create and edit designs with Claude on a canvas where every design is real code.",
+  "author": {
+    "name": "Aquila Labs, Inc"
+  },
+  "keywords": [
+    "creative",
+    "developer-tools",
+    "productivity"
+  ]
+}

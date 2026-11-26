@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "snomed-ct-terminology": {
+      "type": "http",
+      "url": "https://snowstorm-mcp.snomedtools.org/mcp"
+    }
+  }
+}

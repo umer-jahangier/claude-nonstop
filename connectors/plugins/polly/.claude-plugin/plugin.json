@@ -1,0 +1,14 @@
+{
+  "name": "polly",
+  "version": "2026.11.26",
+  "description": "Polly: Create polls, surveys, standups, Q&A, and more without leaving Claude",
+  "author": {
+    "name": "Polly"
+  },
+  "keywords": [
+    "communication",
+    "education",
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

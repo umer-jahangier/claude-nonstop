@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "anythingmcp": {
+      "type": "http",
+      "url": "https://cloud.anythingmcp.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

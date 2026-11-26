@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "numbersgame-ramp": {
+      "type": "http",
+      "url": "https://ramp.numbersgame.xyz/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

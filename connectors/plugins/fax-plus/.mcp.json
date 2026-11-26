@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "fax-plus": {
+      "type": "http",
+      "url": "https://mcp.fax.plus/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

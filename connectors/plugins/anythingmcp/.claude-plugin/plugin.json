@@ -1,0 +1,15 @@
+{
+  "name": "anythingmcp",
+  "version": "2026.11.26",
+  "description": "AnythingMCP: Connect Claude to SAP, weclapp, DATEV, Odoo, Etsy, Shopware, Billbee, Sendcloud, Deutsche Bahn, Telegram, Bundesbank & 180+ business APIs — or turn any REST, SOAP, GraphQL or SQL API into MCP tools.",
+  "author": {
+    "name": "helpcode.ai"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools",
+    "financial-services",
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

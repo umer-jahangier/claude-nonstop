@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "paybooc-shopping-rewards": {
+      "type": "http",
+      "url": "https://open.paybooc.co.kr/pybc/api/mcp/shopping/claude"
+    }
+  }
+}

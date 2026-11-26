@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "zohoanalytics": {
+      "type": "http",
+      "url": "https://analytics.zohomcp.com/mcp/message",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

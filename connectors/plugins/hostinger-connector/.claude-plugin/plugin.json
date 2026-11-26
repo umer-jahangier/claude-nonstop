@@ -1,0 +1,14 @@
+{
+  "name": "hostinger-connector",
+  "version": "2026.11.26",
+  "description": "Hostinger Connector: Manage your Hostinger services via Claude — deploy websites, launch eCommerce stores, configure domains and DNS, control VPS servers, run email marketing campaigns, and manage your subscriptions.",
+  "author": {
+    "name": "Hostinger"
+  },
+  "keywords": [
+    "commerce-shopping",
+    "developer-tools",
+    "other",
+    "productivity"
+  ]
+}

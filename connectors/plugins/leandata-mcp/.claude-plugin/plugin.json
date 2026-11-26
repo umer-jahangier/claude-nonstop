@@ -1,0 +1,14 @@
+{
+  "name": "leandata-mcp",
+  "version": "2026.11.26",
+  "description": "LeanData MCP: Connect Claude to LeanData to administer pools, manage meetings, and audit routing.",
+  "author": {
+    "name": "LeanData"
+  },
+  "keywords": [
+    "communication",
+    "data-analytics",
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

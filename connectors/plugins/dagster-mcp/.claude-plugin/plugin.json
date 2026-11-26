@@ -1,0 +1,12 @@
+{
+  "name": "dagster-mcp",
+  "version": "2026.11.26",
+  "description": "Dagster+ MCP: Investigate issues and take action in your Dagster+ deployment from Claude.",
+  "author": {
+    "name": "Prefect"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools"
+  ]
+}

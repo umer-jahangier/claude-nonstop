@@ -1,0 +1,11 @@
+{
+  "name": "fax-plus",
+  "version": "2026.11.26",
+  "description": "Fax.Plus: Send and receive faxes securely from Claude",
+  "author": {
+    "name": "Alohi"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

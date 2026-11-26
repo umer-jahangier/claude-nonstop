@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "tr-highq": {
+      "type": "http",
+      "url": "https://highq-mcp.thomsonreuters.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

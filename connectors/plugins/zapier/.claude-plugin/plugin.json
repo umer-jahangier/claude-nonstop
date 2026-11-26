@@ -1,14 +1,14 @@
 {
   "name": "zapier",
-  "version": "2026.10.25",
-  "description": "Zapier: Automate workflows across thousands of apps via conversation",
+  "version": "2026.11.26",
+  "description": "Zapier: Automate workflows across 9,000+ apps. Run one-off actions or build automations with triggers and actions for Facebook Lead Ads, Typeform, LinkedIn, Instagram, YouTube, Google Ads, Telegram, webhooks.",
   "author": {
     "name": "Zapier"
   },
   "keywords": [
     "communication",
     "data-analytics",
-    "developer-tools",
+    "financial-services",
     "productivity",
     "sales-and-marketing"
   ]

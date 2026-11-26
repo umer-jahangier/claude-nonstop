@@ -1,0 +1,12 @@
+{
+  "name": "tr-highq",
+  "version": "2026.11.26",
+  "description": "HighQ: Securely search your HighQ matter data",
+  "author": {
+    "name": "Thomson Reuters Holdings Inc."
+  },
+  "keywords": [
+    "legal",
+    "productivity"
+  ]
+}

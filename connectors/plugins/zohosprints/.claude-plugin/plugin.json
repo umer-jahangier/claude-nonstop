@@ -1,0 +1,12 @@
+{
+  "name": "zohosprints",
+  "version": "2026.11.26",
+  "description": "Zoho Sprints: Zoho Sprints MCP Server lets AI assistants manage agile projects, sprints, and work items using natural language.",
+  "author": {
+    "name": "Zoho Corporation"
+  },
+  "keywords": [
+    "developer-tools",
+    "productivity"
+  ]
+}

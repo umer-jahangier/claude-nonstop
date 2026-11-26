@@ -1,0 +1,11 @@
+{
+  "name": "digits",
+  "version": "2026.11.26",
+  "description": "Digits: Track and analyze your finances with Digits",
+  "author": {
+    "name": "Digits Financial, Inc."
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

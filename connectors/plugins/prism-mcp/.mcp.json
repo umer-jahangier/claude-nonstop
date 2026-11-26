@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "prism-mcp": {
+      "type": "http",
+      "url": "https://revalidata.com/api/prism-mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

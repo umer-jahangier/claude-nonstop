@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "twinkle-hub": {
+      "type": "http",
+      "url": "https://api.twinkleai.tw/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

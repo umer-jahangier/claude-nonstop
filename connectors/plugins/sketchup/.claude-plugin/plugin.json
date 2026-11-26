@@ -1,0 +1,11 @@
+{
+  "name": "sketchup",
+  "version": "2026.11.26",
+  "description": "Trimble SketchUp: Create and iterate 3D models for use in SketchUp",
+  "author": {
+    "name": "Trimble SketchUp"
+  },
+  "keywords": [
+    "creative"
+  ]
+}

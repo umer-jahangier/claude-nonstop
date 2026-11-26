@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "framer": {
+      "type": "http",
+      "url": "https://mcp.framer.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

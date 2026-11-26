@@ -1,11 +1,13 @@
 {
   "name": "granola",
-  "version": "2026.10.25",
-  "description": "Granola: The AI notepad for meetings",
+  "version": "2026.11.26",
+  "description": "Granola: The AI notepad for meetings, now in Claude. Ask about your notes, transcripts and meeting context.",
   "author": {
     "name": "Granola"
   },
   "keywords": [
-    "productivity"
+    "communication",
+    "productivity",
+    "sales-and-marketing"
   ]
 }

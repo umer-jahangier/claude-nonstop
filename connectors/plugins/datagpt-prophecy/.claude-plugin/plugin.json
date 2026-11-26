@@ -1,0 +1,11 @@
+{
+  "name": "datagpt-prophecy",
+  "version": "2026.11.26",
+  "description": "Prophecy DataGPT: Governed data work for business teams, right in Claude",
+  "author": {
+    "name": "Prophecy"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

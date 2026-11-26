@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "ontora": {
+      "type": "http",
+      "url": "https://api.eu.ontora.com/mcp/directory",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "duvo-mcp": {
+      "type": "http",
+      "url": "https://api.duvo.ai/v2/mcp"
+    }
+  }
+}

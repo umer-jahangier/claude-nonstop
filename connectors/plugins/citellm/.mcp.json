@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "citellm": {
+      "type": "http",
+      "url": "https://mcp.citellm.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

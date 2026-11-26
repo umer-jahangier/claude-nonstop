@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "ice-data-services": {
+      "type": "http",
+      "url": "https://fids-mcp.ice.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "general-translation",
+  "version": "2026.11.26",
+  "description": "General Translation: Translate and localize your app, docs and files with General Translation: upload content, run translations, manage glossaries and publish to the CDN.",
+  "author": {
+    "name": "General Translation, Inc."
+  },
+  "keywords": [
+    "developer-tools",
+    "productivity"
+  ]
+}

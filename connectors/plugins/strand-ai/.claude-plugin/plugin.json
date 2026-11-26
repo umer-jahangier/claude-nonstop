@@ -1,0 +1,12 @@
+{
+  "name": "strand-ai",
+  "version": "2026.11.26",
+  "description": "Strand AI: Predict spatial proteomics from H&E histology slides",
+  "author": {
+    "name": "Strand AI"
+  },
+  "keywords": [
+    "data-analytics",
+    "health-life-sciences"
+  ]
+}

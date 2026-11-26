@@ -1,0 +1,12 @@
+{
+  "name": "honeybadger",
+  "version": "2026.11.26",
+  "description": "Honeybadger: Investigate production errors, query logs, and manage dashboards and alarms from your AI assistant",
+  "author": {
+    "name": "Honeybadger"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools"
+  ]
+}

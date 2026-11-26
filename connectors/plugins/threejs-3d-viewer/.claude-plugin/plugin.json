@@ -1,0 +1,11 @@
+{
+  "name": "threejs-3d-viewer",
+  "version": "2026.11.26",
+  "description": "Three.js 3D Viewer: Demo 3D viewer that renders interactive 3D scenes and models using Three.js",
+  "author": {
+    "name": "Model Context Protocol Community"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

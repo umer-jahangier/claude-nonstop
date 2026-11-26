@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "inductive-bio": {
+      "type": "http",
+      "url": "https://api.inductive.bio/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "clarify",
+  "version": "2026.11.26",
+  "description": "Clarify: Query your CRM. Create records. Ask anything.",
+  "author": {
+    "name": "Clarify"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

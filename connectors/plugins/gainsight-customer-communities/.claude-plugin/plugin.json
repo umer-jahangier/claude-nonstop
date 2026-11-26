@@ -1,0 +1,11 @@
+{
+  "name": "gainsight-customer-communities",
+  "version": "2026.11.26",
+  "description": "Gainsight (Customer Communities): Ask your AI for the community insights you need",
+  "author": {
+    "name": "Gainsight"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

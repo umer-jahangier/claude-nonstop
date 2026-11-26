@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "weinc-domain-for-anything": {
+      "type": "http",
+      "url": "https://my.we.inc/api/domain/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

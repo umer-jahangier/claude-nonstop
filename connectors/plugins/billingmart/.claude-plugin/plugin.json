@@ -1,0 +1,12 @@
+{
+  "name": "billingmart",
+  "version": "2026.11.26",
+  "description": "BillingMart: BillingMart.com MCP Server- Invoice drafts, estimates, client lookup, expenses, and billing reports",
+  "author": {
+    "name": "BillingMart.com LLC"
+  },
+  "keywords": [
+    "financial-services",
+    "productivity"
+  ]
+}

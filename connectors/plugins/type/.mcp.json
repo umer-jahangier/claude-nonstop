@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "type": {
+      "type": "http",
+      "url": "https://api.type.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

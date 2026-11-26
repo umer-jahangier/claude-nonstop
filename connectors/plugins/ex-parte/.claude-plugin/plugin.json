@@ -1,0 +1,12 @@
+{
+  "name": "ex-parte",
+  "version": "2026.11.26",
+  "description": "Ex Parte: For Ex Parte Enterprise users: research U.S. patent litigation, explore legal profiles, and read existing reports and available source documents in Claude.",
+  "author": {
+    "name": "ExParte Inc"
+  },
+  "keywords": [
+    "data-analytics",
+    "legal"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "datagpt-prophecy": {
+      "type": "http",
+      "url": "https://app.prophecy.ai/datagpt/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

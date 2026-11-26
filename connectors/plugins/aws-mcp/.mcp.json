@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "aws-mcp": {
-      "type": "http",
-      "url": "https://aws-mcp.us-east-1.api.aws/mcp"
-    }
-  }
-}

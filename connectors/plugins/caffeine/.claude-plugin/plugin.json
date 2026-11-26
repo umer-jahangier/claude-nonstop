@@ -1,0 +1,12 @@
+{
+  "name": "caffeine",
+  "version": "2026.11.26",
+  "description": "Caffeine: Describe an app and Caffeine builds, deploys, and hosts it — no servers, no setup.",
+  "author": {
+    "name": "Caffeine Labs AG"
+  },
+  "keywords": [
+    "developer-tools",
+    "productivity"
+  ]
+}

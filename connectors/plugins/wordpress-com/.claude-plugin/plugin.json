@@ -1,11 +1,15 @@
 {
   "name": "wordpress-com",
-  "version": "2026.10.25",
-  "description": "WordPress.com: Secure AI access to manage your WordPress.com sites",
+  "version": "2026.11.26",
+  "description": "WordPress: Build & publish with WordPress",
   "author": {
     "name": "Automattic (WordPress.com)"
   },
   "keywords": [
-    "productivity"
+    "commerce-shopping",
+    "creative",
+    "developer-tools",
+    "productivity",
+    "sales-and-marketing"
   ]
 }

@@ -1,0 +1,11 @@
+{
+  "name": "lilt",
+  "version": "2026.11.26",
+  "description": "LILT: High-quality translation with human verification",
+  "author": {
+    "name": "LILT"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "corraldata": {
+      "type": "http",
+      "url": "https://mcp.corraldata.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

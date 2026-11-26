@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "oneteam": {
+      "type": "http",
+      "url": "https://api.oneteam.io/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

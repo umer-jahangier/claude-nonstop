@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "speeda": {
+      "type": "http",
+      "url": "https://speeda-mcp.ub-speeda.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

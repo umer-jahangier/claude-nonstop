@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "weinc": {
+      "type": "http",
+      "url": "https://my.we.inc/api/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

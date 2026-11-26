@@ -1,11 +1,12 @@
 {
   "name": "lusha",
-  "version": "2026.10.25",
+  "version": "2026.11.26",
   "description": "Lusha: Find and enrich B2B contacts and companies",
   "author": {
     "name": "Lusha"
   },
   "keywords": [
-    "productivity"
+    "productivity",
+    "sales-and-marketing"
   ]
 }

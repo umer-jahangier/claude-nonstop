@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "caffeine": {
+      "type": "http",
+      "url": "https://mcp.caffeine.ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

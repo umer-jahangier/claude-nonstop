@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "geekbot": {
+      "type": "http",
+      "url": "https://mcp.geekbot.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

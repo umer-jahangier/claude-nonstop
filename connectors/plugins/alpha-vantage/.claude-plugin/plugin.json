@@ -1,6 +1,6 @@
 {
   "name": "alpha-vantage",
-  "version": "2026.10.25",
+  "version": "2026.11.26",
   "description": "Alpha Vantage MCP Server: Stock market data: stocks, options, fundamentals, earnings, SEC filings, indices, news, exchange rates, commodities, and other trading signals to power your quantitative finance workflow",
   "author": {
     "name": "Alpha Vantage Inc"

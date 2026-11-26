@@ -1,0 +1,11 @@
+{
+  "name": "august-digital-twins",
+  "version": "2026.11.26",
+  "description": "august: Understand your users with august Digital Twins",
+  "author": {
+    "name": "Fermat Commerce"
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

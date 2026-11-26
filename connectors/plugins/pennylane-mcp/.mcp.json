@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "pennylane-mcp": {
+      "type": "http",
+      "url": "https://mcp.pennylane.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

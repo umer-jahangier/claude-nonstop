@@ -1,0 +1,12 @@
+{
+  "name": "chamelio",
+  "version": "2026.11.26",
+  "description": "Chamelio: Search contracts, track and start legal workflows, and ask Chamelio's AI legal agent.",
+  "author": {
+    "name": "Chamelio"
+  },
+  "keywords": [
+    "legal",
+    "productivity"
+  ]
+}

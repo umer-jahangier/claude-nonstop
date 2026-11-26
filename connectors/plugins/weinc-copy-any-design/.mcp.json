@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "weinc-copy-any-design": {
+      "type": "http",
+      "url": "https://my.we.inc/api/design/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

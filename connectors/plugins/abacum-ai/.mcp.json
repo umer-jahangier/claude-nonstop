@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "abacum-ai": {
+      "type": "http",
+      "url": "https://mcp.abacum.ai/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

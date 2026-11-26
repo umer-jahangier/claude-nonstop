@@ -1,11 +1,13 @@
 {
   "name": "pitchbook",
-  "version": "2026.10.25",
+  "version": "2026.11.26",
   "description": "PitchBook Premium: PitchBook data, embedded in the way you work.",
   "author": {
     "name": "PitchBook"
   },
   "keywords": [
-    "financial-services"
+    "data-analytics",
+    "financial-services",
+    "productivity"
   ]
 }

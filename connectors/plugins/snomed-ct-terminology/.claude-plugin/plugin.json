@@ -1,0 +1,11 @@
+{
+  "name": "snomed-ct-terminology",
+  "version": "2026.11.26",
+  "description": "SNOMED CT Terminology: Search, validate, and expand SNOMED CT concepts, directly from SNOMED International",
+  "author": {
+    "name": "SNOMED International"
+  },
+  "keywords": [
+    "health-life-sciences"
+  ]
+}

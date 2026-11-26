@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "openlens": {
+      "type": "http",
+      "url": "https://openlens.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

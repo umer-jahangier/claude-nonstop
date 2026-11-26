@@ -1,6 +1,6 @@
 {
   "name": "mixpanel",
-  "version": "2026.10.25",
+  "version": "2026.11.26",
   "description": "Mixpanel: Analyze, query, and manage your Mixpanel data",
   "author": {
     "name": "Mixpanel"

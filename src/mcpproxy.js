@@ -93,11 +93,11 @@ async function handle(req, res, ctx) {
     return deny(res, 404, 'no such connector');
   }
   const entry = (config.load().desktopConnectors || []).find((e) => e.name.toLowerCase() === name.toLowerCase());
-  if (!entry || !cat.isTokenConnector(entry)) return deny(res, 404, `there is no token connector called ${name}`);
-  const token = cat.tokenFor(entry, vault);
-  if (!token) return deny(res, 401, `${entry.name} has no access token: add it again with one`);
+  if (!entry || !cat.viaGateway(entry)) return deny(res, 404, `there is no connector called ${name} that goes through the gateway`);
+  const auth = await cat.upstreamAuth(entry, vault);
+  if (!auth) return deny(res, 401, cat.authOf(entry) === 'oauth' ? `${entry.name} isn't connected yet: open claude-nonstop (Apps → Connectors) and click Connect next to it` : `${entry.name} has no access token: add it again with one`);
 
-  const headers = { authorization: `Bearer ${token}`, 'user-agent': 'claude-nonstop' };
+  const headers = { authorization: auth, 'user-agent': 'claude-nonstop' };
   for (const h of FORWARD) if (req.headers[h]) headers[h] = req.headers[h];
   let body;
   try {
@@ -110,9 +110,24 @@ async function handle(req, res, ctx) {
   let up;
   try {
     up = await fetch(entry.url, { method: req.method, headers, body, signal: ctl.signal, redirect: 'manual' });
+    // A sign-in that ran out early: renewed once, and the request sent again.
+    if (up.status === 401 && cat.authOf(entry) === 'oauth') {
+      const again = await cat.upstreamAuth(entry, vault, { force: true });
+      if (again) {
+        await up.text().catch(() => {});
+        up = await fetch(entry.url, { method: req.method, headers: { ...headers, authorization: again }, body, signal: ctl.signal, redirect: 'manual' });
+      }
+    }
   } catch (err) {
     if (res.destroyed) return;
     return deny(res, 502, `couldn't reach ${new URL(entry.url).host} (${err.message})`);
+  }
+  if (up.status === 401 || up.status === 403) {
+    // The app can't sign in on a gateway connector itself: say where to fix it, and don't
+    // pass the service's sign-in hints on.
+    await up.text().catch(() => {});
+    log(`connectors: ${entry.name} refused its sign-in (HTTP ${up.status})`);
+    return deny(res, up.status, cat.authOf(entry) === 'oauth' ? `${entry.name} refused the sign-in: open claude-nonstop (Apps → Connectors) and click Connect next to it again` : `${entry.name} refused its access token: add it again with a new one`);
   }
   const back = {};
   for (const h of BACK) if (up.headers.get(h)) back[h] = up.headers.get(h);

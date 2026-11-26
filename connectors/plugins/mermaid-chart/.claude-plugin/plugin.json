@@ -1,6 +1,6 @@
 {
   "name": "mermaid-chart",
-  "version": "2026.10.25",
+  "version": "2026.11.26",
   "description": "Mermaid Chart: Validates Mermaid syntax, renders diagrams as high-quality SVG, and displays them instantly in an interactive UI where users can preview, zoom, and iterate in real time.",
   "author": {
     "name": "Mermaid Chart Inc"

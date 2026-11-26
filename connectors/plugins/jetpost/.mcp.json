@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "jetpost": {
+      "type": "http",
+      "url": "https://www.jetpost.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

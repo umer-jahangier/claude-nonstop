@@ -592,12 +592,34 @@ const sentence = (m) => `${m[0].toUpperCase()}${m.slice(1)}${/[.!?]$/.test(m) ? 
 
 async function addConnector(body) {
   try {
-    return await require('./connectorcatalog').add({ slug: body.slug, name: body.name, url: body.url, token: body.token, noAuth: body.oauth === false, oauth: body.oauth === true });
+    return await require('./connectorcatalog').add({ slug: body.slug, name: body.name, url: body.url, token: body.token, client: body.client, noAuth: body.oauth === false, oauth: body.oauth === true });
   } catch (err) {
     const e = httpError(400, sentence(err.message));
     if (err.code === 'needs-token') e.needsToken = true;
+    if (err.code) e.details = { need: err.code, redirect: err.redirect, clientUrl: err.clientUrl };
     throw e;
   }
+}
+
+// Starts a connector's sign-in in the browser; the page watches the connectors list for it.
+async function connectConnector(name, body) {
+  const cat = require('./connectorcatalog');
+  let login;
+  try {
+    login = await cat.connect(name, { client: body.client });
+  } catch (err) {
+    const e = httpError(400, sentence(err.message));
+    if (err.code) e.details = { need: err.code, redirect: err.redirect };
+    if (err.code === 'app-sign-in') e.status = 409;
+    throw e;
+  }
+  openBrowser(login.url);
+  login.done.then(() => events.notify('connectors', { name })).catch(() => {});
+  return { url: login.url };
+}
+
+async function testConnector(name) {
+  return require('./connectorcatalog').test(name);
 }
 
 function removeConnector(name) {
@@ -607,7 +629,7 @@ function removeConnector(name) {
 
 function connectorCatalog() {
   const cat = require('./connectorcatalog');
-  return { connectors: cat.catalog(), gh: Boolean(cat.ghToken()) };
+  return { connectors: cat.catalog(), gh: Boolean(cat.ghToken()), clients: Object.keys(vault.load().oauthClients || {}), redirect: require('./mcpauth').redirectUri() };
 }
 
 // Runs `claude-nonstop desktop --quiet` in its own process: the system's admin prompt can
@@ -668,6 +690,8 @@ async function route(method, pathname, body, ctx) {
   if (area === 'desktop' && method === 'POST' && id === 'auto') return desktopAuto();
   if (area === 'connectors' && method === 'GET' && id === 'catalog') return connectorCatalog();
   if (area === 'connectors' && method === 'POST' && !id) return addConnector(body);
+  if (area === 'connectors' && method === 'POST' && id && action === 'connect') return connectConnector(decodeURIComponent(id), body);
+  if (area === 'connectors' && method === 'POST' && id && action === 'test') return testConnector(decodeURIComponent(id));
   if (area === 'connectors' && method === 'DELETE' && id) return removeConnector(decodeURIComponent(id));
   if (area === 'settings' && method === 'PATCH') return editSettings(body);
   if (area === 'pin' && method === 'PUT') return setPin(body);
@@ -742,7 +766,7 @@ async function handle(req, res, ctx) {
     json(res, 200, result === undefined ? { ok: true } : result);
   } catch (err) {
     ctx.invalidate();
-    json(res, err.status || 500, { error: err.message, ...(err.needsToken ? { needsToken: true } : {}) });
+    json(res, err.status || 500, { error: err.message, ...(err.needsToken ? { needsToken: true } : {}), ...(err.details || {}) });
   }
 }
 

@@ -1,7 +1,7 @@
 {
   "name": "ramp",
-  "version": "2026.10.25",
-  "description": "Ramp: Search, access, and analyze your Ramp financial data",
+  "version": "2026.11.26",
+  "description": "Ramp: Analyze spend and handle expenses, bills and approvals in Ramp",
   "author": {
     "name": "Ramp"
   },

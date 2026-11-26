@@ -1,0 +1,11 @@
+{
+  "name": "product-hunt",
+  "version": "2026.11.26",
+  "description": "Product Hunt: Explore over a decade of Product Hunt launches, compare tools using community reviews, and discover startups worth researching. Create and manage your own launches in Claude.",
+  "author": {
+    "name": "Product Hunt, Inc."
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

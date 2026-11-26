@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "billingmart": {
+      "type": "http",
+      "url": "https://api.billingmart.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

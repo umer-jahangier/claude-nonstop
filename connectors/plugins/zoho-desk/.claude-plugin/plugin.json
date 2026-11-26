@@ -1,0 +1,12 @@
+{
+  "name": "zoho-desk",
+  "version": "2026.11.26",
+  "description": "Zoho Desk: Zoho Desk MCP for Customer Support Automation",
+  "author": {
+    "name": "Zoho"
+  },
+  "keywords": [
+    "communication",
+    "productivity"
+  ]
+}

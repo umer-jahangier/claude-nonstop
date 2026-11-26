@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "ample-computer": {
+      "type": "http",
+      "url": "https://api.ample.computer/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

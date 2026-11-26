@@ -283,6 +283,7 @@ main { max-width: 1080px; margin: 0 auto; padding: 12px 20px 72px 44px; }
 .list > .row:first-child { border-top-left-radius: 12px; border-top-right-radius: 12px; }
 .list > .row:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
 .row-text { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.badge.warn { color: #d97706; }
 .badge { display: inline-block; margin-left: 0.4em; padding: 0 0.45em; border-radius: 999px; font-size: 0.6875rem; line-height: 1.5; font-weight: 600; letter-spacing: 0.02em; vertical-align: 0.1em; color: var(--muted, #888); border: 1px solid currentColor; opacity: 0.8; }
 .field .service-pick { flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 7px 0; }
 .field .service-pick label { min-width: 0; width: auto; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 0; min-height: 40px; padding: 4px 10px 4px 30px; position: relative; line-height: 1.2; border-radius: 7px; background: var(--fill); color: var(--label); cursor: pointer; white-space: nowrap; }
@@ -1260,8 +1261,8 @@ function renderDesktop() {
     <div class="row"><span class="k">API key</span><span class="v mono">${esc(shown)}</span><span class="acts"><button class="icon-btn" type="button" data-act="toggle-token" data-fk="toggle-token" aria-label="${ui.showToken ? 'Hide' : 'Show'} the gateway key" title="${ui.showToken ? 'Hide' : 'Show'}">${icon('eye')}</button><button class="icon-btn" type="button" data-act="copy-token" data-fk="copy-token" aria-label="Copy the gateway key" title="Copy">${icon('copy')}</button></span></div>
     <div class="row"><span class="k">Auth scheme</span><span class="v">Bearer</span></div>`;
   $('#desktop-file').textContent = desktopInfo ? `The same values are saved in ${desktopInfo.file}` : '';
-  const signInNote = { oauth: '', none: ' · no sign-in', gh: ' · your GitHub CLI sign-in', token: ' · your access token', 'token-missing': ' · needs an access token' };
-  $('#desktop-connectors').innerHTML = S.settings.desktopConnectors.map((c) => `<li class="row"><span class="row-text"><span class="row-title">${esc(c.name)}</span><span class="row-sub mono">${esc(c.url)}${signInNote[c.signIn] || ''}</span></span><span class="acts"><button class="icon-btn" type="button" data-act="remove-connector" data-id="${esc(c.name)}" data-fk="remove-connector-${esc(c.name)}" aria-label="Remove the ${esc(c.name)} connector" title="Remove">${icon('trash')}</button></span></li>`).join('')
+  const signInNote = { oauth: ' · you sign in to it in Claude', none: ' · no sign-in', gh: ' · your GitHub CLI sign-in', token: ' · your access token', 'token-missing': ' · needs an access token', connected: ' · connected', 'needs-sign-in': ' · not connected yet' };
+  $('#desktop-connectors').innerHTML = S.settings.desktopConnectors.map((c) => `<li class="row"><span class="row-text"><span class="row-title">${esc(c.name)}${c.signIn === 'needs-sign-in' ? ' <span class="badge warn">Sign in needed</span>' : ''}</span><span class="row-sub mono">${esc(c.url)}${signInNote[c.signIn] || ''}</span></span><span class="acts">${c.signIn === 'needs-sign-in' || c.signIn === 'connected' ? `<button class="btn" type="button" data-act="connect-connector" data-id="${esc(c.name)}" data-fk="connect-connector-${esc(c.name)}">${c.signIn === 'connected' ? 'Sign In Again' : 'Connect'}</button>` : ''}<button class="btn" type="button" data-act="test-connector" data-id="${esc(c.name)}" data-fk="test-connector-${esc(c.name)}">Test</button><button class="icon-btn" type="button" data-act="remove-connector" data-id="${esc(c.name)}" data-fk="remove-connector-${esc(c.name)}" aria-label="Remove the ${esc(c.name)} connector" title="Remove">${icon('trash')}</button></span></li>`).join('')
     + `<li class="row add"><button class="add-btn" type="button" data-act="browse-connectors" data-fk="browse-connectors"><span class="tile">${icon('plus-circle')}</span>Browse Connectors…</button></li>`
     + `<li class="row add"><button class="add-btn" type="button" data-act="add-connector" data-fk="add-connector"><span class="tile">${icon('plus-circle')}</span>Add by Address…</button></li>`;
   renderDesktopCard();
@@ -1318,6 +1319,28 @@ function renderDesktopCard() {
   }
   card.dataset.state = state;
   card.innerHTML = `<span class="desk-icon">${icon(state === 'done' ? 'check' : 'desktop')}</span><div>${body}</div>`;
+}
+
+// Opens a connector's sign-in page in the browser (the gateway opens it); the gateway says
+// when it's done, and then the connector is tested.
+async function connectorConnect(name, client) {
+  try {
+    await api('POST', `/api/connectors/${encodeURIComponent(name)}/connect`, client ? { client } : {});
+    ui.connecting = ui.connecting || new Set();
+    ui.connecting.add(name.toLowerCase());
+    toast(`Sign in to ${name} in the browser tab that opened. It connects as soon as you're back.`);
+  } catch (err) {
+    toast(`${name}: ${err.message}`, true);
+    if (err.data && err.data.need === 'app-sign-in') { await refresh(); await applyConnectors(`${name} goes to the Claude app to sign in.`); }
+  }
+}
+async function connectorConnected(name) {
+  await refresh();
+  if (ui.connecting) ui.connecting.delete(String(name).toLowerCase());
+  try {
+    const r = await api('POST', `/api/connectors/${encodeURIComponent(name)}/test`);
+    toast(r.ok ? `${name} is connected: ${r.tools} tool${r.tools === 1 ? '' : 's'} ready in Claude.` : `${name} signed in, but didn't answer properly: ${r.why}.`, !r.ok);
+  } catch {}
 }
 
 // Hands a changed connector list to the desktop app, the same way the Strict sandbox switch does.
@@ -2485,6 +2508,7 @@ function connectEvents() {
       return;
     }
     if (e.type === 'desktop-advice' || e.type === 'usage' || e.type === 'in-use') { scheduleRefresh(); return; }
+    if (e.type === 'connectors') { connectorConnected(e.name); return; }
     addFeed(e);
     if (e.backlog) return;
     if (e.type === 'request') {
@@ -2810,7 +2834,10 @@ function sheetContent() {
         <div class="field"><label for="f-cname">Name</label><input id="f-cname" name="name" maxlength="64" placeholder="Linear, Notion…" autofocus spellcheck="false"></div>
         <div class="field"><label for="f-curl">Address</label><input id="f-curl" class="mono-input" name="url" type="url" placeholder="https://mcp.example.com/mcp" spellcheck="false" autocapitalize="off"></div>
         <div class="field" id="f-ctoken-row"${sh.needsToken ? '' : ' hidden'}><label for="f-ctoken">Token</label><input id="f-ctoken" class="mono-input" name="token" type="password" placeholder="Access token or API key" spellcheck="false" autocapitalize="off"></div>
+        <div class="field" id="f-ccid-row"${sh.needsClient ? '' : ' hidden'}><label for="f-ccid">Client ID</label><input id="f-ccid" class="mono-input" name="clientId" placeholder="From the OAuth app you registered" spellcheck="false" autocapitalize="off"></div>
+        <div class="field" id="f-ccsecret-row"${sh.needsClient ? '' : ' hidden'}><label for="f-ccsecret">Client secret</label><input id="f-ccsecret" class="mono-input" name="clientSecret" type="password" placeholder="If it has one" spellcheck="false" autocapitalize="off"></div>
       </div>
+      <p class="hint" id="f-credirect"${sh.needsClient ? '' : ' hidden'}>Register this redirect URL in that OAuth app: <code>${esc(sh.redirect || '')}</code></p>
       <p class="hint">Find the address in the service's MCP or connector docs. A token is kept encrypted on this computer and handed to the app only when it connects.</p>
       <p class="sheet-error" id="sheet-error" role="alert" hidden></p>
       <div class="sheet-actions"><button class="btn large" type="button" data-act="close-sheet">Cancel</button><button class="btn large primary" type="submit">Add</button></div>
@@ -2829,21 +2856,43 @@ function sheetContent() {
 }
 
 // Connector catalog: tick the services to add, then add them all at once.
-const catState = () => ui.cat || (ui.cat = { list: null, gh: false, picked: [], tokens: {}, q: '', category: '' });
+const catState = () => ui.cat || (ui.cat = { list: null, gh: false, clients: [], redirect: '', picked: [], tokens: {}, urls: {}, cids: {}, csecrets: {}, q: '', category: '' });
 const CATEGORY_NAMES = { 'developer-tools': 'Developer tools', productivity: 'Productivity', 'data-analytics': 'Data and analytics', 'sales-and-marketing': 'Sales and marketing', 'financial-services': 'Finance', communication: 'Communication', creative: 'Creative', legal: 'Legal', 'commerce-shopping': 'Shopping', 'health-life-sciences': 'Health and life sciences', education: 'Education', 'media-entertainment': 'Media', travel: 'Travel', 'consumer-health': 'Personal health', nonprofit: 'Nonprofit', other: 'Other' };
 const addedNames = () => new Set(((S && S.settings.desktopConnectors) || []).map((c) => c.name.toLowerCase()));
 function catNeedsToken(c) { return c.auth === 'token' && !(c.tokenFrom === 'gh' && catState().gh); }
+function catNeedsClient(c) { return c.auth === 'oauth-client' && !catState().clients.includes(c.clientIssuer); }
+// The fields a ticked connector needs before it can be added: its address (self-hosted), a
+// token, or an OAuth app's client ID and secret.
+function catFieldsHtml(c) {
+  const c0 = catState();
+  const f = [];
+  const input = (attr, val, ph, label, type = 'text') => `<input class="mono-input" type="${type}" ${attr}="${esc(c.slug)}" value="${esc(val || '')}" placeholder="${esc(ph)}" aria-label="${esc(`${c.name} ${label}`)}" spellcheck="false" autocapitalize="off">`;
+  if (c.askUrl) f.push(input('data-cat-url', c0.urls[c.slug], c.urlLabel || 'Server address', c.urlLabel || 'address', 'url'), `<p class="hint">${esc(c.urlHint || '')}</p>`);
+  if (catNeedsToken(c)) f.push(input('data-cat-token', c0.tokens[c.slug], c.tokenLabel || 'Access token', c.tokenLabel || 'access token', 'password'), `<p class="hint">${esc(c.tokenHint || '')}</p>`);
+  if (catNeedsClient(c)) {
+    f.push(input('data-cat-cid', c0.cids[c.slug], 'Client ID', 'client ID'), input('data-cat-csecret', c0.csecrets[c.slug], 'Client secret', 'client secret', 'password'),
+      `<p class="hint">${esc(c.clientHelp || '')} Redirect URL to register: <code>${esc(c0.redirect)}</code>${c.clientUrl ? ` · <a href="${esc(c.clientUrl)}" target="_blank" rel="noopener noreferrer">Open</a>` : ''}</p>`);
+  }
+  return f.length ? `<div class="cat-token">${f.join('')}</div>` : '';
+}
+const catMissing = (c) => {
+  const c0 = catState();
+  if (c.askUrl && !String(c0.urls[c.slug] || '').trim()) return `${c.name} needs its ${c.urlLabel || 'address'}.`;
+  if (catNeedsToken(c) && !String(c0.tokens[c.slug] || '').trim()) return `${c.name} needs an access token.`;
+  if (catNeedsClient(c) && !String(c0.cids[c.slug] || '').trim()) return `${c.name} needs the client ID and secret of your OAuth app.`;
+  return null;
+};
 function catalogRowsHtml() {
   const c0 = catState();
   const added = addedNames();
   return c0.list.map((c) => {
     const on = c0.picked.includes(c.slug);
     const have = added.has(c.name.toLowerCase());
-    const note = c.auth === 'token' ? (c.tokenFrom === 'gh' && c0.gh ? 'Uses your GitHub CLI sign-in' : 'Needs an access token') : c.auth === 'none' ? 'No sign-in' : '';
-    const text = `${c.name} ${c.author} ${c.description} ${c.categories.join(' ')}`.toLowerCase();
+    const note = c.auth === 'token' ? (c.tokenFrom === 'gh' && c0.gh ? 'Uses your GitHub CLI sign-in' : c.askUrl ? 'Your server address and a token' : 'Needs an access token') : c.auth === 'none' ? 'No sign-in' : c.auth === 'oauth-client' ? (catNeedsClient(c) ? 'Sign in with your own OAuth app' : 'Sign in with your OAuth app') : 'Sign in with your account';
+    const text = `${c.name} ${c.slug} ${c.author} ${c.description} ${c.categories.join(' ')} ${(c.url || '').replace(/^https?:\/\//, '')} ${c.slug === 'highlevel' ? 'ghl gohighlevel leadconnector crm' : ''}`.toLowerCase();
     return `<div class="cat-item" data-text="${esc(text)}" data-cats="${esc(c.categories.join(' '))}">
       <label class="chat-row cat-row${on ? ' picked' : ''}${have ? ' have' : ''}"><input type="checkbox" data-cat-pick value="${esc(c.slug)}"${on || have ? ' checked' : ''}${have ? ' disabled' : ''}><span class="cat-tile" aria-hidden="true">${esc(c.name.trim()[0] || '?')}</span><span class="t"><b>${esc(c.name)}${have ? ' <em>Added</em>' : ''}</b><span>${esc([c.author && c.author !== c.name ? c.author : '', note, c.description].filter(Boolean).join(' · '))}</span></span></label>
-      ${on && catNeedsToken(c) ? `<div class="cat-token"><input class="mono-input" type="password" data-cat-token="${esc(c.slug)}" value="${esc(c0.tokens[c.slug] || '')}" placeholder="${esc(c.tokenLabel || 'Access token')}" aria-label="${esc(`${c.name} ${c.tokenLabel || 'access token'}`)}" spellcheck="false" autocapitalize="off"><p class="hint">${esc(c.tokenHint || '')}</p></div>` : ''}
+      ${on ? catFieldsHtml(c) : ''}
     </div>`;
   }).join('');
 }
@@ -2869,9 +2918,11 @@ function catGoLabel() {
 function filterCatalog() {
   const c0 = catState();
   const q = c0.q.trim().toLowerCase();
+  const words = q.split(/[\s,]+/).filter(Boolean);
   let any = false;
   for (const el of document.querySelectorAll('.cat-item')) {
-    const show = (!q || el.dataset.text.includes(q)) && (!c0.category || el.dataset.cats.split(' ').includes(c0.category));
+    // Every word typed, in any order, anywhere in the name, maker or description.
+    const show = (!words.length || words.every((w) => el.dataset.text.includes(w))) && (!c0.category || el.dataset.cats.split(' ').includes(c0.category));
     el.hidden = !show;
     any = any || show;
   }
@@ -2888,9 +2939,11 @@ document.addEventListener('change', (e) => {
     const c = c0.list.find((x) => x.slug === slug);
     item.querySelector('.cat-row').classList.toggle('picked', e.target.checked);
     const tok = item.querySelector('.cat-token');
-    if (e.target.checked && catNeedsToken(c) && !tok) {
-      item.insertAdjacentHTML('beforeend', `<div class="cat-token"><input class="mono-input" type="password" data-cat-token="${esc(c.slug)}" value="${esc(c0.tokens[c.slug] || '')}" placeholder="${esc(c.tokenLabel || 'Access token')}" aria-label="${esc(`${c.name} ${c.tokenLabel || 'access token'}`)}" spellcheck="false" autocapitalize="off"><p class="hint">${esc(c.tokenHint || '')}</p></div>`);
-      item.querySelector('[data-cat-token]').focus();
+    const fields = e.target.checked ? catFieldsHtml(c) : '';
+    if (fields && !tok) {
+      item.insertAdjacentHTML('beforeend', fields);
+      const first = item.querySelector('.cat-token input');
+      if (first) first.focus();
     } else if (!e.target.checked && tok) tok.remove();
     const go = $('#cat-go');
     if (go) { go.innerHTML = catGoLabel(); go.disabled = !c0.picked.length; }
@@ -2903,6 +2956,9 @@ document.addEventListener('input', (e) => {
   if (!ui.sheet || ui.sheet.kind !== 'connectors' || !e.target.matches) return;
   if (e.target.matches('[data-cat-search]')) { catState().q = e.target.value; filterCatalog(); }
   else if (e.target.matches('[data-cat-token]')) catState().tokens[e.target.dataset.catToken] = e.target.value;
+  else if (e.target.matches('[data-cat-url]')) catState().urls[e.target.dataset.catUrl] = e.target.value;
+  else if (e.target.matches('[data-cat-cid]')) catState().cids[e.target.dataset.catCid] = e.target.value;
+  else if (e.target.matches('[data-cat-csecret]')) catState().csecrets[e.target.dataset.catCsecret] = e.target.value;
 });
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && e.target.matches && e.target.matches('[data-cat-search]')) e.preventDefault();
@@ -3139,12 +3195,25 @@ const actions = {
   'add-key': () => { if (ui.view !== 'relay') showView('relay'); openSheet('add-key'); },
   'close-sheet': () => closeSheet(),
   'add-connector': () => openSheet('add-connector'),
+  'connect-connector': (id) => connectorConnect(id),
+  'test-connector': async (id, el) => {
+    const was = el.innerHTML;
+    el.disabled = true;
+    el.innerHTML = `${SPINNER}Testing…`;
+    try {
+      const r = await api('POST', `/api/connectors/${encodeURIComponent(id)}/test`);
+      toast(r.ok ? `${id} works: ${r.tools} tool${r.tools === 1 ? '' : 's'} ready in Claude.` : `${id} didn't answer properly: ${r.why}.`, !r.ok);
+    } finally {
+      el.disabled = false;
+      el.innerHTML = was;
+    }
+  },
   'browse-connectors': async () => {
     ui.cat = null;
     openSheet('connectors');
     try {
       const r = await api('GET', '/api/connectors/catalog');
-      Object.assign(catState(), { list: r.connectors, gh: r.gh });
+      Object.assign(catState(), { list: r.connectors, gh: r.gh, clients: r.clients || [], redirect: r.redirect || '' });
     } catch (err) {
       catState().list = [];
       toast(`Couldn't load the connectors: ${err.message}`, true);
@@ -3363,35 +3432,47 @@ document.addEventListener('submit', async (event) => {
       submit.innerHTML = `${SPINNER}Checking…`;
       let c;
       try {
-        c = await api('POST', '/api/connectors', { name: data.name, url: data.url, token: data.token || undefined });
+        c = await api('POST', '/api/connectors', { name: data.name, url: data.url, token: data.token || undefined, client: data.clientId ? { id: data.clientId, secret: data.clientSecret || '' } : undefined });
       } catch (err) {
         if (err.data && err.data.needsToken) {
           const row = $('#f-ctoken-row');
           if (row) { row.hidden = false; $('#f-ctoken').focus(); }
           ui.sheet.needsToken = true;
         }
+        if (err.data && err.data.need === 'needs-client') {
+          for (const id of ['#f-ccid-row', '#f-ccsecret-row', '#f-credirect']) { const el = $(id); if (el) el.hidden = false; }
+          const r = $('#f-credirect code');
+          if (r) r.textContent = err.data.redirect || '';
+          ui.sheet.needsClient = true;
+          ui.sheet.redirect = err.data.redirect;
+          $('#f-ccid').focus();
+        }
         throw err;
       }
       await closeSheet();
       await refresh();
-      await applyConnectors(`Added ${c.name}.`);
+      if (c.auth === 'oauth') await connectorConnect(c.name);
+      await applyConnectors(`Added ${c.name}.${c.auth === 'oauth' ? ' Sign in to it in the browser tab that opened.' : ''}`);
     } else if (kind === 'connectors') {
       const c0 = catState();
       if (!c0.picked.length) { sheetError('Tick the connectors to add.'); return; }
-      const missing = c0.list.filter((c) => c0.picked.includes(c.slug) && catNeedsToken(c) && !String(c0.tokens[c.slug] || '').trim());
-      if (missing.length) {
-        sheetError(`${missing[0].name} needs an access token. Paste it under its name.`);
-        const box = document.querySelector(`[data-cat-token="${CSS.escape(missing[0].slug)}"]`);
+      const missing = c0.list.filter((c) => c0.picked.includes(c.slug)).map((c) => [c, catMissing(c)]).find(([, m]) => m);
+      if (missing) {
+        sheetError(`${missing[1]} Fill it in under its name.`);
+        const box = document.querySelector(`.cat-token input[value=""][data-cat-url="${CSS.escape(missing[0].slug)}"], .cat-token input[value=""][data-cat-token="${CSS.escape(missing[0].slug)}"], .cat-token input[value=""][data-cat-cid="${CSS.escape(missing[0].slug)}"]`);
         if (box) box.focus();
         return;
       }
       submit.innerHTML = `${SPINNER}Adding…`;
       const done = [];
       const failed = [];
+      const toConnect = [];
       for (const slug of [...c0.picked]) {
         const c = c0.list.find((x) => x.slug === slug);
         try {
-          await api('POST', '/api/connectors', { slug, token: String(c0.tokens[slug] || '').trim() || undefined });
+          const cid = String(c0.cids[slug] || '').trim();
+          const added = await api('POST', '/api/connectors', { slug, token: String(c0.tokens[slug] || '').trim() || undefined, url: String(c0.urls[slug] || '').trim() || undefined, client: cid ? { id: cid, secret: String(c0.csecrets[slug] || '').trim() } : undefined });
+          if (added.auth === 'oauth') toConnect.push(added.name);
           done.push(c.name);
           c0.picked = c0.picked.filter((x) => x !== slug);
         } catch (err) {
@@ -3406,7 +3487,9 @@ document.addEventListener('submit', async (event) => {
       } else {
         await closeSheet();
       }
-      if (done.length) await applyConnectors(`Added ${done.length > 3 ? `${done.length} connectors` : done.join(', ')}.`);
+      // Each one that signs in with an account opens its sign-in page in the browser.
+      for (const name of toConnect) await connectorConnect(name);
+      if (done.length) await applyConnectors(`Added ${done.length > 3 ? `${done.length} connectors` : done.join(', ')}.${toConnect.length ? ` Sign in to ${toConnect.join(', ')} in the browser ${toConnect.length > 1 ? 'tabs' : 'tab'} that opened.` : ''}`);
     } else if (kind === 'rename') {
       const name = String(data.label || '').trim();
       const id = form.dataset.id;

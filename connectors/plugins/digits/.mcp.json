@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "digits": {
+      "type": "http",
+      "url": "https://api.digits.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

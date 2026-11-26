@@ -1,0 +1,11 @@
+{
+  "name": "s-p-global-adaptive-retrieval",
+  "version": "2026.11.26",
+  "description": "S&P Global - Adaptive Retrieval: Flexible data access for complex workflows",
+  "author": {
+    "name": "S&P Global"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

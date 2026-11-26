@@ -1,0 +1,15 @@
+{
+  "name": "onesignal",
+  "version": "2026.11.26",
+  "description": "OneSignal: Agentic access to OneSignal’s customer engagement platform for messaging, users, and analytics.",
+  "author": {
+    "name": "OneSignal"
+  },
+  "keywords": [
+    "commerce-shopping",
+    "communication",
+    "data-analytics",
+    "developer-tools",
+    "sales-and-marketing"
+  ]
+}

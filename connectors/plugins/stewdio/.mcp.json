@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "stewdio": {
+      "type": "http",
+      "url": "https://mcp.stewdio.ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

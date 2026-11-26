@@ -1,0 +1,11 @@
+{
+  "name": "inductive-bio",
+  "version": "2026.11.26",
+  "description": "Inductive Bio: State-of-the-art ADMET prediction models for drug discovery",
+  "author": {
+    "name": "Inductive Bio"
+  },
+  "keywords": [
+    "health-life-sciences"
+  ]
+}

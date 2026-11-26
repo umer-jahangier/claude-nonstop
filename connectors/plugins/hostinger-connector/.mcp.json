@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "hostinger-connector": {
+      "type": "http",
+      "url": "https://mcp.hostinger.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

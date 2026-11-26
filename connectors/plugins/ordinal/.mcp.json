@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "ordinal": {
+      "type": "http",
+      "url": "https://app.tryordinal.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

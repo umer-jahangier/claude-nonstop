@@ -1,6 +1,6 @@
 {
   "name": "etherscan",
-  "version": "2026.10.25",
+  "version": "2026.11.26",
   "description": "Etherscan: Explore wallets, tokens, transactions, contracts, logs, blocks, and gas across 60+ EVM chains with Etherscan",
   "author": {
     "name": "etherscan"

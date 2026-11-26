@@ -1,0 +1,11 @@
+{
+  "name": "interactive-brokers",
+  "version": "2026.11.26",
+  "description": "Interactive Brokers (IBKR): Trade, invest, analyze, and manage global markets",
+  "author": {
+    "name": "Interactive Brokers"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

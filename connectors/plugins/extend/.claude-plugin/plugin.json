@@ -1,0 +1,11 @@
+{
+  "name": "extend",
+  "version": "2026.11.26",
+  "description": "Extend: Turn documents into structured data",
+  "author": {
+    "name": "Extend"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

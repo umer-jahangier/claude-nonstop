@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "vibeprospecting": {
+      "type": "http",
+      "url": "https://vibeprospecting.explorium.ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

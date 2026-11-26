@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "picsart-media-studio": {
+      "type": "http",
+      "url": "https://api.picsart.com/connectors/media-tools/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

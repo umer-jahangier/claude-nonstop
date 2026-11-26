@@ -1,0 +1,13 @@
+{
+  "name": "samsara-mcp",
+  "version": "2026.11.26",
+  "description": "Samsara: Ask Claude about your fleet and get answers from live Samsara data",
+  "author": {
+    "name": "Samsara"
+  },
+  "keywords": [
+    "data-analytics",
+    "other",
+    "productivity"
+  ]
+}

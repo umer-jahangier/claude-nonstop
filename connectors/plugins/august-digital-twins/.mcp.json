@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "august-digital-twins": {
+      "type": "http",
+      "url": "https://mcp.getaugust.ai/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

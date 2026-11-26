@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "cafeteria": {
+      "type": "http",
+      "url": "https://mcp.cafeteria.page/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

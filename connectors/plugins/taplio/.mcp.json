@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "taplio": {
+      "type": "http",
+      "url": "https://mcp.taplio.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

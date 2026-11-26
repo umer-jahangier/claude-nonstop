@@ -1,6 +1,6 @@
 {
   "name": "atlassian",
-  "version": "2026.10.25",
+  "version": "2026.11.26",
   "description": "Atlassian MCP: Search, read and update Jira, Confluence, Bitbucket, Loom and other Atlassian apps with your existing Atlassian permissions.",
   "author": {
     "name": "Atlassian"

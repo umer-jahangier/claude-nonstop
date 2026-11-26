@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "clear-street-studio": {
+      "type": "http",
+      "url": "https://mcp.clearstreet.io/v1/studio/toolsets/public-api-read",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

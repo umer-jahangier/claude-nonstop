@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "lastminute-com": {
-      "type": "http",
-      "url": "https://mcp.lastminute.com/mcp"
-    }
-  }
-}

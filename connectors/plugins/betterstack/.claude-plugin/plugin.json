@@ -1,0 +1,12 @@
+{
+  "name": "betterstack",
+  "version": "2026.11.26",
+  "description": "mcp.betterstack.com: Better Stack plugin for Claude: observability for AI agents (logs, metrics, dashboards, uptime, incidents).",
+  "author": {
+    "name": "Better Stack, Inc."
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "reply-io-mcp-for-claude": {
+      "type": "http",
+      "url": "https://claude.mcp.reply.io/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

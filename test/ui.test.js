@@ -146,9 +146,9 @@ test('adds and removes desktop connectors, and puts them in the app settings', a
   assert.equal((await apiCall('POST', '/api/connectors', { name: 'Docs', url: 'http://example.com/mcp', oauth: true })).status, 400);
   assert.equal((await apiCall('POST', '/api/connectors', { name: 'Docs', url: 'https://example.com/mcp', oauth: true })).status, 200);
   let s = JSON.parse((await apiCall('GET', '/api/state')).body);
-  assert.deepEqual(s.settings.desktopConnectors, [{ name: 'Docs', transport: 'http', url: 'https://example.com/mcp', oauth: true, signIn: 'oauth' }]);
+  assert.deepEqual(s.settings.desktopConnectors, [{ name: 'Docs', transport: 'http', url: 'https://example.com/mcp', oauth: true, auth: 'oauth', signIn: 'needs-sign-in' }]);
   const r = JSON.parse((await apiCall('POST', '/api/desktop')).body);
-  assert.deepEqual(JSON.parse(r.settings.managedMcpServers), [{ name: 'Docs', transport: 'http', url: 'https://example.com/mcp', oauth: true }]);
+  assert.match(JSON.parse(r.settings.managedMcpServers)[0].url, /\/mcp\/Docs$/);
   assert.equal((await apiCall('DELETE', `/api/connectors/${encodeURIComponent('docs')}`)).status, 200);
   s = JSON.parse((await apiCall('GET', '/api/state')).body);
   assert.deepEqual(s.settings.desktopConnectors, []);
@@ -232,7 +232,7 @@ test('the connector catalog adds with one click, and GitHub signs in with a toke
     assert.deepEqual(require('../src/connectorcatalog').headers('github', { viaGateway: true }), { Authorization: `Bearer ${vault.loadWithTokens().gatewayToken}` }, 'the app gets the gateway token, not GitHub\'s');
     assert.deepEqual(require('../src/connectorcatalog').headers('github'), { Authorization: 'Bearer github_pat_TESTTOKEN0123456789' }, 'an older profile pointing at GitHub itself still gets GitHub\'s token');
     assert.equal(require('../src/connectorcatalog').tokenFor(config0().desktopConnectors.find((e) => e.name === 'GitHub'), vault.load()), 'github_pat_TESTTOKEN0123456789');
-    assert.equal(app.find((e) => e.name === 'Linear').oauth, true);
+    assert.match(app.find((e) => e.name === 'Linear').url, /\/mcp\/Linear$/, 'Linear signs in through the gateway');
 
     // With a GitHub CLI sign-in, nothing needs pasting.
     process.env.CLAUDE_NONSTOP_GH_TOKEN = 'gho_FROMTHEGITHUBCLI0123456';

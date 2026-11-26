@@ -1,0 +1,13 @@
+{
+  "name": "substrate-claim-status",
+  "version": "2026.11.26",
+  "description": "Substrate Claim Status: Check healthcare claim status in Claude",
+  "author": {
+    "name": "Substrate AI"
+  },
+  "keywords": [
+    "data-analytics",
+    "health-life-sciences",
+    "productivity"
+  ]
+}

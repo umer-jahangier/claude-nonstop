@@ -1,0 +1,13 @@
+{
+  "name": "vanta",
+  "version": "2026.11.26",
+  "description": "Vanta: Connect to Vanta's trust management platform",
+  "author": {
+    "name": "Vanta Inc"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools",
+    "productivity"
+  ]
+}

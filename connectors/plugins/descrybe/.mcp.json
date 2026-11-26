@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "descrybe": {
-      "type": "http",
-      "url": "https://mcp.descrybe.com/mcp"
-    }
-  }
-}

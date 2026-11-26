@@ -1,0 +1,11 @@
+{
+  "name": "rillet",
+  "version": "2026.11.26",
+  "description": "Rillet: Query your live GL and financials in plain English",
+  "author": {
+    "name": "Rillet"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

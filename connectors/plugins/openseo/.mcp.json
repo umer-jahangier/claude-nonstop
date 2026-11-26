@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "openseo": {
+      "type": "http",
+      "url": "https://app.openseo.so/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

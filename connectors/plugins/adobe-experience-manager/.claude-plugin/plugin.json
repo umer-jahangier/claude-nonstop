@@ -1,0 +1,11 @@
+{
+  "name": "adobe-experience-manager",
+  "version": "2026.11.26",
+  "description": "Adobe Experience Manager: Manage your Adobe Experience Manager content",
+  "author": {
+    "name": "Adobe"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

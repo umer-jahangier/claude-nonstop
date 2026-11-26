@@ -1,0 +1,13 @@
+{
+  "name": "athletedata",
+  "version": "2026.11.26",
+  "description": "athletedata: Connect Garmin, WHOOP, Oura, Apple Health and 29 more apps so Claude can analyse your training, sleep and HRV and send workouts straight to your watch.",
+  "author": {
+    "name": "HealthspanOS AG"
+  },
+  "keywords": [
+    "consumer-health",
+    "data-analytics",
+    "health-life-sciences"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "scriptivox",
+  "version": "2026.11.26",
+  "description": "Scriptivox: Transcribe meetings, interviews, podcasts and videos into accurate text with speaker labels, then turn them into minutes, show notes or subtitles.",
+  "author": {
+    "name": "Scriptivox"
+  },
+  "keywords": [
+    "communication",
+    "productivity"
+  ]
+}

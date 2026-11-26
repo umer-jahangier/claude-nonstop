@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "popcorn-mcp": {
+      "type": "http",
+      "url": "https://api.popcorn.space/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

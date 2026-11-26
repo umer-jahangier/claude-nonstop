@@ -1,0 +1,12 @@
+{
+  "name": "twinkle-hub",
+  "version": "2026.11.26",
+  "description": "Twinkle Hub: Government and parliamentary open data from seven jurisdictions — legislation, court rulings, parliamentary records, procurement — in one queryable interface, with source and licence on every result.",
+  "author": {
+    "name": "Twinkle AI"
+  },
+  "keywords": [
+    "data-analytics",
+    "other"
+  ]
+}

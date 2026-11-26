@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "tracy-at-qode": {
+      "type": "http",
+      "url": "https://tracyinterview.ai/mcp"
+    }
+  }
+}

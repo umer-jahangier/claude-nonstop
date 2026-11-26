@@ -1,0 +1,12 @@
+{
+  "name": "clio",
+  "version": "2026.11.26",
+  "description": "Clio: Research the law, analyze dockets and develop case strategy with Clio Library and Clio Docket, with citations back to the sources.",
+  "author": {
+    "name": "Themis Solutions Inc. (DBA Clio)"
+  },
+  "keywords": [
+    "legal",
+    "productivity"
+  ]
+}

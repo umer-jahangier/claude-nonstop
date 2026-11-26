@@ -1,11 +1,12 @@
 {
   "name": "signeasy",
-  "version": "2026.10.25",
+  "version": "2026.11.26",
   "description": "Signeasy: Track contract status, activity, and signers",
   "author": {
     "name": "Signeasy"
   },
   "keywords": [
+    "legal",
     "productivity"
   ]
 }

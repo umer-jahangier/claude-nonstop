@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "plus-ai-mcp": {
+      "type": "http",
+      "url": "https://mcp.plusai.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

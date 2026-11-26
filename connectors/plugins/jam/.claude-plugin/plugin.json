@@ -1,0 +1,11 @@
+{
+  "name": "jam",
+  "version": "2026.11.26",
+  "description": "Jam: Record screen and collect automatic context for issues",
+  "author": {
+    "name": "Jam"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

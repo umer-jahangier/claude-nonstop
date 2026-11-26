@@ -1,0 +1,11 @@
+{
+  "name": "ramp-data",
+  "version": "2026.11.26",
+  "description": "Ramp Data: Search and analyze Ramp spend across 50,000+ businesses",
+  "author": {
+    "name": "Ramp"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

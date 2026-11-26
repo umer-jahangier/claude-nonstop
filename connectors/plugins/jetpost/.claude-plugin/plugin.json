@@ -1,0 +1,13 @@
+{
+  "name": "jetpost",
+  "version": "2026.11.26",
+  "description": "Jetpost: Send messages, notes, and docs to your team, email anyone, and share memory and context across Claude, ChatGPT, and other AI tools. Collaborate, hand off work, and stay in sync.",
+  "author": {
+    "name": "Jetpost"
+  },
+  "keywords": [
+    "communication",
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

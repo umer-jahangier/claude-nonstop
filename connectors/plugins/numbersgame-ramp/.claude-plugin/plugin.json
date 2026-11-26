@@ -1,0 +1,11 @@
+{
+  "name": "numbersgame-ramp",
+  "version": "2026.11.26",
+  "description": "NumbersGame Ramp: Read your clients' Ramp spend next to their books",
+  "author": {
+    "name": "Numbers Game B.V."
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

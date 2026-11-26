@@ -1,0 +1,12 @@
+{
+  "name": "versine",
+  "version": "2026.11.26",
+  "description": "Versine: Send, request and split money with friends from within Claude - every payment is approved by you in the Versine app.",
+  "author": {
+    "name": "Versine"
+  },
+  "keywords": [
+    "financial-services",
+    "productivity"
+  ]
+}

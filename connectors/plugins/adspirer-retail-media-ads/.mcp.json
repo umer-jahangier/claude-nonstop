@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "adspirer-retail-media-ads": {
+      "type": "http",
+      "url": "https://mcp.adspirer.com/retail-ads",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

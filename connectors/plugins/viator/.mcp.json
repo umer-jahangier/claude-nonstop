@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "viator": {
-      "type": "http",
-      "url": "https://exp-app-mcp.prod.ep.viator.com/mcp"
-    }
-  }
-}

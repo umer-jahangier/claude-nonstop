@@ -1,0 +1,13 @@
+{
+  "name": "squarespace",
+  "version": "2026.11.26",
+  "description": "Squarespace: Find a domain name for your next idea, and run your Squarespace store's orders, products and customers, all from Claude.",
+  "author": {
+    "name": "Squarespace"
+  },
+  "keywords": [
+    "commerce-shopping",
+    "productivity",
+    "sales-and-marketing"
+  ]
+}

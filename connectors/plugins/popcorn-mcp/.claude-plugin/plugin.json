@@ -1,0 +1,11 @@
+{
+  "name": "popcorn-mcp",
+  "version": "2026.11.26",
+  "description": "Popcorn: Connect AI agents to your Popcorn phone service to read voicemails and make calls on your behalf.",
+  "author": {
+    "name": "Popcorn Labs, Inc"
+  },
+  "keywords": [
+    "communication"
+  ]
+}

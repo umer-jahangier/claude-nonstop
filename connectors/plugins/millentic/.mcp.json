@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "millentic": {
+      "type": "http",
+      "url": "https://mcp.millentic.com/",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

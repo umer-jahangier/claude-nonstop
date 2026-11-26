@@ -1,0 +1,11 @@
+{
+  "name": "juicebox",
+  "version": "2026.11.26",
+  "description": "Juicebox: Launch sourcing agents and get candidate and usage insights from Juicebox in Claude.",
+  "author": {
+    "name": "Juicebox"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

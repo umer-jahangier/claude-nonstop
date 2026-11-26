@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "slidesgpt": {
+      "type": "http",
+      "url": "https://claude.slidesgpt.com/mcp"
+    }
+  }
+}

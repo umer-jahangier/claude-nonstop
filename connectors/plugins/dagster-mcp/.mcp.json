@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "dagster-mcp": {
+      "type": "http",
+      "url": "https://mcp.agent.dagster.cloud/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "fastmail": {
+      "type": "http",
+      "url": "https://api.fastmail.com/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

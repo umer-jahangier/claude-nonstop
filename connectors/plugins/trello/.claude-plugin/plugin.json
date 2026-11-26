@@ -1,0 +1,11 @@
+{
+  "name": "trello",
+  "version": "2026.11.26",
+  "description": "Trello: Get things done in Trello",
+  "author": {
+    "name": "Trello"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

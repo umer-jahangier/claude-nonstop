@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "onesignal": {
+      "type": "http",
+      "url": "https://api.onesignal.com/mcp/oauth",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "pubmatic",
+  "version": "2026.11.26",
+  "description": "PubMatic: Manage campaigns, deals, reporting, and inventory in PubMatic directly from Claude using natural language.",
+  "author": {
+    "name": "PubMatic"
+  },
+  "keywords": [
+    "media-entertainment"
+  ]
+}

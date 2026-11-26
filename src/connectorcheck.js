@@ -9,7 +9,7 @@
 //   'no-metadata'  asks for sign-in but publishes no OAuth metadata the app can use
 //   'redirects' / 'unreachable'  the address isn't the server's final https address
 
-const TIMEOUT = 12000;
+const TIMEOUT = 20000;
 
 async function get(url, init = {}) {
   const ctl = new AbortController();
@@ -69,7 +69,13 @@ async function check(url, transport = transportFor(url)) {
   const hint = (r.headers.get('www-authenticate') || '').match(/resource_metadata="([^"]+)"/);
   if (hint) resource = await json(hint[1]);
   if (!resource) for (const u of wellKnown(url, 'oauth-protected-resource')) if ((resource = await json(u))) break;
-  const declared = resource && Array.isArray(resource.authorization_servers) && resource.authorization_servers[0];
+  // A server may name its authorization server relative to itself ("/").
+  let declared = resource && Array.isArray(resource.authorization_servers) && resource.authorization_servers[0];
+  try {
+    if (declared) declared = new URL(declared, url).href.replace(/\/$/, '');
+  } catch {
+    declared = null;
+  }
   const meta = await authServerMeta(declared || new URL(url).origin);
   if (!meta) return { auth: 'no-metadata', issuer: null };
   return { auth: meta.registration_endpoint ? 'oauth' : 'needs-client', issuer: meta.issuer || declared || new URL(url).origin };

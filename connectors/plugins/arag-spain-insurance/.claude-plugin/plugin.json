@@ -1,0 +1,11 @@
+{
+  "name": "arag-spain-insurance",
+  "version": "2026.11.26",
+  "description": "ARAG Spain Insurance Products: Explore ARAG insurance products in Spain. Initially, learn about ARAG Home Rental and request an indicative annual price.",
+  "author": {
+    "name": "InfiniteWatch"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

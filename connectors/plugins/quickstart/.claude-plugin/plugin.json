@@ -1,0 +1,11 @@
+{
+  "name": "quickstart",
+  "version": "2026.11.26",
+  "description": "QuickStart: AI-powered accounting",
+  "author": {
+    "name": "Oracle NetSuite"
+  },
+  "keywords": [
+    "financial-services"
+  ]
+}

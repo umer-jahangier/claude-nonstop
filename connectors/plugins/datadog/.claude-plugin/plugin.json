@@ -1,6 +1,6 @@
 {
   "name": "datadog",
-  "version": "2026.10.25",
+  "version": "2026.11.26",
   "description": "Datadog: Debug and resolve issues using Datadog telemetry",
   "author": {
     "name": "Datadog"

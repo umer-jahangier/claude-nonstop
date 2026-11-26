@@ -1,0 +1,14 @@
+{
+  "name": "texttoquant",
+  "version": "2026.11.26",
+  "description": "TEXT TO QUANT: Backtest trading strategies written in plain English on real market data, with graded, honesty flagged reports.",
+  "author": {
+    "name": "Spekule"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools",
+    "financial-services",
+    "productivity"
+  ]
+}

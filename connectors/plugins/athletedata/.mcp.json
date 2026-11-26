@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "athletedata": {
+      "type": "http",
+      "url": "https://mcp.athletedata.health/mcp",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

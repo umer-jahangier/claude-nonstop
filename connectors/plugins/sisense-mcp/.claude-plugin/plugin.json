@@ -1,0 +1,11 @@
+{
+  "name": "sisense-mcp",
+  "version": "2026.11.26",
+  "description": "Sisense MCP: Ask your Sisense natural language questions, get visuals and insights",
+  "author": {
+    "name": "Sisense Inc."
+  },
+  "keywords": [
+    "data-analytics"
+  ]
+}

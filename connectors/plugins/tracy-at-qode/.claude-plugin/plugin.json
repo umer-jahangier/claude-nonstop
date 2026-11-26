@@ -1,0 +1,11 @@
+{
+  "name": "tracy-at-qode",
+  "version": "2026.11.26",
+  "description": "Tracy AI Interviewer: Set up one-to-one video interviews run by Tracy, AI interviewer, as a two-way natural conversation: suggest questions, invite participants after a preview, and read each participant's result.",
+  "author": {
+    "name": "Qode"
+  },
+  "keywords": [
+    "productivity"
+  ]
+}

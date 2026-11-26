@@ -1,0 +1,11 @@
+{
+  "name": "strava",
+  "version": "2026.11.26",
+  "description": "Strava: Analyze, summarize, and explore your Strava data",
+  "author": {
+    "name": "Strava, Inc."
+  },
+  "keywords": [
+    "consumer-health"
+  ]
+}

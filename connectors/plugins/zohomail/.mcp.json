@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "zohomail": {
+      "type": "http",
+      "url": "https://mail.zohomcp.com/mcp/message",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

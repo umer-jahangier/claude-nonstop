@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "docfarm": {
+      "type": "http",
+      "url": "https://mcp.doc.farm/"
+    }
+  }
+}

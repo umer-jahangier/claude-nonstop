@@ -1,0 +1,11 @@
+{
+  "name": "ample-computer",
+  "version": "2026.11.26",
+  "description": "Ample Computer: Deploy apps, databases and storage from Claude and get a live URL, with no servers or cloud console to set up.",
+  "author": {
+    "name": "Ample Computer"
+  },
+  "keywords": [
+    "developer-tools"
+  ]
+}

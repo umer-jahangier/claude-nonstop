@@ -1,6 +1,6 @@
 {
   "name": "sentry",
-  "version": "2026.10.25",
+  "version": "2026.11.26",
   "description": "Sentry: Search, query, and debug errors intelligently",
   "author": {
     "name": "Sentry.io"

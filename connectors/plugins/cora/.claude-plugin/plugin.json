@@ -1,0 +1,13 @@
+{
+  "name": "cora",
+  "version": "2026.11.26",
+  "description": "Cora: Query all your customer data. Prep for every meeting. Run agents that do the work.",
+  "author": {
+    "name": "Cora AI, Inc"
+  },
+  "keywords": [
+    "communication",
+    "data-analytics",
+    "productivity"
+  ]
+}

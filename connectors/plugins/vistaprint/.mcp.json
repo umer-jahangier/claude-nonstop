@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "vistaprint": {
+      "type": "http",
+      "url": "https://claude.mcp-pod.es.vpsvc.com/mcp"
+    }
+  }
+}

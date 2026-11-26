@@ -1,0 +1,13 @@
+{
+  "name": "alpic",
+  "version": "2026.11.26",
+  "description": "Alpic: Manage your MCP Servers and MCP Apps hosted on Alpic",
+  "author": {
+    "name": "Alpic"
+  },
+  "keywords": [
+    "data-analytics",
+    "developer-tools",
+    "productivity"
+  ]
+}

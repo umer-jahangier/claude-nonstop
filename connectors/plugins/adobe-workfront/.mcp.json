@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "adobe-workfront": {
+      "type": "http",
+      "url": "https://mcp.workfront.adobe.com/mcp/v1/workfront",
+      "oauth": {
+        "mode": "dcr"
+      }
+    }
+  }
+}

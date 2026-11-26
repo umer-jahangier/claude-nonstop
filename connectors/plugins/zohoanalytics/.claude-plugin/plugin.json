@@ -1,0 +1,12 @@
+{
+  "name": "zohoanalytics",
+  "version": "2026.11.26",
+  "description": "Zoho Analytics Cloud: Zoho Analytics MCP Server lets AI assistants query and analyze business data using natural language.",
+  "author": {
+    "name": "Zoho Corporation"
+  },
+  "keywords": [
+    "data-analytics",
+    "productivity"
+  ]
+}

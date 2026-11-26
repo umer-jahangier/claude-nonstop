@@ -1,6 +1,6 @@
 {
   "name": "countersignatory",
-  "version": "2026.10.25",
+  "version": "2026.11.26",
   "description": "Countersignatory: Let an agent buy a verified human's approval, verification or judgment at a published spot price, paid by x402 (USDC on Base) or card, answered by hand or refunded.",
   "author": {
     "name": "Countersignatory Ltd"

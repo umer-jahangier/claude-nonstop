@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "melon": {
+      "type": "http",
+      "url": "https://mcp.melon.com/mcp/"
+    }
+  }
+}

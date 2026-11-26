@@ -18,6 +18,10 @@ function fill(v) {
     accounts: v.accounts && typeof v.accounts === 'object' ? v.accounts : {},
     // Access tokens for connectors that sign in with one, by connector name in lower case.
     connectorTokens: v.connectorTokens && typeof v.connectorTokens === 'object' ? v.connectorTokens : {},
+    // Connector sign-ins claude-nonstop made itself (mcpauth.js), by connector name in lower case.
+    connectorAuth: v.connectorAuth && typeof v.connectorAuth === 'object' ? v.connectorAuth : {},
+    // OAuth apps you registered with a service, by its sign-in address (one Google app, say).
+    oauthClients: v.oauthClients && typeof v.oauthClients === 'object' ? v.oauthClients : {},
     gatewayToken: v.gatewayToken || null,
     uiToken: v.uiToken || null,
   };

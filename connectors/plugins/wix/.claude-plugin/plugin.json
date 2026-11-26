@@ -1,11 +1,15 @@
 {
   "name": "wix",
-  "version": "2026.10.25",
-  "description": "Wix: Manage and build sites and apps on Wix",
+  "version": "2026.11.26",
+  "description": "Wix: Create a website or online store, get a domain, and manage it all on Wix",
   "author": {
     "name": "Wix"
   },
   "keywords": [
+    "commerce-shopping",
+    "creative",
+    "developer-tools",
+    "other",
     "productivity"
   ]
 }

@@ -1,6 +1,6 @@
 {
   "name": "mdn",
-  "version": "2026.10.25",
+  "version": "2026.11.26",
   "description": "MDN: Search & retrieval of MDN docs & browser compat data",
   "author": {
     "name": "Mozilla"
