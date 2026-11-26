@@ -1066,7 +1066,9 @@ function accountState(a) {
   const c = a.lastCheck;
   if (!a.enabled) return { s: 'off', word: 'Paused', ready: false };
   if (login && login.loggedIn === false) return { s: 'dead', word: 'Not signed in', ready: false };
-  if (c && !c.ok && /limit/i.test(c.reason || '')) return { s: 'warn', word: 'Limit reached', ready: false };
+  if (c && !c.ok && /limit/i.test(c.reason || '') && !/disabled|admin/i.test(c.reason || '')) return { s: 'warn', word: 'Limit reached', ready: false };
+  // Turned off by the account's organization, or a sign-in no longer accepted: not usable.
+  if (c && !c.ok && /disabled Claude subscription access|organization has disabled|ask your admin|not (allowed|permitted) to use Claude Code|sign-in refused|could not be refreshed/i.test(c.reason || '')) return { s: 'dead', word: 'Not usable', ready: false };
   if (c && !c.ok) return { s: 'warn', word: 'Check failed', ready: true };
   return { s: c && c.ok ? 'ready' : '', word: c && c.ok ? 'Ready' : 'Not checked', ready: true };
 }

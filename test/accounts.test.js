@@ -39,3 +39,11 @@ test('reports a signed-out account as signed out', async () => {
     delete process.env.FAKE_CLAUDE_SIGNED_OUT;
   }
 });
+
+test('an account whose organization turned Claude Code off counts as not usable, not as a limit', () => {
+  const accounts = require('../src/accounts');
+  const r = 'Your organization has disabled Claude subscription access for Claude Code · Use an Anthropic API key instead, or ask your admin to enable access';
+  assert.equal(accounts.isBlockedReason(r), true);
+  assert.equal(accounts.isLimitReason(r), false);
+  assert.equal(accounts.isBlockedReason("You've hit your usage limit"), false);
+});

@@ -2,7 +2,11 @@
 
 Every release of claude-nonstop, newest first. Full notes, and the code at each version, are on the [releases page](https://github.com/umer-jahangier/claude-nonstop/releases). The installer and `claude-nonstop update` install the latest release; the npm package is [`@umer-jahangier/claude-nonstop`](https://www.npmjs.com/package/@umer-jahangier/claude-nonstop).
 
-## [1.24.1](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.24.1) · 2026-11-27
+## [1.24.2](https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.24.2) · 2026-11-27
+
+- An account whose organization turned Claude Code off for subscription seats ("Your organization has disabled Claude subscription access for Claude Code"), or whose sign-in is no longer accepted, now shows **Not usable** instead of In use. The gateway and new terminal sessions skip it, and it's checked again every few minutes, so it comes back by itself once access is turned on.
+
+(https://github.com/umer-jahangier/claude-nonstop/releases/tag/v1.24.1) · 2026-11-27
 
 - **Change Account…** on every connected connector: paste another account's token (and, for n8n, another instance's address), or sign in again as someone else (Google shows its account chooser). The connector keeps its name, so nothing changes in Claude but the account, and no new settings need approving.
 - Several n8n instances side by side: adding n8n again names it "n8n 2" (or the name you give it) instead of replacing the first.

@@ -260,6 +260,11 @@ async function probe(account, bin) {
 // A plan limit (session, weekly, usage): not a passing "rate limit" on a burst of requests.
 const isLimitReason = (reason) => /usage limit|session limit|weekly limit|limit reached|hit your|out of (extra )?usage/i.test(reason || '') && !/would exceed your account's rate limit/i.test(reason || '');
 
+// A refusal that won't pass by itself: the account's organization turned Claude Code off for
+// subscription seats, or the sign-in is no longer accepted. Such an account isn't used until a
+// check finds it working again.
+const isBlockedReason = (reason) => /disabled Claude subscription access|organization has disabled|ask your admin to enable|not (allowed|permitted) to use Claude Code|sign-in refused|OAuth session expired and could not be refreshed/i.test(reason || '');
+
 function findEmail(value) {
   if (!value || typeof value !== 'object') return null;
   for (const [k, v] of Object.entries(value)) {
@@ -340,6 +345,7 @@ module.exports = {
   remove,
   logout,
   isLimitReason,
+  isBlockedReason,
   parseJsonOutput,
   LOGIN_ARGS,
   PROBE_ARGS,

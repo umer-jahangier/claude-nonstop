@@ -71,7 +71,7 @@ function helperCommand() {
 // Whether an account has usage left, trusting a recent limit for a while instead of asking.
 async function hasUsage(account, cfg, bin) {
   const recent = state.load().accounts[account.id];
-  if (recent && !recent.ok && accounts.isLimitReason(recent.reason) && Date.now() - recent.at < cfg.accountRecheckMinutes * 60000) {
+  if (recent && !recent.ok && (accounts.isLimitReason(recent.reason) || accounts.isBlockedReason(recent.reason)) && Date.now() - recent.at < cfg.accountRecheckMinutes * 60000) {
     say(`${account.label}: ${recent.reason} (checked ${minutesAgo(recent.at)})`);
     return false;
   }

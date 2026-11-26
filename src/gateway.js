@@ -416,7 +416,7 @@ const fresh = (creds) => Boolean(creds && (!creds.expiresAt || creds.expiresAt >
 
 const limitedRecently = (account, cfg) => {
   const recent = state.load().accounts[account.id];
-  return recent && !recent.ok && accounts.isLimitReason(recent.reason) && Date.now() - recent.at < cfg.accountRecheckMinutes * 60000 ? recent.reason : null;
+  return recent && !recent.ok && (accounts.isLimitReason(recent.reason) || accounts.isBlockedReason(recent.reason)) && Date.now() - recent.at < cfg.accountRecheckMinutes * 60000 ? recent.reason : null;
 };
 
 // An account's sign-in token, renewed first when it has expired. The gateway only reads
