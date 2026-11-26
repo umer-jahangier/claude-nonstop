@@ -512,6 +512,14 @@ select.model-input { text-align: left; cursor: pointer; appearance: none; -webki
 .values .k { flex: none; width: 128px; }
 .values .v { flex: 1; min-width: 0; color: var(--label-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .values .acts { display: flex; gap: 2px; flex: none; }
+/* Connector rows: the buttons sit in one line with room between them; the address takes what's left. */
+#desktop-connectors .acts { display: flex; align-items: center; gap: 8px; flex: none; flex-wrap: nowrap; white-space: nowrap; }
+#desktop-connectors .acts .btn { height: 28px; padding: 0 11px; font-size: 0.8125rem; }
+#desktop-connectors .acts .icon-btn { flex: none; }
+@media (max-width: 560px) {
+  #desktop-connectors .row { flex-wrap: wrap; }
+  #desktop-connectors .acts { width: 100%; justify-content: flex-end; }
+}
 .view-actions { margin: 16px 0 0 4px; display: flex; gap: 10px; }
 .flat { --sep-left: 16px; }
 .field-row { cursor: default; }
@@ -1264,7 +1272,7 @@ function renderDesktop() {
     <div class="row"><span class="k">Auth scheme</span><span class="v">Bearer</span></div>`;
   $('#desktop-file').textContent = desktopInfo ? `The same values are saved in ${desktopInfo.file}` : '';
   const signInNote = { oauth: ' · you sign in to it in Claude', none: ' · no sign-in', gh: ' · your GitHub CLI sign-in', token: ' · your access token', 'token-missing': ' · needs an access token', connected: ' · connected', 'needs-sign-in': ' · not connected yet' };
-  $('#desktop-connectors').innerHTML = S.settings.desktopConnectors.map((c) => `<li class="row"><span class="row-text"><span class="row-title">${esc(c.name)}${c.signIn === 'needs-sign-in' ? ' <span class="badge warn">Sign in needed</span>' : ''}</span><span class="row-sub mono">${esc(c.url)}${signInNote[c.signIn] || ''}</span></span><span class="acts">${c.signIn === 'needs-sign-in' ? `<button class="btn" type="button" data-act="connect-connector" data-id="${esc(c.name)}" data-fk="connect-connector-${esc(c.name)}">Connect</button>` : ''}${['connected', 'token', 'gh', 'token-missing'].includes(c.signIn) ? `<button class="btn" type="button" data-act="change-connector" data-id="${esc(c.name)}" data-fk="change-connector-${esc(c.name)}">Change Account…</button>` : ''}<button class="btn" type="button" data-act="test-connector" data-id="${esc(c.name)}" data-fk="test-connector-${esc(c.name)}">Test</button><button class="icon-btn" type="button" data-act="remove-connector" data-id="${esc(c.name)}" data-fk="remove-connector-${esc(c.name)}" aria-label="Remove the ${esc(c.name)} connector" title="Remove">${icon('trash')}</button></span></li>`).join('')
+  $('#desktop-connectors').innerHTML = S.settings.desktopConnectors.map((c) => `<li class="row"><span class="row-text"><span class="row-title">${esc(c.name)}${c.signIn === 'needs-sign-in' ? ' <span class="badge warn">Sign in needed</span>' : ''}</span><span class="row-sub mono">${esc(c.url)}${signInNote[c.signIn] || ''}</span></span><span class="acts">${c.signIn === 'needs-sign-in' ? `<button class="btn" type="button" data-act="connect-connector" data-id="${esc(c.name)}" data-fk="connect-connector-${esc(c.name)}">Connect</button>` : ''}${['connected', 'token', 'gh', 'token-missing'].includes(c.signIn) ? `<button class="btn" type="button" data-act="change-connector" data-id="${esc(c.name)}" data-fk="change-connector-${esc(c.name)}">Change Account</button>` : ''}<button class="btn" type="button" data-act="test-connector" data-id="${esc(c.name)}" data-fk="test-connector-${esc(c.name)}">Test</button><button class="icon-btn" type="button" data-act="remove-connector" data-id="${esc(c.name)}" data-fk="remove-connector-${esc(c.name)}" aria-label="Remove the ${esc(c.name)} connector" title="Remove">${icon('trash')}</button></span></li>`).join('')
     + `<li class="row add"><button class="add-btn" type="button" data-act="browse-connectors" data-fk="browse-connectors"><span class="tile">${icon('plus-circle')}</span>Browse Connectors…</button></li>`
     + `<li class="row add"><button class="add-btn" type="button" data-act="add-connector" data-fk="add-connector"><span class="tile">${icon('plus-circle')}</span>Add by Address…</button></li>`;
   renderDesktopCard();
